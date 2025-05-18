@@ -1,0 +1,10 @@
+export * from "./adapters/ApiAdaptersCategory";
+export { default as Form } from "./components/Form.Category.vue";
+export { default as List } from "./components/List.Category.vue";
+export * from "./constans/DefaultFormCategory";
+export * from "./constans/DefaultRoutesCategory";
+export * from "./constans/DefaultTableHeaderCategory";
+export * from "./models/Category";
+export * from "./router/CategoryRouter";
+export * from "./schemas/CategorySchemas";
+export * from "./services/ApiPetitionsCategory";

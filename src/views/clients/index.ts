@@ -1,0 +1,18 @@
+export * from "./adapters/Client.ApiAdapter";
+export { default as Details } from "./components/Details.Client.vue";
+export { default as Form } from "./components/Form.Client.vue";
+export { default as List } from "./components/List.Client.vue";
+export * from "./composables/useDetails.Client";
+export * from "./composables/useFetch.Client";
+export * from "./composables/useForm.Client";
+export * from "./composables/useList.Client";
+export * from "./constants/Client.DefaultFormValue";
+export * from "./constants/Client.FormatedTimeLine";
+export * from "./constants/Client.RoutesDictionary";
+export * from "./constants/Client.TableHeader";
+export * from "./constants/Client.TabsForm";
+export * from "./models/Client";
+export * from "./router/Router.Client";
+export * from "./schemas/Client.BasicSchema";
+export * from "./schemas/Client.Schema";
+export * from "./services/Client.ApiPetitions";
