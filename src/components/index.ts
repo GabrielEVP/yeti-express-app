@@ -44,10 +44,6 @@ export { default as FormBasicClientModal } from "@components/sections/clients/Fo
 export { default as AdressesForm } from "@/components/sections/adresses/AdressesForm.vue";
 export { default as AdressesList } from "@/components/sections/adresses/AdressesList.vue";
 
-// SECTIONS – BANK ACCOUNTS
-export { default as BankAccountsForm } from "@/components/sections/bank-accounts/BankAccountsForm.vue";
-export { default as BankAccountsList } from "@/components/sections/bank-accounts/BankAccountsList.vue";
-
 // SECTIONS – CLIENTS &
 export { default as SelectorBasicClient } from "@/components/sections/clients/SelectorBasicClient.vue";
 

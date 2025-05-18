@@ -32,9 +32,6 @@
                   <PhonesForm />
                   <EmailsForm />
                </TabsContent>
-               <TabsContent tab="bank" :activeTab="activeTab">
-                  <BankAccountsForm />
-               </TabsContent>
                <TabsContent tab="billing" :activeTab="activeTab">
                   <SelectForm label="Tipo de moneda" name="currency" :items="CURRENCYSELECT" id="currency" />
                   <FieldForm label="Tasa de Impuesto" type="number" name="taxRate" id="taxRate" />
@@ -58,7 +55,7 @@ import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { TYPECONTACTSELECT, COUNTRIES, CURRENCYSELECT } from "@/constants/";
 import { CLIENTTABS, useClientForm } from "@/views/clients/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AdressesForm, EmailsForm, PhonesForm, BankAccountsForm, AcceptButton, CancelButton } from "@/components/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AdressesForm, EmailsForm, PhonesForm, AcceptButton, CancelButton } from "@/components/";
 
 const router = useRouter();
 

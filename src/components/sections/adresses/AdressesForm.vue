@@ -21,10 +21,6 @@
             <FieldForm :name="`addresses[${idx}].municipality`" :id="`municipality-${idx}`" label="Municipio" type="text" :required="idx === 0" />
             <FieldForm :name="`addresses[${idx}].postalCode`" :id="`postalCode-${idx}`" label="Código Postal" type="text" :required="idx === 0" />
          </div>
-         <div class="mt-4 flex items-center space-x-2 text-sm">
-            <input type="radio" name="billing" :id="`billing-${idx}`" :checked="field.value.isBilling" @change="handleBillingChange(idx, true)" />
-            <label :for="`billing-${idx}`" class="text-black dark:text-white"> Usar como dirección de facturación </label>
-         </div>
       </div>
    </div>
 </template>
@@ -35,14 +31,5 @@ import { Address } from "@/models/";
 import { ADDRESSDEFAULTFORMVALUE, COUNTRIES } from "@/constants/";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
-const { fields, push, remove, update } = useFieldArray<Address>("addresses");
-
-const handleBillingChange = (selectedIndex: number, checked: boolean) => {
-   fields.value.forEach((field, idx) => {
-      update(idx, {
-         ...field.value,
-         isBilling: idx === selectedIndex ? checked : false,
-      });
-   });
-};
+const { fields, push, remove } = useFieldArray<Address>("addresses");
 </script>

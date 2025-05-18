@@ -40,7 +40,6 @@
                      <AdressesList :addresses="client.addresses" />
                      <PhonesList :phones="client.phones" />
                      <EmailsList :emails="client.emails" />
-                     <BankAccountsList :bankAccounts="client.bankAccounts" />
                   </div>
                </div>
             </Card>
@@ -85,7 +84,6 @@ import {
    SectionText,
    Card,
    PhonesList,
-   BankAccountsList,
    EmailsList,
    AdressesList,
    TableBilling,
