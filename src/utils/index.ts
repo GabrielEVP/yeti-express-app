@@ -5,7 +5,6 @@ export * from "./bagdes/GetContactTypeText";
 export * from "./bagdes/GetStatusBilling";
 export * from "./entity/GetClientName";
 export * from "./entity/GetNameCountry";
-export * from "./entity/GetSupplierName";
 export * from "./filters/FilterByDayMonth";
 export * from "./formatting/FormatCurrency";
 export * from "./formatting/FormatDate";

@@ -1,3 +1,2 @@
-export * from './GetClientName';
-export * from './GetNameCountry';
-export * from './GetSupplierName';
+export * from "./GetClientName";
+export * from "./GetNameCountry";

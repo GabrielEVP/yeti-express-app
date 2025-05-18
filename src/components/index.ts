@@ -39,7 +39,6 @@ export { default as TextAreaForm } from "@/components/forms/TextArea.vue";
 // MODALS
 export { default as ModalForm } from "@/components/modals/ModalForm.vue";
 export { default as FormBasicClientModal } from "@components/sections/clients/FormBasicClientModal.vue";
-export { default as FormBasicSupplierModal } from "@components/sections/suppliers/FormBasicSupplierModal.vue";
 
 // SECTIONS – ADDRESSES
 export { default as AdressesForm } from "@/components/sections/adresses/AdressesForm.vue";
@@ -49,9 +48,8 @@ export { default as AdressesList } from "@/components/sections/adresses/Adresses
 export { default as BankAccountsForm } from "@/components/sections/bank-accounts/BankAccountsForm.vue";
 export { default as BankAccountsList } from "@/components/sections/bank-accounts/BankAccountsList.vue";
 
-// SECTIONS – CLIENTS & SUPPLIERS
+// SECTIONS – CLIENTS &
 export { default as SelectorBasicClient } from "@/components/sections/clients/SelectorBasicClient.vue";
-export { default as SelectorBasicSupplier } from "@/components/sections/suppliers/SelectorBasicSupplier.vue";
 
 // SECTIONS – DUE DATES
 export { default as DueDatesForm } from "@/components/sections/due-dates/DueDatesForm.vue";

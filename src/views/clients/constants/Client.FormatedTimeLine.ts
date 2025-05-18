@@ -1,6 +1,5 @@
 import { User } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
-import { ORDEREVENTDEFINITION } from "@views/orders/";
 import { INVOICEEVENTDEFINITION } from "@views/invoices/";
 
 export const CLIENTEVENTDEFINITIONS: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
@@ -11,6 +10,5 @@ export const CLIENTEVENTDEFINITIONS: Record<string, Record<string, Omit<TimeLine
          text: "Se han actualizado los datos del cliente",
       },
       ...INVOICEEVENTDEFINITION,
-      ...ORDEREVENTDEFINITION,
    },
 };

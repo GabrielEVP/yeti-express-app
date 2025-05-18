@@ -5,7 +5,7 @@ import { mapEventsToLineContent } from "@/composables";
 import { filterByDateMonth, percentageChange, sumBy, formatCurrency, formatCountWithPlural, formatPercentageChange } from "@/utils/";
 
 export function useClientData(clientId: string) {
-   const { client, invoices, orders, loadData } = useFetchClient(clientId);
+   const { client, invoices, loadData } = useFetchClient(clientId);
 
    onMounted(async () => {
       await loadData();
@@ -52,7 +52,6 @@ export function useClientData(clientId: string) {
    return {
       client,
       invoices,
-      orders,
       lineContents,
       totalBilled,
       billedChangePercent,
