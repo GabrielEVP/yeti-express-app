@@ -1,16 +1,16 @@
 import { ref } from "vue";
 import { getClient, Client } from "@/views/clients";
-import { getInvoicesByClientId, Invoice } from "@/views/invoices";
+import { getDeliverysByClientId, Delivery } from "@/views/deliveries";
 
 export function useFetchClient(clientId: string) {
    const client = ref<Client | null>(null);
-   const invoices = ref<Invoice[]>([]);
+   const deliveries = ref<Delivery[]>([]);
 
    const loadData = async () => {
       if (!clientId) return;
       client.value = await getClient(clientId);
-      invoices.value = await getInvoicesByClientId(clientId);
+      deliveries.value = await getDeliverysByClientId(clientId);
    };
 
-   return { client, invoices, loadData };
+   return { client, deliveries, loadData };
 }

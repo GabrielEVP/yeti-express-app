@@ -2,6 +2,6 @@ export interface Payment {
    id: string;
    date: string;
    amount: number;
-   invoiceId: string;
+   deliveryId: string;
    typePaymentId: string;
 }

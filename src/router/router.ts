@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "@views/home/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import { ClientRouter } from "@/views/clients/router";
-import { InvoiceRouter } from "@/views/invoices";
+import { DeliveryRouter } from "@/views/deliveries";
 import { UserRouter } from "@/views/users/router/Router.User";
 import { useAuthStore } from "@/stores/";
 import { storeToRefs } from "pinia";
@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
       meta: { requiresAuth: true },
    },
    ...ClientRouter,
-   ...InvoiceRouter,
+   ...DeliveryRouter,
    ...UserRouter,
 ];
 

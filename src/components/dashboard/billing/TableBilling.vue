@@ -48,7 +48,7 @@ const handleDownload = async (id: string) => {
       const response = await apiClient.get(`${props.url}/${id}/download?ts=${Date.now()}`, {
          responseType: "blob",
       });
-      TransformBinaryToPdf(response.data, "Factura", id);
+      TransformBinaryToPdf(response.data, "Delivery", id);
    } catch (error) {
       throw new Error("Error al abrir el PDF");
    }

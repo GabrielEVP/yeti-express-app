@@ -4,18 +4,18 @@ import { CLIENTEVENTDEFINITIONS } from "@/views/clients/constants/Client.Formate
 
 export const EVENTTIMELINECONTENT: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
    ...CLIENTEVENTDEFINITIONS,
-   invoice: {
-      update_invoice: {
+   delivery: {
+      update_delivery: {
          icon: Receipt,
          title: "Actualización de factura",
          text: "Se ha actualizado la información de la factura",
       },
-      create_invoice: {
+      create_delivery: {
          icon: Receipt,
          title: "Creación de factura",
          text: "Se ha creado una nueva factura",
       },
-      update_status_invoice: {
+      update_status_delivery: {
          icon: Receipt,
          title: "Estado de factura actualizado",
          text: "Se ha actualizado el estado de la factura",

@@ -6,6 +6,6 @@ export interface Line {
    taxRate: number;
    totalAmount: number;
    totalTaxAmount: number;
-   invoiceId: string;
+   deliveryId: string;
    productId: string;
 }

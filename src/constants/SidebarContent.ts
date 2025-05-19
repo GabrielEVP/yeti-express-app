@@ -31,14 +31,14 @@ export const menuItems: MenuItem[] = [
    },
    {
       id: "facturacion",
-      title: "Facturacion",
+      title: "Deliveries",
       icon: FileChartColumn,
       children: [
          {
-            id: "invoices",
+            id: "deliveries",
             title: "Deliverys",
             icon: FileTextIcon,
-            url: "/invoices",
+            url: "/deliveries",
          },
       ],
    },

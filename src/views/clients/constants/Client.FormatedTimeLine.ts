@@ -1,6 +1,6 @@
 import { User } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
-import { INVOICEEVENTDEFINITION } from "@views/invoices/";
+import { INVOICEEVENTDEFINITION } from "@views/deliveries/";
 
 export const CLIENTEVENTDEFINITIONS: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
    client: {

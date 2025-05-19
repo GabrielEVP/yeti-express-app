@@ -58,8 +58,8 @@
          <div class="space-y-4">
             <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
             <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
-               <TableBilling :data="invoices" url="/invoices" />
-               <ChartBilling :documents="invoices" title="Estadistica mensual de las Facturas" label="Total factura" />
+               <TableBilling :data="deliveries" url="/deliveries" />
+               <ChartBilling :documents="deliveries" title="Estadistica mensual de las Facturas" label="Total factura" />
             </div>
          </div>
       </div>
@@ -75,5 +75,5 @@ import { SideBar, SectionText, Card, TableBilling, ActionsButton, Text, TimeLine
 
 const route = useRoute();
 const clientId = route.params.id as string;
-const { client, invoices, lineContents, totalBilledText, billedChangeText, totalPendingText, pendingCountText, sectionActions } = useClientData(clientId);
+const { client, deliveries, lineContents, totalBilledText, billedChangeText, totalPendingText, pendingCountText, sectionActions } = useClientData(clientId);
 </script>

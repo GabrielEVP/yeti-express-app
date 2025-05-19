@@ -5,7 +5,7 @@ import { mapEventsToLineContent } from "@/composables";
 import { filterByDateMonth, percentageChange, sumBy, formatCurrency, formatCountWithPlural, formatPercentageChange } from "@/utils/";
 
 export function useClientData(clientId: string) {
-   const { client, invoices, loadData } = useFetchClient(clientId);
+   const { client, deliveries, loadData } = useFetchClient(clientId);
 
    onMounted(async () => {
       await loadData();
@@ -16,17 +16,17 @@ export function useClientData(clientId: string) {
 
    // Metrics
    const now = dayjs();
-   const paidInvoices = computed(() => invoices.value.filter((i) => i.status === "paid"));
-   const thisMonthInvoices = computed(() => filterByDateMonth(paidInvoices.value, (i) => i.date, now));
-   const lastMonthInvoices = computed(() => filterByDateMonth(paidInvoices.value, (i) => i.date, now.subtract(1, "month")));
+   const paidDeliverys = computed(() => deliveries.value.filter((i) => i.status === "paid"));
+   const thisMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now));
+   const lastMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now.subtract(1, "month")));
 
-   const totalBilled = computed(() => sumBy(thisMonthInvoices.value, (i) => Number(i.totalTaxAmount)));
-   const totalLast = computed(() => sumBy(lastMonthInvoices.value, (i) => Number(i.totalTaxAmount)));
+   const totalBilled = computed(() => sumBy(thisMonthDeliverys.value, (i) => Number(i.totalTaxAmount)));
+   const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.totalTaxAmount)));
    const billedChangePercent = computed(() => percentageChange(totalBilled.value, totalLast.value));
 
-   const pendingInvoices = computed(() => invoices.value.filter((i) => i.status !== "paid"));
-   const totalPending = computed(() => sumBy(pendingInvoices.value, (i) => Number(i.totalTaxAmount)));
-   const pendingCount = computed(() => pendingInvoices.value.length);
+   const pendingDeliverys = computed(() => deliveries.value.filter((i) => i.status !== "paid"));
+   const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.totalTaxAmount)));
+   const pendingCount = computed(() => pendingDeliverys.value.length);
 
    // Textos formateados
    const totalBilledText = computed(() => formatCurrency(totalBilled.value));
@@ -40,8 +40,8 @@ export function useClientData(clientId: string) {
          url: `/clients/edit/${clientId}`,
       },
       {
-         content: "Crear Factura",
-         url: `/invoices/new/${clientId}`,
+         content: "Crear Delivery",
+         url: `/deliveries/new/${clientId}`,
       },
       {
          content: "Crear presupuesto",
@@ -51,7 +51,7 @@ export function useClientData(clientId: string) {
 
    return {
       client,
-      invoices,
+      deliveries,
       lineContents,
       totalBilled,
       billedChangePercent,
