@@ -40,18 +40,6 @@ export const menuItems: MenuItem[] = [
             icon: FileTextIcon,
             url: "/invoices",
          },
-         {
-            id: "type-payments",
-            title: "Tipos de pagos",
-            icon: HandCoins,
-            url: "/type-payments",
-         },
-         {
-            id: "type-prices",
-            title: "Tipos de precios",
-            icon: Receipt,
-            url: "/type-prices",
-         },
       ],
    },
 ];

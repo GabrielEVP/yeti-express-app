@@ -33,7 +33,6 @@
                      </div>
                      <SectionText title="Notas" :content="invoice.notes" />
                      <LinesList :lines="invoice.lines" />
-                     <DueDatesList :dueDates="invoice.dueDates" />
                      <PaymentsList :payments="invoice.payments" />
                   </div>
                </div>
@@ -49,7 +48,7 @@ import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { getStatusBillingClass, getStatusBillingText, getClientName } from "@utils";
 import { Invoice, getInvoice, INITIALINVOICEFORMSTATE } from "@views/invoices";
-import { SideBar, SectionText, Card, ActionsButton, Bagde, TimeLineActivity, LinesList, DueDatesList, PaymentsList } from "@components";
+import { SideBar, SectionText, Card, ActionsButton, Bagde, TimeLineActivity, LinesList, PaymentsList } from "@components";
 
 const route = useRoute();
 const invoiceId = route.params.id as string;

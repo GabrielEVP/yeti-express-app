@@ -19,21 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useFieldArray } from "vee-validate";
 import { Payment } from "@/models/";
 import { PAYMENTDEFAULTFORMSVALUE } from "@/constants/";
-import { TypePayment, getTypePayments } from "@/views/type-payments/";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
 const { remove, push, fields } = useFieldArray<Payment>("payments");
 
 const typePayments = ref<{ label: string; value: string }[]>([]);
-onMounted(async () => {
-   const response: any = await getTypePayments();
-   typePayments.value = response.map((payment: TypePayment) => ({
-      label: payment.name,
-      value: payment.id,
-   }));
-});
 </script>

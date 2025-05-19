@@ -43,10 +43,6 @@ export { default as FormBasicClientModal } from "@components/sections/clients/Fo
 // SECTIONS – CLIENTS &
 export { default as SelectorBasicClient } from "@/components/sections/clients/SelectorBasicClient.vue";
 
-// SECTIONS – DUE DATES
-export { default as DueDatesForm } from "@/components/sections/due-dates/DueDatesForm.vue";
-export { default as DueDatesList } from "@/components/sections/due-dates/DueDatesList.vue";
-
 // SECTIONS – EMAILS
 
 // SECTIONS – LINES

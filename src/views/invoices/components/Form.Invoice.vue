@@ -44,9 +44,7 @@
                   </div>
                   <LinesForm />
                </TabsContent>
-               <TabsContent tab="dueDates" :activeTab="activeTab">
-                  <DueDatesForm />
-               </TabsContent>
+
                <TabsContent tab="payments" :activeTab="activeTab">
                   <PaymentsForm />
                </TabsContent>
@@ -80,7 +78,6 @@ import {
    FieldFormDisabled,
    TextAreaForm,
    LinesForm,
-   DueDatesForm,
    PaymentsForm,
    AcceptButton,
    CancelButton,
