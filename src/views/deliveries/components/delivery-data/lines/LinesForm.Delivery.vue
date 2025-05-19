@@ -1,6 +1,6 @@
 <template>
    <Sheet title="Lineas">
-      <PlusButton @click="push(LINEDEFAULTFORMVALUE)" />
+      <PlusButton @click="push(DELIVERY_LINE_DEFAULT_FORM_VALUE)" />
       <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
          <Text>No hay lineas agregadas</Text>
       </div>
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import { useFieldArray } from "vee-validate";
-import { DeliveryLine, LINEDEFAULTFORMVALUE } from "@views/deliveries";
+import { DeliveryLine, DELIVERY_LINE_DEFAULT_FORM_VALUE } from "@views/deliveries";
 import { PlusButton, TrashButton, Sheet, FieldForm, FieldFormDisabled, Text } from "@/components/";
 
 const { remove, push, fields } = useFieldArray<DeliveryLine>("lines");

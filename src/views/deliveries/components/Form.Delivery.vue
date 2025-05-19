@@ -36,8 +36,7 @@
                      <FieldForm type="date" label="Fecha de factura" name="date" id="date" required />
                   </div>
                   <div class="grid lg:grid-cols-2 grid-cols-1 gap-6 lg:mb-8">
-                     <FieldFormDisabled label="Monto sin IVA" id="totalAmount" v-model="totalAmount" />
-                     <FieldFormDisabled label="Monto con IVA" id="totalTaxAmount" v-model="totalTaxAmount" />
+                     <FieldForm label="Monto sin IVA" id="totalAmount" />
                   </div>
                   <div class="gap-6 lg:mb-8">
                      <SelectorBasicClient :client-id="clientId" @update:client-id="(value: string) => {clientId = value }" />
@@ -66,9 +65,9 @@ import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
 import { FileText, CalendarDays, HandCoins, NotebookPen } from "lucide-vue-next";
-import { useAlert, useCalculeAmount } from "@/composables/";
-import { Delivery, DeliverySchema, deliveryAppRoutes, INITIALINVOICEFORMSTATE, getDelivery, postDeliverys, putDeliverys, LinesForm, PaymentsForm, SelectorBasicClient } from "@/views/deliveries/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, FieldFormDisabled, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
+import { useAlert } from "@/composables/";
+import { Delivery, DeliverySchema, deliveryAppRoutes, DELIVERY_DEFAULT_FORM_VALUE, getDelivery, postDeliverys, putDeliverys, LinesForm, PaymentsForm, SelectorBasicClient } from "@/views/deliveries/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
 
 const activeTab = ref("general");
 
@@ -88,15 +87,12 @@ onMounted(async () => {
 const { handleSubmit, defineField, setValues, values, setFieldValue, meta } = useForm<Delivery>({
    validationSchema: DeliverySchema,
    initialValues: {
-      ...INITIALINVOICEFORMSTATE,
+      ...DELIVERY_DEFAULT_FORM_VALUE,
    },
 });
 
 const [clientId] = defineField("clientId");
 const [totalAmount] = defineField("totalAmount");
-const [totalTaxAmount] = defineField("totalTaxAmount");
-
-useCalculeAmount(values, setFieldValue as any);
 
 const router = useRouter();
 const { showError, alertMessage, triggerError } = useAlert();

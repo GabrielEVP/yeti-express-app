@@ -47,13 +47,13 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { getStatusBillingClass, getStatusBillingText, getClientName } from "@utils";
-import { Delivery, getDelivery, INITIALINVOICEFORMSTATE, LinesList, PaymentsList } from "@views/deliveries";
+import { Delivery, getDelivery, DELIVERY_DEFAULT_FORM_VALUE, LinesList, PaymentsList } from "@views/deliveries";
 import { SideBar, SectionText, Card, ActionsButton, Bagde, TimeLineActivity } from "@components";
 
 const route = useRoute();
 const deliveryId = route.params.id as string;
 
-const delivery = ref<Delivery>(INITIALINVOICEFORMSTATE);
+const delivery = ref<Delivery>(DELIVERY_DEFAULT_FORM_VALUE);
 const clientNames = ref<Record<string, string>>({});
 
 onMounted(async () => {

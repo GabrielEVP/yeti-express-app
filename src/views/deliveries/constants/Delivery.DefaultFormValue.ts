@@ -1,14 +1,13 @@
-import { Delivery, DeliveryLine, DeliveryPayment } from "@/views/deliveries/";
+import { Delivery, DeliveryLine, DeliveryPayment, DeliveryReceipt } from "@/views/deliveries/";
 
-export const PAYMENTDEFAULTFORMSVALUE: DeliveryPayment = {
+export const DELIVERY_PAYMENT_DEFAULT_FORM_VALUE: DeliveryPayment = {
    id: "",
    date: new Date().toISOString().split("T")[0],
    amount: 0,
-   typePaymentId: "",
    deliveryId: "",
 };
 
-export const LINEDEFAULTFORMVALUE: DeliveryLine = {
+export const DELIVERY_LINE_DEFAULT_FORM_VALUE: DeliveryLine = {
    id: "",
    description: "",
    quantity: 0,
@@ -17,19 +16,40 @@ export const LINEDEFAULTFORMVALUE: DeliveryLine = {
    totalAmount: 0,
    totalTaxAmount: 0,
    deliveryId: "",
-   productId: "",
 };
 
-export const INITIALINVOICEFORMSTATE: Delivery = {
+export const DELIVERY_RECEIPT_DEFAULT_FORM_VALUE: DeliveryReceipt = {
    id: "",
-   number: "",
+   full_name: "",
+   delivery_id: "",
+   phone: "",
+   address: "",
+   state: "",
+   city: "",
+   municipality: "",
+   postalCode: "",
+   deliveryId: "",
+   userId: "",
+};
+
+export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
+   id: "",
    date: new Date().toISOString().split("T")[0],
    status: "pending",
+   currency: "USD",
+   typePayment: "Full",
    totalAmount: 0,
-   totalTaxAmount: 0,
+   comision: 0,
    notes: "",
    clientId: "",
-   userId: "1",
-   lines: [],
-   payments: [],
+   clientAddressId: "",
+   courierId: "",
+   openBoxId: "",
+   closeBoxId: "",
+   userId: "",
+   deliveryLines: [],
+   deliveryReceipts: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
+   deliveryPayments: [],
+   createdAt: new Date().toISOString(),
+   updatedAt: new Date().toISOString(),
 };
