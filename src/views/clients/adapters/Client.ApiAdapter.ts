@@ -57,7 +57,6 @@ export function adaptClientEventforApi(ClientEvent: ClientEvent): any {
 export function adaptAddress(apiAddress: any): ClientAddress {
    return {
       id: apiAddress.id,
-      country: apiAddress.country,
       address: apiAddress.address,
       state: apiAddress.state,
       city: apiAddress.city,
@@ -69,7 +68,6 @@ export function adaptAddress(apiAddress: any): ClientAddress {
 export function adaptAddressForApi(address: ClientAddress): any {
    return {
       id: address.id,
-      country: address.country,
       address: address.address,
       state: address.state,
       city: address.city,

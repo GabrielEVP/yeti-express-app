@@ -1,17 +1,29 @@
-import { object, string, number, array } from "yup";
-import { AddressSchema, BankAccountSchema, EmailSchema, PhoneSchema } from "@/schemas/";
+import { object, string, array } from "yup";
+
+export const PhoneSchema = object({
+   name: string().required("El nombre es requerido"),
+   phone: string().max(10, "El numero de telefono puede tener como maximo 10 digitos").required("El numero de telefono es requerido"),
+   type: string().oneOf(["Work", "Personal"]).required(),
+});
+
+export const EmailSchema = object({
+   email: string().email("Tiene que ser un email").required("El email es requerido"),
+   type: string().oneOf(["Work", "Personal"]).required(),
+});
+
+export const AddressSchema = object({
+   country: string().required("País requerido"),
+   address: string().required("Dirección requerida"),
+   state: string().required("Estado requerido"),
+   municipality: string().required("Municipio requerido"),
+   postalCode: string().required("Código postal requerido"),
+});
 
 export const ClientSchema = object({
    legalName: string().required("Nombre Legal es requerido"),
    registrationNumber: string().required("Numero de registro Requerido"),
-   type: string().oneOf(["NT", "JU", "GB", "OT"]),
-   website: string().optional(),
-   country: string().required(),
-   currency: string().oneOf(["EUR", "USD", "BOV", "OT"]),
-   discount: number().optional(),
    notes: string().optional(),
    addresses: array().of(AddressSchema),
-   bankAccounts: array().of(BankAccountSchema),
    emails: array().of(EmailSchema),
    phones: array().of(PhoneSchema),
 });
