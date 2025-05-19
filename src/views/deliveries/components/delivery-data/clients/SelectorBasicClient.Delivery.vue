@@ -22,7 +22,7 @@
 import { ref, computed, onMounted, defineProps, watch, nextTick } from "vue";
 import { Client, getClients } from "@views/clients";
 import Selector from "@components/forms/Selector.vue";
-import FormBasicClientModal from "./FormBasicClientModal.vue";
+import { FormBasicClientModal } from "@/views/deliveries/";
 const props = defineProps<{
    clientId: string;
    clientIdAttrs?: any;
