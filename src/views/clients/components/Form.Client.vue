@@ -19,11 +19,6 @@
                <TabsContent tab="general" :activeTab="activeTab">
                   <FieldForm label="Nombre Legal" name="legalName" id="legalName" required />
                   <FieldForm label="Número de Registro" name="registrationNumber" id="registrationNumber" required />
-                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-                     <FieldForm label="Sitio Web" name="website" id="website" />
-                     <SelectForm label="Tipo de cliente" name="type" :items="TYPECONTACTSELECT" id="type" />
-                     <SelectForm label="País" name="country" :items="COUNTRIES" id="country" />
-                  </div>
                </TabsContent>
                <TabsContent tab="address" :activeTab="activeTab">
                   <AdressesForm />
@@ -31,11 +26,6 @@
                <TabsContent tab="contact" :activeTab="activeTab">
                   <PhonesForm />
                   <EmailsForm />
-               </TabsContent>
-               <TabsContent tab="billing" :activeTab="activeTab">
-                  <SelectForm label="Tipo de moneda" name="currency" :items="CURRENCYSELECT" id="currency" />
-                  <FieldForm label="Tasa de Impuesto" type="number" name="taxRate" id="taxRate" />
-                  <FieldForm label="Descuento" type="number" name="discount" id="discount" />
                </TabsContent>
                <TabsContent tab="notes" :activeTab="activeTab">
                   <TextAreaForm label="Notas" name="notes" id="notes" />

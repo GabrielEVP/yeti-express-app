@@ -14,10 +14,9 @@
          <FieldForm :name="`addresses[${idx}].address`" :id="`address-${idx}`" label="Dirección" type="text" :required="idx === 0" />
          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
             <FieldForm :name="`addresses[${idx}].state`" :id="`state-${idx}`" label="Estado" type="text" :required="idx === 0" />
-            <SelectForm v-model="fields[idx].value.country" label="País" placeholder="Selecciona un país" :items="COUNTRIES" :required="idx === 0" />
-         </div>
-         <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
             <FieldForm :name="`addresses[${idx}].city`" :id="`city-${idx}`" label="Ciudad" type="text" :required="idx === 0" />
+         </div>
+         <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
             <FieldForm :name="`addresses[${idx}].municipality`" :id="`municipality-${idx}`" label="Municipio" type="text" :required="idx === 0" />
             <FieldForm :name="`addresses[${idx}].postalCode`" :id="`postalCode-${idx}`" label="Código Postal" type="text" :required="idx === 0" />
          </div>
@@ -28,8 +27,8 @@
 <script setup lang="ts">
 import { useFieldArray } from "vee-validate";
 import { Address } from "@/models/";
-import { ADDRESSDEFAULTFORMVALUE, COUNTRIES } from "@/constants/";
-import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
+import { ADDRESSDEFAULTFORMVALUE } from "@/constants/";
+import { PlusButton, TrashButton, FieldForm, Text } from "@/components/";
 
 const { fields, push, remove } = useFieldArray<Address>("addresses");
 </script>

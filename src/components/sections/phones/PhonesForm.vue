@@ -12,8 +12,8 @@
       </div>
       <FieldForm type="text" label="Nombre" :name="`phones[${idx}].name`" :id="`phone-${idx}`" />
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-         <FieldForm type="text" label="Telefono" :name="`phones[${idx}].phone`" :id="`phone-${idx}`" />
-         <SelectForm label="Tipo" v-model="field.value.type" :items="[...CONTACTSELECT]" />
+         <FieldForm label="Telefono" :name="`phones[${idx}].phone`" :id="`phone-${idx}`" />
+         <SelectForm label="Tipo" :name="`phones[${idx}].type`" v-model="field.value.type" :items="[...CONTACTSELECT]" />
       </div>
    </div>
 </template>

@@ -12,7 +12,7 @@
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
          <FieldForm label="Email" :name="`emails[${idx}].email`" :id="`email-${idx}`" />
-         <SelectForm label="Tipo" placeholder="Seleciona Un Tipo" v-model="field.value.type" :items="[...CONTACTSELECT]" @update:model="field.value.type = $event" />
+         <SelectForm label="Tipo" :name="`emails[${idx}].type`" placeholder="Seleciona Un Tipo" v-model="field.value.type" :items="[...CONTACTSELECT]" @update:model="field.value.type = $event" />
       </div>
    </div>
 </template>
