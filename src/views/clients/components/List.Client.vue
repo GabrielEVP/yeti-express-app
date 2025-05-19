@@ -6,14 +6,7 @@
             <div class="flex-grow flex gap-2">
                <SearchForm v-model="searchQuery" placeholder="Buscar Cliente" @input="applyFilters" />
                <div class="relative">
-                  <FilterButton>
-                     <SelectForm name="type" label="Tipo de cliente" :items="[...TYPECONTACTSELECT]" @change="applySelectFilters">
-                        <option value="">Todos</option>
-                     </SelectForm>
-                     <SelectForm name="country" label="Pais" :items="[...COUNTRIES]" @change="applySelectFilters">
-                        <option value="">Todos</option>
-                     </SelectForm>
-                  </FilterButton>
+                  <FilterButton> </FilterButton>
                </div>
             </div>
             <NewButton label="Nuevo Cliente" :URL="clientAppRoutes.new" />
@@ -49,9 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { TYPECONTACTSELECT, COUNTRIES } from "@/constants/";
 import { CLIENTTABLEHEADERS, clientAppRoutes, useClientList } from "@/views/clients";
-import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, FilterButton, SelectForm, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
+import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, FilterButton, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
 
 const { clients, searchQuery, applySelectFilters, currentPage, totalPages, startIndex, endIndex, paginatedItems, isOpen, updatePage, handleSort, applyFilters, open, close, handleDeleteConfirmation } =
    useClientList();

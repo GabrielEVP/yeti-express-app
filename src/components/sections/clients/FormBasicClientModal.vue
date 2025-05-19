@@ -6,11 +6,6 @@
          <FieldForm label="Nombre Legal" name="legalName" id="legalName" required />
          <FieldForm label="Numero de registro" name="registrationNumber" id="registrationNumber" required />
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-         <SelectForm label="Tipo de cliente" v-model="type" :items="TYPECONTACTSELECT" />
-         <SelectForm label="País" v-model="country" :items="COUNTRIES" />
-         <SelectForm label="Tipo de moneda" v-model="currency" :items="CURRENCYSELECT" />
-      </div>
       <div v-for="(field, idx) in fields" :key="idx">
          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <FieldForm :name="`addresses[${idx}].address`" label="Direccion" :id="`address-${idx}`" required />
@@ -29,10 +24,8 @@
 import { defineProps } from "vue";
 import { useForm, useFieldArray } from "vee-validate";
 import { useAlert } from "@/composables/";
-import { Address } from "@/models/";
-import { COUNTRIES, CURRENCYSELECT, TYPECONTACTSELECT } from "@/constants/";
-import { Client, BasicClientSchema, DEFAULTBASICCLIENTFORMVALUE, postClients, adaptClient } from "@/views/clients/";
-import { ModalForm, FieldForm, SelectForm, CancelButton, AcceptButton, DangerAlert, SuccessAlert } from "@/components/";
+import { ClientAddress, Client, BasicClientSchema, DEFAULTBASICCLIENTFORMVALUE, postClients, adaptClient } from "@/views/clients/";
+import { ModalForm, FieldForm, SuccessAlert } from "@/components/";
 
 defineProps<{
    isOpen: boolean;
@@ -43,16 +36,12 @@ const emit = defineEmits<{
    (e: "addClient", clientData: any): void;
 }>();
 
-const { handleSubmit, defineField } = useForm<Client>({
+const { handleSubmit } = useForm<Client>({
    validationSchema: BasicClientSchema,
    initialValues: { ...DEFAULTBASICCLIENTFORMVALUE },
 });
 
-const [type] = defineField("type");
-const [country] = defineField("country");
-const [currency] = defineField("currency");
-
-const { fields } = useFieldArray<Address>("addresses");
+const { fields } = useFieldArray<ClientAddress>("addresses");
 
 const { showSuccess, showError, alertMessage, triggerSuccess, triggerError } = useAlert();
 
