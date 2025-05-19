@@ -67,23 +67,8 @@ import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
 import { FileText, CalendarDays, HandCoins, NotebookPen } from "lucide-vue-next";
 import { useAlert, useCalculeAmount } from "@/composables/";
-import { Invoice, InvoiceSchema, invoiceAppRoutes, INITIALINVOICEFORMSTATE, getInvoice, postInvoices, putInvoices } from "@/views/invoices/";
-import {
-   SideBar,
-   Card,
-   Tabs,
-   TabsContent,
-   TabsTitle,
-   FieldForm,
-   FieldFormDisabled,
-   TextAreaForm,
-   LinesForm,
-   PaymentsForm,
-   AcceptButton,
-   CancelButton,
-   DangerAlert,
-   SelectorBasicClient,
-} from "@/components/";
+import { Invoice, InvoiceSchema, invoiceAppRoutes, INITIALINVOICEFORMSTATE, getInvoice, postInvoices, putInvoices, LinesForm, PaymentsForm, SelectorBasicClient } from "@/views/invoices/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, FieldFormDisabled, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
 
 const activeTab = ref("general");
 

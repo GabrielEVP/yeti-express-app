@@ -63,10 +63,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useModal, usePagination, useAlert } from "@/composables/";
-import { STATUSBILLINGSELECT } from "@/constants/";
 import { getStatusBillingClass, getStatusBillingText, getClientName, formatDateCustom } from "@utils";
 import { startOfMonth, endOfMonth, format } from "date-fns";
-import { TABLEHEADERSINVOICES, Invoice, invoiceAppRoutes, deleteInvoice, getFilterInvoices, getPdfInvoice } from "@views/invoices";
+import { TABLEHEADERSINVOICES, Invoice, invoiceAppRoutes, deleteInvoice, getFilterInvoices, getPdfInvoice, STATUSBILLINGSELECT } from "@views/invoices";
 import {
    SideBar,
    Card,

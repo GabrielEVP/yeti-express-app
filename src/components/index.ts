@@ -38,20 +38,6 @@ export { default as TextAreaForm } from "@/components/forms/TextArea.vue";
 
 // MODALS
 export { default as ModalForm } from "@/components/modals/ModalForm.vue";
-export { default as FormBasicClientModal } from "@components/sections/clients/FormBasicClientModal.vue";
-
-// SECTIONS – CLIENTS &
-export { default as SelectorBasicClient } from "@/components/sections/clients/SelectorBasicClient.vue";
-
-// SECTIONS – EMAILS
-
-// SECTIONS – LINES
-export { default as LinesForm } from "@/components/sections/lines/LinesForm.vue";
-export { default as LinesList } from "@/components/sections/lines/LinesList.vue";
-
-// SECTIONS – PAYMENTS
-export { default as PaymentsForm } from "@/components/sections/payments/PaymentsForm.vue";
-export { default as PaymentsList } from "@/components/sections/payments/PaymentsList.vue";
 
 // UI – ALERTS
 export { default as DangerAlert } from "@/components/ui/alerts/Danger.vue";

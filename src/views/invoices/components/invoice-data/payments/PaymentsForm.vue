@@ -21,11 +21,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useFieldArray } from "vee-validate";
-import { Payment } from "@/models/";
-import { PAYMENTDEFAULTFORMSVALUE } from "@/constants/";
+import { InvoicePayment, PAYMENTDEFAULTFORMSVALUE } from "@views/invoices";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
-const { remove, push, fields } = useFieldArray<Payment>("payments");
+const { remove, push, fields } = useFieldArray<InvoicePayment>("payments");
 
 const typePayments = ref<{ label: string; value: string }[]>([]);
 </script>

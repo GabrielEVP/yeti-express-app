@@ -47,8 +47,8 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { getStatusBillingClass, getStatusBillingText, getClientName } from "@utils";
-import { Invoice, getInvoice, INITIALINVOICEFORMSTATE } from "@views/invoices";
-import { SideBar, SectionText, Card, ActionsButton, Bagde, TimeLineActivity, LinesList, PaymentsList } from "@components";
+import { Invoice, getInvoice, INITIALINVOICEFORMSTATE, LinesList, PaymentsList } from "@views/invoices";
+import { SideBar, SectionText, Card, ActionsButton, Bagde, TimeLineActivity } from "@components";
 
 const route = useRoute();
 const invoiceId = route.params.id as string;

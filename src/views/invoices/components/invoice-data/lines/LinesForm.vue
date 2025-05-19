@@ -26,11 +26,10 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import { useFieldArray } from "vee-validate";
-import { Line } from "@/models/";
-import { LINEDEFAULTFORMVALUE } from "@/constants/";
+import { InvoiceLine, LINEDEFAULTFORMVALUE } from "@views/invoices";
 import { PlusButton, TrashButton, Sheet, FieldForm, FieldFormDisabled, Text } from "@/components/";
 
-const { remove, push, fields } = useFieldArray<Line>("lines");
+const { remove, push, fields } = useFieldArray<InvoiceLine>("lines");
 
 const calculateTotal = (field: any) => {
    return +(field.quantity * field.unitPrice).toFixed(2);
