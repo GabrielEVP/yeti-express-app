@@ -1,3 +1,9 @@
-export { default as Details } from './Details.Client.vue';
-export { default as Form } from './Form.Client.vue';
-export { default as List } from './List.Client.vue';
+export { default as Details } from "./Details.Client.vue";
+export { default as Form } from "./Form.Client.vue";
+export { default as List } from "./List.Client.vue";
+export { default as AdressesForm } from "./client-data/addresses/AdressesForm.vue";
+export { default as AdressesList } from "./client-data/addresses/AdressesList.vue";
+export { default as EmailsForm } from "./client-data/emails/EmailsForm.vue";
+export { default as EmailsList } from "./client-data/emails/EmailsList.vue";
+export { default as PhonesForm } from "./client-data/phones/PhonesForm.vue";
+export { default as PhonesList } from "./client-data/phones/PhonesList.vue";

@@ -43,9 +43,8 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { TYPECONTACTSELECT, COUNTRIES, CURRENCYSELECT } from "@/constants/";
-import { CLIENTTABS, useClientForm } from "@/views/clients/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AdressesForm, EmailsForm, PhonesForm, AcceptButton, CancelButton } from "@/components/";
+import { CLIENTTABS, useClientForm, AdressesForm, EmailsForm, PhonesForm } from "@/views/clients/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, TextAreaForm, AcceptButton, CancelButton } from "@/components/";
 
 const router = useRouter();
 

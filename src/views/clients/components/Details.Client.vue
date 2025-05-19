@@ -64,7 +64,7 @@
             </ActivityView>
          </div>
          <div class="space-y-4">
-            <h2 class="text-2xl font-bold tracking-tight">Factura</h2>
+            <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
             <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
                <TableBilling :data="invoices" url="/invoices" />
                <ChartBilling :documents="invoices" title="Estadistica mensual de las Facturas" label="Total factura" />
@@ -78,23 +78,8 @@
 import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { getContactTypeText, getContactTypeClass, formatDateShort, formatRelativeDate, getCountryName } from "@/utils/";
-import { useClientData } from "@/views/clients";
-import {
-   SideBar,
-   SectionText,
-   Card,
-   PhonesList,
-   EmailsList,
-   AdressesList,
-   TableBilling,
-   ActionsButton,
-   Bagde,
-   Text,
-   TimeLineActivity,
-   ActivityView,
-   ChartBilling,
-   LoadingSkeleton,
-} from "@/components/";
+import { useClientData, PhonesList, EmailsList, AdressesList } from "@/views/clients";
+import { SideBar, SectionText, Card, TableBilling, ActionsButton, Bagde, Text, TimeLineActivity, ActivityView, ChartBilling, LoadingSkeleton } from "@/components/";
 
 const route = useRoute();
 const clientId = route.params.id as string;

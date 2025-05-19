@@ -40,10 +40,6 @@ export { default as TextAreaForm } from "@/components/forms/TextArea.vue";
 export { default as ModalForm } from "@/components/modals/ModalForm.vue";
 export { default as FormBasicClientModal } from "@components/sections/clients/FormBasicClientModal.vue";
 
-// SECTIONS – ADDRESSES
-export { default as AdressesForm } from "@/components/sections/adresses/AdressesForm.vue";
-export { default as AdressesList } from "@/components/sections/adresses/AdressesList.vue";
-
 // SECTIONS – CLIENTS &
 export { default as SelectorBasicClient } from "@/components/sections/clients/SelectorBasicClient.vue";
 
@@ -52,8 +48,6 @@ export { default as DueDatesForm } from "@/components/sections/due-dates/DueDate
 export { default as DueDatesList } from "@/components/sections/due-dates/DueDatesList.vue";
 
 // SECTIONS – EMAILS
-export { default as EmailsForm } from "@/components/sections/emails/EmailsForm.vue";
-export { default as EmailsList } from "@/components/sections/emails/EmailsList.vue";
 
 // SECTIONS – LINES
 export { default as LinesForm } from "@/components/sections/lines/LinesForm.vue";
@@ -62,10 +56,6 @@ export { default as LinesList } from "@/components/sections/lines/LinesList.vue"
 // SECTIONS – PAYMENTS
 export { default as PaymentsForm } from "@/components/sections/payments/PaymentsForm.vue";
 export { default as PaymentsList } from "@/components/sections/payments/PaymentsList.vue";
-
-// SECTIONS – PHONES
-export { default as PhonesForm } from "@/components/sections/phones/PhonesForm.vue";
-export { default as PhonesList } from "@/components/sections/phones/PhonesList.vue";
 
 // UI – ALERTS
 export { default as DangerAlert } from "@/components/ui/alerts/Danger.vue";
