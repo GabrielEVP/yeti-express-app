@@ -26,9 +26,8 @@
 
 <script setup lang="ts">
 import { useFieldArray } from "vee-validate";
-import { Address } from "@/models/";
-import { ADDRESSDEFAULTFORMVALUE } from "@/constants/";
+import { ClientAddress, ADDRESSDEFAULTFORMVALUE } from "@/views/clients/";
 import { PlusButton, TrashButton, FieldForm, Text } from "@/components/";
 
-const { fields, push, remove } = useFieldArray<Address>("addresses");
+const { fields, push, remove } = useFieldArray<ClientAddress>("addresses");
 </script>

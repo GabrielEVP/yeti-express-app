@@ -19,9 +19,8 @@
 
 <script setup lang="ts">
 import { useFieldArray } from "vee-validate";
-import { Email } from "@/models/";
-import { EMAILDEFAULTFORMVALUES, CONTACTSELECT } from "@/constants/";
+import { ClientEmail, EMAILDEFAULTFORMVALUES, CONTACTSELECT } from "@/views/clients/";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
-const { remove, push, fields } = useFieldArray<Email>("emails");
+const { remove, push, fields } = useFieldArray<ClientEmail>("emails");
 </script>

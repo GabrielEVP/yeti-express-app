@@ -17,6 +17,7 @@ export * from "./constants/Client.FormatedTimeLine";
 export * from "./constants/Client.RoutesDictionary";
 export * from "./constants/Client.TableHeader";
 export * from "./constants/Client.TabsForm";
+export * from "./constants/Client.ContactSelect";
 export * from "./models/Client";
 export * from "./router/Router.Client";
 export * from "./schemas/Client.BasicSchema";

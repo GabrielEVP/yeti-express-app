@@ -37,12 +37,6 @@
                {{ client.registrationNumber }}
             </TableContent>
             <TableContent>
-               <Bagde :class="getContactTypeClass(client.type)">
-                  {{ getContactTypeText(client.type) }}
-               </Bagde>
-            </TableContent>
-
-            <TableContent>
                <div class="flex gap-1 justify-center">
                   <EyeButton :id="String(client.id)" route="/clients" />
                   <EditButton :id="String(client.id)" route="/clients/edit" />
@@ -56,9 +50,8 @@
 
 <script setup lang="ts">
 import { TYPECONTACTSELECT, COUNTRIES } from "@/constants/";
-import { getContactTypeText, getContactTypeClass } from "@/utils/";
-import { CLIENTTABLEHEADERS, clientAppRoutes, useClientList } from "@views/clients";
-import { SideBar, Card, TableContent, TableRow, TableDashboard, Bagde, SearchForm, FilterButton, SelectForm, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
+import { CLIENTTABLEHEADERS, clientAppRoutes, useClientList } from "@/views/clients";
+import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, FilterButton, SelectForm, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
 
 const { clients, searchQuery, applySelectFilters, currentPage, totalPages, startIndex, endIndex, paginatedItems, isOpen, updatePage, handleSort, applyFilters, open, close, handleDeleteConfirmation } =
    useClientList();

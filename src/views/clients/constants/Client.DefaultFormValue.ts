@@ -1,16 +1,31 @@
-import { Client } from "@views/clients";
-import { ADDRESSDEFAULTFORMVALUE } from "@/constants/";
+import { Client, ClientAddress, ClientEmail, ClientPhone } from "@views/clients";
+
+export const EMAILDEFAULTFORMVALUES: ClientEmail = {
+   id: "",
+   email: "",
+   type: "Work",
+} as const;
+
+export const ADDRESSDEFAULTFORMVALUE: ClientAddress = {
+   id: "",
+   address: "",
+   city: "",
+   state: "",
+   municipality: "",
+   postalCode: "",
+};
+
+export const PHONEDEFAULTFORMVALUE: ClientPhone = {
+   id: "",
+   name: "",
+   phone: "",
+   type: "Work",
+};
 
 export const DEFAULTCLIENTFORMVALUE: Client = {
    id: "",
    registrationNumber: "",
    legalName: "",
-   type: "NT",
-   website: "",
-   country: "VE",
-   currency: "USD",
-   taxRate: 0.0,
-   discount: 0.0,
    notes: "",
    userId: "",
    createdAt: "",
@@ -19,19 +34,12 @@ export const DEFAULTCLIENTFORMVALUE: Client = {
    addresses: [],
    emails: [],
    phones: [],
-   bankAccounts: [],
 };
 
 export const DEFAULTBASICCLIENTFORMVALUE: Client = {
    id: "",
    registrationNumber: "",
    legalName: "",
-   type: "NT",
-   website: "",
-   country: "VE",
-   currency: "USD",
-   taxRate: 0.0,
-   discount: 0.0,
    notes: "",
    userId: "",
    createdAt: "",
@@ -40,5 +48,4 @@ export const DEFAULTBASICCLIENTFORMVALUE: Client = {
    addresses: [ADDRESSDEFAULTFORMVALUE],
    emails: [],
    phones: [],
-   bankAccounts: [],
 };

@@ -10,9 +10,6 @@
                <div class="flex items-center gap-2">
                   <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Registro</h5>
                   <Text>| {{ client.registrationNumber }}</Text>
-                  <Bagde :class="getContactTypeClass(client.type)">
-                     {{ getContactTypeText(client.type) }}
-                  </Bagde>
                </div>
             </div>
             <div class="flex gap-2">
@@ -30,11 +27,6 @@
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <SectionText title="Nombre Legal" :content="client.legalName" />
                         <SectionText title="Número de registro" :content="client.registrationNumber" />
-                        <SectionText title="Tipo" :content="getContactTypeText(client.type)" />
-                        <SectionText title="País" :content="getCountryName(client.country)" />
-                        <SectionText title="Sitio Web" :content="client.website" />
-                        <SectionText title="Tasa de Impuesto" :content="client.taxRate + '%'" />
-                        <SectionText title="Descuento" :content="client.discount + '%'" />
                      </div>
                      <SectionText title="Notas" :content="client.notes" />
                      <AdressesList :addresses="client.addresses" />
@@ -77,9 +69,9 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
-import { getContactTypeText, getContactTypeClass, formatDateShort, formatRelativeDate, getCountryName } from "@/utils/";
+import { formatDateShort, formatRelativeDate } from "@/utils/";
 import { useClientData, PhonesList, EmailsList, AdressesList } from "@/views/clients";
-import { SideBar, SectionText, Card, TableBilling, ActionsButton, Bagde, Text, TimeLineActivity, ActivityView, ChartBilling, LoadingSkeleton } from "@/components/";
+import { SideBar, SectionText, Card, TableBilling, ActionsButton, Text, TimeLineActivity, ActivityView, ChartBilling, LoadingSkeleton } from "@/components/";
 
 const route = useRoute();
 const clientId = route.params.id as string;

@@ -20,9 +20,8 @@
 
 <script setup lang="ts">
 import { useFieldArray } from "vee-validate";
-import { Phone } from "@models";
-import { CONTACTSELECT, PHONEDEFAULTFORMVALUE } from "@/constants/";
+import { ClientPhone, PHONEDEFAULTFORMVALUE, CONTACTSELECT } from "@/views/clients/";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
-const { remove, push, fields } = useFieldArray<Phone>("phones");
+const { remove, push, fields } = useFieldArray<ClientPhone>("phones");
 </script>
