@@ -3,6 +3,7 @@ export { default as Details } from "./components/Details.Employer.vue";
 export { default as Form } from "./components/Form.Employer.vue";
 export { default as List } from "./components/List.Employer.vue";
 export * from "./constants/Employer.DefaultForm";
+export * from "./constants/Employer.RoleSelect";
 export * from "./constants/Employer.RoutesDictionary";
 export * from "./constants/Employer.TableHeader";
 export * from "./models/Employer";

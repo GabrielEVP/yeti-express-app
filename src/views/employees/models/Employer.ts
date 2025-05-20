@@ -3,7 +3,7 @@ export interface Employer {
    name: string;
    email: string;
    password: string;
-   role: "admin" | "employee";
+   role: "admin" | "basic";
    active: boolean;
    userId: string;
    createdAt: string;

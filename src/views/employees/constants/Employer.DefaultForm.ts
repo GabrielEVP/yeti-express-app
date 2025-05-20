@@ -5,7 +5,7 @@ export const DEFAULT_EMPLOYER_FORM: Employer = {
    name: "",
    email: "",
    password: "",
-   role: "employee",
+   role: "basic",
    active: true,
    userId: "",
    createdAt: "",

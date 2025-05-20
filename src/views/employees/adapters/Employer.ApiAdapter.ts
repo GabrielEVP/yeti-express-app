@@ -1,4 +1,5 @@
 import { Employer } from "@/views/employees";
+
 export const adaptEmployer = (data: any): Employer => {
    return {
       id: data.id,

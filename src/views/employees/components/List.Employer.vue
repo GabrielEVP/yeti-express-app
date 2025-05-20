@@ -54,8 +54,8 @@ import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, Filt
 const employers = ref<Employer[]>([]);
 
 const { searchQuery, filters, applyFilters, handleSort, setDynamicFilters } = useFilterSortSearch({
-   columns: ["name", "email", "role"], // Updated columns
-   fetchFn: getFilterEmployers, // Changed to getFilterEmployers
+   columns: ["name", "email", "role"],
+   fetchFn: getFilterEmployers,
    dataRef: employers,
 });
 
@@ -74,25 +74,24 @@ const applySelectFilters = handleSubmit((formValues) => {
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(employers, 15);
 
 const { executeFetch } = useFetch<Employer[]>({
-   // Changed to Employer[]
-   fetchFunction: getEmployers, // Changed to getEmployers
-   errorMessageOnFailure: "Error al cargar Empleadores", // Changed message
+   fetchFunction: getEmployers,
+   errorMessageOnFailure: "Error al cargar Empleadores",
 });
 
 onMounted(async () => {
-   employers.value = await executeFetch(); // Changed to executeFetch
+   employers.value = await executeFetch();
 });
 
 const { deleteAndNotify } = useDeleteWithFeedback<string>({
-   deleteFn: deleteEmployer, // Changed to deleteEmployer
-   onSuccessMessage: "Empleador eliminado exitosamente", // Changed message
+   deleteFn: deleteEmployer,
+   onSuccessMessage: "Empleador eliminado exitosamente",
 });
 
 const { isOpen, selectedId, open, close } = useModal();
 
 const handleDeleteConfirmation = async () => {
    await deleteAndNotify(String(selectedId.value), async () => {
-      employers.value = await executeFetch(); // Changed to executeFetch
+      employers.value = await executeFetch();
    });
    close();
 };

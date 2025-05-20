@@ -52,7 +52,7 @@ import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { formatDateShort, formatRelativeDate } from "@/utils/";
 import { ref, computed, onMounted } from "vue";
-import { Employer, getEmployer } from "@/views/employees"; // Adjusted import
+import { Employer, getEmployer } from "@/views/employees";
 import { SideBar, SectionText, Card, ActionsButton, Text, TimeLineActivity, ActivityView, LoadingSkeleton } from "@/components/";
 
 const route = useRoute();
@@ -76,8 +76,8 @@ onMounted(async () => {
 
 const sectionActions = [
    {
-      content: "Editar Empleador", // Changed label
-      url: `/employers/edit/${employerId}`, // Adjusted URL
+      content: "Editar Empleador",
+      url: `/employers/edit/${employerId}`,
    },
 ];
 </script>

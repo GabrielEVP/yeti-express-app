@@ -1,6 +1,7 @@
 import { object, string } from "yup";
 
 export const EmployerSchema = object({
-   firstName: string().required("El nombre es requerido"),
-   lastName: string().required("El apellido es requerido"),
+   name: string().required("El nombre es requerido"),
+   email: string().email("debe ser un email").required("El email es requerido"),
+   password: string().required("La contraseña es requerida"),
 });
