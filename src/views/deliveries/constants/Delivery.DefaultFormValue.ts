@@ -6,6 +6,7 @@ export const DELIVERY_PAYMENT_DEFAULT_FORM_VALUE: DeliveryPayment = {
    method: "cash",
    amount: 0,
    deliveryId: "",
+   userId: "",
 };
 
 export const DELIVERY_LINE_DEFAULT_FORM_VALUE: DeliveryLine = {
@@ -13,10 +14,9 @@ export const DELIVERY_LINE_DEFAULT_FORM_VALUE: DeliveryLine = {
    description: "",
    quantity: 0,
    unitPrice: 0,
-   taxRate: 0,
    totalAmount: 0,
-   totalTaxAmount: 0,
    deliveryId: "",
+   userId: "",
 };
 
 export const DELIVERY_RECEIPT_DEFAULT_FORM_VALUE: DeliveryReceipt = {
@@ -49,7 +49,7 @@ export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
    closeBoxId: "",
    userId: "",
    lines: [],
-   receipts: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
+   receipt: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
    payments: [],
    createdAt: new Date().toISOString(),
    updatedAt: new Date().toISOString(),

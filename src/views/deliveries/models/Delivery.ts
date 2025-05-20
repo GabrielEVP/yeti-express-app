@@ -15,7 +15,7 @@ export interface Delivery {
    closeBoxId: string;
    userId: string;
    lines: DeliveryLine[];
-   receipts: DeliveryReceipt;
+   receipt: DeliveryReceipt;
    payments: DeliveryPayment[];
    createdAt: string;
    updatedAt: string;
@@ -43,10 +43,9 @@ export interface DeliveryLine {
    description: string;
    quantity: number;
    unitPrice: number;
-   taxRate: number;
    totalAmount: number;
-   totalTaxAmount: number;
    deliveryId: string;
+   userId: string;
 }
 
 export interface DeliveryPayment {
@@ -55,4 +54,5 @@ export interface DeliveryPayment {
    method: "cash" | "mobile payment" | "bank_transfer" | "other";
    amount: number;
    deliveryId: string;
+   userId: string;
 }

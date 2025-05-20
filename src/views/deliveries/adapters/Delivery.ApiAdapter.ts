@@ -3,10 +3,11 @@ import { Delivery, DeliveryLine, DeliveryReceipt, DeliveryPayment } from "@views
 export function adaptDelivery(apiData: any): Delivery {
    return {
       id: apiData.id,
+      number: apiData.number,
       date: apiData.date,
       status: apiData.status as "pending" | "paid" | "refused",
-      currency: apiData.currency as "USD" | "BOV" | "OTHERS",
-      typePayment: apiData.type_payment as "Partial" | "Full",
+      currency: apiData.currency as "USD" | "BOV" | "OTH",
+      paymentType: apiData.type_payment as "Partial" | "Full",
       totalAmount: apiData.total_amount,
       comision: apiData.comision,
       notes: apiData.notes,
@@ -18,19 +19,20 @@ export function adaptDelivery(apiData: any): Delivery {
       userId: apiData.user_id,
       createdAt: apiData.created_at,
       updatedAt: apiData.updated_at,
-      deliveryLines: Array.isArray(apiData.lines) ? apiData.lines.map(adaptLine) : [],
-      deliveryPayments: Array.isArray(apiData.payments) ? apiData.payments.map(adaptPayment) : [],
-      deliveryReceipts: adaptReceipt(apiData.receipt),
+      lines: Array.isArray(apiData.lines) ? apiData.lines.map(adaptLine) : [],
+      payments: Array.isArray(apiData.payments) ? apiData.payments.map(adaptPayment) : [],
+      receipt: adaptReceipt(apiData.receipt),
    };
 }
 
 export function adaptDeliveryForApi(delivery: Delivery): any {
    return {
       id: delivery.id,
+      number: delivery.number,
       date: delivery.date,
       status: delivery.status,
       currency: delivery.currency,
-      type_payment: delivery.typePayment,
+      type_payment: delivery.paymentType,
       total_amount: delivery.totalAmount,
       comision: delivery.comision,
       notes: delivery.notes,
@@ -40,9 +42,9 @@ export function adaptDeliveryForApi(delivery: Delivery): any {
       open_box_id: delivery.openBoxId,
       close_box_id: delivery.closeBoxId,
       user_id: delivery.userId,
-      lines: delivery.deliveryLines.map(adaptLineForApi),
-      payments: delivery.deliveryPayments.map(adaptPaymentForApi),
-      receipt: adaptReceiptForApi(delivery.deliveryReceipts),
+      lines: delivery.lines.map(adaptLineForApi),
+      payments: delivery.payments.map(adaptPaymentForApi),
+      receipt: adaptReceiptForApi(delivery.receipt),
    };
 }
 
@@ -52,10 +54,9 @@ export function adaptLine(apiLine: any): DeliveryLine {
       description: apiLine.description,
       quantity: apiLine.quantity,
       unitPrice: apiLine.unit_price,
-      taxRate: apiLine.tax_rate,
       totalAmount: apiLine.total_amount,
-      totalTaxAmount: apiLine.total_tax_amount,
       deliveryId: apiLine.delivery_id,
+      userId: apiLine.user_id,
    };
 }
 
@@ -65,18 +66,16 @@ export function adaptLineForApi(line: DeliveryLine): any {
       description: line.description,
       quantity: line.quantity,
       unit_price: line.unitPrice,
-      tax_rate: line.taxRate,
       total_amount: line.totalAmount,
-      total_tax_amount: line.totalTaxAmount,
       delivery_id: line.deliveryId,
+      user_id: line.userId,
    };
 }
 
 export function adaptReceipt(apiReceipt: any): DeliveryReceipt {
    return {
       id: apiReceipt.id,
-      full_name: apiReceipt.full_name,
-      delivery_id: apiReceipt.delivery_id,
+      fullName: apiReceipt.full_name,
       phone: apiReceipt.phone,
       address: apiReceipt.address,
       state: apiReceipt.state,
@@ -91,8 +90,7 @@ export function adaptReceipt(apiReceipt: any): DeliveryReceipt {
 export function adaptReceiptForApi(receipt: DeliveryReceipt): any {
    return {
       id: receipt.id,
-      full_name: receipt.full_name,
-      delivery_id: receipt.delivery_id,
+      full_name: receipt.fullName,
       phone: receipt.phone,
       address: receipt.address,
       state: receipt.state,
@@ -109,6 +107,8 @@ export function adaptPayment(apiPayment: any): DeliveryPayment {
       date: apiPayment.date,
       amount: apiPayment.amount,
       deliveryId: apiPayment.delivery_id,
+      method: apiPayment.method,
+      userId: apiPayment.user_id,
    };
 }
 
@@ -118,5 +118,7 @@ export function adaptPaymentForApi(payment: DeliveryPayment): any {
       date: payment.date,
       amount: payment.amount,
       delivery_id: payment.deliveryId,
+      method: payment.method,
+      user_id: payment.userId,
    };
 }

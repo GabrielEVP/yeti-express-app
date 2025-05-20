@@ -7,16 +7,16 @@ import type { PartialDeep } from "type-fest";
 
 interface CrudFormOptions<T extends GenericObject, ID> {
    id?: ID;
-   getById: (id: ID) => Promise<T>;
-   create: (values: T) => Promise<any>;
-   update: (values: T, id: ID) => Promise<any>;
+   getById?: (id: ID) => Promise<T>;
+   create?: (values: T) => Promise<any>;
+   update?: (values: T, id: ID) => Promise<any>;
 
-   defaultRoute: string;
+   defaultRoute?: string;
    messages: {
-      createError: string;
-      updateError: string;
-      createSuccess: string;
-      updateSuccess: string;
+      createError?: string;
+      updateError?: string;
+      createSuccess?: string;
+      updateSuccess?: string;
    };
    validation: {
       schema: any;
@@ -28,36 +28,56 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
    const router = useRouter();
    const { triggerError, triggerSuccess } = useAlert();
 
-   const { handleSubmit, setValues, meta } = useForm<T>({
+   const { handleSubmit, setValues, meta, errors } = useForm<T>({
       validationSchema: validation.schema,
       initialValues: validation.initialValues,
    });
 
    const initializeForm = async () => {
-      if (!id) return;
+      if (!id || !getById) return;
       const data = await getById(id);
       setValues(data as PartialDeep<T>);
    };
 
    const onSubmit = handleSubmit(async (values) => {
       const isEdit = Boolean(id);
-      const { createError, updateError, createSuccess, updateSuccess } = messages;
 
       try {
-         const response = isEdit ? await update(values, id!) : await create(values);
+         if (isEdit) {
+            if (!update) {
+               triggerError("No se definió la función de actualización.");
+               return;
+            }
 
-         if (!response || response.status < 200 || response.status >= 300) {
-            triggerError(isEdit ? updateError : createError);
-            return;
+            const res = await update(values, id!);
+            if (!res || res.status < 200 || res.status >= 300) {
+               triggerError(messages.updateError ?? "Error al actualizar");
+               return;
+            }
+
+            triggerSuccess(messages.updateSuccess ?? "Actualizado correctamente");
+         } else {
+            if (!create) {
+               triggerError("No se definió la función de creación.");
+               return;
+            }
+
+            const res = await create(values);
+            if (!res || res.status < 200 || res.status >= 300) {
+               triggerError(messages.createError ?? "Error al crear");
+               return;
+            }
+
+            triggerSuccess(messages.createSuccess ?? "Creado correctamente");
          }
 
-         const successMessage = isEdit ? updateSuccess : createSuccess;
-         triggerSuccess(successMessage);
-         redirectToLastOrDefault(router, defaultRoute);
+         if (defaultRoute) {
+            redirectToLastOrDefault(router, defaultRoute);
+         }
       } catch {
-         triggerError(isEdit ? updateError : createError);
+         triggerError(isEdit ? messages.updateError ?? "Error al actualizar" : messages.createError ?? "Error al crear");
       }
    });
 
-   return { initializeForm, onSubmit, meta };
+   return { initializeForm, onSubmit, meta, errors };
 }

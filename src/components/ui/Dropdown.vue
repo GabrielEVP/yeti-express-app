@@ -18,10 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { ChevronDown, ChevronUp } from "lucide-vue-next";
 import { onClickOutside } from "@vueuse/core";
-import { useTemplateRef } from "vue";
 
 const openDropdown = ref(false);
 

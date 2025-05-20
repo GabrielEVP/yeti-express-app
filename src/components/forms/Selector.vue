@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from "vue";
-import { Search, ChevronDown } from "lucide-vue-next";
+import { ref, onMounted, onUnmounted } from "vue";
+import { ChevronDown } from "lucide-vue-next";
 import { Input, Label, PlusButton } from "@/components/";
 
 const props = defineProps<{
@@ -35,11 +35,6 @@ const emit = defineEmits<{
    (e: "openModal"): void;
    (e: "update:modelValue", value: string): void;
 }>();
-
-const updateModelValue = (event: Event) => {
-   const target = event.target as HTMLInputElement;
-   emit("update:modelValue", target.value);
-};
 
 const isOpen = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);

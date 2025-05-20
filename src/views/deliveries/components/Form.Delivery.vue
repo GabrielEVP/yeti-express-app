@@ -7,8 +7,7 @@
                <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
                   <template #mobile>
                      <option value="general">General</option>
-                     <option value="dueDates">Vencimientos</option>
-                     <option value="payments">Pagos</option>
+                     <option value="receipt">Cliente a recibir</option>
                      <option value="notes">Notas</option>
                   </template>
                   <template #desktop>
@@ -16,13 +15,9 @@
                         <FileText class="w-4 h-4 dark:text-white" />
                         <span class="m-4 dark:text-white">General</span>
                      </TabsTitle>
-                     <TabsTitle tab="dueDates" :activeTab="activeTab" @update:activeTab="activeTab = $event">
-                        <CalendarDays class="w-4 h-4 dark:text-white" />
-                        <span class="m-4 dark:text-white">Vencimientos</span>
-                     </TabsTitle>
-                     <TabsTitle tab="payments" :activeTab="activeTab" @update:activeTab="activeTab = $event">
-                        <HandCoins class="w-4 h-4 dark:text-white" />
-                        <span class="m-4 dark:text-white">Pagos</span>
+                     <TabsTitle tab="receipt" :activeTab="activeTab" @update:activeTab="activeTab = $event">
+                        <NotebookPen class="w-4 h-4 dark:text-white" />
+                        <span class="m-4 dark:text-white">Cliente a recibir</span>
                      </TabsTitle>
                      <TabsTitle tab="notes" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                         <NotebookPen class="w-4 h-4 dark:text-white" />
@@ -31,21 +26,33 @@
                   </template>
                </Tabs>
                <TabsContent tab="general" :activeTab="activeTab">
-                  <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
-                     <FieldForm label="Número de factura" name="number" id="number" required />
-                     <FieldForm type="date" label="Fecha de factura" name="date" id="date" required />
+                  <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
+                     <FieldForm type="date" label="Fecha del delivery" name="date" id="date" required />
+                     <FieldForm type="number" label="Monto" name="totalAmount" id="totalAmount" />
+                     <SelectForm label="Tipo de moneda" name="currency" :items="[...CURRENCYSELECT]" />
                   </div>
-                  <div class="grid lg:grid-cols-2 grid-cols-1 gap-6 lg:mb-8">
-                     <FieldForm label="Monto sin IVA" id="totalAmount" />
+                  <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
+                     <SelectForm label="Tipo de pago" name="paymentType" :items="[...PAYMENT_SELECT]" />
+                     <SelectForm label="Repartidor" name="courierId" :items="[...PAYMENT_SELECT]" />
+                     <FieldForm type="number" label="Comision" name="comision" id="comision" />
                   </div>
                   <div class="gap-6 lg:mb-8">
-                     <SelectorBasicClient :client-id="clientId" @update:client-id="(value: string) => {clientId = value }" />
+                     <ContentSelectorClient :client-id="clientId" :address-id="clientAddressId" />
                   </div>
                   <LinesForm />
                </TabsContent>
-
-               <TabsContent tab="payments" :activeTab="activeTab">
-                  <PaymentsForm />
+               <TabsContent tab="receipt" :activeTab="activeTab">
+                  <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
+                     <FieldForm label="Nombre completo" name="receipt.fullName" id="number" required />
+                     <FieldForm label="Telefono" name="receipt.phone" id="number" required />
+                  </div>
+                  <FieldForm label="Direccion" name="receipt.address" id="receipt.address" required />
+                  <div class="grid lg:grid-cols-4 grid-cols-1 gap-6">
+                     <FieldForm label="Estado" name="receipt.state" id="receipt.state" required />
+                     <FieldForm label="Ciudad" name="receipt.city" id="receipt.city" required />
+                     <FieldForm label="Municipio" name="receipt.municipality" id="receipt.municipality" required />
+                     <FieldForm label="Codigo Postal" name="receipt.postalCode" id="receipt.postalCode" required />
+                  </div>
                </TabsContent>
                <TabsContent tab="notes" :activeTab="activeTab">
                   <TextAreaForm label="Notas" id="notes" rows="32" />
@@ -64,10 +71,22 @@
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
-import { FileText, CalendarDays, HandCoins, NotebookPen } from "lucide-vue-next";
+import { FileText, NotebookPen } from "lucide-vue-next";
 import { useAlert } from "@/composables/";
-import { Delivery, DeliverySchema, deliveryAppRoutes, DELIVERY_DEFAULT_FORM_VALUE, getDelivery, postDeliverys, putDeliverys, LinesForm, PaymentsForm, SelectorBasicClient } from "@/views/deliveries/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
+import {
+   Delivery,
+   DeliverySchema,
+   deliveryAppRoutes,
+   DELIVERY_DEFAULT_FORM_VALUE,
+   getDelivery,
+   postDeliverys,
+   putDeliverys,
+   LinesForm,
+   CURRENCYSELECT,
+   PAYMENT_SELECT,
+   ContentSelectorClient,
+} from "@/views/deliveries/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
 
 const activeTab = ref("general");
 
@@ -84,7 +103,7 @@ onMounted(async () => {
    }
 });
 
-const { handleSubmit, defineField, setValues, values, setFieldValue, meta } = useForm<Delivery>({
+const { handleSubmit, defineField, setValues, meta } = useForm<Delivery>({
    validationSchema: DeliverySchema,
    initialValues: {
       ...DELIVERY_DEFAULT_FORM_VALUE,
@@ -92,7 +111,7 @@ const { handleSubmit, defineField, setValues, values, setFieldValue, meta } = us
 });
 
 const [clientId] = defineField("clientId");
-const [totalAmount] = defineField("totalAmount");
+const [clientAddressId] = defineField("clientAddressId");
 
 const router = useRouter();
 const { showError, alertMessage, triggerError } = useAlert();

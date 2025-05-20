@@ -17,6 +17,7 @@
                   </template>
                </Tabs>
                <TabsContent tab="general" :activeTab="activeTab">
+                  {{ errors }}
                   <FieldForm label="Nombre Legal" name="legalName" id="legalName" required />
                   <FieldForm label="Número de Registro" name="registrationNumber" id="registrationNumber" required />
                </TabsContent>
@@ -50,6 +51,6 @@ const router = useRouter();
 
 const route = useRoute();
 const clientId = route.params.id as string;
-const { activeTab, meta, initializeForm, onSubmit } = useClientForm(clientId);
+const { activeTab, meta, initializeForm, onSubmit, errors } = useClientForm(clientId);
 onMounted(initializeForm);
 </script>

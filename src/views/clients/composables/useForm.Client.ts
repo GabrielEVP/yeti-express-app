@@ -6,7 +6,7 @@ export function useClientForm(clientId?: string) {
    const activeTab = ref("general");
    const { userId } = useUserId();
 
-   const { initializeForm, onSubmit, meta } = useVeeForm<Client, string>({
+   const { initializeForm, onSubmit, meta, errors } = useVeeForm<Client, string>({
       id: clientId,
       getById: getClient,
       create: postClients,
@@ -29,5 +29,6 @@ export function useClientForm(clientId?: string) {
       initializeForm,
       onSubmit,
       meta,
+      errors,
    };
 }
