@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from "@components/sidebars/Sidebar.vue";
+import Sidebar from "@components/ui/sidebars/Sidebar.vue";
 import MetriCard from "@/views/home/components/MetriCard.vue";
 import LegendItem from "@/views/home/components/LegendItem.vue";
 import { reactive, computed, onMounted, ref } from "vue";

@@ -1,39 +1,91 @@
 <template>
    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <aside :class="[isSidebarExpanded ? 'w-64' : 'w-20', 'bg-white text-black h-screen flex flex-col fixed z-10 transition-[width] shadow-xl duration-300 ease-in-out', isDarkMode ? 'dark' : '']">
-         <div class="h-20 flex items-center justify-center bg-gray-50 dark:bg-gray-700 shadow-sm" :class="[isSidebarExpanded ? '' : 'pl-2']">
-            <slot name="header"></slot>
+      <aside :class="['fixed left-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg', isSidebarExpanded ? 'w-64' : 'w-20']">
+         <div class="p-3 flex items-center">
+            <img :src="logo" alt="Logo" class="w-14 h-14 rounded-xl shadow-md" />
+            <span v-show="isSidebarExpanded" class="ml-4 text-black dark:text-gray-300 whitespace-nowrap"> Gava </span>
          </div>
+         <hr class="border-gray-200 dark:border-gray-700 mx-3" />
+         <nav class="py-4">
+            <ul class="p-4 space-y-4 flex flex-col">
+               <li v-for="item in navigationItems" :key="item.route">
+                  <NavigationItem :item="item" :isSidebarExpanded="isSidebarExpanded" />
+               </li>
+            </ul>
+         </nav>
 
-         <slot name="items"></slot>
+         <div class="absolute bottom-0 w-full pb-4 flex flex-col">
+            <hr class="border-gray-200 dark:border-gray-700 mb-4" />
+            <div class="flex p-4">
+               <ToggleDarkMode :isSidebarExpanded="isSidebarExpanded" :isDarkMode="isDarkMode" @toggle="toggleDarkMode" />
+            </div>
 
-         <slot name="footer"></slot>
-
-         <button @click="emitToggleSidebar" class="absolute -right-5 top-12 bg-black hover:bg-gray-800 dark:bg-gray-74300 hover:dark:bg-gray-600 rounded-full p-1 shadow-xl border border-gray-900">
-            <ChevronRight v-if="!isSidebarExpanded" class="w-4 h-4 text-gray-300 dark:text-gray-400" />
-            <ChevronLeft v-else class="w-4 h-4 text-gray-300 dark:text-gray-400 ml-" />
-         </button>
+            <hr class="border-gray-200 dark:border-gray-700 mb-4" />
+            <div class="relative px-3">
+               <ProfileMenu :isSidebarExpanded="isSidebarExpanded" :items="profileMenuItems" />
+            </div>
+         </div>
       </aside>
-
-      <div :class="[isSidebarExpanded ? 'ml-64' : 'ml-20', 'flex-1 transition-all duration-300 ease-in-out h-screen overflow-auto']">
-         <main class="min-h-screen p-6">
-            <slot name="content" />
-         </main>
-      </div>
+      <main :class="['transition-all duration-300', isSidebarExpanded ? 'ml-64' : 'ml-20']" class="p-6">
+         <slot></slot>
+      </main>
    </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronRight, ChevronLeft } from "lucide-vue-next";
+import logo from "@/assets/yeti.webp";
+import { ref, onMounted } from "vue";
+import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, PackageSearch, UserIcon, LogOutIcon } from "lucide-vue-next";
+import NavigationItem from "@/components/ui/sidebars/SidebarItems.vue";
+import ToggleDarkMode from "@/components/ui/sidebars/SidebarToggleMode.vue";
 
-defineProps({
-   isSidebarExpanded: Boolean,
-   isDarkMode: Boolean,
-});
+const isDarkMode = ref(false);
+const isSidebarExpanded = ref(false);
 
-const emit = defineEmits(["toggleSidebarState"]);
+const navigationItems = [
+   { route: "/home", title: "Inicio", icon: HomeIcon },
+   { route: "/deliveries", title: "Deliverys", icon: ClipboardIcon },
+   { route: "/clients", title: "Clientes", icon: UsersIcon },
+   { route: "/employees", title: "Empleados", icon: BookUser },
+   { route: "/couriers", title: "Repartidor", icon: PackageSearch },
+];
 
-function emitToggleSidebar() {
-   emit("toggleSidebarState");
+const profileMenuItems = [
+   { label: "Mi Perfil", icon: UserIcon, action: () => handleProfileClick() },
+   {
+      label: "Cerrar Sesión",
+      icon: LogOutIcon,
+      action: () => handleLogoutClick(),
+   },
+];
+
+function handleProfileClick() {
+   console.log("Profile clicked");
 }
+
+function handleLogoutClick() {
+   console.log("Logout clicked");
+}
+
+function toggleDarkMode() {
+   isDarkMode.value = !isDarkMode.value;
+   updateDarkMode();
+}
+
+function updateDarkMode() {
+   const classList = document.documentElement.classList;
+   isDarkMode.value ? classList.add("dark") : classList.remove("dark");
+   localStorage.setItem("darkMode", String(isDarkMode.value));
+}
+
+onMounted(() => {
+   const storedMode = localStorage.getItem("darkMode");
+   isDarkMode.value = storedMode === "true" || (!storedMode && window.matchMedia("(prefers-color-scheme: dark)").matches);
+   updateDarkMode();
+
+   const storedSidebar = localStorage.getItem("sidebarExpanded");
+   if (storedSidebar !== null) {
+      isSidebarExpanded.value = storedSidebar === "true";
+   }
+});
 </script>

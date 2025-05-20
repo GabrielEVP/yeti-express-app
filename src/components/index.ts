@@ -1,7 +1,3 @@
-// SIDEBARS (core)
-export { default as SideBar } from "@/components/sidebars/Sidebar.vue";
-export { default as MenuItems } from "@/components/sidebars/MenuItems.vue";
-
 // BUTTONS
 export { default as AcceptButton } from "@/components/buttons/Accept.vue";
 export { default as ActionsButton } from "@/components/buttons/Actions.vue";
@@ -68,11 +64,10 @@ export { default as ConfirmationModal } from "@/components/ui/modals/Confirmatio
 export { default as Modal } from "@/components/ui/modals/Modal.vue";
 
 // UI – SIDEBAR HELPERS
-export { default as SidebarBase } from "@/components/ui/sidebars/Sidebar.vue";
-export { default as SidebarDropdown } from "@/components/ui/sidebars/SidebarDropdown.vue";
+export { default as SideBar } from "@/components/ui/sidebars/Sidebar.vue";
 export { default as SidebarItems } from "@/components/ui/sidebars/SidebarItems.vue";
 export { default as SidebarToggleMode } from "@/components/ui/sidebars/SidebarToggleMode.vue";
-export { default as SidebarUserMenu } from "@/components/ui/sidebars/SidebarUserMenu.vue";
+export { default as SidebarProfileMenu } from "@components/ui/sidebars/SidebarProfileMenu.vue";
 export * from "@/components/ui/sidebars/useSidebarState";
 
 // UI – TABLES
