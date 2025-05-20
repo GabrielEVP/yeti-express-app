@@ -1,10 +1,10 @@
-export const dealerApiRoutes = {
+export const courierApiRoutes = {
    list: "/couriers",
-   details: (dealerId: string) => `/couriers/${dealerId}`,
+   details: (courierId: string) => `/couriers/${courierId}`,
    search: (search: string) => `/couriers/search/${search}`,
 };
 
-export const dealerAppRoutes = {
+export const courierAppRoutes = {
    list: "/couriers",
    new: "/couriers/new",
    edit: (id: string | number) => `/couriers/edit/${id}`,

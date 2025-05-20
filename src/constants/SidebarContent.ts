@@ -1,4 +1,4 @@
-import { HomeIcon, FileTextIcon, ClipboardIcon, WalletIcon, UsersIcon, BookUser, PackageSearch, Receipt, HandCoins, CircleUser, FileChartColumn, Warehouse, ChartBarStacked } from "lucide-vue-next";
+import { HomeIcon, FileTextIcon, Bike, UsersIcon, CircleUser, FileChartColumn } from "lucide-vue-next";
 
 export interface MenuItem {
    id: string;
@@ -39,6 +39,19 @@ export const menuItems: MenuItem[] = [
             title: "Deliverys",
             icon: FileTextIcon,
             url: "/deliveries",
+         },
+      ],
+   },
+   {
+      id: "facturacion",
+      title: "Repartidores",
+      icon: Bike,
+      children: [
+         {
+            id: "Repartidores",
+            title: "Repartidores",
+            icon: Bike,
+            url: "/couriers",
          },
       ],
    },

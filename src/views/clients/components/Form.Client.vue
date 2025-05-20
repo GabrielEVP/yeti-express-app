@@ -1,6 +1,6 @@
 <template>
    <SideBar>
-      <div class="flex justify-center items-center min-h-screen">
+      <div class="flex justify-center items-center min-h-[calc(100vh-3rem)] py-6 px-2">
          <Card class="w-full max-w-4xl p-6">
             <form @submit.prevent="onSubmit" class="h-full space-y-6">
                <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
@@ -17,7 +17,6 @@
                   </template>
                </Tabs>
                <TabsContent tab="general" :activeTab="activeTab">
-                  {{ errors }}
                   <FieldForm label="Nombre Legal" name="legalName" id="legalName" required />
                   <FieldForm label="Número de Registro" name="registrationNumber" id="registrationNumber" required />
                </TabsContent>

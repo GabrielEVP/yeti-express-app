@@ -1,7 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import { Details, Form, List } from "@/views/couriers/";
 
-export const DealerRouter: Array<RouteRecordRaw> = [
+export const CourierRouter: Array<RouteRecordRaw> = [
    {
       path: "/couriers",
       name: "Couriers",
@@ -10,13 +10,13 @@ export const DealerRouter: Array<RouteRecordRaw> = [
    },
    {
       path: "/couriers/new",
-      name: "DealerNew",
+      name: "CourierNew",
       component: Form,
       meta: { requiresAuth: true },
    },
    {
       path: "/couriers/edit/:id",
-      name: "DealerEdit",
+      name: "CourierEdit",
       component: Form,
       meta: { requiresAuth: true },
       props: true,

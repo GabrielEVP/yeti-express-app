@@ -2,26 +2,36 @@
    <SelectorClient ref="selectorRef" :client="clientSearch" :address="addressSearch" @openModal="openModalClientForm" @update:client="clientSearch = $event" @update:address="addressSearch = $event">
       <template #list>
          <ul class="max-h-60 overflow-auto py-1">
-            <li
-               v-for="(client, index) in filteredClients"
-               :key="index"
-               class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
-               @click="selectClient(client)"
-            >
-               {{ client.legalName }}
-            </li>
+            <template v-if="filteredClients.length">
+               <li
+                  v-for="(client, index) in filteredClients"
+                  :key="index"
+                  class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
+                  @click="selectClient(client)"
+               >
+                  {{ client.legalName }}
+               </li>
+            </template>
+            <template v-else>
+               <li class="px-4 py-2 text-gray-500 dark:text-gray-400 italic">No hay clientes para mostrar</li>
+            </template>
          </ul>
       </template>
       <template #direccion>
          <ul class="max-h-60 overflow-auto py-1">
-            <li
-               v-for="(address, index) in filteredAddresses"
-               :key="index"
-               class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
-               @click="selectAddress(address)"
-            >
-               {{ address.address }}
-            </li>
+            <template v-if="filteredAddresses.length">
+               <li
+                  v-for="(address, index) in filteredAddresses"
+                  :key="index"
+                  class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
+                  @click="selectAddress(address)"
+               >
+                  {{ address.address }}
+               </li>
+            </template>
+            <template v-else>
+               <li class="px-4 py-2 text-gray-500 dark:text-gray-400 italic">No hay direcciones para mostrar</li>
+            </template>
          </ul>
       </template>
       <template #modal>

@@ -9,7 +9,7 @@
                   <FilterButton> </FilterButton>
                </div>
             </div>
-            <NewButton label="Nuevo Courier" :URL="dealerAppRoutes.new" />
+            <NewButton label="Nuevo Courier" :URL="courierAppRoutes.new" />
          </div>
       </Card>
       <TableDashboard
@@ -46,15 +46,15 @@
 import { onMounted, ref } from "vue";
 import { useForm } from "vee-validate";
 import { usePagination, useModal, useFetch, useFilterSortSearch, useDeleteWithFeedback } from "@/composables/";
-import { Courier, getDealers, deleteDealer, getFilterDealers } from "@/views/couriers/";
+import { Courier, getCouriers, deleteCourier, getFilterCouriers } from "@/views/couriers/";
 import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, FilterButton, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
-import { DEALER_TABLE_HEADER, dealerAppRoutes } from "@/views/couriers";
+import { DEALER_TABLE_HEADER, courierAppRoutes } from "@/views/couriers";
 
 const couriers = ref<Courier[]>([]);
 
 const { searchQuery, filters, applyFilters, handleSort, setDynamicFilters } = useFilterSortSearch({
    columns: ["firstName", "lastName", "phone", "commission"],
-   fetchFn: getFilterDealers,
+   fetchFn: getFilterCouriers,
    dataRef: couriers,
 });
 
@@ -73,8 +73,8 @@ const applySelectFilters = handleSubmit((formValues) => {
 
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(couriers, 15);
 
-const { isLoading, fetchError, executeFetch } = useFetch<Courier[]>({
-   fetchFunction: getDealers,
+const { executeFetch } = useFetch<Courier[]>({
+   fetchFunction: getCouriers,
    errorMessageOnFailure: "Error al cargar Repartidor",
 });
 
@@ -83,7 +83,7 @@ onMounted(async () => {
 });
 
 const { deleteAndNotify } = useDeleteWithFeedback<string>({
-   deleteFn: deleteDealer,
+   deleteFn: deleteCourier,
    onSuccessMessage: "Courier eliminado exitosamente",
 });
 

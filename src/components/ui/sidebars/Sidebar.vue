@@ -15,8 +15,8 @@
          </button>
       </aside>
 
-      <div :class="[isSidebarExpanded ? 'ml-64' : 'ml-20', 'flex-1 transition-all duration-300 ease-in-out']">
-         <main class="p-6">
+      <div :class="[isSidebarExpanded ? 'ml-64' : 'ml-20', 'flex-1 transition-all duration-300 ease-in-out h-screen overflow-auto']">
+         <main class="min-h-screen p-6">
             <slot name="content" />
          </main>
       </div>

@@ -1,56 +1,56 @@
 import { apiClient } from "@/services/";
-import { Courier, adaptDealer, adaptDealerForApi, dealerApiRoutes } from "@/views/couriers";
+import { Courier, adaptCourier, adaptCourierForApi, courierApiRoutes } from "@/views/couriers";
 
-export const getDealers = async (): Promise<Courier[]> => {
+export const getCouriers = async (): Promise<Courier[]> => {
    try {
-      const response = await apiClient.get(dealerApiRoutes.list);
-      return Array.isArray(response.data) ? response.data.map(adaptDealer) : [adaptDealer(response.data)];
+      const response = await apiClient.get(courierApiRoutes.list);
+      return Array.isArray(response.data) ? response.data.map(adaptCourier) : [adaptCourier(response.data)];
    } catch (error) {
       throw new Error("Failed to fetch couriers.");
    }
 };
 
-export const getDealer = async (dealerId: string): Promise<Courier> => {
+export const getCourier = async (courierId: string): Promise<Courier> => {
    try {
-      const response = await apiClient.get(dealerApiRoutes.details(dealerId));
-      return adaptDealer(response.data);
+      const response = await apiClient.get(courierApiRoutes.details(courierId));
+      return adaptCourier(response.data);
    } catch (error) {
-      throw new Error(`Failed to fetch courier with ID ${dealerId}.`);
+      throw new Error(`Failed to fetch courier with ID ${courierId}.`);
    }
 };
 
-export const postDealer = async (data: Courier): Promise<Courier> => {
+export const postCourier = async (data: Courier): Promise<Courier> => {
    try {
-      const payload = adaptDealerForApi(data);
-      const response = await apiClient.post(dealerApiRoutes.list, payload);
-      return adaptDealer(response.data);
+      const payload = adaptCourierForApi(data);
+      const response = await apiClient.post(courierApiRoutes.list, payload);
+      return adaptCourier(response.data);
    } catch (error) {
       throw new Error("Failed to create courier.");
    }
 };
 
-export const putDealer = async (data: Courier, dealerId: string): Promise<Courier> => {
+export const putCourier = async (data: Courier, courierId: string): Promise<Courier> => {
    try {
-      const payload = adaptDealerForApi(data);
-      const response = await apiClient.put(dealerApiRoutes.details(dealerId), payload);
-      return adaptDealer(response.data);
+      const payload = adaptCourierForApi(data);
+      const response = await apiClient.put(courierApiRoutes.details(courierId), payload);
+      return adaptCourier(response.data);
    } catch (error) {
-      throw new Error(`Failed to update courier with ID ${dealerId}.`);
+      throw new Error(`Failed to update courier with ID ${courierId}.`);
    }
 };
 
-export const deleteDealer = async (dealerId: string): Promise<void> => {
+export const deleteCourier = async (courierId: string): Promise<void> => {
    try {
-      await apiClient.delete(dealerApiRoutes.details(dealerId));
+      await apiClient.delete(courierApiRoutes.details(courierId));
    } catch (error) {
-      throw new Error(`Failed to delete courier with ID ${dealerId}.`);
+      throw new Error(`Failed to delete courier with ID ${courierId}.`);
    }
 };
 
-export const getFilterDealers = async (params: Record<string, any>): Promise<Courier[]> => {
+export const getFilterCouriers = async (params: Record<string, any>): Promise<Courier[]> => {
    try {
-      const response = await apiClient.get(dealerApiRoutes.list, { params });
-      return Array.isArray(response.data) ? response.data.map(adaptDealer) : [adaptDealer(response.data)];
+      const response = await apiClient.get(courierApiRoutes.list, { params });
+      return Array.isArray(response.data) ? response.data.map(adaptCourier) : [adaptCourier(response.data)];
    } catch (error) {
       throw new Error("Failed to fetch filtered couriers.");
    }

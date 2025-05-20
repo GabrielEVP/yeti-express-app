@@ -12,6 +12,6 @@ import { defineProps } from "vue";
 
 defineProps<{
    title: string;
-   content: string;
+   content: string | number;
 }>();
 </script>

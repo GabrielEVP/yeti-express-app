@@ -33,7 +33,7 @@
                   </div>
                   <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
                      <SelectForm label="Tipo de pago" name="paymentType" :items="[...PAYMENT_SELECT]" />
-                     <SelectForm label="Repartidor" name="courierId" :items="[...PAYMENT_SELECT]" />
+                     <SelectForm label="Repartidor" name="courierId" :items="[...couriers]" />
                      <FieldForm type="number" label="Comision" name="comision" id="comision" />
                   </div>
                   <div class="gap-6 lg:mb-8">
@@ -73,6 +73,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
 import { FileText, NotebookPen } from "lucide-vue-next";
 import { useAlert } from "@/composables/";
+import { Courier, getCouriers } from "@views/couriers";
 import {
    Delivery,
    DeliverySchema,
@@ -108,6 +109,15 @@ const { handleSubmit, defineField, setValues, meta } = useForm<Delivery>({
    initialValues: {
       ...DELIVERY_DEFAULT_FORM_VALUE,
    },
+});
+
+const couriers = ref<{ label: string; value: string }[]>([]);
+onMounted(async () => {
+   const response: any = await getCouriers();
+   couriers.value = response.map((courier: Courier) => ({
+      label: courier.firstName + " " + courier.lastName,
+      value: courier.id,
+   }));
 });
 
 const [clientId] = defineField("clientId");

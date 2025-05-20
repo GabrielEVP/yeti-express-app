@@ -53,19 +53,19 @@ import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
 import { formatDateShort, formatRelativeDate } from "@/utils/";
 import { ref, computed, onMounted } from "vue";
-import { Courier, getDealer } from "@/views/couriers";
+import { Courier, getCourier } from "@/views/couriers";
 import { SideBar, SectionText, Card, ActionsButton, Text, TimeLineActivity, ActivityView, LoadingSkeleton } from "@/components/";
 
 const route = useRoute();
-const dealerId = route.params.id as string;
+const courierId = route.params.id as string;
 
 const courier = ref<Courier | null>(null);
 const lineContents = computed(() => []);
 
 const loadData = async () => {
    try {
-      const fetchedDealer = await getDealer(dealerId);
-      courier.value = fetchedDealer;
+      const fetchedCourier = await getCourier(courierId);
+      courier.value = fetchedCourier;
    } catch (error) {
       console.error("Failed to fetch courier data:", error);
    }
@@ -78,7 +78,7 @@ onMounted(async () => {
 const sectionActions = [
    {
       content: "Editar Courier",
-      url: `/couriers/edit/${dealerId}`,
+      url: `/couriers/edit/${courierId}`,
    },
 ];
 </script>
