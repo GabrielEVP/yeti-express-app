@@ -29,7 +29,7 @@
                         <SectionText title="Fecha de Emisión" :content="delivery.date" />
                         <SectionText title="Cliente" :content="clientNames[delivery.clientId]" />
                         <SectionText title="Importe Total" :content="delivery.totalAmount + ' €'" />
-                        <SectionText title="Total Impuestos" :content="delivery.totalTaxAmount + ' €'" />
+                        <SectionText title="Total Impuestos" :content="delivery.totalAmount + ' €'" />
                      </div>
                      <SectionText title="Notas" :content="delivery.notes" />
                      <LinesList :lines="delivery.lines" />

@@ -3,6 +3,7 @@ import { Delivery, DeliveryLine, DeliveryPayment, DeliveryReceipt } from "@/view
 export const DELIVERY_PAYMENT_DEFAULT_FORM_VALUE: DeliveryPayment = {
    id: "",
    date: new Date().toISOString().split("T")[0],
+   method: "cash",
    amount: 0,
    deliveryId: "",
 };
@@ -20,8 +21,7 @@ export const DELIVERY_LINE_DEFAULT_FORM_VALUE: DeliveryLine = {
 
 export const DELIVERY_RECEIPT_DEFAULT_FORM_VALUE: DeliveryReceipt = {
    id: "",
-   full_name: "",
-   delivery_id: "",
+   fullName: "",
    phone: "",
    address: "",
    state: "",
@@ -34,10 +34,11 @@ export const DELIVERY_RECEIPT_DEFAULT_FORM_VALUE: DeliveryReceipt = {
 
 export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
    id: "",
+   number: "",
    date: new Date().toISOString().split("T")[0],
    status: "pending",
    currency: "USD",
-   typePayment: "Full",
+   paymentType: "Full",
    totalAmount: 0,
    comision: 0,
    notes: "",
@@ -47,9 +48,9 @@ export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
    openBoxId: "",
    closeBoxId: "",
    userId: "",
-   deliveryLines: [],
-   deliveryReceipts: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
-   deliveryPayments: [],
+   lines: [],
+   receipts: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
+   payments: [],
    createdAt: new Date().toISOString(),
    updatedAt: new Date().toISOString(),
 };

@@ -1,9 +1,10 @@
 export interface Delivery {
    id: string;
+   number: string;
    date: string;
    status: "pending" | "paid" | "refused";
-   currency: "USD" | "BOV" | "OTHERS";
-   typePayment: "Partial" | "Full";
+   currency: "USD" | "BOV" | "OTH";
+   paymentType: "Partial" | "Full";
    totalAmount: number;
    comision: number;
    notes: string;
@@ -13,9 +14,9 @@ export interface Delivery {
    openBoxId: string;
    closeBoxId: string;
    userId: string;
-   deliveryLines: DeliveryLine[];
-   deliveryReceipts: DeliveryReceipt;
-   deliveryPayments: DeliveryPayment[];
+   lines: DeliveryLine[];
+   receipts: DeliveryReceipt;
+   payments: DeliveryPayment[];
    createdAt: string;
    updatedAt: string;
 }
@@ -26,8 +27,7 @@ export interface DeliveryEvent extends Event {
 
 export interface DeliveryReceipt {
    id: string;
-   full_name: string;
-   delivery_id: string;
+   fullName: string;
    phone: string;
    address: string;
    state: string;
@@ -52,6 +52,7 @@ export interface DeliveryLine {
 export interface DeliveryPayment {
    id: string;
    date: string;
+   method: "cash" | "mobile payment" | "bank_transfer" | "other";
    amount: number;
    deliveryId: string;
 }

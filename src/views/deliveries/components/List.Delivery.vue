@@ -43,7 +43,7 @@
                   {{ getStatusBillingText(delivery.status) }}
                </Bagde>
             </TableContent>
-            <TableContent class="text-gray-600 dark:text-gray-300"> {{ delivery.totalTaxAmount }} $ </TableContent>
+            <TableContent class="text-gray-600 dark:text-gray-300">{{ delivery.totalAmount }}</TableContent>
             <TableContent>
                <div class="flex gap-1 justify-center">
                   <EyeButton :id="String(delivery.id)" route="/deliveries" />
