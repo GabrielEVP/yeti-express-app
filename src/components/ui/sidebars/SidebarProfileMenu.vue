@@ -1,6 +1,4 @@
 <template>
-   <DangerAlert :show="showError" :message="alertMessage" />
-   <SuccessAlert :show="showSuccess" :message="alertMessage" />
    <div class="flex items-center">
       <button
          @click="toggleProfileMenu"
@@ -34,9 +32,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ProfilePhoto from "@/assets/profile.jpeg";
-import { DangerAlert, SuccessAlert } from "@/components/";
-import { useAlert } from "@/composables/";
-const { showSuccess, showError, alertMessage } = useAlert();
 
 const isOpen = ref(false);
 

@@ -1,4 +1,6 @@
 <template>
+   <DangerAlert :show="showError" :message="alertMessage" />
+   <SuccessAlert :show="showSuccess" :message="alertMessage" />
    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <aside :class="['fixed left-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg', isSidebarExpanded ? 'w-64' : 'w-20']">
          <div class="p-3 flex items-center">
@@ -13,13 +15,11 @@
                </li>
             </ul>
          </nav>
-
          <div class="absolute bottom-0 w-full pb-4 flex flex-col">
             <hr class="border-gray-200 dark:border-gray-700 mb-4" />
             <div class="flex p-4">
                <ToggleDarkMode :isSidebarExpanded="isSidebarExpanded" :isDarkMode="isDarkMode" @toggle="toggleDarkMode" />
             </div>
-
             <hr class="border-gray-200 dark:border-gray-700 mb-4" />
             <div class="relative px-3">
                <ProfileMenu :isSidebarExpanded="isSidebarExpanded" :items="profileMenuItems" />
@@ -38,6 +38,10 @@ import { ref, onMounted } from "vue";
 import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, PackageSearch, UserIcon, LogOutIcon } from "lucide-vue-next";
 import NavigationItem from "@/components/ui/sidebars/SidebarItems.vue";
 import ToggleDarkMode from "@/components/ui/sidebars/SidebarToggleMode.vue";
+
+const { showSuccess, showError, alertMessage } = useAlert();
+import { DangerAlert, SuccessAlert } from "@/components/";
+import { useAlert } from "@/composables/";
 
 const isDarkMode = ref(false);
 const isSidebarExpanded = ref(false);

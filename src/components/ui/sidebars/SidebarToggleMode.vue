@@ -18,7 +18,7 @@ const props = defineProps<{
 
 let text = ref("");
 
-if (props.isDarkMode == true) {
+if (props.isDarkMode) {
    text.value = "Modo oscuro";
 } else {
    text.value = "Modo claro";

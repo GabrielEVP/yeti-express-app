@@ -54,8 +54,6 @@
             </TableContent>
          </TableRow>
       </TableDashboard>
-      <SuccessAlert :show="showSuccess" :message="alertMessage" />
-      <DangerAlert :show="showError" :message="alertMessage" />
    </SideBar>
 </template>
 
@@ -82,8 +80,6 @@ import {
    EditButton,
    EyeButton,
    ConfirmationModal,
-   SuccessAlert,
-   DangerAlert,
 } from "@/components/";
 import Download from "@components/buttons/Download.vue";
 
