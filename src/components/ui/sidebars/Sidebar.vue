@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import logo from "@/assets/yeti.webp";
 import { ref, onMounted } from "vue";
-import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, PackageSearch, UserIcon, LogOutIcon } from "lucide-vue-next";
+import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, Bike, UserIcon, LogOutIcon } from "lucide-vue-next";
 import NavigationItem from "@/components/ui/sidebars/SidebarItems.vue";
 import ToggleDarkMode from "@/components/ui/sidebars/SidebarToggleMode.vue";
 import ProfileMenu from "@/components/ui/sidebars/SidebarProfileMenu.vue";
@@ -50,7 +50,7 @@ const navigationItems = [
    { route: "/home", title: "Inicio", icon: HomeIcon },
    { route: "/deliveries", title: "Deliverys", icon: ClipboardIcon },
    { route: "/clients", title: "Clientes", icon: UsersIcon },
-   { route: "/couriers", title: "Repartidor", icon: PackageSearch },
+   { route: "/couriers", title: "Repartidor", icon: Bike },
    { route: "/employees", title: "Empleados", icon: BookUser },
 ];
 
