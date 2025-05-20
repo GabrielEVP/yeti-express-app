@@ -1,0 +1,11 @@
+export * from "./adapters/Courier.ApiAdapter";
+export { default as Details } from "./components/Details.Courier.vue";
+export { default as Form } from "./components/Form.Courier.vue";
+export { default as List } from "./components/List.Courier.vue";
+export * from "./constants/Courier.DefaultForm";
+export * from "./constants/Courier.RoutesDictionary";
+export * from "./constants/Courier.TableHeader";
+export * from "./models/Courier";
+export * from "./router/Router.Courier";
+export * from "./schemas/Courier.Schemas";
+export * from "./services/Courier.ApiPetitions";
