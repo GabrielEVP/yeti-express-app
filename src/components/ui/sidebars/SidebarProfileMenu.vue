@@ -2,14 +2,11 @@
    <div class="flex items-center">
       <button
          @click="toggleProfileMenu"
-         class="flex items-center justify-center w-14 h-14 min-w-14 min-h-14 max-w-14 max-h-14 rounded-sm ring-2 ring-primary-500 p-0.5 transition-transform hover:scale-105 overflow-hidden"
+         class="flex items-center justify-center w-14 h-14 min-w-14 min-h-14 max-w-14 max-h-14 rounded-sm ring-2 ring-primary-500 p-0.5 transition-transform hover:scale-105 overflow-hidden bg-primary-600 text-white font-bold text-lg"
       >
-         <img :src="ProfilePhoto" alt="User avatar" class="w-14 h-14 object-cover rounded-sm" />
+         <span class="bg-gray-900 w-full h-full flex items-center justify-center">YE</span>
       </button>
-
-      <span v-show="isSidebarExpanded" class="ml-4 text-black dark:text-gray-300 whitespace-nowrap"> Gabriel Vargas </span>
    </div>
-
    <div
       v-if="isOpen"
       v-click-outside="closeProfileMenu"
@@ -31,12 +28,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import ProfilePhoto from "@/assets/profile.jpeg";
 
 const isOpen = ref(false);
 
 defineProps<{
-   isSidebarExpanded: boolean;
    items: { label: string; icon: any; action: () => void }[];
 }>();
 

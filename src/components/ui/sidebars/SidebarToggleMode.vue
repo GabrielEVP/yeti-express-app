@@ -12,7 +12,6 @@ import { ref, defineProps } from "vue";
 import { SunIcon, MoonIcon } from "lucide-vue-next";
 
 const props = defineProps<{
-   isSidebarExpanded: boolean;
    isDarkMode: boolean;
 }>();
 
