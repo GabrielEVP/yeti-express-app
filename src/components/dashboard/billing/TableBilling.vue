@@ -14,7 +14,7 @@
             <TableRow v-for="dataItem in data" :key="dataItem.id">
                <TableContent class="text-gray-900 dark:text-gray-50">{{ dataItem.number }}</TableContent>
                <TableContent>{{ formatDateCustom(dataItem.date) }}</TableContent>
-               <TableContent class="text-right">{{ dataItem.totalAmount }} $</TableContent>
+               <TableContent class="text-right">{{ dataItem.total }} $</TableContent>
                <TableContent class="text-center">
                   <Bagde :class="[getStatusBillingClass(dataItem.status)]">
                      {{ getStatusBillingText(dataItem.status) }}
@@ -22,7 +22,7 @@
                </TableContent>
                <TableContent class="text-center">
                   <div class="flex justify-center gap-2">
-                     <EyeButton :id="dataItem.id" :route="url" />
+                     <EyeButton :id="String(dataItem.id)" :route="url" />
                      <DownloadButton @click="handleDownload(dataItem.id)" />
                   </div>
                </TableContent>

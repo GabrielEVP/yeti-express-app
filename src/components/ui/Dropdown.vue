@@ -1,6 +1,6 @@
 <template>
    <div class="relative border rounded-md dark:border-gray-700" v-click-outside="closeDropdown">
-      <button ref="1" @click="openDropdown = !openDropdown" class="flex w-full items-center justify-between p-4 hover:bg-muted/50 dark:hover:bg-gray-800">
+      <button ref="target" @click="openDropdown = !openDropdown" class="flex w-full items-center justify-between p-4 hover:bg-muted/50 dark:hover:bg-gray-800">
          <div class="flex items-center gap-2">
             <slot name="header"></slot>
          </div>

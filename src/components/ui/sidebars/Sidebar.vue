@@ -2,7 +2,7 @@
    <DangerAlert :show="showError" :message="alertMessage" />
    <SuccessAlert :show="showSuccess" :message="alertMessage" />
    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <aside :class="['fixed left-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg flex flex-col w-20']">
+      <aside class="fixed left-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg flex flex-col w-20">
          <div class="p-3 flex items-center shrink-0">
             <img :src="logo" alt="Logo" class="w-14 h-14 rounded-xl shadow-md" />
          </div>

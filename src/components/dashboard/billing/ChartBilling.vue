@@ -24,7 +24,7 @@ onMounted(() => {
 
 interface ChartableDocument {
    date: string;
-   totalAmount: number;
+   total: number;
 }
 
 type ChartProps<T> = {
@@ -47,7 +47,7 @@ function mapDocumentsToBarChartData<T extends ChartableDocument>(documents: T[] 
          year: "numeric",
       });
 
-      const amount = Number(doc.totalAmount);
+      const amount = Number(doc.total);
       if (isNaN(amount)) continue;
 
       groupedByMonth[month] = (groupedByMonth[month] || 0) + amount;

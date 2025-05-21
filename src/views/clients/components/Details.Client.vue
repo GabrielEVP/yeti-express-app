@@ -59,7 +59,7 @@
             <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
             <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
                <TableBilling :data="deliveries" url="/deliveries" />
-               <ChartBilling :documents="deliveries" title="Estadistica mensual de las Facturas" label="Total factura" />
+               <ChartBilling :documents="deliveries" title="Estadistica mensual de deliverys" label="Total deliverys" />
             </div>
          </div>
       </div>

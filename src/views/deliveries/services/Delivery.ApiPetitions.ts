@@ -72,7 +72,7 @@ export const getPdfDelivery = async (deliveryId: string): Promise<void> => {
 export const getDeliveriesByClientId = async (clientId: string): Promise<Delivery[]> => {
    try {
       const response = await apiClient.get(`/deliveries/clients/${clientId}`);
-      return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
+      return response.data;
    } catch (error) {
       throw new Error("Failed to fetch deliveries by client ID.");
    }
