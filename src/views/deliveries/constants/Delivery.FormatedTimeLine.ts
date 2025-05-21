@@ -1,7 +1,7 @@
 import { Receipt } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
 
-export const INVOICEEVENTDEFINITION: Record<string, Omit<TimeLineContent, "date">> = {
+export const DELIVERY_EVENT_DEFINITION: Record<string, Omit<TimeLineContent, "date">> = {
    update_delivery: {
       icon: Receipt,
       title: "Actualización de factura",

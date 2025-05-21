@@ -29,9 +29,11 @@
                         <SectionText title="Número de registro" :content="client.registrationNumber" />
                      </div>
                      <SectionText title="Notas" :content="client.notes" />
-                     <AdressesList :addresses="client.addresses" />
-                     <PhonesList :phones="client.phones" />
-                     <EmailsList :emails="client.emails" />
+                     <div class="space-y-6 pt-8">
+                        <AdressesList :addresses="client.addresses" />
+                        <PhonesList :phones="client.phones" />
+                        <EmailsList :emails="client.emails" />
+                     </div>
                   </div>
                </div>
             </Card>

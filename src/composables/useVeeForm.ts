@@ -28,7 +28,7 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
    const router = useRouter();
    const { triggerError, triggerSuccess } = useAlert();
 
-   const { handleSubmit, setValues, meta, errors } = useForm<T>({
+   const { handleSubmit, setValues, meta, errors, setFieldValue } = useForm<T>({
       validationSchema: validation.schema,
       initialValues: validation.initialValues,
    });
@@ -79,5 +79,5 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
       }
    });
 
-   return { initializeForm, onSubmit, meta, errors };
+   return { initializeForm, onSubmit, meta, errors, setFieldValue };
 }

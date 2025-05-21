@@ -1,6 +1,5 @@
 <template>
    <SideBar>
-      <DangerAlert :show="showError" :message="alertMessage" />
       <div class="flex justify-center items-center min-h-screen">
          <Card class="w-full max-w-4xl mx-auto p-6">
             <form @submit.prevent="onSubmit" class="h-full">
@@ -28,7 +27,7 @@
                <TabsContent tab="general" :activeTab="activeTab">
                   <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
                      <FieldForm type="date" label="Fecha del delivery" name="date" id="date" required />
-                     <FieldForm type="number" label="Monto" name="totalAmount" id="totalAmount" />
+                     <FieldForm type="number" label="Monto" name="total" id="total" />
                      <SelectForm label="Tipo de moneda" name="currency" :items="[...CURRENCYSELECT]" />
                   </div>
                   <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
@@ -70,10 +69,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useForm } from "vee-validate";
 import { FileText, NotebookPen } from "lucide-vue-next";
-import { useAlert } from "@/composables/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
+import { useVeeForm } from "@/composables/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton } from "@/components/";
 import { Courier, getCouriers } from "@views/couriers";
 import {
    Delivery,
@@ -90,39 +88,39 @@ import {
 } from "@/views/deliveries/";
 
 const activeTab = ref("general");
+const router = useRouter();
+
+const route = useRoute();
+const DeliveryId = route.params.id as string;
+
+const { initializeForm, onSubmit, meta, setFieldValue } = useVeeForm<Delivery>({
+   id: DeliveryId,
+   getById: getDelivery,
+   create: postDeliveries,
+   update: (values, id) => putDeliveries(values, id),
+   defaultRoute: deliveryAppRoutes.list,
+   messages: {
+      createError: "Error al crear el delivery",
+      updateError: "Error al actualizar el delivery",
+      createSuccess: "delivery creado correctamente",
+      updateSuccess: "delivery actualizado correctamente",
+   },
+   validation: {
+      schema: DeliverySchema,
+      initialValues: { ...DELIVERY_DEFAULT_FORM_VALUE },
+   },
+});
+
+onMounted(async () => {
+   initializeForm();
+});
 
 const clientId = ref("");
 const addressId = ref("");
 
 const contentSelectorRef = ref<InstanceType<typeof ContentSelectorClient>>();
 
-const route = useRoute();
-const DeliveryId = route.params.id as string;
 const routeClientId = route.params.clientId as string;
-
-onMounted(async () => {
-   if (DeliveryId) {
-      const data = (await getDelivery(DeliveryId)) as Delivery;
-      setValues(data);
-   } else if (routeClientId) {
-      setValues({ clientId: routeClientId });
-   }
-});
-
-const { handleSubmit, defineField, setValues, setFieldValue, meta } = useForm<Delivery>({
-   validationSchema: DeliverySchema,
-   initialValues: {
-      ...DELIVERY_DEFAULT_FORM_VALUE,
-   },
-});
-
-watch(clientId, (newVal) => {
-   setFieldValue("clientId", newVal);
-});
-
-watch(addressId, (newVal) => {
-   setFieldValue("clientAddressId", newVal);
-});
 
 const couriers = ref<{ label: string; value: string }[]>([]);
 onMounted(async () => {
@@ -133,30 +131,11 @@ onMounted(async () => {
    }));
 });
 
-const router = useRouter();
-const { showError, alertMessage, triggerError } = useAlert();
+watch(clientId, (newVal) => {
+   setFieldValue("clientId", newVal);
+});
 
-const onSubmit = handleSubmit(async (values) => {
-   let response: any;
-   let errorMessage: string;
-
-   if (DeliveryId) {
-      errorMessage = "Error al actualizar la factura";
-      response = await putDeliveries(values, DeliveryId);
-   } else {
-      errorMessage = "Error al crear la factura";
-      response = await postDeliveries(values);
-   }
-
-   if (!response || response.status < 200 || response.status >= 300) {
-      triggerError(errorMessage);
-   } else {
-      await router.push({
-         path: deliveryAppRoutes.list,
-         state: {
-            successMessage: DeliveryId ? "Delivery actualizada correctamente" : "Delivery creada correctamente",
-         },
-      });
-   }
+watch(addressId, (newVal) => {
+   setFieldValue("clientAddressId", newVal);
 });
 </script>

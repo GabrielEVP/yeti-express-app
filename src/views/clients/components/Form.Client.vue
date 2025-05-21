@@ -53,7 +53,7 @@ const router = useRouter();
 const route = useRoute();
 const clientId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta, errors } = useVeeForm<Client, string>({
+const { initializeForm, onSubmit, meta } = useVeeForm<Client, string>({
    id: clientId,
    getById: getClient,
    create: postClients,

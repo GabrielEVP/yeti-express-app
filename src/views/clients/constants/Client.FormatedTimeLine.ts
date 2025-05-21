@@ -1,14 +1,14 @@
 import { User } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
-import { INVOICEEVENTDEFINITION } from "@views/deliveries/";
+import { DELIVERY_EVENT_DEFINITION } from "@views/deliveries/";
 
-export const CLIENTEVENTDEFINITIONS: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
+export const CLIENT_EVENT_DEFINITIONS: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
    client: {
-      update: {
+      update_client: {
          icon: User,
          title: "Actualización de cliente",
          text: "Se han actualizado los datos del cliente",
       },
-      ...INVOICEEVENTDEFINITION,
+      ...DELIVERY_EVENT_DEFINITION,
    },
 };

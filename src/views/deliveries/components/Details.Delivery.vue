@@ -27,7 +27,7 @@
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <SectionText title="Número de Delivery" :content="delivery.number" />
                         <SectionText title="Fecha de Emisión" :content="delivery.date" />
-                        <SectionText title="Cliente" :content="clientNames[delivery.clientId]" />
+                        <SectionText title="Cliente" :content="delivery.clientId" />
                         <SectionText title="Importe Total" :content="delivery.total + ' €'" />
                      </div>
                      <SectionText title="Notas" :content="delivery.notes" />

@@ -17,7 +17,6 @@
             </template>
          </ul>
       </template>
-
       <template #direccion>
          <ul class="max-h-60 overflow-auto py-1">
             <template v-if="filteredAddresses.length">
@@ -35,7 +34,6 @@
             </template>
          </ul>
       </template>
-
       <template #modal>
          <FormClientModal :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="addNewClient" />
       </template>

@@ -1,9 +1,9 @@
 import { Package, Receipt } from "lucide-vue-next";
 import { type TimeLineContent } from "@models/LineContent";
-import { CLIENTEVENTDEFINITIONS } from "@/views/clients/constants/Client.FormatedTimeLine";
+import { CLIENT_EVENT_DEFINITIONS } from "@/views/clients/constants/Client.FormatedTimeLine";
 
 export const EVENTTIMELINECONTENT: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
-   ...CLIENTEVENTDEFINITIONS,
+   ...CLIENT_EVENT_DEFINITIONS,
    delivery: {
       update_delivery: {
          icon: Receipt,

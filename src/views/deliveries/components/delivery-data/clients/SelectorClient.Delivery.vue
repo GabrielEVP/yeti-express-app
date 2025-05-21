@@ -1,6 +1,7 @@
 <template>
+   <slot name="modal" />
    <div class="relative w-full h-full" ref="dropdownRef">
-      <Label>Cliente</Label>
+      <Label for="client">Cliente</Label>
       <div class="relative">
          <div class="flex w-full items-start space-x-4">
             <div class="flex flex-grow space-x-4">
@@ -17,7 +18,6 @@
                      <slot name="list"></slot>
                   </div>
                </div>
-
                <div ref="addressTarget" class="relative w-full">
                   <Field name="clientAddressId" :validateOnInput="true" v-slot="{ field }">
                      <div class="form-group">
@@ -32,15 +32,12 @@
                   </div>
                </div>
             </div>
-
             <div class="flex-shrink-0 self-stretch">
                <PlusButton @click="emit('openModal')" />
             </div>
          </div>
       </div>
    </div>
-
-   <slot name="modal" />
 </template>
 
 <script setup lang="ts">
@@ -54,32 +51,33 @@ const emit = defineEmits<{
    (e: "openModal"): void;
 }>();
 
-const clientSearch = ref("");
-const addressSearch = ref("");
+const clientTarget = ref(null);
+onClickOutside(clientTarget, () => (isClientOpen.value = false));
+
+const addressTarget = ref(null);
+onClickOutside(addressTarget, () => (isAddressOpen.value = false));
 
 const isClientOpen = ref(false);
-const isAddressOpen = ref(false);
-
-const clientTarget = ref(null);
-const addressTarget = ref(null);
-
-onClickOutside(clientTarget, () => (isClientOpen.value = false));
-onClickOutside(addressTarget, () => (isAddressOpen.value = false));
 
 function toggleClient() {
    isClientOpen.value = !isClientOpen.value;
 }
 
+const isAddressOpen = ref(false);
 function toggleAddress() {
    isAddressOpen.value = !isAddressOpen.value;
 }
 
-function onClientSearch(e: Event) {
-   clientSearch.value = (e.target as HTMLInputElement).value;
+const clientSearch = ref("");
+
+function onClientSearch(event: Event) {
+   clientSearch.value = (event.target as HTMLInputElement).value;
 }
 
-function onAddressSearch(e: Event) {
-   addressSearch.value = (e.target as HTMLInputElement).value;
+const addressSearch = ref("");
+
+function onAddressSearch(event: Event) {
+   addressSearch.value = (event.target as HTMLInputElement).value;
 }
 
 defineExpose({
