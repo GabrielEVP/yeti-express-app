@@ -4,8 +4,8 @@ export interface Delivery {
    date: string;
    status: "pending" | "paid" | "refused";
    currency: "USD" | "BOV" | "OTH";
-   paymentType: "Partial" | "Full";
-   totalAmount: number;
+   paymentType: "partial" | "full";
+   total: number;
    comision: number;
    notes: string;
    clientId: string;
@@ -43,7 +43,7 @@ export interface DeliveryLine {
    description: string;
    quantity: number;
    unitPrice: number;
-   totalAmount: number;
+   total: number;
    deliveryId: string;
    userId: string;
 }

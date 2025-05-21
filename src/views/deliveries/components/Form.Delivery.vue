@@ -73,6 +73,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
 import { FileText, NotebookPen } from "lucide-vue-next";
 import { useAlert } from "@/composables/";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
 import { Courier, getCouriers } from "@views/couriers";
 import {
    Delivery,
@@ -87,7 +88,6 @@ import {
    PAYMENT_SELECT,
    ContentSelectorClient,
 } from "@/views/deliveries/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton, DangerAlert } from "@/components/";
 
 const activeTab = ref("general");
 

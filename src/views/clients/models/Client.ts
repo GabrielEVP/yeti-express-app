@@ -2,14 +2,14 @@ import { Event } from "@/models/";
 
 export interface Client {
    id: string;
-   registrationNumber: string;
    legalName: string;
+   registrationNumber: string;
    notes: string;
-   userId: string;
    events: ClientEvent[];
    addresses: ClientAddress[];
    emails: ClientEmail[];
    phones: ClientPhone[];
+   userId: string;
    createdAt: string;
    updatedAt: string;
 }
@@ -30,12 +30,12 @@ export interface ClientAddress {
 export interface ClientEmail {
    id: string;
    email: string;
-   type: "Work" | "Personal";
+   type: "work" | "personal";
 }
 
 export interface ClientPhone {
    id: string;
    name: string;
    phone: string;
-   type: "Work" | "Personal";
+   type: "work" | "personal";
 }

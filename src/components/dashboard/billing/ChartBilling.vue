@@ -24,7 +24,7 @@ onMounted(() => {
 
 interface ChartableDocument {
    date: string;
-   totalTaxAmount: number;
+   totalAmount: number;
 }
 
 type ChartProps<T> = {
@@ -35,7 +35,7 @@ type ChartProps<T> = {
 
 const props = defineProps<ChartProps<ChartableDocument>>();
 
-function mapDocumentsToBarChartData<T extends ChartableDocument>(documents: T[] = [], label = "Facturación Mensual"): BarChartData {
+function mapDocumentsToBarChartData<T extends ChartableDocument>(documents: T[] = [], label = "Ganancias Mensual de deliverys"): BarChartData {
    const groupedByMonth: Record<string, number> = {};
 
    for (const doc of documents) {
@@ -47,7 +47,7 @@ function mapDocumentsToBarChartData<T extends ChartableDocument>(documents: T[] 
          year: "numeric",
       });
 
-      const amount = Number(doc.totalTaxAmount);
+      const amount = Number(doc.totalAmount);
       if (isNaN(amount)) continue;
 
       groupedByMonth[month] = (groupedByMonth[month] || 0) + amount;

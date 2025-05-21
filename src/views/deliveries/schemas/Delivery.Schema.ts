@@ -29,7 +29,7 @@ export const DeliverySchema = object({
    date: date().required("La fecha de la entrega es requerida"),
    status: mixed<"pending" | "paid" | "refused">().oneOf(["pending", "paid", "refused"], "Estado inválido").required("El estado de la entrega es requerido"),
    currency: mixed<"USD" | "BOV" | "OTH">().oneOf(["USD", "BOV", "OTH"], "Moneda inválida").required("La moneda es requerida"),
-   paymentType: mixed<"Partial" | "Full">().oneOf(["Partial", "Full"], "Tipo de pago inválido").required("El tipo de pago es requerido"),
+   paymentType: mixed<"partial" | "full">().oneOf(["partial", "full"], "Tipo de pago inválido").required("El tipo de pago es requerido"),
    totalAmount: number().min(0, "El total debe ser mayor o igual a 0").required("El total es requerido"),
    comision: number().min(0).required("La comisión es requerida"),
    notes: string().nullable(),

@@ -38,11 +38,11 @@
             <TimeLineActivity :lineContents="lineContents" />
          </div>
          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <ActivityView title="Total Facturado">
+            <ActivityView title="Total de Ganancias del mes">
                <div class="text-2xl font-bold">{{ totalBilledText }}</div>
                <p class="text-xs text-gray-500">{{ billedChangeText }}</p>
             </ActivityView>
-            <ActivityView title="Facturas Pendientes">
+            <ActivityView title="Deliverys Pendientes">
                <div class="text-2xl font-bold">{{ totalPendingText }}</div>
                <p class="text-xs text-gray-500">{{ pendingCountText }}</p>
             </ActivityView>
@@ -111,7 +111,7 @@ const pendingCount = computed(() => pendingDeliverys.value.length);
 const totalBilledText = computed(() => formatCurrency(totalBilled.value));
 const billedChangeText = computed(() => formatPercentageChange(billedChangePercent.value));
 const totalPendingText = computed(() => formatCurrency(totalPending.value));
-const pendingCountText = computed(() => formatCountWithPlural(pendingCount.value, "factura pendiente", "facturas pendientes"));
+const pendingCountText = computed(() => formatCountWithPlural(pendingCount.value, "Delivery pendiente", "Deliverys pendientes"));
 
 const sectionActions = [
    {
@@ -121,10 +121,6 @@ const sectionActions = [
    {
       content: "Crear Delivery",
       url: `/deliveries/new/${clientId}`,
-   },
-   {
-      content: "Crear presupuesto",
-      url: `/orders/new/${clientId}`,
    },
 ];
 </script>

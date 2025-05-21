@@ -1,4 +1,4 @@
-export function formatCurrency(amount: number, locale = "es-ES", currency = "EUR"): string {
+export function formatCurrency(amount: number, locale = "es-ES", currency = "USD"): string {
    return amount.toLocaleString(locale, {
       style: "currency",
       currency,
