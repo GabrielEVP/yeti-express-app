@@ -67,13 +67,64 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from "dayjs";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Building2 } from "lucide-vue-next";
-import { formatDateShort, formatRelativeDate } from "@/utils/";
-import { useClientData, PhonesList, EmailsList, AdressesList } from "@/views/clients";
+import { mapEventsToLineContent } from "@/composables";
+import { formatDateShort, formatRelativeDate, filterByDateMonth, percentageChange, sumBy, formatCurrency, formatCountWithPlural, formatPercentageChange } from "@/utils/";
 import { SideBar, SectionText, Card, TableBilling, ActionsButton, Text, TimeLineActivity, ActivityView, ChartBilling, LoadingSkeleton } from "@/components/";
+import { getClient, Client, PhonesList, EmailsList, AdressesList } from "@/views/clients";
+import { getDeliverysByClientId, Delivery } from "@/views/deliveries";
 
 const route = useRoute();
 const clientId = route.params.id as string;
-const { client, deliveries, lineContents, totalBilledText, billedChangeText, totalPendingText, pendingCountText, sectionActions } = useClientData(clientId);
+
+const client = ref<Client | null>(null);
+const deliveries = ref<Delivery[]>([]);
+
+const loadData = async () => {
+   if (!clientId) return;
+   client.value = await getClient(clientId);
+   deliveries.value = await getDeliverysByClientId(clientId);
+};
+
+onMounted(async () => {
+   await loadData();
+});
+
+const lineContents = computed(() => (client.value?.events ? mapEventsToLineContent(client.value.events) : []));
+
+const now = dayjs();
+const paidDeliverys = computed(() => deliveries.value.filter((i) => i.status === "paid"));
+const thisMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now));
+const lastMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now.subtract(1, "month")));
+
+const totalBilled = computed(() => sumBy(thisMonthDeliverys.value, (i) => Number(i.totalAmount)));
+const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.totalAmount)));
+const billedChangePercent = computed(() => percentageChange(totalBilled.value, totalLast.value));
+
+const pendingDeliverys = computed(() => deliveries.value.filter((i) => i.status !== "paid"));
+const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.totalAmount)));
+const pendingCount = computed(() => pendingDeliverys.value.length);
+
+const totalBilledText = computed(() => formatCurrency(totalBilled.value));
+const billedChangeText = computed(() => formatPercentageChange(billedChangePercent.value));
+const totalPendingText = computed(() => formatCurrency(totalPending.value));
+const pendingCountText = computed(() => formatCountWithPlural(pendingCount.value, "factura pendiente", "facturas pendientes"));
+
+const sectionActions = [
+   {
+      content: "Editar Cliente",
+      url: `/clients/edit/${clientId}`,
+   },
+   {
+      content: "Crear Delivery",
+      url: `/deliveries/new/${clientId}`,
+   },
+   {
+      content: "Crear presupuesto",
+      url: `/orders/new/${clientId}`,
+   },
+];
 </script>

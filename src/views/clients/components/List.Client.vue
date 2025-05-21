@@ -42,9 +42,53 @@
 </template>
 
 <script setup lang="ts">
-import { CLIENTTABLEHEADERS, clientAppRoutes, useClientList } from "@/views/clients";
+import { onMounted, ref } from "vue";
+import { useForm } from "vee-validate";
+import { usePagination, useModal, useFetch, useFilterSortSearch, useDeleteWithFeedback } from "@/composables/";
 import { SideBar, Card, TableContent, TableRow, TableDashboard, SearchForm, FilterButton, NewButton, TrashButton, EditButton, EyeButton, ConfirmationModal } from "@/components/";
+import { Client, getClients, deleteClient, getFilterClients, CLIENTTABLEHEADERS, clientAppRoutes } from "@/views/clients";
 
-const { clients, searchQuery, applySelectFilters, currentPage, totalPages, startIndex, endIndex, paginatedItems, isOpen, updatePage, handleSort, applyFilters, open, close, handleDeleteConfirmation } =
-   useClientList();
+const clients = ref<Client[]>([]);
+
+const { searchQuery, filters, applyFilters, handleSort, setDynamicFilters } = useFilterSortSearch({
+   columns: ["legal_name", "email", "type", "country"],
+   fetchFn: getFilterClients,
+   dataRef: clients,
+});
+
+const { handleSubmit } = useForm({
+   initialValues: {
+      type: "",
+      country: "",
+   },
+});
+
+const applySelectFilters = handleSubmit((formValues) => {
+   setDynamicFilters(formValues);
+});
+
+const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(clients, 15);
+
+const { executeFetch } = useFetch<Client[]>({
+   fetchFunction: getClients,
+   errorMessageOnFailure: "Error al cargar clientes",
+});
+
+onMounted(async () => {
+   clients.value = await executeFetch();
+});
+
+const { deleteAndNotify } = useDeleteWithFeedback<string>({
+   deleteFn: deleteClient,
+   onSuccessMessage: "Cliente eliminado exitosamente",
+});
+
+const { isOpen, selectedId, open, close } = useModal();
+
+const handleDeleteConfirmation = async () => {
+   await deleteAndNotify(String(selectedId.value), async () => {
+      clients.value = await executeFetch();
+   });
+   close();
+};
 </script>

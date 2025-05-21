@@ -8,10 +8,6 @@ export { default as EmailsForm } from "./components/client-data/emails/EmailsFor
 export { default as EmailsList } from "./components/client-data/emails/EmailsList.vue";
 export { default as PhonesForm } from "./components/client-data/phones/PhonesForm.vue";
 export { default as PhonesList } from "./components/client-data/phones/PhonesList.vue";
-export * from "./composables/useDetails.Client";
-export * from "./composables/useFetch.Client";
-export * from "./composables/useForm.Client";
-export * from "./composables/useList.Client";
 export * from "./constants/Client.DefaultFormValue";
 export * from "./constants/Client.FormatedTimeLine";
 export * from "./constants/Client.RoutesDictionary";

@@ -41,15 +41,35 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { CLIENTTABS, useClientForm, AdressesForm, EmailsForm, PhonesForm } from "@/views/clients/";
+import { useVeeForm } from "@/composables/";
 import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, TextAreaForm, AcceptButton, CancelButton } from "@/components/";
+import { Client, ClientSchema, DEFAULTCLIENTFORMVALUE, clientAppRoutes, getClient, putClients, postClients, CLIENTTABS, AdressesForm, EmailsForm, PhonesForm } from "@/views/clients/";
 
+const activeTab = ref("general");
 const router = useRouter();
 
 const route = useRoute();
 const clientId = route.params.id as string;
-const { activeTab, meta, initializeForm, onSubmit, errors } = useClientForm(clientId);
+
+const { initializeForm, onSubmit, meta } = useVeeForm<Client, string>({
+   id: clientId,
+   getById: getClient,
+   create: postClients,
+   update: (values, id) => putClients(values, id),
+   defaultRoute: clientAppRoutes.list,
+   messages: {
+      createError: "Error al crear el cliente",
+      updateError: "Error al actualizar el cliente",
+      createSuccess: "Cliente creado correctamente",
+      updateSuccess: "Cliente actualizado correctamente",
+   },
+   validation: {
+      schema: ClientSchema,
+      initialValues: { ...DEFAULTCLIENTFORMVALUE },
+   },
+});
+
 onMounted(initializeForm);
 </script>
