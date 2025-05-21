@@ -1,5 +1,5 @@
 <template>
-   <SelectorClient ref="selectorRef" :client="clientSearch" :address="addressSearch" @openModal="openModalClientForm" @update:client="clientSearch = $event" @update:address="addressSearch = $event">
+   <SelectorClient ref="selectorRef" @openModal="openModalClientForm">
       <template #list>
          <ul class="max-h-60 overflow-auto py-1">
             <template v-if="filteredClients.length">
@@ -17,6 +17,7 @@
             </template>
          </ul>
       </template>
+
       <template #direccion>
          <ul class="max-h-60 overflow-auto py-1">
             <template v-if="filteredAddresses.length">
@@ -34,6 +35,7 @@
             </template>
          </ul>
       </template>
+
       <template #modal>
          <FormClientModal :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="addNewClient" />
       </template>
@@ -41,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, defineProps } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { Client, getClients, ClientAddress } from "@views/clients";
 import { FormClientModal, SelectorClient } from "@/views/deliveries/";
 
@@ -59,36 +61,38 @@ const selectorRef = ref<InstanceType<typeof SelectorClient>>();
 const clients = ref<Client[]>([]);
 const selectedClient = ref<Client | null>(null);
 
-const clientSearch = ref("");
-const addressSearch = ref("");
 const isModalClientFormOpen = ref(false);
+
+const clientSearch = computed(() => selectorRef.value?.getClientSearch() ?? "");
+const addressSearch = computed(() => selectorRef.value?.getAddressSearch() ?? "");
 
 onMounted(async () => {
    clients.value = await getClients();
    syncFromProps();
 });
 
-const openModalClientForm = () => {
+function openModalClientForm() {
    isModalClientFormOpen.value = true;
-};
+}
 
-const closeModalClientForm = () => {
+function closeModalClientForm() {
    isModalClientFormOpen.value = false;
-};
+}
 
 const filteredClients = computed(() => clients.value.filter((c) => c.legalName.toLowerCase().includes(clientSearch.value.toLowerCase())));
+
 const filteredAddresses = computed(() => selectedClient.value?.addresses.filter((a) => a.address.toLowerCase().includes(addressSearch.value.toLowerCase())) ?? []);
 
 function selectClient(client: Client) {
-   clientSearch.value = client.legalName;
    selectedClient.value = client;
-   addressSearch.value = "";
+   selectorRef.value?.setClientSearch(client.legalName);
+   selectorRef.value?.setAddressSearch("");
    emit("update:clientId", String(client.id));
    selectorRef.value?.closeDropdowns();
 }
 
 function selectAddress(address: ClientAddress) {
-   addressSearch.value = address.address;
+   selectorRef.value?.setAddressSearch(address.address);
    emit("update:addressId", String(address.id));
    selectorRef.value?.closeDropdowns();
 }
@@ -96,13 +100,13 @@ function selectAddress(address: ClientAddress) {
 function syncFromProps() {
    const client = clients.value.find((c) => String(c.id) === props.clientId);
    if (client) {
-      clientSearch.value = client.legalName;
       selectedClient.value = client;
+      selectorRef.value?.setClientSearch(client.legalName);
    }
 
-   const address = selectedClient.value?.addresses.find((a) => String(a.id) === props.addressId);
+   const address = client?.addresses.find((a) => String(a.id) === props.addressId);
    if (address) {
-      addressSearch.value = address.address;
+      selectorRef.value?.setAddressSearch(address.address);
    }
 }
 

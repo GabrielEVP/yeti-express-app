@@ -36,14 +36,14 @@
                {{ formatDateCustom(delivery.date) }}
             </TableContent>
             <TableContent class="text-gray-600 dark:text-gray-300">
-               {{ clientNames[delivery.clientId] || "Cargando..." }}
+               {{ "Cargando..." }}
             </TableContent>
             <TableContent class="text-gray-600 dark:text-gray-300">
                <Bagde :class="getStatusBillingClass(delivery.status)">
                   {{ getStatusBillingText(delivery.status) }}
                </Bagde>
             </TableContent>
-            <TableContent class="text-gray-600 dark:text-gray-300">{{ delivery.totalAmount }}</TableContent>
+            <TableContent class="text-gray-600 dark:text-gray-300">{{ delivery.total }}</TableContent>
             <TableContent>
                <div class="flex gap-1 justify-center">
                   <EyeButton :id="String(delivery.id)" route="/deliveries" />
@@ -63,7 +63,15 @@ import { useRouter } from "vue-router";
 import { useModal, usePagination, useAlert } from "@/composables/";
 import { getStatusBillingClass, getStatusBillingText, getClientName, formatDateCustom } from "@utils";
 import { startOfMonth, endOfMonth, format } from "date-fns";
-import { TABLEHEADERSINVOICES, Delivery, deliveryAppRoutes, deleteDelivery, getFilterDeliverys, getPdfDelivery, STATUSBILLINGSELECT } from "@views/deliveries";
+import {
+   TABLEHEADERSINVOICES,
+   Delivery,
+   deliveryAppRoutes,
+   deleteDelivery,
+   getDeliveries, // Usamos el correcto
+   getPdfDelivery,
+   STATUSBILLINGSELECT,
+} from "@views/deliveries";
 import {
    SideBar,
    Card,
@@ -84,7 +92,6 @@ import {
 import Download from "@components/buttons/Download.vue";
 
 const deliveries = ref<Delivery[]>([]);
-
 const searchQuery = ref("");
 const selectedDeliveryStatus = ref("");
 
@@ -93,64 +100,30 @@ const sort = ref<{ column: string; order: "asc" | "desc" }>({
    order: "asc",
 });
 
-const handleSort = async (sortConfig: { column: string; order: "asc" | "desc" }) => {
-   sort.value = sortConfig;
-   handleApplyFilter();
-};
-
-const filters = computed(() => ({
-   search: searchQuery.value,
-   sort: sort.value,
-   select: [{ option: "status", value: selectedDeliveryStatus.value }],
-   dateRange: {
-      start: startDate.value,
-      end: endDate.value,
-   },
-}));
-
-const handleApplyFilter = async () => {
-   const data = await getFilterDeliverys(filters.value);
-
-   deliveries.value = Array.isArray(data) ? (data as Delivery[]) : [];
-   currentPage.value = 1;
-};
-
 const startDate = ref("");
 const endDate = ref("");
-const clientNames = ref<Record<string, string>>({});
+
+const handleSort = async (sortConfig: { column: string; order: "asc" | "desc" }) => {
+   sort.value = sortConfig;
+};
 
 onMounted(async () => {
+   deliveries.value = await getDeliveries();
    const today = new Date();
    startDate.value = format(startOfMonth(today), "yyyy-MM-dd");
    endDate.value = format(endOfMonth(today), "yyyy-MM-dd");
-
-   await handleApplyFilter();
-
-   for (const delivery of deliveries.value) {
-      await getClientName(clientNames.value, delivery.clientId);
-   }
 });
 
 const itemsPerPage = 15;
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(deliveries, itemsPerPage);
 
-const { showSuccess, showError, alertMessage, triggerSuccess, triggerError } = useAlert();
-
-const router = useRouter();
-
-if (router.options.history.state?.successMessage) {
-   const successMessage = String(router.options.history.state.successMessage || "");
-   triggerSuccess(successMessage);
-
-   window.history.replaceState({}, document.title);
-}
+const { triggerSuccess, triggerError } = useAlert();
 
 const { isOpen, selectedId, open, close } = useModal();
 
 const handleDeleteConfirmation = async () => {
    try {
       await deleteDelivery(String(selectedId.value));
-      await handleApplyFilter();
       triggerSuccess("Delivery eliminado exitosamente");
    } catch (error) {
       triggerError("Error al eliminar el Delivery");
@@ -159,7 +132,7 @@ const handleDeleteConfirmation = async () => {
 
 const handleDownload = async (deliveryId: string) => {
    try {
-      getPdfDelivery(deliveryId);
+      await getPdfDelivery(deliveryId);
    } catch (error) {
       triggerError("Error al abrir el PDF de la factura");
    }

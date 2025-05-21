@@ -75,7 +75,7 @@ import { mapEventsToLineContent } from "@/composables";
 import { formatDateShort, formatRelativeDate, filterByDateMonth, percentageChange, sumBy, formatCurrency, formatCountWithPlural, formatPercentageChange } from "@/utils/";
 import { SideBar, SectionText, Card, TableBilling, ActionsButton, Text, TimeLineActivity, ActivityView, ChartBilling, LoadingSkeleton } from "@/components/";
 import { getClient, Client, PhonesList, EmailsList, AdressesList } from "@/views/clients";
-import { getDeliverysByClientId, Delivery } from "@/views/deliveries";
+import { getDeliveriesByClientId, Delivery } from "@/views/deliveries";
 
 const route = useRoute();
 const clientId = route.params.id as string;
@@ -86,7 +86,7 @@ const deliveries = ref<Delivery[]>([]);
 const loadData = async () => {
    if (!clientId) return;
    client.value = await getClient(clientId);
-   deliveries.value = await getDeliverysByClientId(clientId);
+   deliveries.value = await getDeliveriesByClientId(clientId);
 };
 
 onMounted(async () => {
@@ -100,12 +100,12 @@ const paidDeliverys = computed(() => deliveries.value.filter((i) => i.status ===
 const thisMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now));
 const lastMonthDeliverys = computed(() => filterByDateMonth(paidDeliverys.value, (i) => i.date, now.subtract(1, "month")));
 
-const totalBilled = computed(() => sumBy(thisMonthDeliverys.value, (i) => Number(i.totalAmount)));
-const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.totalAmount)));
+const totalBilled = computed(() => sumBy(thisMonthDeliverys.value, (i) => Number(i.total)));
+const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.total)));
 const billedChangePercent = computed(() => percentageChange(totalBilled.value, totalLast.value));
 
 const pendingDeliverys = computed(() => deliveries.value.filter((i) => i.status !== "paid"));
-const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.totalAmount)));
+const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.total)));
 const pendingCount = computed(() => pendingDeliverys.value.length);
 
 const totalBilledText = computed(() => formatCurrency(totalBilled.value));

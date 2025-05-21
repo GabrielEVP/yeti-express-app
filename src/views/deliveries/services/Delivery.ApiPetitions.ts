@@ -1,64 +1,63 @@
-import { useGetAxios, useFilterGetAxios, usePostAxios, usePutAxios, useDeleteAxios } from "@/services/";
-import { Delivery, adaptDelivery, adaptDeliveryForApi, deliveryApiRoutes } from "@/views/deliveries";
 import { apiClient } from "@/services/";
+import { Delivery, adaptDelivery, adaptDeliveryForApi, deliveryApiRoutes } from "@/views/deliveries/";
 import { TransformBinaryToPdf } from "@/utils";
 
-export const getDeliverys = async () => {
+export const getDeliveries = async (): Promise<Delivery[]> => {
    try {
-      const data = await useGetAxios(deliveryApiRoutes.list);
-      return Array.isArray(data) ? data.map(adaptDelivery) : [];
+      const response = await apiClient.get(deliveryApiRoutes.list);
+      return response.data;
    } catch (error) {
-      return error;
+      throw new Error("Failed to fetch deliveries.");
    }
 };
 
-export const postDeliverys = async (data: Delivery) => {
+export const getDelivery = async (deliveryId: string): Promise<Delivery> => {
    try {
-      data = { ...data };
-      data = adaptDeliveryForApi(data);
-      return await usePostAxios(deliveryApiRoutes.list, data);
+      const response = await apiClient.get(deliveryApiRoutes.details(deliveryId));
+      return adaptDelivery(response.data);
    } catch (error) {
-      return error;
+      throw new Error(`Failed to fetch delivery with ID ${deliveryId}.`);
    }
 };
 
-export const putDeliverys = async (data: Delivery, deliveryId: string) => {
+export const postDeliveries = async (data: Delivery): Promise<Delivery> => {
    try {
-      data = { ...data };
-      data = adaptDeliveryForApi(data);
-      return await usePutAxios(deliveryApiRoutes.details(deliveryId), data);
+      const payload = adaptDeliveryForApi(data);
+      const response = await apiClient.post(deliveryApiRoutes.list, payload);
+      return adaptDelivery(response.data);
    } catch (error) {
-      return error;
+      throw new Error("Failed to create delivery.");
    }
 };
 
-export const getDelivery = async (deliveryId: string) => {
+export const putDeliveries = async (data: Delivery, deliveryId: string): Promise<Delivery> => {
    try {
-      const data = await useGetAxios(deliveryApiRoutes.details(deliveryId));
-      return adaptDelivery(data);
+      const payload = adaptDeliveryForApi(data);
+      const response = await apiClient.put(deliveryApiRoutes.details(deliveryId), payload);
+      return adaptDelivery(response.data);
    } catch (error) {
-      return error;
+      throw new Error(`Failed to update delivery with ID ${deliveryId}.`);
    }
 };
 
-export const deleteDelivery = async (deliveryId: string) => {
+export const deleteDelivery = async (deliveryId: string): Promise<void> => {
    try {
-      return await useDeleteAxios(deliveryApiRoutes.details(deliveryId));
+      await apiClient.delete(deliveryApiRoutes.details(deliveryId));
    } catch (error) {
-      return error;
+      throw new Error(`Failed to delete delivery with ID ${deliveryId}.`);
    }
 };
 
-export const getFilterDeliverys = async (data: any) => {
+export const getFilterDeliveries = async (params: Record<string, any>): Promise<Delivery[]> => {
    try {
-      const result = await useFilterGetAxios(deliveryApiRoutes.list, data);
-      return Array.isArray(result) ? result.map(adaptDelivery) : [];
+      const response = await apiClient.get(deliveryApiRoutes.list, { params });
+      return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
    } catch (error) {
-      return error;
+      throw new Error("Failed to fetch filtered deliveries.");
    }
 };
 
-export const getPdfDelivery = async (deliveryId: string) => {
+export const getPdfDelivery = async (deliveryId: string): Promise<void> => {
    try {
       const response = await apiClient.get(`/deliveries/${deliveryId}/download?ts=${Date.now()}`, {
          responseType: "blob",
@@ -66,16 +65,15 @@ export const getPdfDelivery = async (deliveryId: string) => {
 
       TransformBinaryToPdf(response.data, "Delivery", deliveryId);
    } catch (error) {
-      throw new Error("Error al abrir PDF");
+      throw new Error("Failed to download delivery PDF.");
    }
 };
 
-export const getDeliverysByClientId = async (clientId: string): Promise<Delivery[]> => {
+export const getDeliveriesByClientId = async (clientId: string): Promise<Delivery[]> => {
    try {
       const response = await apiClient.get(`/deliveries/clients/${clientId}`);
-      const data = Array.isArray(response.data) ? response.data.map(adaptDelivery) : [];
-      return data;
+      return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
    } catch (error) {
-      throw new Error("Error al abrir PDF");
+      throw new Error("Failed to fetch deliveries by client ID.");
    }
 };

@@ -37,7 +37,7 @@
                      <FieldForm type="number" label="Comision" name="comision" id="comision" />
                   </div>
                   <div class="gap-6 lg:mb-8">
-                     <ContentSelectorClient :client-id="clientId" :address-id="clientAddressId" />
+                     <ContentSelectorClient ref="contentSelectorRef" :client-id="clientId" :address-id="addressId" @update:clientId="clientId = $event" @update:addressId="addressId = $event" />
                   </div>
                   <LinesForm />
                </TabsContent>
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useForm } from "vee-validate";
 import { FileText, NotebookPen } from "lucide-vue-next";
@@ -81,8 +81,8 @@ import {
    deliveryAppRoutes,
    DELIVERY_DEFAULT_FORM_VALUE,
    getDelivery,
-   postDeliverys,
-   putDeliverys,
+   postDeliveries,
+   putDeliveries,
    LinesForm,
    CURRENCYSELECT,
    PAYMENT_SELECT,
@@ -90,6 +90,11 @@ import {
 } from "@/views/deliveries/";
 
 const activeTab = ref("general");
+
+const clientId = ref("");
+const addressId = ref("");
+
+const contentSelectorRef = ref<InstanceType<typeof ContentSelectorClient>>();
 
 const route = useRoute();
 const DeliveryId = route.params.id as string;
@@ -104,11 +109,19 @@ onMounted(async () => {
    }
 });
 
-const { handleSubmit, defineField, setValues, meta } = useForm<Delivery>({
+const { handleSubmit, defineField, setValues, setFieldValue, meta } = useForm<Delivery>({
    validationSchema: DeliverySchema,
    initialValues: {
       ...DELIVERY_DEFAULT_FORM_VALUE,
    },
+});
+
+watch(clientId, (newVal) => {
+   setFieldValue("clientId", newVal);
+});
+
+watch(addressId, (newVal) => {
+   setFieldValue("clientAddressId", newVal);
 });
 
 const couriers = ref<{ label: string; value: string }[]>([]);
@@ -120,9 +133,6 @@ onMounted(async () => {
    }));
 });
 
-const [clientId] = defineField("clientId");
-const [clientAddressId] = defineField("clientAddressId");
-
 const router = useRouter();
 const { showError, alertMessage, triggerError } = useAlert();
 
@@ -132,10 +142,10 @@ const onSubmit = handleSubmit(async (values) => {
 
    if (DeliveryId) {
       errorMessage = "Error al actualizar la factura";
-      response = await putDeliverys(values, DeliveryId);
+      response = await putDeliveries(values, DeliveryId);
    } else {
       errorMessage = "Error al crear la factura";
-      response = await postDeliverys(values);
+      response = await postDeliveries(values);
    }
 
    if (!response || response.status < 200 || response.status >= 300) {
