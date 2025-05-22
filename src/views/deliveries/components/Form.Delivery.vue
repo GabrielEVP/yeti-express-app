@@ -61,9 +61,9 @@
                      <div class="flex items-center justify-center m-auto mt-4">
                         <PlusButton @click="openModalClientForm" />
                      </div>
-                     <FormClientModal :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="handleAddClient" />
+                     <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="handleAddClient" />
                   </div>
-                  <LinesForm />
+                  <DeliveryLinesForm />
                </TabsContent>
                <TabsContent tab="receipt" :activeTab="activeTab">
                   <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
@@ -97,19 +97,8 @@ import { useRouter, useRoute } from "vue-router";
 import { FileText, NotebookPen } from "lucide-vue-next";
 import { useVeeForm } from "@/composables/";
 import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, FieldSelectorForm, SelectForm, ContentFieldSelectorForm, TextAreaForm, AcceptButton, CancelButton, PlusButton } from "@/components/";
-import {
-   Delivery,
-   DeliverySchema,
-   deliveryAppRoutes,
-   DELIVERY_DEFAULT_FORM_VALUE,
-   getDelivery,
-   postDeliveries,
-   putDeliveries,
-   CURRENCYSELECT,
-   PAYMENT_SELECT,
-   LinesForm,
-   FormClientModal,
-} from "@/views/deliveries/";
+import { Delivery, DeliverySchema, deliveryAppRoutes, DELIVERY_DEFAULT_FORM_VALUE, getDelivery, postDeliveries, putDeliveries, CURRENCYSELECT, PAYMENT_SELECT } from "@/views/deliveries/";
+import { DeliveryClientModalForm, DeliveryLinesForm } from "@/views/deliveries/components/";
 import { Client, ClientAddress, getClients } from "@/views/clients/";
 import { Courier, getCouriers } from "@views/couriers";
 

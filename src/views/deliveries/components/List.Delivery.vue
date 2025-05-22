@@ -61,7 +61,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useModal, usePagination, useAlert } from "@/composables/";
-import { getStatusBillingClass, getStatusBillingText, getClientName, formatDateCustom } from "@utils";
+import { getStatusBillingClass, getStatusBillingText, formatDateCustom } from "@utils";
 import { startOfMonth, endOfMonth, format } from "date-fns";
 import {
    TABLEHEADERSINVOICES,

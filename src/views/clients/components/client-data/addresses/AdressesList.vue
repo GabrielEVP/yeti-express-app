@@ -15,7 +15,6 @@
                   </p>
                   <p class="text-sm">CP: {{ address.postalCode }}</p>
                </div>
-               <span v-if="address.isBilling" class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold dark:border-gray-600"> Facturación </span>
             </div>
          </div>
          <EmptyData v-else class="mt-10" />

@@ -14,7 +14,7 @@
             <FieldForm type="number" label="Cantidad" :name="`lines[${idx}].quantity`" :id="`lines-${idx}`" />
             <FieldForm type="number" label="Precio Unitario" :name="`lines[${idx}].unitPrice`" :id="`lines-${idx}`" />
          </div>
-         <FieldFormDisabled label="Total" :id="`lines-${idx}`" v-model="field.value.totalAmount" />
+         <FieldFormDisabled label="Total" :id="`lines-${idx}`" v-model="field.value.total" />
       </div>
    </Sheet>
 </template>
@@ -34,7 +34,7 @@ const calculateTotal = (field: DeliveryLine) => {
 watch(
    () => fields.value,
    (fields) => {
-      fields.map((field) => (field.value.totalAmount = calculateTotal(field.value)));
+      fields.map((field) => (field.value.total = calculateTotal(field.value)));
    },
    { deep: true }
 );
