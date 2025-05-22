@@ -11,7 +11,7 @@ interface CrudFormOptions<T extends GenericObject, ID> {
    getById?: (id: ID) => Promise<T>;
    create?: (values: T) => Promise<any>;
    update?: (values: T, id: ID) => Promise<any>;
-
+   modal?: boolean;
    defaultRoute?: string;
    messages: {
       createError?: string;
@@ -25,7 +25,7 @@ interface CrudFormOptions<T extends GenericObject, ID> {
    };
 }
 
-export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, create, update, defaultRoute, messages, validation }: CrudFormOptions<T, ID>) {
+export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, create, update, defaultRoute, messages, validation, modal }: CrudFormOptions<T, ID>) {
    const router = useRouter();
    const { triggerError, triggerSuccess } = useAlert();
 
@@ -70,7 +70,10 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
             }
 
             triggerSuccess(messages.createSuccess ?? "Creado correctamente");
-            return res;
+
+            if (modal) {
+               return res;
+            }
          }
 
          if (defaultRoute) {

@@ -115,6 +115,7 @@ import { Courier, getCouriers } from "@views/couriers";
 
 const activeTab = ref("general");
 const router = useRouter();
+
 const route = useRoute();
 const deliveryId = route.params.id as string;
 

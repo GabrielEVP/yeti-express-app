@@ -43,6 +43,7 @@ const emit = defineEmits<{
 }>();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
+   modal: true,
    create: postClients,
    messages: {
       createError: "Error al crear el cliente",
