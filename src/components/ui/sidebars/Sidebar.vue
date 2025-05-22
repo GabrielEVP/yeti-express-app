@@ -9,7 +9,7 @@
          <hr class="border-gray-200 dark:border-gray-700 mx-3 shrink-0" />
          <nav class="py-4">
             <ul class="p-4 space-y-4 flex flex-col">
-               <li v-for="item in navigationItems" :key="item.route">
+               <li v-for="item in navigationItems">
                   <NavigationItem :item="item" />
                </li>
             </ul>
@@ -20,9 +20,7 @@
                <ToggleDarkMode :isDarkMode="isDarkMode" @toggle="toggleDarkMode" />
             </div>
             <hr class="border-gray-200 dark:border-gray-700 mb-4" />
-            <div class="relative px-3">
-               <ProfileMenu :items="profileMenuItems" />
-            </div>
+            <div class="relative px-3"></div>
          </div>
       </aside>
       <main class="transition-all duration-300 ml-20 p-6">
@@ -32,16 +30,15 @@
 </template>
 
 <script setup lang="ts">
-import logo from "@/assets/yeti.webp";
 import { ref, onMounted } from "vue";
-import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, Bike, UserIcon, LogOutIcon } from "lucide-vue-next";
+import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, Bike } from "lucide-vue-next";
+import logo from "@/assets/yeti.webp";
+import { DangerAlert, SuccessAlert } from "@/components/";
 import NavigationItem from "@/components/ui/sidebars/SidebarItems.vue";
 import ToggleDarkMode from "@/components/ui/sidebars/SidebarToggleMode.vue";
-import ProfileMenu from "@/components/ui/sidebars/SidebarProfileMenu.vue";
+import { useAlert } from "@/composables/";
 
 const { showSuccess, showError, alertMessage } = useAlert();
-import { DangerAlert, SuccessAlert } from "@/components/";
-import { useAlert } from "@/composables/";
 
 const isDarkMode = ref(false);
 const isSidebarExpanded = ref(false);
@@ -53,23 +50,6 @@ const navigationItems = [
    { route: "/couriers", title: "Repartidor", icon: Bike },
    { route: "/employees", title: "Empleados", icon: BookUser },
 ];
-
-const profileMenuItems = [
-   { label: "Mi Perfil", icon: UserIcon, action: () => handleProfileClick() },
-   {
-      label: "Cerrar Sesión",
-      icon: LogOutIcon,
-      action: () => handleLogoutClick(),
-   },
-];
-
-function handleProfileClick() {
-   console.log("Profile clicked");
-}
-
-function handleLogoutClick() {
-   console.log("Logout clicked");
-}
 
 function toggleDarkMode() {
    isDarkMode.value = !isDarkMode.value;

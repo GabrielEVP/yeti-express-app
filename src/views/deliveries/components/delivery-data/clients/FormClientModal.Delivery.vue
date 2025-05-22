@@ -1,5 +1,5 @@
 <template>
-   <ModalForm :isOpen="isOpen" title="Añadir Nuevo Cliente" @close="$emit('close')" :meta="meta" @onSubmit="onSubmit">
+   <ModalForm title="Añadir Nuevo Cliente" :meta="meta" :isOpen="isOpen" @onSubmit="onSubmitform" @close="$emit('close')">
       <div class="space-y-4 border p-4 rounded-md mb-4">
          <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold dark:text-white">Información del cliente</h3>
@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { defineProps, onMounted } from "vue";
 import { useFieldArray } from "vee-validate";
-import { useUserId, useVeeForm } from "@/composables/";
+import { useVeeForm } from "@/composables/";
 import { ModalForm, FieldForm } from "@/components/";
 import { Client, ClientAddress, BasicClientSchema, DEFAULTBASICCLIENTFORMVALUE, postClients } from "@/views/clients/";
 
@@ -37,12 +37,10 @@ defineProps<{
    isOpen: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
    (e: "close"): void;
    (e: "addClient", clientData: Client): void;
 }>();
-
-const { userId } = useUserId();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
    create: postClients,
@@ -52,13 +50,20 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
    },
    validation: {
       schema: BasicClientSchema,
-      initialValues: { ...DEFAULTBASICCLIENTFORMVALUE, userId: userId.value },
+      initialValues: { ...DEFAULTBASICCLIENTFORMVALUE },
    },
 });
 
 onMounted(() => {
    initializeForm();
 });
+async function onSubmitform() {
+   const createdClient = await onSubmit();
 
+   if (createdClient) {
+      emit("close");
+      emit("addClient", createdClient);
+   }
+}
 const { fields } = useFieldArray<ClientAddress>("addresses");
 </script>

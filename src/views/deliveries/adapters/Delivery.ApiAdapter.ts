@@ -7,7 +7,7 @@ export function adaptDelivery(apiData: any): Delivery {
       date: apiData.date,
       status: apiData.status as "pending" | "paid" | "refused",
       currency: apiData.currency as "USD" | "BOV" | "OTH",
-      paymentType: apiData.type_payment as "partial" | "full",
+      paymentType: apiData.payment_type as "partial" | "full",
       total: apiData.total,
       comision: apiData.comision,
       notes: apiData.notes,

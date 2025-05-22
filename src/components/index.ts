@@ -25,6 +25,8 @@ export { default as TableDashboard } from "@/components/dashboard/Table.vue";
 // FORMS
 export { default as FieldFormDisabled } from "@/components/forms/FieldDisabled.vue";
 export { default as FieldForm } from "@/components/forms/Field.vue";
+export { default as FieldSelectorForm } from "@components/forms/field-selector/FieldSelector.vue";
+export { default as ContentFieldSelectorForm } from "@components/forms/field-selector/ContentFieldSelector.vue";
 export { default as MultiSelectForm } from "@/components/forms/MultiSelect.vue";
 export { default as PriceDropdownForm } from "@/components/forms/PriceDropdown.vue";
 export { default as SearchForm } from "@/components/forms/Search.vue";

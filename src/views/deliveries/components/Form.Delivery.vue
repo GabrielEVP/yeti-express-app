@@ -28,15 +28,40 @@
                   <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
                      <FieldForm type="date" label="Fecha del delivery" name="date" id="date" required />
                      <FieldForm type="number" label="Monto" name="total" id="total" />
-                     <SelectForm label="Tipo de moneda" name="currency" :items="[...CURRENCYSELECT]" />
+                     <SelectForm label="Tipo de moneda" name="currency" :items="CURRENCYSELECT" />
                   </div>
                   <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-                     <SelectForm label="Tipo de pago" name="paymentType" :items="[...PAYMENT_SELECT]" />
-                     <SelectForm label="Repartidor" name="courierId" :items="[...couriers]" />
+                     <SelectForm label="Tipo de pago" name="paymentType" :items="PAYMENT_SELECT" />
+                     <SelectForm label="Repartidor" name="courierId" :items="courierOptions" />
                      <FieldForm type="number" label="Comision" name="comision" id="comision" />
                   </div>
-                  <div class="gap-6 lg:mb-8">
-                     <ContentSelectorClient ref="contentSelectorRef" :client-id="clientId" :address-id="addressId" @update:clientId="clientId = $event" @update:addressId="addressId = $event" />
+                  <div class="flex flex-row gap-6 mb-8">
+                     <FieldSelectorForm
+                        label="Cliente"
+                        name="clientId"
+                        id="clientId"
+                        :isOpen="isClientOpen"
+                        :selectedValue="clientId"
+                        :displayValue="selectedClientName"
+                        @toggle="toggleClientSelector"
+                     >
+                        <ContentFieldSelectorForm :items="clients" displayKey="legalName" :selectedValue="clientId" @update="handleSelectClient" />
+                     </FieldSelectorForm>
+                     <FieldSelectorForm
+                        label="Dirección"
+                        name="clientAddressId"
+                        id="clientAddressId"
+                        :isOpen="isAddressOpen"
+                        :selectedValue="addressId"
+                        :displayValue="selectedAddressText"
+                        @toggle="toggleAddressSelector"
+                     >
+                        <ContentFieldSelectorForm :items="addresses" displayKey="address" :selectedValue="addressId" @update="handleSelectAddress" />
+                     </FieldSelectorForm>
+                     <div class="flex items-center justify-center m-auto mt-4">
+                        <PlusButton @click="openModalClientForm" />
+                     </div>
+                     <FormClientModal :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="handleAddClient" />
                   </div>
                   <LinesForm />
                </TabsContent>
@@ -67,12 +92,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { FileText, NotebookPen } from "lucide-vue-next";
 import { useVeeForm } from "@/composables/";
-import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton } from "@/components/";
-import { Courier, getCouriers } from "@views/couriers";
+import { SideBar, Card, Tabs, TabsContent, TabsTitle, FieldForm, FieldSelectorForm, SelectForm, ContentFieldSelectorForm, TextAreaForm, AcceptButton, CancelButton, PlusButton } from "@/components/";
 import {
    Delivery,
    DeliverySchema,
@@ -81,61 +105,118 @@ import {
    getDelivery,
    postDeliveries,
    putDeliveries,
-   LinesForm,
    CURRENCYSELECT,
    PAYMENT_SELECT,
-   ContentSelectorClient,
+   LinesForm,
+   FormClientModal,
 } from "@/views/deliveries/";
+import { Client, ClientAddress, getClients } from "@/views/clients/";
+import { Courier, getCouriers } from "@views/couriers";
 
 const activeTab = ref("general");
 const router = useRouter();
-
 const route = useRoute();
-const DeliveryId = route.params.id as string;
+const deliveryId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta, setFieldValue } = useVeeForm<Delivery>({
-   id: DeliveryId,
+const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
+   id: deliveryId,
    getById: getDelivery,
    create: postDeliveries,
-   update: (values, id) => putDeliveries(values, id),
+   update: putDeliveries,
    defaultRoute: deliveryAppRoutes.list,
    messages: {
       createError: "Error al crear el delivery",
       updateError: "Error al actualizar el delivery",
-      createSuccess: "delivery creado correctamente",
-      updateSuccess: "delivery actualizado correctamente",
+      createSuccess: "Delivery creado correctamente",
+      updateSuccess: "Delivery actualizado correctamente",
    },
    validation: {
       schema: DeliverySchema,
-      initialValues: { ...DELIVERY_DEFAULT_FORM_VALUE },
+      initialValues: DELIVERY_DEFAULT_FORM_VALUE,
    },
 });
 
-onMounted(async () => {
-   initializeForm();
-});
-
-const clientId = ref("");
-const addressId = ref("");
-
-const contentSelectorRef = ref<InstanceType<typeof ContentSelectorClient>>();
-
-const routeClientId = route.params.clientId as string;
-
-const couriers = ref<{ label: string; value: string }[]>([]);
-onMounted(async () => {
-   const response: any = await getCouriers();
-   couriers.value = response.map((courier: Courier) => ({
-      label: courier.firstName + " " + courier.lastName,
+const courierOptions = computed(() =>
+   couriers.value.map((courier) => ({
+      label: `${courier.firstName} ${courier.lastName}`,
       value: courier.id,
-   }));
+   }))
+);
+
+const clientId = ref<string>("");
+const addressId = ref<string>("");
+
+const clients = ref<Client[]>([]);
+const couriers = ref<Courier[]>([]);
+
+const selectedClientName = computed(() => clients.value.find((c) => c.id === clientId.value)?.legalName || "");
+const selectedAddressText = computed(() => addresses.value.find((a) => a.id === addressId.value)?.address || "");
+
+const addresses = computed<ClientAddress[]>(() => {
+   const client = clients.value.find((c) => c.id === clientId.value);
+   return client?.addresses || [];
 });
 
-watch(clientId, (newVal) => {
-   setFieldValue("clientId", newVal);
+onMounted(async () => {
+   await initializeForm();
+   const [courierData, clientData] = await Promise.all([getCouriers(), getClients()]);
+   couriers.value = courierData;
+   clients.value = clientData;
+
+   if (values.date) {
+      const dateOnly = values.date.split(" ")[0];
+      setFieldValue("date", dateOnly);
+   }
+   clientId.value = values.clientId;
+   addressId.value = values.clientAddressId;
 });
 
-watch(addressId, (newVal) => {
-   setFieldValue("clientAddressId", newVal);
-});
+const isModalClientFormOpen = ref(false);
+
+function openModalClientForm() {
+   isModalClientFormOpen.value = true;
+}
+
+function closeModalClientForm() {
+   isModalClientFormOpen.value = false;
+}
+
+const isClientOpen = ref(false);
+const isAddressOpen = ref(false);
+
+function handleSelectClient(client: Record<string, any>) {
+   clientId.value = client.id;
+   setFieldValue("clientId", client.id);
+
+   if (client.addresses && client.addresses.length > 0) {
+      addressId.value = client.addresses[0].id;
+      setFieldValue("clientAddressId", client.addresses[0].id);
+   } else {
+      addressId.value = "";
+      setFieldValue("clientAddressId", "");
+   }
+   isClientOpen.value = false;
+}
+
+async function handleAddClient(newClient: Client) {
+   clients.value = await getClients();
+   handleSelectClient(newClient);
+   closeModalClientForm();
+}
+
+function handleSelectAddress(address: Record<string, any>) {
+   addressId.value = address.id;
+   setFieldValue("clientAddressId", address.id);
+   isAddressOpen.value = false;
+}
+
+function toggleClientSelector() {
+   isClientOpen.value = !isClientOpen.value;
+   isAddressOpen.value = false;
+}
+
+function toggleAddressSelector() {
+   isAddressOpen.value = !isAddressOpen.value;
+   isClientOpen.value = false;
+}
 </script>

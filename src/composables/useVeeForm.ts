@@ -1,3 +1,4 @@
+// Set initial client and address based on form values
 import { useForm } from "vee-validate";
 import { useRouter } from "vue-router";
 import { useAlert } from "@/composables/useAlert";
@@ -28,7 +29,7 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
    const router = useRouter();
    const { triggerError, triggerSuccess } = useAlert();
 
-   const { handleSubmit, setValues, meta, errors, setFieldValue } = useForm<T>({
+   const { handleSubmit, setValues, meta, errors, setFieldValue, values } = useForm<T>({
       validationSchema: validation.schema,
       initialValues: validation.initialValues,
    });
@@ -69,6 +70,7 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
             }
 
             triggerSuccess(messages.createSuccess ?? "Creado correctamente");
+            return res;
          }
 
          if (defaultRoute) {
@@ -79,5 +81,5 @@ export function useVeeForm<T extends GenericObject, ID = string>({ id, getById, 
       }
    });
 
-   return { initializeForm, onSubmit, meta, errors, setFieldValue };
+   return { initializeForm, onSubmit, meta, errors, setFieldValue, values };
 }
