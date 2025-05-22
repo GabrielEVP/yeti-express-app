@@ -60,7 +60,8 @@ export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
    events: [],
    lines: [],
    receipt: DELIVERY_RECEIPT_DEFAULT_FORM_VALUE,
-   payments: [],
+   clientPayments: [],
+   courierPayments: [],
    createdAt: new Date().toISOString(),
    updatedAt: new Date().toISOString(),
 };
