@@ -1,4 +1,5 @@
-import { Delivery, DeliveryLine, DeliveryReceipt, DeliveryPayment } from "@views/deliveries/models/Delivery";
+import { Delivery, DeliveryEvent, DeliveryLine, DeliveryReceipt, DeliveryClientPayment, DeliveryCourierPayment } from "@views/deliveries/models/Delivery";
+import { adaptEvents, adaptEventsForApi } from "@/adapters/";
 
 export function adaptDelivery(apiData: any): Delivery {
    return {
@@ -19,8 +20,10 @@ export function adaptDelivery(apiData: any): Delivery {
       userId: apiData.user_id,
       createdAt: apiData.created_at,
       updatedAt: apiData.updated_at,
+      events: Array.isArray(apiData.events) ? apiData.lines.map(adaptDeliveryEvent) : [],
       lines: Array.isArray(apiData.lines) ? apiData.lines.map(adaptLine) : [],
-      payments: Array.isArray(apiData.payments) ? apiData.payments.map(adaptPayment) : [],
+      clientPayments: Array.isArray(apiData.client_payments) ? apiData.payments.map(adaptClientPayment) : [],
+      courierPayments: Array.isArray(apiData.courier_payments) ? apiData.payments.map(adaptCourierPayment) : [],
       receipt: adaptReceipt(apiData.receipt),
    };
 }
@@ -42,9 +45,25 @@ export function adaptDeliveryForApi(delivery: Delivery): any {
       open_box_id: delivery.openBoxId,
       close_box_id: delivery.closeBoxId,
       user_id: delivery.userId,
+      events: delivery.events.map(adaptDeliveryEventForApi),
       lines: delivery.lines.map(adaptLineForApi),
-      payments: delivery.payments.map(adaptPaymentForApi),
+      clientPayments: delivery.clientPayments.map(adaptClientPaymentForApi),
+      courierPayments: delivery.courierPayments.map(adaptCourierPaymentForApi),
       receipt: adaptReceiptForApi(delivery.receipt),
+   };
+}
+
+export function adaptDeliveryEvent(apiEvent: any): DeliveryEvent {
+   return {
+      ...adaptEvents(apiEvent),
+      deliveryId: apiEvent.delivery_id,
+   };
+}
+
+export function adaptDeliveryEventForApi(event: DeliveryEvent): any {
+   return {
+      ...adaptEventsForApi(event),
+      delivery_id: event.deliveryId,
    };
 }
 
@@ -101,7 +120,7 @@ export function adaptReceiptForApi(receipt: DeliveryReceipt): any {
    };
 }
 
-export function adaptPayment(apiPayment: any): DeliveryPayment {
+export function adaptClientPayment(apiPayment: any): DeliveryClientPayment {
    return {
       id: apiPayment.id,
       date: apiPayment.date,
@@ -112,7 +131,29 @@ export function adaptPayment(apiPayment: any): DeliveryPayment {
    };
 }
 
-export function adaptPaymentForApi(payment: DeliveryPayment): any {
+export function adaptClientPaymentForApi(payment: DeliveryClientPayment): any {
+   return {
+      id: payment.id,
+      date: payment.date,
+      amount: payment.amount,
+      delivery_id: payment.deliveryId,
+      method: payment.method,
+      user_id: payment.userId,
+   };
+}
+
+export function adaptCourierPayment(apiPayment: any): DeliveryCourierPayment {
+   return {
+      id: apiPayment.id,
+      date: apiPayment.date,
+      amount: apiPayment.amount,
+      deliveryId: apiPayment.delivery_id,
+      method: apiPayment.method,
+      userId: apiPayment.user_id,
+   };
+}
+
+export function adaptCourierPaymentForApi(payment: DeliveryCourierPayment): any {
    return {
       id: payment.id,
       date: payment.date,

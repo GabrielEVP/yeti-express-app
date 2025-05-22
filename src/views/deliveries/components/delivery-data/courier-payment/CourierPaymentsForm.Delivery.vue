@@ -1,6 +1,6 @@
 <template>
    <div class="flex justify-end mb-4">
-      <PlusButton @click="push(DELIVERY_PAYMENT_DEFAULT_FORM_VALUE)" />
+      <PlusButton @click="push(DELIVERY_COURIER_PAYMENT_DEFAULT_FORM_VALUE)" />
    </div>
    <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
       <Text>No hay pagos agregados</Text>
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useFieldArray } from "vee-validate";
-import { DeliveryCourierPayment, DELIVERY_PAYMENT_DEFAULT_FORM_VALUE } from "@views/deliveries";
+import { DeliveryCourierPayment, DELIVERY_COURIER_PAYMENT_DEFAULT_FORM_VALUE } from "@views/deliveries";
 import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from "@/components/";
 
 const { remove, push, fields } = useFieldArray<DeliveryCourierPayment>("payments");

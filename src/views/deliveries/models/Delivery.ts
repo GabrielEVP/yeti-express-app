@@ -1,3 +1,5 @@
+import { Event } from "@/models/";
+
 export interface Delivery {
    id: string;
    number: string;
@@ -17,7 +19,8 @@ export interface Delivery {
    events: DeliveryEvent[];
    lines: DeliveryLine[];
    receipt: DeliveryReceipt;
-   payments: DeliveryClientPayment[];
+   clientPayments: DeliveryClientPayment[];
+   courierPayments: DeliveryCourierPayment[];
    createdAt: string;
    updatedAt: string;
 }

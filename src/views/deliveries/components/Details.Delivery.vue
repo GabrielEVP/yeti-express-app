@@ -41,8 +41,8 @@
                         <DeliveryClientAddressList :address="clientAddress" />
                         <DeliveryReceiptDropdown :receipt="delivery.receipt" />
                         <DeliveryLinesDropdown :lines="delivery.lines" />
-                        <DeliveryPaymentsDrowdown :payments="delivery.payments" />
-                        <DeliveryCourierPaymentsDropdown :payments="delivery.payments" />
+                        <DeliveryPaymentsDrowdown :payments="delivery.clientPayments" />
+                        <DeliveryCourierPaymentsDropdown :payments="delivery.courierPayments" />
                      </div>
                   </div>
                </div>
