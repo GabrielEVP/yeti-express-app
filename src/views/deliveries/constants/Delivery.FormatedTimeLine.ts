@@ -2,29 +2,51 @@ import { Receipt } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
 
 export const DELIVERY_EVENT_DEFINITION: Record<string, Omit<TimeLineContent, "date">> = {
-   update_delivery: {
-      icon: Receipt,
-      title: "Actualización del delivery",
-      text: "Se ha actualizado la información de la delivery",
-   },
    create_delivery: {
       icon: Receipt,
       title: "Creación del delivery",
-      text: "Se ha creado una nueva delivery",
+      text: "Se ha creado un nuevo delivery",
    },
-   update_status_delivery: {
+   update_delivery: {
       icon: Receipt,
-      title: "Estado del la delivery actualizado",
-      text: "Se ha actualizado el estado de la delivery",
-   },
-   change_client_delivery: {
-      icon: Receipt,
-      title: "Cambio del cliente",
-      text: "Se ha cambiado el cliente de la nueva delivery",
+      title: "Actualización del delivery",
+      text: "Se ha actualizado la información del delivery",
    },
    delete_delivery: {
       icon: Receipt,
       title: "Delivery Borrada",
-      text: "Se ha eliminado la delivery",
+      text: "Se ha eliminado el delivery",
+   },
+
+   update_status_canceled_delivery: {
+      icon: Receipt,
+      title: "Delivery cancelado",
+      text: "Se ha cancelado el delivery",
+   },
+   update_status_transit_delivery: {
+      icon: Receipt,
+      title: "Delivery puesto en tránsito",
+      text: "Se ha puesto en tránsito el delivery",
+   },
+   update_status_partial_paid_delivery: {
+      icon: Receipt,
+      title: "Delivery parcialmente pagado",
+      text: "Se ha pagado parcialmente el delivery",
+   },
+   update_status_paid_delivery: {
+      icon: Receipt,
+      title: "Delivery pagado",
+      text: "Se ha pagado delivery",
+   },
+
+   update_partial_paid_courier: {
+      icon: Receipt,
+      title: "Repartidor parcialmente pagado",
+      text: "Se ha pagado parcialmente la comisión del repartidor",
+   },
+   update_paid_courier: {
+      icon: Receipt,
+      title: "Delivery pagado",
+      text: "Se ha pagado la comision del repartidor",
    },
 };

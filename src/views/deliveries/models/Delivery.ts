@@ -55,7 +55,7 @@ export interface DeliveryLine {
 export interface DeliveryClientPayment {
    id: string;
    date: string;
-   method: "cash" | "mobile payment" | "bank_transfer" | "other";
+   method: "cash" | "mobile_payment" | "bank_transfer" | "other";
    amount: number;
    deliveryId: string;
    userId: string;
@@ -64,7 +64,7 @@ export interface DeliveryClientPayment {
 export interface DeliveryCourierPayment {
    id: string;
    date: string;
-   method: "cash" | "mobile payment" | "bank_transfer" | "other";
+   method: "cash" | "mobile_payment" | "bank_transfer" | "other";
    amount: number;
    deliveryId: string;
    userId: string;

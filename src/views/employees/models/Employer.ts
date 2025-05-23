@@ -1,3 +1,5 @@
+import { Event } from "@/models/";
+
 export interface Employer {
    id: string;
    name: string;
@@ -6,6 +8,11 @@ export interface Employer {
    role: "admin" | "basic";
    active: boolean;
    userId: string;
+   events: EmployerEvent[];
    createdAt: string;
    updatedAt: string;
+}
+
+export interface EmployerEvent extends Event {
+   employerId: string;
 }

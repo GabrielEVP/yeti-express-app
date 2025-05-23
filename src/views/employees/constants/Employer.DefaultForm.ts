@@ -8,6 +8,7 @@ export const DEFAULT_EMPLOYER_FORM: Employer = {
    role: "basic",
    active: true,
    userId: "",
+   events: [],
    createdAt: "",
    updatedAt: "",
 };

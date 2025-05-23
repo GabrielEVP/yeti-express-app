@@ -8,6 +8,7 @@ export const DEFAULT_COURIER_FORM: Courier = {
    commission: 0,
    active: true,
    userId: "",
+   events: [],
    createdAt: "",
    updatedAt: "",
 };

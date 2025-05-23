@@ -1,4 +1,5 @@
 import { Client, ClientEvent, ClientAddress, ClientEmail, ClientPhone } from "@/views/clients/";
+import { adaptEvents, adaptEventsForApi } from "@/adapters/";
 
 export function adaptClient(apiData: any): Client {
    return {
@@ -25,32 +26,24 @@ export function adaptClientForApi(client: Client): any {
       user_id: client.userId,
       created_at: client.createdAt,
       updated_at: client.updatedAt,
-      events: Array.isArray(client.events) ? client.events.map(adaptClientEventforApi) : [],
+      events: Array.isArray(client.events) ? client.events.map(adaptClientEventForApi) : [],
       addresses: Array.isArray(client.addresses) ? client.addresses.map(adaptAddressForApi) : [],
       emails: Array.isArray(client.emails) ? client.emails.map(adaptEmailForApi) : [],
       phones: Array.isArray(client.phones) ? client.phones.map(adaptPhoneForApi) : [],
    };
 }
 
-export function adaptClientEvent(apiData: any): ClientEvent {
+export function adaptClientEvent(apiEvent: any): ClientEvent {
    return {
-      id: apiData.id,
-      event: apiData.event,
-      referenceTable: apiData.reference_table,
-      referenceId: apiData.reference_id,
-      clientId: apiData.client_id,
-      createdAt: apiData.created_at,
+      ...adaptEvents(apiEvent),
+      clientId: apiEvent.client_id,
    };
 }
 
-export function adaptClientEventforApi(ClientEvent: ClientEvent): any {
+export function adaptClientEventForApi(event: ClientEvent): any {
    return {
-      id: ClientEvent.id,
-      event: ClientEvent.event,
-      reference_table: ClientEvent.referenceTable,
-      reference_id: ClientEvent.referenceId,
-      client_id: ClientEvent.clientId,
-      created_at: ClientEvent.createdAt,
+      ...adaptEventsForApi(event),
+      client_id: event.clientId,
    };
 }
 
@@ -81,7 +74,7 @@ export function adaptPhone(apiPhone: any): ClientPhone {
       id: apiPhone.id,
       name: apiPhone.name,
       phone: apiPhone.phone,
-      type: apiPhone.type.toLowerCase() === "Work" ? "Work" : "Personal",
+      type: apiPhone.type.toLowerCase() === "work" ? "work" : "personal",
    };
 }
 
@@ -90,7 +83,7 @@ export function adaptPhoneForApi(phone: ClientPhone): any {
       id: phone.id,
       name: phone.name,
       phone: phone.phone,
-      type: phone.type.toLowerCase() === "Work" ? "Work" : "Personal",
+      type: phone.type.toLowerCase() === "work" ? "work" : "personal",
    };
 }
 
@@ -98,7 +91,7 @@ export function adaptEmail(apiEmail: any): ClientEmail {
    return {
       id: apiEmail.id,
       email: apiEmail.email,
-      type: apiEmail.type.toLowerCase() === "Work" ? "Work" : "Personal",
+      type: apiEmail.type.toLowerCase() === "work" ? "work" : "personal",
    };
 }
 
@@ -106,6 +99,6 @@ export function adaptEmailForApi(email: ClientEmail): any {
    return {
       id: email.id,
       email: email.email,
-      type: email.type.toLowerCase() === "Work" ? "Work" : "Personal",
+      type: email.type.toLowerCase() === "work" ? "work" : "personal",
    };
 }
