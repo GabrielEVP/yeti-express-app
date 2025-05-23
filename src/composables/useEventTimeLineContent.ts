@@ -1,17 +1,17 @@
 import { TimeLineContent } from "@models/LineContent";
 import { formatDate } from "@utils";
-import { EVENTTIMELINECONTENT } from "@/constants/";
+import { EVENT_TIME_LINE_CONTENT } from "@/constants/";
 
 type EventLike = {
-   refenceTable?: string;
+   section?: string;
    event: string;
    createdAt: string;
 };
 
 export function mapEventsToLineContent<T extends EventLike>(events: T[]): TimeLineContent[] {
    return events.map((event) => {
-      const table = event.refenceTable || "client";
-      const definition = EVENTTIMELINECONTENT[table]?.[event.event];
+      const table = event.section || "clients";
+      const definition = EVENT_TIME_LINE_CONTENT[table]?.[event.event];
 
       return {
          icon: definition?.icon ?? "Info",

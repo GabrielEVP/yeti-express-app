@@ -2,7 +2,7 @@ import { User, Receipt } from "lucide-vue-next";
 import { TimeLineContent } from "@models/LineContent";
 
 export const CLIENT_EVENT_DEFINITIONS: Record<string, Record<string, Omit<TimeLineContent, "date">>> = {
-   client: {
+   clients: {
       update_client: {
          icon: User,
          title: "Actualización de cliente",

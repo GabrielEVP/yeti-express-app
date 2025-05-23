@@ -39,7 +39,6 @@ export { default as ModalForm } from "@/components/modals/ModalForm.vue";
 
 // UI – ALERTS
 export { default as DangerAlert } from "@/components/ui/alerts/Danger.vue";
-export { default as InfoAlert } from "@/components/ui/alerts/Info.vue";
 export { default as SuccessAlert } from "@/components/ui/alerts/Success.vue";
 export { default as WarningAlert } from "@/components/ui/alerts/Warning.vue";
 

@@ -104,6 +104,7 @@ onMounted(async () => {
 });
 
 const lineContents = computed(() => (delivery.value?.events ? mapEventsToLineContent(delivery.value.events) : []));
+
 const dateFormated = computed(() => formatDateCustom(delivery.value?.date));
 const statusFormated = computed(() => formatValue(delivery.value?.status, STATUS_BILLING_MAP));
 const paymentTypeFormated = computed(() => formatValue(delivery.value?.paymentType, PAYMENT_TYPE_MAP));

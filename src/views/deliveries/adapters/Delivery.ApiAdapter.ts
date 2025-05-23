@@ -20,7 +20,7 @@ export function adaptDelivery(apiData: any): Delivery {
       userId: apiData.user_id,
       createdAt: apiData.created_at,
       updatedAt: apiData.updated_at,
-      events: Array.isArray(apiData.events) ? apiData.lines.map(adaptDeliveryEvent) : [],
+      events: Array.isArray(apiData.events) ? apiData.events.map(adaptDeliveryEvent) : [],
       lines: Array.isArray(apiData.lines) ? apiData.lines.map(adaptLine) : [],
       clientPayments: Array.isArray(apiData.client_payments) ? apiData.payments.map(adaptClientPayment) : [],
       courierPayments: Array.isArray(apiData.courier_payments) ? apiData.payments.map(adaptCourierPayment) : [],

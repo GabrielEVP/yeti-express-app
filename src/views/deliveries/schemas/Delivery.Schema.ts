@@ -4,13 +4,13 @@ export const lineSchema = object({
    description: string().required("La descripción es requerida"),
    quantity: number().min(1, "Cantidad mínima es 1").required("La cantidad es requerida"),
    unitPrice: number().min(0, "El precio unitario no puede ser negativo").required("El precio es requerido"),
-   totalAmount: number().min(0, "El total debe ser positivo").required("El total es requerido"),
+   total: number().min(0, "El total debe ser positivo").required("El total es requerido"),
 });
 
 export const paymentSchema = object({
    date: date().required("La fecha del pago es requerida"),
-   method: mixed<"cash" | "mobile payment" | "bank_transfer" | "other">()
-      .oneOf(["cash", "mobile payment", "bank_transfer", "other"], "Método de pago inválido")
+   method: mixed<"cash" | "mobile_payment" | "bank_transfer" | "other">()
+      .oneOf(["cash", "mobile_payment", "bank_transfer", "other"], "Método de pago inválido")
       .required("El método de pago es requerido"),
    amount: number().min(0.01, "El monto debe ser mayor que 0").required("El monto es requerido"),
 });
