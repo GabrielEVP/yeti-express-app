@@ -9,6 +9,12 @@ export const CLIENT_EVENT_DEFINITIONS: Record<string, Record<string, Omit<TimeLi
          text: "Se han actualizado los datos del cliente",
       },
 
+      update_delivery: {
+         icon: Receipt,
+         title: "Creación del delivery",
+         text: "Se ha creado un nuevo delivery",
+      },
+
       create_delivery: {
          icon: Receipt,
          title: "Creación del delivery",

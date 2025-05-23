@@ -77,3 +77,12 @@ export const getDeliveriesByClientId = async (clientId: string): Promise<Deliver
       throw new Error("Failed to fetch deliveries by client ID.");
    }
 };
+
+export const getDeliveriesByCourierId = async (courierId: string): Promise<Delivery[]> => {
+   try {
+      const response = await apiClient.get(`/deliveries/couriers/${courierId}`);
+      return response.data;
+   } catch (error) {
+      throw new Error("Failed to fetch deliveries by courier ID.");
+   }
+};

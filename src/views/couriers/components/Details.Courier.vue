@@ -5,10 +5,6 @@
          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                <h1 class="text-3xl font-bold tracking-tight">{{ courier.firstName }} {{ courier.lastName }}</h1>
-               <div class="flex items-center gap-2">
-                  <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">ID</h5>
-                  <Text>| {{ courier.id }}</Text>
-               </div>
             </div>
             <div class="flex gap-2">
                <ActionsButton title="Acciones" :datas="sectionActions" />
@@ -32,17 +28,31 @@
                   </div>
                </div>
             </Card>
-            <TimeLineActivity :lineContents="lineContents" />
+            <div class="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+               <ActivityView title="Fecha de Creación">
+                  <div class="text-2xl font-bold">{{ formatDateShort(courier.createdAt) }}</div>
+                  <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.createdAt) }}</p>
+               </ActivityView>
+               <ActivityView title="Ultima Actualizacion">
+                  <div class="text-2xl font-bold">{{ formatDateShort(courier.updatedAt) }}</div>
+                  <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.updatedAt) }}</p>
+               </ActivityView>
+               <ActivityView title="Pagos pendientes">
+                  <div class="text-2xl font-bold">20</div>
+                  <p class="text-xs text-gray-500">Faltan 2 deliverys por pagar este mes</p>
+               </ActivityView>
+               <ActivityView title="Pagos realizados">
+                  <div class="text-2xl font-bold">300</div>
+                  <p class="text-xs text-gray-500">Total de comision este mes 500</p>
+               </ActivityView>
+            </div>
          </div>
-         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <ActivityView title="Fecha de Creación">
-               <div class="text-2xl font-bold">{{ formatDateShort(courier.createdAt) }}</div>
-               <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.createdAt) }}</p>
-            </ActivityView>
-            <ActivityView title="Ultima Actualizacion">
-               <div class="text-2xl font-bold">{{ formatDateShort(courier.updatedAt) }}</div>
-               <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.updatedAt) }}</p>
-            </ActivityView>
+         <div class="space-y-4">
+            <h2 class="text-2xl font-bold tracking-tight">Deliverys Pendientes por pagar</h2>
+            <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
+               <TableBilling :data="deliveries" url="/deliveries" />
+               <ChartBilling :documents="deliveries" title="Estadistica mensual de deliverys" label="Total deliverys" />
+            </div>
          </div>
       </div>
    </SideBar>
@@ -54,21 +64,18 @@ import { Building2 } from "lucide-vue-next";
 import { formatDateShort, formatRelativeDate } from "@/utils/";
 import { ref, computed, onMounted } from "vue";
 import { Courier, getCourier } from "@/views/couriers";
-import { SideBar, SectionText, Card, ActionsButton, Text, TimeLineActivity, ActivityView, LoadingSkeleton } from "@/components/";
+import { SideBar, SectionText, Card, ActionsButton, Text, ActivityView, TableBilling, ChartBilling, LoadingSkeleton } from "@/components/";
+import { Delivery, getDeliveriesByCourierId } from "@/views/deliveries";
 
 const route = useRoute();
 const courierId = route.params.id as string;
 
 const courier = ref<Courier | null>(null);
-const lineContents = computed(() => []);
+const deliveries = ref<Delivery[]>([]);
 
 const loadData = async () => {
-   try {
-      const fetchedCourier = await getCourier(courierId);
-      courier.value = fetchedCourier;
-   } catch (error) {
-      console.error("Failed to fetch courier data:", error);
-   }
+   courier.value = await getCourier(courierId);
+   deliveries.value = await getDeliveriesByCourierId(courierId);
 };
 
 onMounted(async () => {
