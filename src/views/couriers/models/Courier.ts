@@ -1,18 +1,17 @@
-import { Event } from "@/models/";
+import { Event } from '@/models/';
 
 export interface Courier {
-   id: string;
-   firstName: string;
-   lastName: string;
-   phone: string;
-   commission: number;
-   active: boolean;
-   userId: string;
-   events: CourierEvent[];
-   createdAt: string;
-   updatedAt: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  active: boolean;
+  userId: string;
+  events: CourierEvent[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CourierEvent extends Event {
-   courierId: string;
+  courierId: string;
 }
