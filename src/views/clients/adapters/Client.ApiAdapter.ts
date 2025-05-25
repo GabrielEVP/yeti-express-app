@@ -66,7 +66,6 @@ export function adaptAddressForApi(address: ClientAddress): any {
 export function adaptPhone(apiPhone: any): ClientPhone {
   return {
     id: apiPhone.id,
-    name: apiPhone.name,
     phone: apiPhone.phone,
   };
 }
@@ -74,7 +73,6 @@ export function adaptPhone(apiPhone: any): ClientPhone {
 export function adaptPhoneForApi(phone: ClientPhone): any {
   return {
     id: phone.id,
-    name: phone.name,
     phone: phone.phone,
   };
 }

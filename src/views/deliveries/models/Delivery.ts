@@ -5,11 +5,9 @@ export interface Delivery {
   number: string;
   date: string;
   status: 'pending' | 'paid' | 'refused';
-  currency: 'USD' | 'BOV' | 'OTH';
   paymentType: 'partial' | 'full';
-  total: number;
-  comision: number;
   notes: string;
+  serviceId: string;
   clientId: string;
   clientAddressId: string;
   courierId: string;

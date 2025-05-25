@@ -12,7 +12,6 @@
         class="flex justify-between items-center border-b py-2 last:border-0 dark:border-gray-700"
       >
         <div>
-          <p class="font-medium">{{ phone.name }}</p>
           <p>{{ phone.phone }}</p>
         </div>
       </div>

@@ -11,7 +11,6 @@
       <TrashButton type="button" @click="remove(idx)" />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <FieldForm type="text" label="Nombre" :name="`phones[${idx}].name`" :id="`phone-${idx}`" />
       <FieldForm label="Telefono" :name="`phones[${idx}].phone`" :id="`phone-${idx}`" />
     </div>
   </div>
@@ -20,7 +19,7 @@
 <script setup lang="ts">
 import { useFieldArray } from 'vee-validate';
 import { ClientPhone, PHONEDEFAULTFORMVALUE } from '@/views/clients/';
-import { PlusButton, TrashButton, FieldForm, SelectForm, Text } from '@/components/';
+import { PlusButton, TrashButton, FieldForm, Text } from '@/components/';
 
 const { remove, push, fields } = useFieldArray<ClientPhone>('phones');
 </script>

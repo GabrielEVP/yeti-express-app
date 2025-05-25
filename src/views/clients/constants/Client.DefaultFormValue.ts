@@ -12,7 +12,6 @@ export const ADDRESSDEFAULTFORMVALUE: ClientAddress = {
 
 export const PHONEDEFAULTFORMVALUE: ClientPhone = {
   id: '',
-  name: '',
   phone: '',
 };
 
@@ -43,5 +42,5 @@ export const DEFAULTBASICCLIENTFORMVALUE: Client = {
   events: [],
   addresses: [ADDRESSDEFAULTFORMVALUE],
   emails: [],
-  phones: [],
+  phones: [PHONEDEFAULTFORMVALUE],
 };

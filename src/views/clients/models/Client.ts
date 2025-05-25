@@ -38,6 +38,5 @@ export interface ClientEmail {
 
 export interface ClientPhone {
   id: string;
-  name: string;
   phone: string;
 }
