@@ -1,27 +1,24 @@
-import { object, string, array } from "yup";
+import { object, string, array } from 'yup';
 
 export const PhoneSchema = object({
-   name: string().required("El nombre es requerido"),
-   phone: string().max(10, "El numero de telefono puede tener como maximo 10 digitos").required("El numero de telefono es requerido"),
-   type: string().oneOf(["Work", "Personal"]).required(),
+  name: string().required('El nombre es requerido'),
+  phone: string()
+    .max(10, 'El numero de telefono puede tener como maximo 10 digitos')
+    .required('El numero de telefono es requerido'),
 });
 
 export const EmailSchema = object({
-   email: string().email("Tiene que ser un email").required("El email es requerido"),
-   type: string().oneOf(["Work", "Personal"]).required(),
+  email: string().email('Tiene que ser un email').required('El email es requerido'),
 });
 
 export const AddressSchema = object({
-   address: string().required("Dirección requerida"),
-   state: string().required("Estado requerido"),
-   municipality: string().required("Municipio requerido"),
-   postalCode: string().required("Código postal requerido"),
+  address: string().required('Dirección requerida'),
 });
 
 export const ClientSchema = object({
-   legalName: string().required("Nombre Legal es requerido"),
-   registrationNumber: string().required("Numero de registro Requerido"),
-   addresses: array().of(AddressSchema),
-   emails: array().of(EmailSchema),
-   phones: array().of(PhoneSchema),
+  legalName: string().required('Nombre Legal es requerido'),
+  registrationNumber: string().required('Numero de registro Requerido'),
+  addresses: array().of(AddressSchema),
+  emails: array().of(EmailSchema),
+  phones: array().of(PhoneSchema),
 });

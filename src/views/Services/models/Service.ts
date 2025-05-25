@@ -1,0 +1,12 @@
+export interface Service {
+  name: string;
+  description: string;
+  amount: number;
+  comision: number;
+  bills: Bill[];
+}
+
+export interface Bill {
+  name: string;
+  amount: number;
+}

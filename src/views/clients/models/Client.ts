@@ -1,41 +1,43 @@
-import { Event } from "@/models/";
+import { Event } from '@/models/';
 
 export interface Client {
-   id: string;
-   legalName: string;
-   registrationNumber: string;
-   notes: string;
-   events: ClientEvent[];
-   addresses: ClientAddress[];
-   emails: ClientEmail[];
-   phones: ClientPhone[];
-   userId: string;
-   createdAt: string;
-   updatedAt: string;
+  id: string;
+  legalName: string;
+  type:
+    | 'venezolano'
+    | 'foreing'
+    | 'legal'
+    | 'commune'
+    | 'government'
+    | 'pasaport'
+    | 'personal_signature';
+  registrationNumber: string;
+  notes: string;
+  events: ClientEvent[];
+  addresses: ClientAddress[];
+  emails: ClientEmail[];
+  phones: ClientPhone[];
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ClientEvent extends Event {
-   clientId: string;
+  clientId: string;
 }
 
 export interface ClientAddress {
-   id: string;
-   address: string;
-   state: string;
-   city: string;
-   municipality: string;
-   postalCode: string;
+  id: string;
+  address: string;
 }
 
 export interface ClientEmail {
-   id: string;
-   email: string;
-   type: "work" | "personal";
+  id: string;
+  email: string;
 }
 
 export interface ClientPhone {
-   id: string;
-   name: string;
-   phone: string;
-   type: "work" | "personal";
+  id: string;
+  name: string;
+  phone: string;
 }
