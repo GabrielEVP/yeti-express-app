@@ -8,6 +8,7 @@ export interface Service {
 }
 
 export interface Bill {
+  id: string;
   name: string;
   amount: number;
 }

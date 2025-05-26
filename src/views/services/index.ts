@@ -9,3 +9,4 @@ export * from './models/Service';
 export * from './router/Router.Service';
 export * from './schemas/Service.Schemas';
 export * from './services/Service.ApiAdapter';
+export * from './constants/Service.TabsForm';

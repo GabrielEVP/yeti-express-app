@@ -24,6 +24,7 @@ export function adaptServiceForApi(service: Service): any {
 
 export function adaptBill(apiBill: any): Bill {
   return {
+    id: apiBill.id,
     name: apiBill.name,
     amount: apiBill.amount,
   };
@@ -31,6 +32,7 @@ export function adaptBill(apiBill: any): Bill {
 
 export function adaptBillForApi(bill: Bill): any {
   return {
+    id: bill.id,
     name: bill.name,
     amount: bill.amount,
   };

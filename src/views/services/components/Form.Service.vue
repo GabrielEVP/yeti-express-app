@@ -1,11 +1,22 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-[calc(100vh-3rem)] py-6 px-2">
+    <div class="flex justify-start">
+      <Breadcumb>
+        <BreadcumbItem>
+          <BreadcumbLink url="/services">Servicios</BreadcumbLink>
+          <BreadcumbSeparator />
+        </BreadcumbItem>
+        <BreadcumbItem>
+          <span class="text-gray-500 dark:text-gray-400">{{ text }}</span>
+        </BreadcumbItem>
+      </Breadcumb>
+    </div>
+    <div class="flex justify-center items-center min-h-[calc(90vh-3rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
-              <template v-for="tab in SERVICETABS" :key="tab.value">
+              <template v-for="tab in SERVICE_TABS" :key="tab.value">
                 <option :value="tab.value">
                   {{ tab.label }}
                 </option>
@@ -13,7 +24,7 @@
             </template>
             <template #desktop>
               <TabsTitle
-                v-for="tab in SERVICETABS"
+                v-for="tab in SERVICE_TABS"
                 :key="tab.value"
                 :tab="tab.value"
                 :activeTab="activeTab"
@@ -77,9 +88,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useFieldArray } from 'vee-validate';
 import { useVeeForm } from '@/composables/';
+import { Service, Bill } from '@/views/services/models';
+import { serviceSchema } from '@/views/services/schemas';
+import { SERVICE_TABS, SERVICES_FORM_VALUE, BILL_FORM_VALUE } from '@/views/services/constants';
+import { getService, postService, putService } from '@/views/services/services';
 import {
   SideBar,
+  Breadcumb,
+  BreadcumbItem,
+  BreadcumbLink,
+  BreadcumbSeparator,
   Card,
   Tabs,
   TabsContent,
@@ -92,35 +112,20 @@ import {
   TrashButton,
   Text,
 } from '@/components/';
-import { FileText, Receipt, Plus, Trash2 } from 'lucide-vue-next';
-import {
-  Service,
-  Bill,
-  getService,
-  postService,
-  putService,
-  SERVICES_FORM_VALUE,
-  BILL_FORM_VALUE,
-  serviceSchema,
-} from '@/views/services';
-import { useFieldArray } from 'vee-validate';
-const SERVICETABS = [
-  {
-    label: 'General',
-    value: 'general',
-    icon: FileText,
-  },
-  {
-    label: 'Facturas',
-    value: 'bills',
-    icon: Receipt,
-  },
-] as const;
 
 const activeTab = ref('general');
+
 const router = useRouter();
 const route = useRoute();
 const serviceId = route.params.id as string;
+
+const text = ref('');
+
+if (!serviceId) {
+  text.value = 'Nuevo servicio';
+} else {
+  text.value = 'Editar servicio';
+}
 
 const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
   id: serviceId,
@@ -140,7 +145,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
   },
 });
 
-const { fields, push, remove } = useFieldArray<Bill>('bills');
-
 onMounted(initializeForm);
+
+const { fields, push, remove } = useFieldArray<Bill>('bills');
 </script>

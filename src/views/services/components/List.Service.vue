@@ -10,9 +10,6 @@
       <div class="mx-auto grid gap-4 items-center grid-cols-1 md:flex md:flex-wrap">
         <div class="flex-grow flex gap-2">
           <SearchForm v-model="searchQuery" placeholder="Buscar Servicio" @input="applyFilters" />
-          <div class="relative">
-            <FilterButton> </FilterButton>
-          </div>
         </div>
         <NewButton label="Nuevo Servicio" :URL="serviceAppRoutes.new" />
       </div>
@@ -25,7 +22,6 @@
       :endIndex="endIndex"
       :totalItems="services.length"
       @updatePage="updatePage"
-      @sort="handleSort"
     >
       <TableRow v-for="(service, id) in paginatedItems" :key="service.id">
         <TableContent class="text-black dark:text-white">
@@ -33,6 +29,15 @@
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300">
           {{ service.amount }}
+        </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300">
+          {{ service.comision }}
+        </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300">
+          {{ totalExpenses(service) }}
+        </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300">
+          {{ totalEarnings(service) }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -48,7 +53,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useForm } from 'vee-validate';
 import {
   usePagination,
   useModal,
@@ -64,35 +68,33 @@ import {
   TableRow,
   TableDashboard,
   SearchForm,
-  FilterButton,
   NewButton,
   TrashButton,
   EditButton,
   EyeButton,
   ConfirmationModal,
 } from '@/components/';
-import { SERVICE_TABLE_HEADER, serviceAppRoutes } from '@/views/services'; // Asegúrate de que 'DEALER_TABLE_HEADER' sea relevante para 'Service' o cámbiale el nombre.
+import { SERVICE_TABLE_HEADER, serviceAppRoutes } from '@/views/services';
 
 const services = ref<Service[]>([]);
 
-const { searchQuery, filters, applyFilters, handleSort, setDynamicFilters } = useFilterSortSearch({
-  columns: ['name', 'amount', 'comision'], // Columnas ajustadas para Service
+const { searchQuery, applyFilters } = useFilterSortSearch({
+  columns: ['name', 'amount', 'comision'],
   fetchFn: getFilterServices,
   dataRef: services,
 });
 
-const { handleSubmit } = useForm({
-  initialValues: {
-    name: '',
-    description: '',
-    amount: 0, // Ajustado para un número
-    comision: 0, // Ajustado para un número
-  },
-});
+const totalExpenses = (service: Service) => {
+  return service.bills?.reduce((billSum, bill) => billSum + (Number(bill.amount) || 0), 0) || 0;
+};
 
-const applySelectFilters = handleSubmit((formValues) => {
-  setDynamicFilters(formValues);
-});
+const totalEarnings = (service: Service) => {
+  const totalExpense = totalExpenses(service);
+  const serviceAmount = Number(service.amount || 0);
+  const serviceCommission = Number(service.comision || 0);
+
+  return serviceAmount - serviceCommission - totalExpense;
+};
 
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(
   services,
