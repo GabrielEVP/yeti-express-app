@@ -16,7 +16,7 @@ export const AddressSchema = object({
 
 export const ClientSchema = object({
   legalName: string().required('Nombre Legal es requerido'),
-  registrationNumber: string().required('Numero de registro Requerido'),
+  registrationNumber: string().required('Numero de documento es Requerido'),
   addresses: array().of(AddressSchema),
   emails: array().of(EmailSchema),
   phones: array().of(PhoneSchema),

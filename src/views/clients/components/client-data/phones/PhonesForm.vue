@@ -10,9 +10,7 @@
       <h3 className="text-lg font-semibold dark:text-white">Telefonos {{ idx + 1 }}</h3>
       <TrashButton type="button" @click="remove(idx)" />
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <FieldForm label="Telefono" :name="`phones[${idx}].phone`" :id="`phone-${idx}`" />
-    </div>
+    <FieldForm label="Telefono" :name="`phones[${idx}].phone`" :id="`phone-${idx}`" />
   </div>
 </template>
 

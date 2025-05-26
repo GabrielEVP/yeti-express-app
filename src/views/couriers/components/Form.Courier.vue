@@ -6,13 +6,9 @@
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">
             Información del Repartidor
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <FieldForm label="Nombre" name="firstName" id="firstName" required />
-            <FieldForm label="Apellido" name="lastName" id="lastName" required />
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <FieldForm label="Teléfono" name="phone" id="phone" required />
-          </div>
+          <FieldForm label="Nombre" name="firstName" id="firstName" required />
+          <FieldForm label="Apellido" name="lastName" id="lastName" required />
+          <FieldForm label="Teléfono" name="phone" id="phone" required />
           <div class="flex justify-end space-x-2">
             <CancelButton @click="router.back()" />
             <AcceptButton :disabled="!meta.valid" />
@@ -41,8 +37,6 @@ const router = useRouter();
 const route = useRoute();
 const courierId = route.params.id as string;
 
-const { userId } = useUserId();
-
 const { initializeForm, onSubmit, meta } = useVeeForm<Courier>({
   id: courierId,
   getById: getCourier,
@@ -57,7 +51,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Courier>({
   },
   validation: {
     schema: CourierSchema,
-    initialValues: { ...DEFAULT_COURIER_FORM, userId: userId.value },
+    initialValues: { ...DEFAULT_COURIER_FORM },
   },
 });
 
