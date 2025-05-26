@@ -31,37 +31,37 @@
             <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
-            <div class="space-y-4">
-              <div v-for="(bill, index) in bills" :key="index" class="flex gap-4">
-                <FieldForm
-                  :label="'Nombre de factura ' + (index + 1)"
-                  :name="`bills[${index}].name`"
-                  :id="`bill-name-${index}`"
-                  required
-                />
-                <FieldForm
-                  :label="'Monto de factura ' + (index + 1)"
-                  :name="`bills[${index}].amount`"
-                  :id="`bill-amount-${index}`"
-                  type="number"
-                  required
-                />
-                <button
-                  type="button"
-                  @click="removeBill(index)"
-                  class="mt-8 text-red-500 hover:text-red-700"
-                >
-                  <Trash2 class="w-5 h-5" />
-                </button>
+            <div>
+              <div class="flex justify-end mb-4">
+                <PlusButton type="button" @click="push(BILL_FORM_VALUE)" />
               </div>
-              <button
-                type="button"
-                @click="addBill"
-                class="text-blue-500 hover:text-blue-700 flex items-center gap-2"
+              <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
+                <Text>No hay gastos agregados</Text>
+              </div>
+              <div
+                v-for="(field, idx) in fields"
+                :key="field.key"
+                class="space-y-4 border p-4 rounded-md mb-4"
               >
-                <Plus class="w-4 h-4" />
-                Agregar factura
-              </button>
+                <div class="flex justify-between items-center">
+                  <h3 class="text-lg font-semibold dark:text-white">Gasto {{ idx + 1 }}</h3>
+                  <TrashButton type="button" @click="remove(idx)" />
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <FieldForm
+                    label="nombre"
+                    :id="`bills-${idx}`"
+                    :name="`bills[${idx}].name`"
+                    :required="idx === 0"
+                  />
+                  <FieldForm
+                    label="Monto"
+                    :id="`bills-${idx}`"
+                    :name="`bills[${idx}].amount`"
+                    :required="idx === 0"
+                  />
+                </div>
+              </div>
             </div>
           </TabsContent>
           <div class="flex justify-end space-x-2">
@@ -88,17 +88,22 @@ import {
   TextAreaForm,
   AcceptButton,
   CancelButton,
+  PlusButton,
+  TrashButton,
+  Text,
 } from '@/components/';
 import { FileText, Receipt, Plus, Trash2 } from 'lucide-vue-next';
-import { Service } from '../models/Service';
 import {
+  Service,
+  Bill,
   getService,
   postService,
   putService,
   SERVICES_FORM_VALUE,
+  BILL_FORM_VALUE,
   serviceSchema,
 } from '@/views/services';
-
+import { useFieldArray } from 'vee-validate';
 const SERVICETABS = [
   {
     label: 'General',
@@ -116,15 +121,7 @@ const activeTab = ref('general');
 const router = useRouter();
 const route = useRoute();
 const serviceId = route.params.id as string;
-const bills = ref([{ name: '', amount: 0 }]);
 
-const addBill = () => {
-  bills.value.push({ name: '', amount: 0 });
-};
-
-const removeBill = (index: number) => {
-  bills.value.splice(index, 1);
-};
 const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
   id: serviceId,
   getById: getService,
@@ -142,6 +139,8 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
     initialValues: { ...SERVICES_FORM_VALUE },
   },
 });
+
+const { fields, push, remove } = useFieldArray<Bill>('bills');
 
 onMounted(initializeForm);
 </script>

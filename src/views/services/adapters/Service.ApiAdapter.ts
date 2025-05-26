@@ -2,6 +2,7 @@ import { Service, Bill } from '@/views/services';
 
 export function adaptService(apiData: any): Service {
   return {
+    id: apiData.id,
     name: apiData.name,
     description: apiData.description,
     amount: apiData.amount,
@@ -12,6 +13,7 @@ export function adaptService(apiData: any): Service {
 
 export function adaptServiceForApi(service: Service): any {
   return {
+    id: service.id,
     name: service.name,
     description: service.description,
     amount: service.amount,

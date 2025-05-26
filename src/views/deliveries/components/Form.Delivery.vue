@@ -33,8 +33,9 @@
             </template>
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
+            {{ errors }}
             <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-              <SelectForm label="Tipo de servicio" name="paymentType" :items="PAYMENT_SELECT" />
+              <SelectForm label="Servicio" name="serviceId" :items="serviceOptions" />
               <SelectForm label="Tipo de pago" name="paymentType" :items="PAYMENT_SELECT" />
               <SelectForm label="Repartidor" name="courierId" :items="courierOptions" />
             </div>
@@ -131,17 +132,17 @@ import {
   putDeliveries,
   PAYMENT_SELECT,
 } from '@/views/deliveries/';
-import { DeliveryClientModalForm, DeliveryLinesForm } from '@/views/deliveries/components/';
+import { DeliveryClientModalForm } from '@/views/deliveries/components/';
 import { Client, ClientAddress, getClients } from '@/views/clients/';
 import { Courier, getCouriers } from '@views/couriers';
+import { Service, getServices } from '@/views/services';
 
 const activeTab = ref('general');
 const router = useRouter();
-
 const route = useRoute();
 const deliveryId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values, errors } = useVeeForm<Delivery>({
   id: deliveryId,
   getById: getDelivery,
   create: postDeliveries,
@@ -159,6 +160,7 @@ const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Del
   },
 });
 
+const couriers = ref<Courier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
     label: `${courier.firstName} ${courier.lastName}`,
@@ -166,11 +168,17 @@ const courierOptions = computed(() =>
   }))
 );
 
+const services = ref<Service[]>([]);
+const serviceOptions = computed(() =>
+  services.value.map((service) => ({
+    label: service.name,
+    value: service.id,
+  }))
+);
+
 const clientId = ref<string>('');
 const addressId = ref<string>('');
-
 const clients = ref<Client[]>([]);
-const couriers = ref<Courier[]>([]);
 
 const selectedClientName = computed(
   () => clients.value.find((c) => c.id === clientId.value)?.legalName || ''
@@ -186,14 +194,15 @@ const addresses = computed<ClientAddress[]>(() => {
 
 onMounted(async () => {
   await initializeForm();
-  const [courierData, clientData] = await Promise.all([getCouriers(), getClients()]);
+  const [courierData, clientData, serviceData] = await Promise.all([
+    getCouriers(),
+    getClients(),
+    getServices(),
+  ]);
   couriers.value = courierData;
   clients.value = clientData;
+  services.value = serviceData;
 
-  if (values.date) {
-    const dateOnly = values.date.split(' ')[0];
-    setFieldValue('date', dateOnly);
-  }
   clientId.value = values.clientId;
   addressId.value = values.clientAddressId;
 });
