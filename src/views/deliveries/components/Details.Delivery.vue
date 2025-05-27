@@ -32,14 +32,13 @@
                 <SectionText title="Forma de Pago" :content="paymentTypeFormated" />
                 <SectionText title="Cliente" :content="client?.legalName || 'Cargando...'" />
                 <SectionText title="Repartidor" :content="receiptFullName" />
-                <SectionText title="Comision" :content="comisionFormated" />
-                <SectionText title="Importe Total" :content="totalFormated" />
+                <SectionText title="Servicio" :content="service?.name" />
+                <SectionText title="Importe Total" :content="totalEarnings" />
               </div>
               <SectionText title="Nota" :content="delivery.notes" />
               <div class="space-y-6 pt-8">
                 <DeliveryClientAddressList :address="clientAddress" />
                 <DeliveryReceiptDropdown :receipt="delivery.receipt" />
-                <DeliveryLinesDropdown :lines="delivery.lines" />
                 <DeliveryPaymentsDrowdown :payments="delivery.clientPayments" />
                 <DeliveryCourierPaymentsDropdown :payments="delivery.courierPayments" />
               </div>
@@ -50,12 +49,12 @@
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Restante a Pagar">
-          <div class="text-2xl font-bold">{{ totalFormated }}</div>
-          <p class="text-xs text-gray-500">Total: {{ totalFormated }}</p>
+          <div class="text-2xl font-bold">{{ totalComisionPaid }}</div>
+          <p class="text-xs text-gray-500">Total: {{ service?.comision }}</p>
         </ActivityView>
         <ActivityView title="Restante a Cobrar">
-          <div class="text-2xl font-bold">{{ totalFormated }}</div>
-          <p class="text-xs text-gray-500">Total: {{ totalFormated }}</p>
+          <div class="text-2xl font-bold">{{ totalEarningPaid }}</div>
+          <p class="text-xs text-gray-500">Total: {{ totalEarnings }}</p>
         </ActivityView>
         <ActivityView title="Ultima Actualizacion">
           <div class="text-2xl font-bold">{{ formatDateShort(delivery.updatedAt) }}</div>
@@ -104,6 +103,7 @@ import {
 } from '@views/deliveries/components/';
 import { Client, ClientAddress, getClient } from '@views/clients';
 import { Courier, getCourier } from '@views/couriers';
+import { Service, getService } from '@views/services';
 
 const route = useRoute();
 const deliveryId = route.params.id as string;
@@ -112,6 +112,7 @@ const delivery = ref<Delivery | null>(null);
 const client = ref<Client | null>(null);
 const clientAddress = ref<ClientAddress | null>(null);
 const courier = ref<Courier | null>(null);
+const service = ref<Service | null>(null);
 
 const loadData = async () => {
   if (!deliveryId) return;
@@ -119,6 +120,7 @@ const loadData = async () => {
   client.value = await getClient(delivery.value.clientId);
   clientAddress.value = client.value ? client.value.addresses[0] : null;
   courier.value = await getCourier(delivery.value.courierId);
+  service.value = await getService(delivery.value.serviceId);
 };
 
 onMounted(async () => {
@@ -134,11 +136,35 @@ const statusFormated = computed(() => formatValue(delivery.value?.status, STATUS
 const paymentTypeFormated = computed(() =>
   formatValue(delivery.value?.paymentType, PAYMENT_TYPE_MAP)
 );
-const comisionFormated = computed(() => formatPercentage(Number(delivery.value?.comision) ?? 0));
-const totalFormated = computed(() => formatCurrency(Number(delivery.value?.total) ?? 0));
 const receiptFullName = computed(
   () => `${(courier.value?.firstName, courier.value?.lastName)}` || 'Cargando...'
 );
+
+const totalExpenses = computed(() => {
+  return service.value?.bills.reduce((sum, bill) => sum + (Number(bill.amount) || 0), 0) || 0;
+});
+
+const totalEarnings = computed(() => {
+  if (!service.value) return 0;
+
+  const billsTotal = service.value.bills?.reduce((sum, bill) => sum + +bill.amount, 0) || 0;
+  const serviceAmount = +service.value.amount || 0;
+  const serviceCommission = +service.value.comision || 0;
+
+  return serviceAmount - serviceCommission - billsTotal;
+});
+
+const totalEarningPaid = computed(() => {
+  const paid = delivery.value?.clientPayments?.reduce((sum, p) => sum + +p.amount, 0) || 0;
+  return totalEarnings.value - paid;
+});
+
+const totalComisionPaid = computed(() => {
+  const paid = delivery.value?.courierPayments?.reduce((sum, p) => sum + +p.amount, 0) || 0;
+  if (service) {
+    return +service.value?.comision - paid || 0;
+  }
+});
 
 const sectionActions = [
   {

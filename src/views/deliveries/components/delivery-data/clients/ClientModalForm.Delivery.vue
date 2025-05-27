@@ -52,7 +52,7 @@
         <h3 class="text-lg font-semibold dark:text-white">Teléfonos de contacto</h3>
       </div>
       <FieldForm
-        :name="`phones[${idx}].number`"
+        :name="`phones[${idx}].phone`"
         :id="`phones-number-${idx}`"
         label="Número de teléfono"
         required

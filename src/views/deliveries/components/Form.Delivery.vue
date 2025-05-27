@@ -33,17 +33,32 @@
             </template>
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
-            {{ errors }}
             <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-              <SelectForm label="Servicio" name="serviceId" :items="serviceOptions" />
-              <SelectForm label="Tipo de pago" name="paymentType" :items="PAYMENT_SELECT" />
-              <SelectForm label="Repartidor" name="courierId" :items="courierOptions" />
+              <SelectForm
+                label="Servicio"
+                name="serviceId"
+                placeholder="Selecciona un servicio"
+                :items="serviceOptions"
+              />
+              <SelectForm
+                label="Forma de pago"
+                name="paymentType"
+                placeholder="Selecciona una forma de pago"
+                :items="PAYMENT_SELECT"
+              />
+              <SelectForm
+                label="Repartidor"
+                name="courierId"
+                placeholder="Selecciona un repartidor"
+                :items="courierOptions"
+              />
             </div>
             <div class="flex flex-row gap-6 mb-8">
               <FieldSelectorForm
                 label="Cliente"
                 name="clientId"
                 id="clientId"
+                placeholder="Selecciona un cliente"
                 :isOpen="isClientOpen"
                 :selectedValue="clientId"
                 :displayValue="selectedClientName"
@@ -60,6 +75,7 @@
                 label="Dirección"
                 name="clientAddressId"
                 id="clientAddressId"
+                placeholder="Selecciona una dirección"
                 :isOpen="isAddressOpen"
                 :selectedValue="addressId"
                 :displayValue="selectedAddressText"

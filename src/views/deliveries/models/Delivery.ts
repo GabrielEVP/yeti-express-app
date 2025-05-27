@@ -5,7 +5,7 @@ export interface Delivery {
   number: string;
   date: string;
   status: 'pending' | 'paid' | 'refused';
-  paymentType: 'partial' | 'full';
+  paymentType: 'partial' | 'full' | null;
   notes: string;
   serviceId: string;
   clientId: string;
@@ -53,7 +53,7 @@ export interface DeliveryLine {
 export interface DeliveryClientPayment {
   id: string;
   date: string;
-  method: 'cash' | 'mobile_payment' | 'bank_transfer' | 'other';
+  method: 'cash' | 'mobile_payment' | 'bank_transfer' | 'other' | null;
   amount: number;
   deliveryId: string;
   userId: string;
@@ -62,7 +62,7 @@ export interface DeliveryClientPayment {
 export interface DeliveryCourierPayment {
   id: string;
   date: string;
-  method: 'cash' | 'mobile_payment' | 'bank_transfer' | 'other';
+  method: 'cash' | 'mobile_payment' | 'bank_transfer' | 'other' | null;
   amount: number;
   deliveryId: string;
   userId: string;

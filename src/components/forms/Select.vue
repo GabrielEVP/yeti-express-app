@@ -1,15 +1,21 @@
 <template>
-  <Field v-if="name" :name="name" :validateOnInput="true" v-slot="{ field, meta, errorMessage }">
+  <Field
+    v-if="name"
+    :name="name"
+    :validateOnInput="true"
+    v-slot="{ value, meta, errorMessage, handleChange }"
+  >
     <div class="form-group">
       <Label :for="id">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
         <select
           :id="id"
-          v-bind="field"
+          :value="value"
+          @change="handleChange"
           class="w-full px-3 py-2 bg-white border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
         >
-          <option v-if="placeholder" value="" disabled selected hidden>
+          <option v-if="placeholder" value="" disabled hidden>
             {{ placeholder }}
           </option>
           <slot></slot>
@@ -32,12 +38,11 @@ import { Label } from '@/components';
 import { SelectOption } from '@/models';
 
 defineProps<{
-  label: string;
   id?: string;
+  label: string;
   name?: string;
   items: SelectOption[];
   required?: boolean;
-  modelValue?: string | number;
   placeholder?: string;
 }>();
 </script>

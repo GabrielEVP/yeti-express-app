@@ -9,7 +9,7 @@ import {
 export const DELIVERY_CLIENT_PAYMENT_DEFAULT_FORM_VALUE: DeliveryClientPayment = {
   id: '',
   date: new Date().toISOString().split('T')[0],
-  method: 'cash',
+  method: null,
   amount: 0,
   deliveryId: '',
   userId: '',
@@ -18,7 +18,7 @@ export const DELIVERY_CLIENT_PAYMENT_DEFAULT_FORM_VALUE: DeliveryClientPayment =
 export const DELIVERY_COURIER_PAYMENT_DEFAULT_FORM_VALUE: DeliveryCourierPayment = {
   id: '',
   date: new Date().toISOString().split('T')[0],
-  method: 'cash',
+  method: null,
   amount: 0,
   deliveryId: '',
   userId: '',
@@ -52,7 +52,7 @@ export const DELIVERY_DEFAULT_FORM_VALUE: Delivery = {
   number: '',
   date: new Date().toISOString().split('T')[0],
   status: 'pending',
-  paymentType: 'full',
+  paymentType: null,
   notes: '',
   serviceId: '',
   clientId: '',
