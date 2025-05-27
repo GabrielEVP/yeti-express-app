@@ -31,8 +31,6 @@
                 <SectionText title="Estado" :content="statusFormated" />
                 <SectionText title="Forma de Pago" :content="paymentTypeFormated" />
                 <SectionText title="Cliente" :content="client?.legalName || 'Cargando...'" />
-                <SectionText title="Repartidor" :content="receiptFullName" />
-                <SectionText title="Servicio" :content="service?.name" />
                 <SectionText title="Importe Total" :content="totalEarnings" />
               </div>
               <SectionText title="Nota" :content="delivery.notes" />
@@ -49,7 +47,7 @@
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Restante a Pagar">
-          <div class="text-2xl font-bold">{{ totalComisionPaid }}</div>
+          <div class="text-2xl font-bold"></div>
           <p class="text-xs text-gray-500">Total: {{ service?.comision }}</p>
         </ActivityView>
         <ActivityView title="Restante a Cobrar">
@@ -78,8 +76,6 @@ import {
   getStatusBillingClass,
   formatDateShort,
   formatRelativeDate,
-  formatCurrency,
-  formatPercentage,
   formatValue,
   formatDateCustom,
 } from '@utils';
@@ -95,14 +91,12 @@ import {
 } from '@components';
 import { Delivery, getDelivery, PAYMENT_TYPE_MAP, STATUS_BILLING_MAP } from '@views/deliveries';
 import {
-  DeliveryLinesDropdown,
   DeliveryClientAddressList,
   DeliveryReceiptDropdown,
   DeliveryPaymentsDrowdown,
   DeliveryCourierPaymentsDropdown,
 } from '@views/deliveries/components/';
 import { Client, ClientAddress, getClient } from '@views/clients';
-import { Courier, getCourier } from '@views/couriers';
 import { Service, getService } from '@views/services';
 
 const route = useRoute();
@@ -111,7 +105,6 @@ const deliveryId = route.params.id as string;
 const delivery = ref<Delivery | null>(null);
 const client = ref<Client | null>(null);
 const clientAddress = ref<ClientAddress | null>(null);
-const courier = ref<Courier | null>(null);
 const service = ref<Service | null>(null);
 
 const loadData = async () => {
@@ -119,8 +112,6 @@ const loadData = async () => {
   delivery.value = await getDelivery(deliveryId);
   client.value = await getClient(delivery.value.clientId);
   clientAddress.value = client.value ? client.value.addresses[0] : null;
-  courier.value = await getCourier(delivery.value.courierId);
-  service.value = await getService(delivery.value.serviceId);
 };
 
 onMounted(async () => {
@@ -135,9 +126,6 @@ const dateFormated = computed(() => formatDateCustom(delivery.value?.date));
 const statusFormated = computed(() => formatValue(delivery.value?.status, STATUS_BILLING_MAP));
 const paymentTypeFormated = computed(() =>
   formatValue(delivery.value?.paymentType, PAYMENT_TYPE_MAP)
-);
-const receiptFullName = computed(
-  () => `${(courier.value?.firstName, courier.value?.lastName)}` || 'Cargando...'
 );
 
 const totalExpenses = computed(() => {
@@ -157,13 +145,6 @@ const totalEarnings = computed(() => {
 const totalEarningPaid = computed(() => {
   const paid = delivery.value?.clientPayments?.reduce((sum, p) => sum + +p.amount, 0) || 0;
   return totalEarnings.value - paid;
-});
-
-const totalComisionPaid = computed(() => {
-  const paid = delivery.value?.courierPayments?.reduce((sum, p) => sum + +p.amount, 0) || 0;
-  if (service) {
-    return +service.value?.comision - paid || 0;
-  }
 });
 
 const sectionActions = [

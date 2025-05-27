@@ -46,12 +46,6 @@
                 placeholder="Selecciona una forma de pago"
                 :items="PAYMENT_SELECT"
               />
-              <SelectForm
-                label="Repartidor"
-                name="courierId"
-                placeholder="Selecciona un repartidor"
-                :items="courierOptions"
-              />
             </div>
             <div class="flex flex-row gap-6 mb-8">
               <FieldSelectorForm
@@ -150,7 +144,6 @@ import {
 } from '@/views/deliveries/';
 import { DeliveryClientModalForm } from '@/views/deliveries/components/';
 import { Client, ClientAddress, getClients } from '@/views/clients/';
-import { Courier, getCouriers } from '@views/couriers';
 import { Service, getServices } from '@/views/services';
 
 const activeTab = ref('general');
@@ -176,13 +169,13 @@ const { initializeForm, onSubmit, meta, setFieldValue, values, errors } = useVee
   },
 });
 
-const couriers = ref<Courier[]>([]);
+/*const couriers = ref<Courier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
     label: `${courier.firstName} ${courier.lastName}`,
     value: courier.id,
   }))
-);
+);*/
 
 const services = ref<Service[]>([]);
 const serviceOptions = computed(() =>
@@ -210,12 +203,7 @@ const addresses = computed<ClientAddress[]>(() => {
 
 onMounted(async () => {
   await initializeForm();
-  const [courierData, clientData, serviceData] = await Promise.all([
-    getCouriers(),
-    getClients(),
-    getServices(),
-  ]);
-  couriers.value = courierData;
+  const [clientData, serviceData] = await Promise.all([getClients(), getServices()]);
   clients.value = clientData;
   services.value = serviceData;
 
