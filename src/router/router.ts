@@ -3,7 +3,7 @@ import HomeView from '@views/home/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import { ClientRouter } from '@/views/clients/router';
 import { DeliveryRouter } from '@/views/deliveries';
-import { EmployerRouter } from '@views/employees';
+import { EmployeeRouter } from '@views/employees';
 import { CourierRouter } from '@views/couriers';
 import { ServiceRouter } from '@views/services';
 import { UserRouter } from '@/views/users/router/Router.User';
@@ -25,7 +25,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   ...ClientRouter,
   ...CourierRouter,
-  ...EmployerRouter,
+  ...EmployeeRouter,
   ...DeliveryRouter,
   ...ServiceRouter,
   ...UserRouter,
