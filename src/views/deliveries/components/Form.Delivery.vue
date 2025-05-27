@@ -35,12 +35,6 @@
           <TabsContent tab="general" :activeTab="activeTab">
             <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
               <SelectForm
-                label="Servicio"
-                name="serviceId"
-                placeholder="Selecciona un servicio"
-                :items="serviceOptions"
-              />
-              <SelectForm
                 label="Forma de pago"
                 name="paymentType"
                 placeholder="Selecciona una forma de pago"
@@ -144,7 +138,6 @@ import {
 } from '@/views/deliveries/';
 import { DeliveryClientModalForm } from '@/views/deliveries/components/';
 import { Client, ClientAddress, getClients } from '@/views/clients/';
-import { Service, getServices } from '@/views/services';
 
 const activeTab = ref('general');
 const router = useRouter();
@@ -176,14 +169,14 @@ const courierOptions = computed(() =>
     value: courier.id,
   }))
 );*/
-
+/*
 const services = ref<Service[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
     label: service.name,
     value: service.id,
   }))
-);
+);*/
 
 const clientId = ref<string>('');
 const addressId = ref<string>('');
@@ -203,9 +196,8 @@ const addresses = computed<ClientAddress[]>(() => {
 
 onMounted(async () => {
   await initializeForm();
-  const [clientData, serviceData] = await Promise.all([getClients(), getServices()]);
+  const [clientData] = await Promise.all([getClients()]);
   clients.value = clientData;
-  services.value = serviceData;
 
   clientId.value = values.clientId;
   addressId.value = values.clientAddressId;

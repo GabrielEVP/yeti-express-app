@@ -1,4 +1,4 @@
-export const SERVICE_TABLE_HEADER = [
+export const TABLE_HEADER_SERVICE = [
   { label: 'Nombre', key: 'name' },
   { label: 'Monto', key: 'amount' },
   { label: 'Comision', key: 'comission' },

@@ -1,10 +1,10 @@
 import { RouteRecordRaw } from 'vue-router';
-import { Details, Form, List } from '@/views/services/';
+import { Details, Form, List } from '@views/services/presentation/pages';
 
 export const ServiceRouter: Array<RouteRecordRaw> = [
   {
     path: '/services',
-    name: 'Service',
+    name: 'Services',
     component: List,
     meta: { requiresAuth: true },
   },
@@ -23,7 +23,7 @@ export const ServiceRouter: Array<RouteRecordRaw> = [
   },
   {
     path: '/services/:id',
-    name: 'ServiceDetails',
+    name: 'Service',
     component: Details,
     meta: { requiresAuth: true },
     props: true,

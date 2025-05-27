@@ -1,4 +1,4 @@
-export const serviceAppRoutes = {
+export const AppRoutesService = {
   list: '/services',
   new: '/services/new',
   edit: (id: string | number) => `/services/edit/${id}`,

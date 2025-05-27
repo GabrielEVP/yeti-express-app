@@ -1,6 +1,6 @@
 import { FileText, ReceiptText } from 'lucide-vue-next';
 
-export const SERVICE_TABS = [
+export const TABS_FORM_SERVICE = [
   {
     label: 'General',
     value: 'general',

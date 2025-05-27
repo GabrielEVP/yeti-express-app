@@ -1,1 +1,1 @@
-export * from './Service.Schemas';
+export * from './Service.Schema';

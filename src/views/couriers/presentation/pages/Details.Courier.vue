@@ -1,3 +1,4 @@
+service.getId()
 <template>
   <SideBar>
     <LoadingSkeleton v-if="!courier" />

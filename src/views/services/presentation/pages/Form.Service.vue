@@ -1,22 +1,11 @@
 <template>
   <SideBar>
-    <div class="flex justify-start">
-      <Breadcumb>
-        <BreadcumbItem>
-          <BreadcumbLink url="/services">Servicios</BreadcumbLink>
-          <BreadcumbSeparator />
-        </BreadcumbItem>
-        <BreadcumbItem>
-          <span class="text-gray-500 dark:text-gray-400">{{ text }}</span>
-        </BreadcumbItem>
-      </Breadcumb>
-    </div>
     <div class="flex justify-center items-center min-h-[calc(90vh-3rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
-              <template v-for="tab in SERVICE_TABS" :key="tab.value">
+              <template v-for="tab in TABS_FORM_SERVICE" :key="tab.value">
                 <option :value="tab.value">
                   {{ tab.label }}
                 </option>
@@ -24,7 +13,7 @@
             </template>
             <template #desktop>
               <TabsTitle
-                v-for="tab in SERVICE_TABS"
+                v-for="tab in TABS_FORM_SERVICE"
                 :key="tab.value"
                 :tab="tab.value"
                 :activeTab="activeTab"
@@ -44,7 +33,7 @@
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
               <div class="flex justify-end mb-4">
-                <PlusButton type="button" @click="push(BILL_FORM_VALUE)" />
+                <PlusButton type="button" @click="push(new Bill('', '', 0))" />
               </div>
               <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
                 <Text>No hay gastos agregados</Text>
@@ -89,29 +78,33 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useFieldArray } from 'vee-validate';
-import { useVeeForm } from '@/composables/';
-import { Service, Bill } from '@/views/services/models';
-import { serviceSchema } from '@/views/services/schemas';
-import { SERVICE_TABS, SERVICES_FORM_VALUE, BILL_FORM_VALUE } from '@/views/services/constants';
-import { getService, postService, putService } from '@/views/services/services';
+import { useVeeForm } from '@/composables';
 import {
   SideBar,
-  Breadcumb,
-  BreadcumbItem,
-  BreadcumbLink,
-  BreadcumbSeparator,
   Card,
-  Tabs,
-  TabsContent,
-  TabsTitle,
   FieldForm,
   TextAreaForm,
   AcceptButton,
   CancelButton,
+  Tabs,
+  TabsTitle,
+  TabsContent,
   PlusButton,
   TrashButton,
   Text,
-} from '@/components/';
+} from '@/components';
+import { Service } from '@/views/services/domain/Service';
+import { Bill } from '@/views/services/domain/Bill';
+import { serviceSchema } from '@/views/services/schemas';
+import {
+  GetServiceByIdUseCase,
+  CreateServiceUseCase,
+  UpdateServiceUseCase,
+} from '@/views/services/use-cases/';
+import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
+import { mapFormToService } from '@/views/services/adapters/Service.FormAdapter';
+import { AppRoutesService } from '@/views/services/presentation/routes';
+import { TABS_FORM_SERVICE } from '@/views/services/presentation/constants';
 
 const activeTab = ref('general');
 
@@ -119,20 +112,27 @@ const router = useRouter();
 const route = useRoute();
 const serviceId = route.params.id as string;
 
-const text = ref('');
+const repository = new ServiceRepositoryImpl();
+const getServiceById = new GetServiceByIdUseCase(repository);
+const createServiceUseCase = new CreateServiceUseCase(repository);
+const updateServiceUseCase = new UpdateServiceUseCase(repository);
 
-if (!serviceId) {
-  text.value = 'Nuevo servicio';
-} else {
-  text.value = 'Editar servicio';
-}
-
-const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
+const { initializeForm, onSubmit, meta } = useVeeForm<Service>({
   id: serviceId,
-  getById: getService,
-  create: postService,
-  update: (values, id) => putService(values, id),
-  defaultRoute: '/services',
+  getById: async (id) => {
+    const service = await getServiceById.execute(id);
+    if (!service) throw new Error('Servicio no encontrado');
+    return service;
+  },
+  create: (formValues) => {
+    const service = mapFormToService(formValues);
+    return createServiceUseCase.execute(service);
+  },
+  update: (formValues, id) => {
+    const service = mapFormToService({ ...formValues, id });
+    return updateServiceUseCase.execute(id, service);
+  },
+  defaultRoute: AppRoutesService.list,
   messages: {
     createError: 'Error al crear el servicio',
     updateError: 'Error al actualizar el servicio',
@@ -141,11 +141,11 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
   },
   validation: {
     schema: serviceSchema,
-    initialValues: { ...SERVICES_FORM_VALUE },
+    initialValues: {},
   },
 });
 
-onMounted(initializeForm);
-
 const { fields, push, remove } = useFieldArray<Bill>('bills');
+
+onMounted(initializeForm);
 </script>
