@@ -1,4 +1,5 @@
 import { Event } from '@/models/';
+import { Service } from '@/views/services';
 
 export interface Delivery {
   id: string;
@@ -7,15 +8,14 @@ export interface Delivery {
   status: 'pending' | 'paid' | 'refused';
   paymentType: 'partial' | 'full' | null;
   notes: string;
-  serviceId: string;
   clientId: string;
   clientAddressId: string;
   courierId: string;
   openBoxId: string;
   closeBoxId: string;
   userId: string;
+  service: Service;
   events: DeliveryEvent[];
-  lines: DeliveryLine[];
   receipt: DeliveryReceipt;
   clientPayments: DeliveryClientPayment[];
   courierPayments: DeliveryCourierPayment[];
@@ -36,16 +36,6 @@ export interface DeliveryReceipt {
   city: string;
   municipality: string;
   postalCode: string;
-  deliveryId: string;
-  userId: string;
-}
-
-export interface DeliveryLine {
-  id: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
   deliveryId: string;
   userId: string;
 }

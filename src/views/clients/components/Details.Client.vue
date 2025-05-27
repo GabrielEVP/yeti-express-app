@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
@@ -84,6 +83,7 @@ import {
   formatCountWithPlural,
   formatPercentageChange,
 } from '@/utils/';
+import dayjs from 'dayjs';
 import {
   SideBar,
   SectionText,
@@ -128,12 +128,14 @@ const lastMonthDeliverys = computed(() =>
   filterByDateMonth(paidDeliverys.value, (i) => i.date, now.subtract(1, 'month'))
 );
 
-const totalBilled = computed(() => sumBy(thisMonthDeliverys.value, (i) => Number(i.total)));
-const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.total)));
+const totalBilled = computed(() =>
+  sumBy(thisMonthDeliverys.value, (i) => Number(i.service.amount))
+);
+const totalLast = computed(() => sumBy(lastMonthDeliverys.value, (i) => Number(i.service.amount)));
 const billedChangePercent = computed(() => percentageChange(totalBilled.value, totalLast.value));
 
 const pendingDeliverys = computed(() => deliveries.value.filter((i) => i.status !== 'paid'));
-const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.total)));
+const totalPending = computed(() => sumBy(pendingDeliverys.value, (i) => Number(i.service.amount)));
 const pendingCount = computed(() => pendingDeliverys.value.length);
 
 const totalBilledText = computed(() => formatCurrency(totalBilled.value));

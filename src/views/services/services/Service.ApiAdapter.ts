@@ -60,3 +60,12 @@ export const getFilterServices = async (params: Record<string, any>): Promise<Se
     throw new Error('Failed to fetch filtered service.');
   }
 };
+
+export const getServiceByDeliveryId = async (DeliveryId: string): Promise<Service> => {
+  try {
+    const response = await apiClient.get(`/services/deliveries/${DeliveryId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch services by client ID.');
+  }
+};
