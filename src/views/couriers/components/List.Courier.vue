@@ -10,9 +10,6 @@
       <div class="mx-auto grid gap-4 items-center grid-cols-1 md:flex md:flex-wrap">
         <div class="flex-grow flex gap-2">
           <SearchForm v-model="searchQuery" placeholder="Buscar Courier" @input="applyFilters" />
-          <div class="relative">
-            <FilterButton> </FilterButton>
-          </div>
         </div>
         <NewButton label="Nuevo Courier" :URL="courierAppRoutes.new" />
       </div>
