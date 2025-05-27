@@ -15,7 +15,6 @@ export const EmployeeApi = {
 
   async create(data: Employee): Promise<Employee> {
     const response = await apiClient.post(employerApiRoutes.list, data);
-    console.log(response);
     return response.data;
   },
 

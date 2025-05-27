@@ -14,7 +14,6 @@
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100">
           <div class="p-6">
@@ -33,7 +32,6 @@
         </Card>
         <TimeLineActivity :lineContents="lineContents" />
       </div>
-
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Fecha de Creación">
           <div class="text-2xl font-bold">{{ formatDateShort(employee.getCreatedAt()) }}</div>
@@ -44,9 +42,6 @@
           <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getCreatedAt()) }}</p>
         </ActivityView>
       </div>
-    </div>
-    <div v-else class="text-center p-6 text-red-600 dark:text-red-400">
-      No se encontró el empleado.
     </div>
   </SideBar>
 </template>
@@ -66,43 +61,35 @@ import {
   ActivityView,
   LoadingSkeleton,
 } from '@/components/';
-
-// Dominio, Infraestructura y Caso de Uso
 import type { Employee } from '@/views/employees/domain/Employee';
 import { EmployeeRepositoryImpl } from '@/views/employees/infrastructure/Employee.RepositoryImpl';
 import { GetEmployeeByIdUseCase } from '@/views/employees/use-cases/Employee.GetByIdUseCase';
+import { AppRoutesEmployee } from '@/views/employees/presentation/routes/';
 
 const route = useRoute();
 const employeeId = route.params.id as string;
 
 const employee = ref<Employee | null>(null);
 const loading = ref(true);
-const lineContents = computed(() => []);
 
-// Instancia repo y caso de uso
 const repository = new EmployeeRepositoryImpl();
 const getEmployeeByIdUseCase = new GetEmployeeByIdUseCase(repository);
 
 const loadData = async () => {
-  loading.value = true;
-  try {
-    employee.value = await getEmployeeByIdUseCase.execute(employeeId);
-  } catch (error) {
-    console.error('Error cargando empleado:', error);
-    employee.value = null;
-  } finally {
-    loading.value = false;
-  }
+  employee.value = await getEmployeeByIdUseCase.execute(employeeId);
+  loading.value = false;
 };
 
 onMounted(() => {
   loadData();
 });
 
+const lineContents = computed(() => []);
+
 const sectionActions = [
   {
     content: 'Editar Empleado',
-    url: `/employees/edit/${employeeId}`,
+    url: AppRoutesEmployee.edit(employeeId),
   },
 ];
 </script>

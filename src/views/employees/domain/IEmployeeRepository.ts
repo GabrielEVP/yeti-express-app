@@ -6,5 +6,5 @@ export interface IEmployeeRepository {
   create(employee: Employee): Promise<Employee>;
   update(id: string, employee: Employee): Promise<Employee>;
   delete(id: string): Promise<void>;
-  search?(query: string): Promise<Employee[]>;
+  search(query: string): Promise<Employee[]>;
 }

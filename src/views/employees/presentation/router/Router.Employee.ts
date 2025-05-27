@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import { Details, Form, List } from '@/views/employees/presentation/components';
+import { Details, Form, List } from '@views/employees/presentation/pages';
 
 export const EmployeeRouter: Array<RouteRecordRaw> = [
   {

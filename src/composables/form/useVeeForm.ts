@@ -44,16 +44,8 @@ export function useVeeForm<T extends GenericObject, ID = string>({
 
   const initializeForm = async () => {
     if (!id || !getById) return;
-
-    try {
-      const data = await getById(id);
-      setValues(data as PartialDeep<T>);
-    } catch (error) {
-      triggerError('No se pudo cargar el registro o no existe');
-      if (defaultRoute) {
-        redirectToLastOrDefault(router, defaultRoute);
-      }
-    }
+    const data = await getById(id);
+    setValues(data as PartialDeep<T>);
   };
 
   const onSubmit = handleSubmit(async (values) => {

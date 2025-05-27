@@ -25,45 +25,48 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { SideBar, Card, FieldForm, SelectForm, AcceptButton, CancelButton } from '@/components';
 import { Employee } from '@/views/employees/domain/Employee';
 import { RoleOptions } from '@/views/employees/domain/Role';
 import { EmployeeSchema } from '@/views/employees/schemas/Employee.Schema';
-import { GetEmployeesUseCase } from '@/views/employees/use-cases/Employee.GetUseCase';
+import {
+  GetEmployeeByIdUseCase,
+  CreateEmployeeUseCase,
+  UpdateEmployeeUseCase,
+} from '@/views/employees/use-cases/';
 import { EmployeeRepositoryImpl } from '@/views/employees/infrastructure/Employee.RepositoryImpl';
 import { mapFormToEmployee } from '@/views/employees/adapters/Employee.FormAdapter';
+import { AppRoutesEmployee } from '@/views/employees/presentation/routes/';
 
 const router = useRouter();
-const route = useRoute();
-
-const employees = ref<Employee[]>([]);
 
 const repository = new EmployeeRepositoryImpl();
-const getEmployees = new GetEmployeesUseCase(repository);
+const getEmployeeById = new GetEmployeeByIdUseCase(repository);
+const createEmployeeUseCase = new CreateEmployeeUseCase(repository);
+const updateEmployeeUseCase = new UpdateEmployeeUseCase(repository);
 
-onMounted(async () => {
-  employees.value = await getEmployees.execute();
-});
-
-const EmployeeId = route.params.id as string | undefined;
+const route = useRoute();
+const EmployeeId = route.params.id as string;
 
 const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
   id: EmployeeId,
   getById: async (id) => {
-    await repository.getById(id);
+    const employee = await getEmployeeById.execute(id);
+    if (!employee) throw new Error('Employee not found');
+    return employee;
   },
   create: (formValues) => {
     const employee = mapFormToEmployee(formValues);
-    return repository.create(employee);
+    return createEmployeeUseCase.execute(employee);
   },
   update: (formValues, id) => {
     const employee = mapFormToEmployee({ ...formValues, id });
-    return repository.update(id, employee);
+    return updateEmployeeUseCase.execute(id, employee);
   },
-  defaultRoute: '/employees',
+  defaultRoute: AppRoutesEmployee.list,
   messages: {
     createError: 'Error al crear el empleado',
     updateError: 'Error al actualizar el empleado',
