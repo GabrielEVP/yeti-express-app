@@ -21,9 +21,10 @@ export class ClientRepositoryImpl implements IClientRepository {
   async getById(id: string): Promise<Client | null> {
     try {
       const response = await ClientApi.getById(id);
+      console.log(response);
       return adaptClient(response);
     } catch (error) {
-      return null;
+      throw new Error(String(error));
     }
   }
 

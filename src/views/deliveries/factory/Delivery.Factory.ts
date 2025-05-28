@@ -18,7 +18,7 @@ export const createDefaultDelivery = (): Delivery => {
     createDefaultClientAddress(),
     createDefaultCourier(),
     [],
-    new DeliveryReceipt('', '', '', '', '', '', '', '', ''),
+    new DeliveryReceipt('', '', '', ''),
     [],
     [],
     new Date().toISOString(),

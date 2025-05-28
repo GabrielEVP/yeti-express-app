@@ -50,7 +50,7 @@ export function adaptDelivery(apiData: any): Delivery {
     adaptClient(apiData.client),
     adaptClientAddress(apiData.client_address),
     adaptCourier(apiData.courier),
-    Array.isArray(apiData.time_line) ? apiData.time_line.map(adaptTimeLineContent) : [],
+    Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
     adaptDeliveryReceipt(apiData.receipt),
     Array.isArray(apiData.client_payments)
       ? apiData.client_payments.map(adaptDeliveryClientPayment)
@@ -89,4 +89,29 @@ function adaptDeliveryReceiptForApi(deliveryReceipt: DeliveryReceipt): any {
     phone: deliveryReceipt.getPhone(),
     address: deliveryReceipt.getAddress(),
   };
+}
+
+export function adaptDeliveryLite(apiData: any): Delivery {
+  return new Delivery(
+    apiData.id,
+    apiData.number,
+    apiData.date,
+    apiData.status as DeliveryStatus,
+    apiData.payment_type as PaymentType,
+    apiData.notes ?? '',
+    adaptService(apiData.service),
+    null as any,
+    null as any,
+    null as any,
+    null as any,
+    null as any,
+    [],
+    [],
+    '',
+    '',
+    '',
+    '',
+    '',
+    ''
+  );
 }

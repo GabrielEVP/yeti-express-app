@@ -1,28 +1,52 @@
-import { User, Receipt } from 'lucide-vue-next';
+import { Receipt } from 'lucide-vue-next';
 import { UITimeLineContentDefinitionMap } from '@/time-line-content/domain';
 
 export const CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS: UITimeLineContentDefinitionMap = {
-  update_client: {
-    icon: User,
-    title: 'Actualización de cliente',
-    text: 'Se han actualizado los datos del cliente',
-  },
-
-  update_delivery: {
-    icon: Receipt,
-    title: 'Actualización del delivery',
-    text: 'Se ha actualizado el delivery',
-  },
-
   create_delivery: {
     icon: Receipt,
     title: 'Creación del delivery',
     text: 'Se ha creado un nuevo delivery',
   },
-
+  update_delivery: {
+    icon: Receipt,
+    title: 'Actualización del delivery',
+    text: 'Se ha actualizado la información del delivery',
+  },
   delete_delivery: {
     icon: Receipt,
-    title: 'Delivery Borrado',
+    title: 'Delivery Borrada',
     text: 'Se ha eliminado el delivery',
+  },
+
+  update_status_canceled_delivery: {
+    icon: Receipt,
+    title: 'Delivery cancelado',
+    text: 'Se ha cancelado el delivery',
+  },
+  update_status_transit_delivery: {
+    icon: Receipt,
+    title: 'Delivery puesto en tránsito',
+    text: 'Se ha puesto en tránsito el delivery',
+  },
+  update_status_partial_paid_delivery: {
+    icon: Receipt,
+    title: 'Delivery parcialmente pagado',
+    text: 'Se ha pagado parcialmente el delivery',
+  },
+  update_status_paid_delivery: {
+    icon: Receipt,
+    title: 'Delivery pagado',
+    text: 'Se ha pagado delivery',
+  },
+
+  update_partial_paid_courier: {
+    icon: Receipt,
+    title: 'Repartidor parcialmente pagado',
+    text: 'Se ha pagado parcialmente la comisión del repartidor',
+  },
+  update_paid_courier: {
+    icon: Receipt,
+    title: 'Delivery pagado',
+    text: 'Se ha pagado la comision del repartidor',
   },
 };
