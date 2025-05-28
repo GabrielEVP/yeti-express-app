@@ -31,7 +31,7 @@
               name="type"
               id="type"
               placeholder="Selecciona un tipo de documento"
-              :items="ClientTypeOptions"
+              :items="Array.from(ClientTypeOptions)"
               required
             />
             <FieldForm

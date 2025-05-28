@@ -4,7 +4,6 @@ export * from './domain/Delivery';
 export * from './domain/DeliveryClientPayment';
 export * from './domain/DeliveryCourierPayment';
 export * from './domain/DeliveryReceipt';
-export * from './domain/DeliveryTimeLine';
 export * from './domain/IDeliveryRepository';
 export * from './domain/PaymentMethod';
 export * from './domain/PaymentType';
@@ -13,10 +12,8 @@ export * from './factory/Delivery.Factory';
 export * from './infrastructure/Delivery.Api';
 export * from './infrastructure/Delivery.RepositoryImpl';
 export * from './infrastructure/routes/Delivery.ApiRoutes';
-
 export * from './presentation/constants/Delivery.FormatedTimeLine';
 export * from './presentation/constants/Delivery.TableHeader';
-
 export * from './presentation/router/Router.Delivery';
 export * from './presentation/routes/AppRoutes.Delivery';
 export * from './schemas/Delivery.ClientBasicSchema';

@@ -12,12 +12,7 @@ export function mapFormToDeliveryReceipt(data: any): DeliveryReceipt {
     data.id ?? '',
     data.fullName ?? '',
     data.phone ?? '',
-    data.address ?? '',
-    data.state ?? '',
-    data.city ?? '',
-    data.municipality ?? '',
-    data.postalCode ?? '',
-    data.deliveryId ?? ''
+    data.address ?? ''
   );
 }
 
@@ -55,9 +50,13 @@ export function mapFormToDelivery(form: any): Delivery {
     mapFormToCourier(form.courier ?? {}),
     [],
     mapFormToDeliveryReceipt(form.receipt ?? {}),
-    (form.clientPayments ?? []).map(mapFormToDeliveryClientPayment),
-    (form.courierPayments ?? []).map(mapFormToDeliveryCourierPayment),
+    [],
+    [],
     form.createdAt ?? new Date().toISOString(),
-    form.updatedAt ?? new Date().toISOString()
+    form.updatedAt ?? new Date().toISOString(),
+    form.serviceId ?? '',
+    form.clientId ?? '',
+    form.clientAddressId ?? '',
+    form.courierId ?? ''
   );
 }

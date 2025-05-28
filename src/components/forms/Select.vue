@@ -35,7 +35,11 @@
 import { defineProps } from 'vue';
 import { Field } from 'vee-validate';
 import { Label } from '@/components';
-import { SelectOption } from '@/models';
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
 
 defineProps<{
   id?: string;

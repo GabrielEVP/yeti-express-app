@@ -1,6 +1,6 @@
 import { DeliveryStatus } from '@/views/deliveries/domain/Status';
 import { PaymentType } from '@/views/deliveries/domain/PaymentType';
-import { DeliveryTimeLine } from '@/views/deliveries/domain/DeliveryTimeLine';
+import { TimeLineContent } from '@time-line-content/domain';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
 import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
@@ -19,12 +19,16 @@ export class Delivery {
   private readonly client: Client;
   private readonly clientAddress: ClientAddress;
   private readonly courier: Courier;
-  private readonly timeLine: DeliveryTimeLine[];
+  private readonly timeLine: TimeLineContent[];
   private receipt: DeliveryReceipt;
   private clientPayments: DeliveryClientPayment[];
   private courierPayments: DeliveryCourierPayment[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
+  private clientId: string;
+  private courierId: string;
+  private serviceId: string;
+  private clientAddressId: string;
 
   constructor(
     id: string,
@@ -37,12 +41,16 @@ export class Delivery {
     client: Client,
     clientAddress: ClientAddress,
     courier: Courier,
-    timeLine: DeliveryTimeLine[],
+    timeLine: TimeLineContent[],
     receipt: DeliveryReceipt,
     clientPayments: DeliveryClientPayment[],
     courierPayments: DeliveryCourierPayment[],
     createdAt: Date | string,
-    updatedAt: Date | string
+    updatedAt: Date | string,
+    serviceId: string,
+    clientId: string,
+    clientAddressId: string,
+    courierId: string
   ) {
     this.id = id;
     this.number = number;
@@ -60,6 +68,10 @@ export class Delivery {
     this.courierPayments = courierPayments;
     this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
     this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
+    this.serviceId = serviceId;
+    this.clientId = clientId;
+    this.clientAddressId = clientAddressId;
+    this.courierId = courierId;
   }
 
   getId(): string {
@@ -102,7 +114,7 @@ export class Delivery {
     return this.courier;
   }
 
-  getTimeLine(): DeliveryTimeLine[] {
+  getTimeLine(): TimeLineContent[] {
     return [...this.timeLine];
   }
 
@@ -124,5 +136,36 @@ export class Delivery {
 
   getUpdatedAt(): Date {
     return this.updatedAt;
+  }
+
+  getClientId(): string {
+    return this.clientId;
+  }
+
+  getCourierId(): string {
+    return this.courierId;
+  }
+
+  getServiceId(): string {
+    return this.serviceId;
+  }
+
+  getClientAddressId(): string {
+    return this.clientAddressId;
+  }
+
+  getRemainingToPay(): number {
+    const totalPaid = this.clientPayments.reduce((sum, payment) => sum + payment.getAmount(), 0);
+    const totalComision = this.service.getComision();
+    return Math.max(totalComision - totalPaid, 0);
+  }
+
+  getRemainingToCollect(): number {
+    const totalCollected = this.courierPayments.reduce(
+      (sum, payment) => sum + payment.getAmount(),
+      0
+    );
+    const earning = this.service.getTotalEarning();
+    return Math.max(earning - totalCollected, 0);
   }
 }

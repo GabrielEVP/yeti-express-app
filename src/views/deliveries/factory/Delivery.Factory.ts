@@ -22,6 +22,10 @@ export const createDefaultDelivery = (): Delivery => {
     [],
     [],
     new Date().toISOString(),
-    new Date().toISOString()
+    new Date().toISOString(),
+    '',
+    '',
+    '',
+    ''
   );
 };

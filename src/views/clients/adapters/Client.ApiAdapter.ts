@@ -43,6 +43,7 @@ export function adaptClientForApi(client: Client): any {
     deliveries: client.getDeliveries(),
     created_at: client.getCreatedAt().toISOString(),
     updated_at: client.getUpdatedAt().toISOString(),
+    addresses: client.getAddresses(),
   };
 }
 
@@ -76,7 +77,7 @@ export function adaptClientLite(apiData: any): Client {
     addresses,
     emails,
     phones,
-    [], // entregas omitidas para evitar recursión
+    [],
     new Date(apiData.created_at),
     new Date(apiData.updated_at)
   );

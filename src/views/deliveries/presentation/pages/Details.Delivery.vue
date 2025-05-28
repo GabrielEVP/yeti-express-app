@@ -27,43 +27,50 @@
             <div class="space-y-5">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <SectionText title="Número de Delivery" :content="delivery.getNumber()" />
-                <SectionText title="Fecha de Emisión" :content="delivery.getDate()" />
+                <SectionText
+                  title="Fecha de Emisión"
+                  :content="formatDateCustom(delivery.getDate())"
+                />
                 <SectionText title="Estado" :content="delivery.getStatus()" />
                 <SectionText title="Forma de Pago" :content="delivery.getPaymentType()" />
-                <SectionText title="Deliverye" :content="delivery.getClient().getLegalName()" />
+                <SectionText title="Cliente" :content="delivery.getClient().getLegalName()" />
                 <SectionText
                   title="Importe Total"
                   :content="delivery.getService().getTotalEarning()"
                 />
+                <SectionText title="Repartidor" :content="delivery.getCourier().getFullName()" />
+                <SectionText title="Comision" :content="delivery.getService().getComision()" />
               </div>
               <SectionText title="Nota" :content="delivery.getNotes()" />
               <div class="space-y-6 pt-8">
-                <DeliveryDeliveryAddressList :address="delivery.getClientAddress().getAddress()" />
+                <DeliveryClientAddressList :address="delivery.getClientAddress()" />
                 <DeliveryReceiptDropdown :receipt="delivery.getReceipt()" />
-                <DeliveryPaymentsDrowdown :payments="delivery.getClientPayments()" />
-                <DeliveryCourierPaymentsDropdown :payments="delivery.getCourierPayments()" />
+                <DeliveryPaymentsDrowdown :DeliveryClientPayments="delivery.getClientPayments()" />
+                <DeliveryCourierPaymentsDropdown
+                  :DeliveryCourierpayments="delivery.getCourierPayments()"
+                />
               </div>
             </div>
           </div>
         </Card>
-        <TimeLineActivity :lineContents="lineContents" />
+        <MenuTimeLineContent :lineContents="lineContents" />
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Restante a Pagar">
-          <div class="text-2xl font-bold"></div>
-          <p class="text-xs text-gray-500">Total: {{}}</p>
+          <div class="text-2xl font-bold">{{ delivery.getRemainingToPay() }}</div>
+          <p class="text-xs text-gray-500">Total: {{ delivery.getService().getComision() }}</p>
         </ActivityView>
         <ActivityView title="Restante a Cobrar">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">Total: {{}}</p>
+          <div class="text-2xl font-bold">{{ delivery.getRemainingToCollect() }}</div>
+          <p class="text-xs text-gray-500">Total: {{ delivery.getService().getTotalEarning() }}</p>
         </ActivityView>
         <ActivityView title="Ultima Actualizacion">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+          <div class="text-2xl font-bold">{{ formatDateShort(delivery.getUpdatedAt()) }}</div>
+          <p class="text-xs text-gray-500">{{ formatRelativeDate(delivery.getUpdatedAt()) }}</p>
         </ActivityView>
-        <ActivityView title="Creacion del deliverye">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+        <ActivityView title="Creacion del cliente">
+          <div class="text-2xl font-bold">{{ formatDateShort(delivery.getCreatedAt()) }}</div>
+          <p class="text-xs text-gray-500">{{ formatRelativeDate(delivery.getCreatedAt()) }}</p>
         </ActivityView>
       </div>
     </div>
@@ -74,11 +81,27 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
-import { SideBar, SectionText, Card, ActionsButton, LoadingSkeleton } from '@/components/';
-import { Delivery } from '@/views/deliveries/domain/';
+import { formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
+import {
+  SideBar,
+  SectionText,
+  Card,
+  ActionsButton,
+  LoadingSkeleton,
+  ActivityView,
+} from '@/components/';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/presentation/';
+import { Delivery, CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@/views/deliveries/domain/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries';
 import { GetDeliveryByIdUseCase } from '@views/deliveries';
 import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes/';
+import {
+  DeliveryClientAddressList,
+  DeliveryReceiptDropdown,
+  DeliveryPaymentsDrowdown,
+  DeliveryCourierPaymentsDropdown,
+} from '@/views/deliveries/presentation/components/';
 
 const repository = new DeliveryRepositoryImpl();
 const getDeliveryByIdUseCase = new GetDeliveryByIdUseCase(repository);
@@ -98,8 +121,12 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
-
+const lineContents = computed(() =>
+  adaptTimeLineContentToUI(
+    delivery.value?.getTimeLine() ?? [],
+    CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS
+  )
+);
 const sectionActions = [
   {
     content: 'Editar Delivery',

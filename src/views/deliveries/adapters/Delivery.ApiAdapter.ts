@@ -1,13 +1,13 @@
 import { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryStatus } from '@/views/deliveries/domain/Status';
 import { PaymentType } from '@/views/deliveries/domain/PaymentType';
-import { DeliveryTimeLine } from '@/views/deliveries/domain/DeliveryTimeLine';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
 import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
 import { adaptClient, adaptClientAddress } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { adaptService } from '@/views/services/';
+import { adaptTimeLineContent } from '@time-line-content/adapter';
 
 function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientPayment {
   return new DeliveryClientPayment(
@@ -34,23 +34,7 @@ function adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
     apiReceipt.id,
     apiReceipt.full_name,
     apiReceipt.phone,
-    apiReceipt.address,
-    apiReceipt.state,
-    apiReceipt.city,
-    apiReceipt.municipality,
-    apiReceipt.postal_code,
-    apiReceipt.delivery_id
-  );
-}
-
-function adaptDeliveryTimeLine(apiTimeLine: any): DeliveryTimeLine {
-  return new DeliveryTimeLine(
-    apiTimeLine.id,
-    apiTimeLine.event,
-    apiTimeLine.section,
-    apiTimeLine.reference_table,
-    apiTimeLine.reference_id,
-    apiTimeLine.created_at
+    apiReceipt.address
   );
 }
 
@@ -66,7 +50,7 @@ export function adaptDelivery(apiData: any): Delivery {
     adaptClient(apiData.client),
     adaptClientAddress(apiData.client_address),
     adaptCourier(apiData.courier),
-    Array.isArray(apiData.time_line) ? apiData.time_line.map(adaptDeliveryTimeLine) : [],
+    Array.isArray(apiData.time_line) ? apiData.time_line.map(adaptTimeLineContent) : [],
     adaptDeliveryReceipt(apiData.receipt),
     Array.isArray(apiData.client_payments)
       ? apiData.client_payments.map(adaptDeliveryClientPayment)
@@ -75,27 +59,34 @@ export function adaptDelivery(apiData: any): Delivery {
       ? apiData.courier_payments.map(adaptDeliveryCourierPayment)
       : [],
     apiData.created_at,
-    apiData.updated_at
+    apiData.updated_at,
+    apiData.service_id,
+    apiData.client_id,
+    apiData.client_address_id,
+    apiData.courier_id
   );
 }
 
 export function adaptDeliveryForApi(delivery: Delivery): any {
   return {
-    id: delivery.getId(),
-    number: delivery.getNumber(),
-    date: delivery.getDate(),
     status: delivery.getStatus(),
-    paymentType: delivery.getPaymentType(),
+    payment_type: delivery.getPaymentType(),
     notes: delivery.getNotes(),
-    service: delivery.getService(),
-    client: delivery.getClient(),
-    clientAddress: delivery.getClientAddress(),
-    courier: delivery.getCourier(),
-    timeLine: delivery.getTimeLine(),
-    receipt: delivery.getReceipt(),
-    clientPayments: delivery.getClientPayments(),
-    courierPayments: delivery.getCourierPayments(),
-    createdAt: delivery.getCreatedAt(),
-    updatedAt: delivery.getUpdatedAt(),
+    receipt: adaptDeliveryReceiptForApi(delivery.getReceipt()),
+    client_payments: delivery.getClientPayments(),
+    courier_payments: delivery.getCourierPayments(),
+    client_id: delivery.getClientId(),
+    courier_id: delivery.getCourierId(),
+    service_id: delivery.getServiceId(),
+    client_address_id: delivery.getClientAddressId(),
+  };
+}
+
+function adaptDeliveryReceiptForApi(deliveryReceipt: DeliveryReceipt): any {
+  return {
+    id: deliveryReceipt.getId(),
+    full_name: deliveryReceipt.getFullName(),
+    phone: deliveryReceipt.getPhone(),
+    address: deliveryReceipt.getAddress(),
   };
 }

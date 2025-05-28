@@ -4,6 +4,6 @@ export enum PaymentType {
 }
 
 export const PaymentTypeOptions = [
-  { value: PaymentType.PARTIAL, label: 'Parcial' },
-  { value: PaymentType.FULL, label: 'Completo' },
+  { label: 'Parcial', value: PaymentType.PARTIAL },
+  { label: 'Completo', value: PaymentType.FULL },
 ] as const;

@@ -15,9 +15,6 @@ export const receiptSchema = object({
 });
 
 export const DeliverySchema = object({
-  status: mixed<'pending' | 'paid' | 'refused'>()
-    .oneOf(['pending', 'paid', 'refused'], 'Estado inválido')
-    .required('El estado de la entrega es requerido'),
   paymentType: mixed<'partial' | 'full'>()
     .oneOf(['partial', 'full'], 'Tipo de pago inválido')
     .required('El tipo de pago es requerido'),

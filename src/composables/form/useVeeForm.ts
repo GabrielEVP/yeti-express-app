@@ -87,7 +87,8 @@ export function useVeeForm<T extends GenericObject, ID = string>({
       if (defaultRoute) {
         redirectToLastOrDefault(router, defaultRoute);
       }
-    } catch {
+    } catch (error) {
+      console.log(error);
       triggerError(
         isEdit
           ? (messages.updateError ?? 'Error al actualizar')
