@@ -1,146 +1,101 @@
-import {
-  Delivery,
-  DeliveryEvent,
-  DeliveryReceipt,
-  DeliveryClientPayment,
-  DeliveryCourierPayment,
-} from '@views/deliveries/models/Delivery';
-import { adaptEvents, adaptEventsForApi } from '@/adapters/';
-import { adaptService, adaptServiceForApi } from '@views/services';
+import { Delivery } from '@/views/deliveries/domain/Delivery';
+import { DeliveryStatus } from '@/views/deliveries/domain/Status';
+import { PaymentType } from '@/views/deliveries/domain/PaymentType';
+import { DeliveryTimeLine } from '@/views/deliveries/domain/DeliveryTimeLine';
+import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
+import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
+import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
+import { adaptClient, adaptClientAddress } from '@/views/clients/adapters/';
+import { adaptCourier } from '@/views/couriers/';
+import { adaptService } from '@/views/services/';
+
+function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientPayment {
+  return new DeliveryClientPayment(
+    apiPayment.id,
+    apiPayment.date,
+    apiPayment.method,
+    apiPayment.amount,
+    apiPayment.delivery_id
+  );
+}
+
+function adaptDeliveryCourierPayment(apiPayment: any): DeliveryCourierPayment {
+  return new DeliveryCourierPayment(
+    apiPayment.id,
+    apiPayment.date,
+    apiPayment.method,
+    apiPayment.amount,
+    apiPayment.delivery_id
+  );
+}
+
+function adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
+  return new DeliveryReceipt(
+    apiReceipt.id,
+    apiReceipt.full_name,
+    apiReceipt.phone,
+    apiReceipt.address,
+    apiReceipt.state,
+    apiReceipt.city,
+    apiReceipt.municipality,
+    apiReceipt.postal_code,
+    apiReceipt.delivery_id
+  );
+}
+
+function adaptDeliveryTimeLine(apiTimeLine: any): DeliveryTimeLine {
+  return new DeliveryTimeLine(
+    apiTimeLine.id,
+    apiTimeLine.event,
+    apiTimeLine.section,
+    apiTimeLine.reference_table,
+    apiTimeLine.reference_id,
+    apiTimeLine.created_at
+  );
+}
 
 export function adaptDelivery(apiData: any): Delivery {
-  return {
-    id: apiData.id,
-    number: apiData.number,
-    date: apiData.date,
-    status: apiData.status as 'pending' | 'paid' | 'refused',
-    paymentType: apiData.payment_type as 'partial' | 'full',
-    notes: apiData.notes,
-    clientId: apiData.client_id,
-    clientAddressId: apiData.client_address_id,
-    courierId: apiData.courier_id,
-    openBoxId: apiData.open_box_id,
-    closeBoxId: apiData.close_box_id,
-    userId: apiData.user_id,
-    createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at,
-    service: adaptService(apiData.service),
-    events: Array.isArray(apiData.events) ? apiData.events.map(adaptDeliveryEvent) : [],
-    clientPayments: Array.isArray(apiData.client_payments)
-      ? apiData.payments.map(adaptClientPayment)
+  return new Delivery(
+    apiData.id,
+    apiData.number,
+    apiData.date,
+    apiData.status as DeliveryStatus,
+    apiData.payment_type as PaymentType,
+    apiData.notes ?? '',
+    adaptService(apiData.service),
+    adaptClient(apiData.client),
+    adaptClientAddress(apiData.client_address),
+    adaptCourier(apiData.courier),
+    Array.isArray(apiData.time_line) ? apiData.time_line.map(adaptDeliveryTimeLine) : [],
+    adaptDeliveryReceipt(apiData.receipt),
+    Array.isArray(apiData.client_payments)
+      ? apiData.client_payments.map(adaptDeliveryClientPayment)
       : [],
-    courierPayments: Array.isArray(apiData.courier_payments)
-      ? apiData.payments.map(adaptCourierPayment)
+    Array.isArray(apiData.courier_payments)
+      ? apiData.courier_payments.map(adaptDeliveryCourierPayment)
       : [],
-    receipt: adaptReceipt(apiData.receipt),
-  };
+    apiData.created_at,
+    apiData.updated_at
+  );
 }
 
 export function adaptDeliveryForApi(delivery: Delivery): any {
   return {
-    id: delivery.id,
-    number: delivery.number,
-    date: delivery.date,
-    status: delivery.status,
-    payment_type: delivery.paymentType,
-    notes: delivery.notes,
-    client_id: delivery.clientId,
-    client_address_id: delivery.clientAddressId,
-    courier_id: delivery.courierId,
-    open_box_id: delivery.openBoxId,
-    close_box_id: delivery.closeBoxId,
-    user_id: delivery.userId,
-    service: adaptServiceForApi(delivery.service),
-    events: delivery.events.map(adaptDeliveryEventForApi),
-    clientPayments: delivery.clientPayments.map(adaptClientPaymentForApi),
-    courierPayments: delivery.courierPayments.map(adaptCourierPaymentForApi),
-    receipt: adaptReceiptForApi(delivery.receipt),
-  };
-}
-
-export function adaptDeliveryEvent(apiEvent: any): DeliveryEvent {
-  return {
-    ...adaptEvents(apiEvent),
-    deliveryId: apiEvent.delivery_id,
-  };
-}
-
-export function adaptDeliveryEventForApi(event: DeliveryEvent): any {
-  return {
-    ...adaptEventsForApi(event),
-    delivery_id: event.deliveryId,
-  };
-}
-
-export function adaptReceipt(apiReceipt: any): DeliveryReceipt {
-  return {
-    id: apiReceipt.id,
-    fullName: apiReceipt.full_name,
-    phone: apiReceipt.phone,
-    address: apiReceipt.address,
-    state: apiReceipt.state,
-    city: apiReceipt.city,
-    municipality: apiReceipt.municipality,
-    postalCode: apiReceipt.postal_code,
-    deliveryId: apiReceipt.delivery_id,
-    userId: apiReceipt.user_id,
-  };
-}
-
-export function adaptReceiptForApi(receipt: DeliveryReceipt): any {
-  return {
-    id: receipt.id,
-    full_name: receipt.fullName,
-    phone: receipt.phone,
-    address: receipt.address,
-    state: receipt.state,
-    city: receipt.city,
-    municipality: receipt.municipality,
-    postal_code: receipt.postalCode,
-    user_id: receipt.userId,
-  };
-}
-
-export function adaptClientPayment(apiPayment: any): DeliveryClientPayment {
-  return {
-    id: apiPayment.id,
-    date: apiPayment.date,
-    amount: apiPayment.amount,
-    deliveryId: apiPayment.delivery_id,
-    method: apiPayment.method,
-    userId: apiPayment.user_id,
-  };
-}
-
-export function adaptClientPaymentForApi(payment: DeliveryClientPayment): any {
-  return {
-    id: payment.id,
-    date: payment.date,
-    amount: payment.amount,
-    delivery_id: payment.deliveryId,
-    method: payment.method,
-    user_id: payment.userId,
-  };
-}
-
-export function adaptCourierPayment(apiPayment: any): DeliveryCourierPayment {
-  return {
-    id: apiPayment.id,
-    date: apiPayment.date,
-    amount: apiPayment.amount,
-    deliveryId: apiPayment.delivery_id,
-    method: apiPayment.method,
-    userId: apiPayment.user_id,
-  };
-}
-
-export function adaptCourierPaymentForApi(payment: DeliveryCourierPayment): any {
-  return {
-    id: payment.id,
-    date: payment.date,
-    amount: payment.amount,
-    delivery_id: payment.deliveryId,
-    method: payment.method,
-    user_id: payment.userId,
+    id: delivery.getId(),
+    number: delivery.getNumber(),
+    date: delivery.getDate(),
+    status: delivery.getStatus(),
+    paymentType: delivery.getPaymentType(),
+    notes: delivery.getNotes(),
+    service: delivery.getService(),
+    client: delivery.getClient(),
+    clientAddress: delivery.getClientAddress(),
+    courier: delivery.getCourier(),
+    timeLine: delivery.getTimeLine(),
+    receipt: delivery.getReceipt(),
+    clientPayments: delivery.getClientPayments(),
+    courierPayments: delivery.getCourierPayments(),
+    createdAt: delivery.getCreatedAt(),
+    updatedAt: delivery.getUpdatedAt(),
   };
 }

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import HomeView from '@views/home/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
-import { ClientRouter } from '@/views/clients/router';
+import { ClientRouter } from '@/views/clients/';
 import { DeliveryRouter } from '@/views/deliveries';
 import { EmployeeRouter } from '@views/employees';
 import { CourierRouter } from '@views/couriers';

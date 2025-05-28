@@ -1,92 +1,67 @@
-import { Client, ClientEvent, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients/';
-import { adaptEvents, adaptEventsForApi } from '@/adapters/';
+import { Client } from '@/views/clients/domain/Client';
+import { ClientTimeLine } from '@/views/clients/domain/ClientTimeLine';
+import { ClientAddress } from '@/views/clients/domain/ClientAddress';
+import { ClientEmail } from '@/views/clients/domain/ClientEmail';
+import { ClientPhone } from '@/views/clients/domain/ClientPhone';
+import { ClientType } from '@/views/clients/domain/Type';
+import { adaptEvents } from '@/adapters/';
 
 export function adaptClient(apiData: any): Client {
-  return {
-    id: apiData.id,
-    type: apiData.type,
-    registrationNumber: apiData.registration_number,
-    legalName: apiData.legal_name,
-    notes: apiData.notes,
-    userId: apiData.user_id,
-    createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at,
-    events: Array.isArray(apiData.events) ? apiData.events.map(adaptClientEvent) : [],
-    addresses: Array.isArray(apiData.addresses) ? apiData.addresses.map(adaptAddress) : [],
-    emails: Array.isArray(apiData.emails) ? apiData.emails.map(adaptEmail) : [],
-    phones: Array.isArray(apiData.phones) ? apiData.phones.map(adaptPhone) : [],
-  };
+  const events = Array.isArray(apiData.events) ? apiData.events.map(adaptClientEvent) : [];
+  const addresses = Array.isArray(apiData.addresses)
+    ? apiData.addresses.map(adaptClientAddress)
+    : [];
+  const emails = Array.isArray(apiData.emails) ? apiData.emails.map(adaptClientEmail) : [];
+  const phones = Array.isArray(apiData.phones) ? apiData.phones.map(adaptClientPhone) : [];
+
+  return new Client(
+    apiData.id,
+    apiData.legal_name,
+    apiData.type as ClientType.VENEZOLANO,
+    apiData.registration_number,
+    apiData.notes ?? '',
+    events,
+    addresses,
+    emails,
+    phones,
+    [],
+    new Date(apiData.created_at),
+    new Date(apiData.updated_at)
+  );
 }
 
 export function adaptClientForApi(client: Client): any {
   return {
-    id: client.id,
-    registration_number: client.registrationNumber,
-    type: client.type,
-    legal_name: client.legalName,
-    notes: client.notes,
-    user_id: client.userId,
-    created_at: client.createdAt,
-    updated_at: client.updatedAt,
-    events: Array.isArray(client.events) ? client.events.map(adaptClientEventForApi) : [],
-    addresses: Array.isArray(client.addresses) ? client.addresses.map(adaptAddressForApi) : [],
-    emails: Array.isArray(client.emails) ? client.emails.map(adaptEmailForApi) : [],
-    phones: Array.isArray(client.phones) ? client.phones.map(adaptPhoneForApi) : [],
+    legal_name: client.getLegalName(),
+    type: client.getType(),
+    registration_number: client.getRegistrationNumber(),
+    notes: client.getNotes(),
+    deliveries: client.getDeliveries(),
+    created_at: client.getCreatedAt().toISOString(),
+    updated_at: client.getUpdatedAt().toISOString(),
   };
 }
 
-export function adaptClientEvent(apiEvent: any): ClientEvent {
-  return {
-    ...adaptEvents(apiEvent),
-    clientId: apiEvent.client_id,
-  };
+function adaptClientEvent(apiEvent: any): ClientTimeLine {
+  const eventData = adaptEvents(apiEvent);
+  return new ClientTimeLine(
+    eventData.id,
+    eventData.event,
+    eventData.section,
+    eventData.referenceTable,
+    eventData.referenceId,
+    eventData.createdAt
+  );
 }
 
-export function adaptClientEventForApi(event: ClientEvent): any {
-  return {
-    ...adaptEventsForApi(event),
-    client_id: event.clientId,
-  };
+export function adaptClientAddress(apiAddress: any): ClientAddress {
+  return new ClientAddress(apiAddress.id, apiAddress.address);
 }
 
-export function adaptAddress(apiAddress: any): ClientAddress {
-  return {
-    id: apiAddress.id,
-    address: apiAddress.address,
-  };
+function adaptClientEmail(apiEmail: any): ClientEmail {
+  return new ClientEmail(apiEmail.id, apiEmail.email);
 }
 
-export function adaptAddressForApi(address: ClientAddress): any {
-  return {
-    id: address.id,
-    address: address.address,
-  };
-}
-
-export function adaptPhone(apiPhone: any): ClientPhone {
-  return {
-    id: apiPhone.id,
-    phone: apiPhone.phone,
-  };
-}
-
-export function adaptPhoneForApi(phone: ClientPhone): any {
-  return {
-    id: phone.id,
-    phone: phone.phone,
-  };
-}
-
-export function adaptEmail(apiEmail: any): ClientEmail {
-  return {
-    id: apiEmail.id,
-    email: apiEmail.email,
-  };
-}
-
-export function adaptEmailForApi(email: ClientEmail): any {
-  return {
-    id: email.id,
-    email: email.email,
-  };
+function adaptClientPhone(apiPhone: any): ClientPhone {
+  return new ClientPhone(apiPhone.id, apiPhone.phone);
 }
