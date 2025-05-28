@@ -30,7 +30,6 @@
             </div>
           </div>
         </Card>
-        <TimeLineActivity :lineContents="lineContents" />
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Fecha de Creación">
@@ -57,7 +56,6 @@ import {
   Card,
   ActionsButton,
   Text,
-  TimeLineActivity,
   ActivityView,
   LoadingSkeleton,
 } from '@/components/';
