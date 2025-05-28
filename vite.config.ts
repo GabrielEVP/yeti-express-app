@@ -6,6 +6,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, 'src') },
+
       { find: '@adapters', replacement: path.resolve(__dirname, 'src/adapters') },
       { find: '@assets', replacement: path.resolve(__dirname, 'src/assets') },
       { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
@@ -17,6 +18,7 @@ export default defineConfig({
       { find: '@services', replacement: path.resolve(__dirname, 'src/services') },
       { find: '@stores', replacement: path.resolve(__dirname, 'src/stores') },
       { find: '@utils', replacement: path.resolve(__dirname, 'src/utils') },
+      { find: '@time-line-content', replacement: path.resolve(__dirname, 'src/time-line-content') },
       { find: '@views', replacement: path.resolve(__dirname, 'src/views') },
     ],
   },

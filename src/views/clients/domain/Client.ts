@@ -1,9 +1,10 @@
 import { ClientAddress } from './ClientAddress';
 import { ClientPhone } from './ClientPhone';
 import { ClientEmail } from './ClientEmail';
-import { ClientTimeLine } from './ClientTimeLine';
 import { ClientType } from './Type';
-import { Delivery } from '@views/deliveries';
+import { Delivery, DeliveryStatus } from '@views/deliveries';
+import { TimeLineContent } from '@time-line-content/domain';
+import dayjs from 'dayjs';
 
 export class Client {
   private readonly id: string;
@@ -11,7 +12,7 @@ export class Client {
   private type: ClientType;
   private registrationNumber: string;
   private notes: string;
-  private events: ClientTimeLine[];
+  private events: TimeLineContent[];
   private addresses: ClientAddress[];
   private emails: ClientEmail[];
   private phones: ClientPhone[];
@@ -25,7 +26,7 @@ export class Client {
     type: ClientType.VENEZOLANO,
     registrationNumber: string,
     notes: string,
-    events: ClientTimeLine[],
+    events: TimeLineContent[],
     addresses: ClientAddress[],
     emails: ClientEmail[],
     phones: ClientPhone[],
@@ -62,7 +63,7 @@ export class Client {
   getNotes(): string {
     return this.notes;
   }
-  getEvents(): ClientTimeLine[] {
+  getEvents(): TimeLineContent[] {
     return [...this.events];
   }
   getAddresses(): ClientAddress[] {
@@ -80,10 +81,79 @@ export class Client {
   getCreatedAt(): Date {
     return this.createdAt;
   }
+
   getUpdatedAt(): Date {
     return this.updatedAt;
   }
-  addEvent(event: ClientTimeLine): void {
-    this.events.push(event);
+
+  getEarningsDelivery(): number {
+    let earning = 0;
+
+    for (const delivery of this.getDeliveries()) {
+      const isPaid = delivery.getStatus() === DeliveryStatus.PAID;
+
+      if (isPaid) {
+        earning += delivery.getService().getTotalEarning();
+      }
+    }
+
+    return earning;
+  }
+
+  getEarningsDeliveryOfCurrentMonth(): number {
+    let earningOfMonth = 0;
+    const currentMonth = dayjs().month();
+    const currentYear = dayjs().year();
+
+    for (const delivery of this.getDeliveries()) {
+      const deliveryDate = dayjs(delivery.getDate());
+      const deliveryMonth = deliveryDate.month();
+      const deliveryYear = deliveryDate.year();
+
+      const isCurrentMonth = deliveryMonth === currentMonth && deliveryYear === currentYear;
+      const isPaid = delivery.getStatus() === DeliveryStatus.PAID;
+
+      if (isCurrentMonth && isPaid) {
+        earningOfMonth += delivery.getService().getTotalEarning();
+      }
+    }
+
+    return earningOfMonth;
+  }
+
+  getEarningsPendingOfDeliveries(): number {
+    let pendingEarning = 0;
+
+    for (const delivery of this.getDeliveries()) {
+      if (delivery.getStatus() === DeliveryStatus.PENDING) {
+        pendingEarning += delivery.getService().getTotalEarning();
+      }
+    }
+
+    return pendingEarning;
+  }
+
+  getPendingDeliveries(): Delivery[] {
+    let pendingDeliveries: Delivery[] = [];
+
+    for (const delivery of this.getDeliveries()) {
+      if (delivery.getStatus() === DeliveryStatus.PENDING) {
+        pendingDeliveries.push(delivery);
+      }
+    }
+
+    return pendingDeliveries;
+  }
+
+  getPendingLenghtDeliveries(): number {
+    let deliveries = 0;
+
+    for (const delivery of this.getDeliveries()) {
+      if (delivery.getStatus() === DeliveryStatus.PENDING) {
+        deliveries++;
+      }
+    }
+
+    return deliveries;
   }
 }

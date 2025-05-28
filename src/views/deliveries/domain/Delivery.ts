@@ -11,7 +11,7 @@ import { Courier } from '@/views/couriers/domain/';
 export class Delivery {
   private readonly id: string;
   private number: string;
-  private date: string;
+  private date: Date;
   private status: DeliveryStatus;
   private paymentType: PaymentType;
   private notes: string;
@@ -23,13 +23,13 @@ export class Delivery {
   private receipt: DeliveryReceipt;
   private clientPayments: DeliveryClientPayment[];
   private courierPayments: DeliveryCourierPayment[];
-  private readonly createdAt: string;
-  private readonly updatedAt: string;
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
 
   constructor(
     id: string,
     number: string,
-    date: string,
+    date: Date | string,
     status: DeliveryStatus,
     paymentType: PaymentType,
     notes: string,
@@ -41,12 +41,12 @@ export class Delivery {
     receipt: DeliveryReceipt,
     clientPayments: DeliveryClientPayment[],
     courierPayments: DeliveryCourierPayment[],
-    createdAt: string,
-    updatedAt: string
+    createdAt: Date | string,
+    updatedAt: Date | string
   ) {
     this.id = id;
     this.number = number;
-    this.date = date;
+    this.date = typeof date === 'string' ? new Date(date) : date;
     this.status = status;
     this.paymentType = paymentType;
     this.notes = notes;
@@ -58,8 +58,8 @@ export class Delivery {
     this.receipt = receipt;
     this.clientPayments = clientPayments;
     this.courierPayments = courierPayments;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
+    this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
   }
 
   getId(): string {
@@ -70,7 +70,7 @@ export class Delivery {
     return this.number;
   }
 
-  getDate(): string {
+  getDate(): Date {
     return this.date;
   }
 
@@ -118,11 +118,11 @@ export class Delivery {
     return [...this.courierPayments];
   }
 
-  getCreatedAt(): string {
+  getCreatedAt(): Date {
     return this.createdAt;
   }
 
-  getUpdatedAt(): string {
+  getUpdatedAt(): Date {
     return this.updatedAt;
   }
 }

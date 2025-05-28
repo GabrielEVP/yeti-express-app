@@ -26,6 +26,7 @@
       "@services": ["src/services/*"],
       "@stores/*": ["src/stores/*"],
       "@utils/*": ["src/utils/*"],
+      "@time-line-content/*": ["src/time-line-content/*"],
       "@views/*": ["src/views/*"],
     }
   },

@@ -30,6 +30,7 @@
               label="Tipo de cliente"
               name="type"
               id="type"
+              placeholder="Selecciona un tipo de documento"
               :items="ClientTypeOptions"
               required
             />
@@ -68,6 +69,7 @@ import {
   SideBar,
   Card,
   FieldForm,
+  SelectForm,
   TextAreaForm,
   AcceptButton,
   CancelButton,

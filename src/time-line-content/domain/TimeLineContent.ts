@@ -1,7 +1,6 @@
-export class ClientTimeLine {
+export class TimeLineContent {
   private readonly id: string;
   private readonly event: string;
-  private readonly section: string;
   private readonly referenceTable: string;
   private readonly referenceId: string;
   private readonly createdAt: Date;
@@ -9,14 +8,12 @@ export class ClientTimeLine {
   constructor(
     id: string,
     event: string,
-    section: string,
     referenceTable: string,
     referenceId: string,
-    createdAt: Date | string
+    createdAt: string | Date
   ) {
     this.id = id;
     this.event = event;
-    this.section = section;
     this.referenceTable = referenceTable;
     this.referenceId = referenceId;
     this.createdAt = createdAt instanceof Date ? createdAt : new Date(createdAt);
@@ -28,10 +25,6 @@ export class ClientTimeLine {
 
   getEvent(): string {
     return this.event;
-  }
-
-  getSection(): string {
-    return this.section;
   }
 
   getReferenceTable(): string {

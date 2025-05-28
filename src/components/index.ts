@@ -18,8 +18,8 @@ export { default as ChartLine } from '@/components/charts/ChartLine.vue';
 // DASHBOARD
 export { default as ActivityView } from '@/components/dashboard/activity/ActivityView.vue';
 export { default as TimeLineActivity } from '@/components/dashboard/activity/TimeLine.vue';
-export { default as TableBilling } from '@/components/dashboard/billing/TableBilling.vue';
-export { default as ChartBilling } from '@/components/dashboard/billing/ChartBilling.vue';
+export { default as TableBilling } from '@views/clients/presentation/components/deliveries/TableDelivery.Client.vue';
+export { default as ChartBilling } from '@views/clients/presentation/components/deliveries/ChartDelivery.Client.vue';
 export { default as TableDashboard } from '@/components/dashboard/Table.vue';
 
 // FORMS

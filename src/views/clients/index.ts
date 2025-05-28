@@ -4,18 +4,15 @@ export * from './domain/Client';
 export * from './domain/ClientAddress';
 export * from './domain/ClientEmail';
 export * from './domain/ClientPhone';
-export * from './domain/ClientTimeLine';
 export * from './domain/IClientRepository';
 export * from './domain/Type';
 export * from './factory/Client.Factory';
 export * from './infrastructure/Client.Api';
 export * from './infrastructure/Client.RepositoryImpl';
 export * from './infrastructure/routes/Client.ApiRoutes';
-
 export * from './presentation/constants/FormatedTimeLine.Client';
 export * from './presentation/constants/TableHeader.Client';
 export * from './presentation/constants/TabsForm.Client';
-
 export * from './presentation/router/Router.Client';
 export * from './presentation/routes/AppRoutes.Client';
 export * from './schemas/Client.AddressSChema';

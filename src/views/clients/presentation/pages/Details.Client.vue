@@ -38,25 +38,44 @@
             </div>
           </div>
         </Card>
-        <TimeLineActivity :lineContents="lineContents" />
+        <MenuTimeLineContent :lineContents="lineContents" />
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Total de Ganancias del mes">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+          <div class="text-2xl font-bold">
+            {{ client.getEarningsDeliveryOfCurrentMonth().toFixed(2) }}
+          </div>
+          <p class="text-xs text-gray-500">
+            Ganancias totales: {{ client.getEarningsDelivery().toFixed(2) }}
+          </p>
         </ActivityView>
         <ActivityView title="Deliverys Pendientes">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+          <div class="text-2xl font-bold">
+            {{ client.getEarningsPendingOfDeliveries().toFixed(2) }}
+          </div>
+          <p class="text-xs text-gray-500">
+            Pendientes por pagar: {{ client.getPendingLenghtDeliveries() }}
+          </p>
         </ActivityView>
         <ActivityView title="Ultima Actualizacion">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+          <div class="text-2xl font-bold">{{ formatDateShort(client.getUpdatedAt()) }}</div>
+          <p class="text-xs text-gray-500">{{ formatRelativeDate(client.getUpdatedAt()) }}</p>
         </ActivityView>
         <ActivityView title="Creacion del cliente">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">{{}}</p>
+          <div class="text-2xl font-bold">{{ formatDateShort(client.getCreatedAt()) }}</div>
+          <p class="text-xs text-gray-500">{{ formatRelativeDate(client.getCreatedAt()) }}</p>
         </ActivityView>
+      </div>
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
+        <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
+          <TableDeliveries :deliveries="client.getDeliveries()" />
+          <ChartDelivery
+            :deliveries="client.getDeliveries()"
+            title="Estadistica mensual de las Facturas"
+            label="Total factura"
+          />
+        </div>
       </div>
     </div>
   </SideBar>
@@ -66,11 +85,29 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
-import { SideBar, SectionText, Card, ActionsButton, LoadingSkeleton } from '@/components/';
+import { formatDateShort, formatRelativeDate } from '@/utils/';
+import {
+  SideBar,
+  SectionText,
+  Card,
+  ActionsButton,
+  LoadingSkeleton,
+  ActivityView,
+} from '@/components/';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import { Client } from '@/views/clients/domain/';
+import { CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@/views/clients/domain/';
 import { ClientRepositoryImpl } from '@/views/clients';
 import { GetClientByIdUseCase } from '@views/clients';
 import { AppRoutesClient } from '@/views/clients/presentation/routes/';
+import {
+  AdressesList,
+  PhonesList,
+  EmailsList,
+  TableDeliveries,
+  ChartDelivery,
+} from '@/views/clients/presentation/components/';
 
 const repository = new ClientRepositoryImpl();
 const getClientByIdUseCase = new GetClientByIdUseCase(repository);
@@ -79,10 +116,11 @@ const client = ref<Client | null>(null);
 const loading = ref(true);
 
 const route = useRoute();
-const courierId = route.params.id as string;
+const clientId = route.params.id as string;
 
 const loadData = async () => {
-  client.value = await getClientByIdUseCase.execute(courierId);
+  client.value = await getClientByIdUseCase.execute(clientId);
+
   loading.value = false;
 };
 
@@ -90,12 +128,14 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() =>
+  adaptTimeLineContentToUI(client.value?.getEvents() ?? [], CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS)
+);
 
 const sectionActions = [
   {
     content: 'Editar Client',
-    url: AppRoutesClient.edit(courierId),
+    url: AppRoutesClient.edit(clientId),
   },
 ];
 </script>
