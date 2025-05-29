@@ -9,7 +9,7 @@
         <img :src="logo" alt="Logo" class="w-14 h-14 rounded-xl shadow-md" />
       </div>
       <hr class="border-gray-200 dark:border-gray-700 mx-3 shrink-0" />
-      <nav class="py-4">
+      <nav class="py-6">
         <ul class="p-4 space-y-4 flex flex-col">
           <li v-for="item in navigationItems">
             <NavigationItem :item="item" />
