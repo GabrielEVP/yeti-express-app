@@ -6,7 +6,6 @@ export * from './factory/Courier.Factory';
 export * from './infrastructure/Courier.Api';
 export * from './infrastructure/Courier.RepositoryImpl';
 export * from './infrastructure/routes/Courier.ApiRoutes';
-export * from './presentation/constants/Courier.FormatedTimeLine';
 export * from './presentation/constants/Courier.TableHeader';
 export * from './presentation/router/Router.Courier';
 export * from './presentation/routes/AppRoutes.Courier';

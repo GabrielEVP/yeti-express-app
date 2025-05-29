@@ -10,7 +10,6 @@ export * from './factory/Client.Factory';
 export * from './infrastructure/Client.Api';
 export * from './infrastructure/Client.RepositoryImpl';
 export * from './infrastructure/routes/Client.ApiRoutes';
-export * from './presentation/constants/FormatedTimeLine.Client';
 export * from './presentation/constants/TableHeader.Client';
 export * from './presentation/constants/TabsForm.Client';
 export * from './presentation/router/Router.Client';

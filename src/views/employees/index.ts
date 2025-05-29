@@ -7,7 +7,6 @@ export * from './factory/Employee.Factory';
 export * from './infrastructure/Employee.Api';
 export * from './infrastructure/Employee.RepositoryImpl';
 export * from './infrastructure/routes/Employee.ApiRoutes';
-
 export * from './presentation/router/Router.Employee';
 export * from './presentation/routes/AppRoutes.Employee';
 export * from './schemas/Employee.Schema';

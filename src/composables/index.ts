@@ -7,6 +7,5 @@ export * from './modal/useDeleteModal';
 export * from './modal/useModal';
 export * from './useAlert';
 export * from './useAuth';
-export * from './useEventTimeLineContent';
 export * from './useFilterSortSearch';
 export * from './usePagination';

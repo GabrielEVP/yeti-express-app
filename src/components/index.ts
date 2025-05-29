@@ -26,8 +26,6 @@ export { default as FieldFormDisabled } from '@/components/forms/FieldDisabled.v
 export { default as FieldForm } from '@/components/forms/Field.vue';
 export { default as FieldSelectorForm } from '@components/forms/field-selector/FieldSelector.vue';
 export { default as ContentFieldSelectorForm } from '@components/forms/field-selector/ContentFieldSelector.vue';
-export { default as MultiSelectForm } from '@/components/forms/MultiSelect.vue';
-export { default as PriceDropdownForm } from '@/components/forms/PriceDropdown.vue';
 export { default as SearchForm } from '@/components/forms/Search.vue';
 export { default as SelectorForm } from '@/components/forms/Selector.vue';
 export { default as SelectForm } from '@/components/forms/Select.vue';

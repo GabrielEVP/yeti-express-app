@@ -12,7 +12,6 @@ export * from './factory/Delivery.Factory';
 export * from './infrastructure/Delivery.Api';
 export * from './infrastructure/Delivery.RepositoryImpl';
 export * from './infrastructure/routes/Delivery.ApiRoutes';
-export * from './presentation/constants/Delivery.FormatedTimeLine';
 export * from './presentation/constants/Delivery.TableHeader';
 export * from './presentation/router/Router.Delivery';
 export * from './presentation/routes/AppRoutes.Delivery';
