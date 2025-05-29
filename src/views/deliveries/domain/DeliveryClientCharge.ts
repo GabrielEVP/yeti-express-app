@@ -1,18 +1,16 @@
 import { PaymentMethod } from '@/views/deliveries/domain/PaymentMethod';
 
-export class DeliveryClientPayment {
+export class DeliveryClientCharge {
   private readonly id: string;
   private date: string;
   private method: PaymentMethod;
   private amount: number;
-  private deliveryId: string;
 
-  constructor(id: string, date: string, method: PaymentMethod, amount: number, deliveryId: string) {
+  constructor(id: string, date: string, method: PaymentMethod, amount: number) {
     this.id = id;
     this.date = date;
     this.method = method;
     this.amount = amount;
-    this.deliveryId = deliveryId;
   }
 
   getId(): string {
@@ -26,8 +24,5 @@ export class DeliveryClientPayment {
   }
   getAmount(): number {
     return this.amount;
-  }
-  getDeliveryId(): string {
-    return this.deliveryId;
   }
 }

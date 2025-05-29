@@ -32,9 +32,9 @@
 import { defineProps } from 'vue';
 import { CreditCard } from 'lucide-vue-next';
 import { Dropdown, EmptyData } from '@/components/';
-import { DeliveryClientPayment } from '@/views/deliveries/domain';
+import { DeliveryClientCharge } from '@/views/deliveries/domain';
 
 defineProps<{
-  DeliveryClientPayments: DeliveryClientPayment[];
+  DeliveryClientPayments: DeliveryClientCharge[];
 }>();
 </script>

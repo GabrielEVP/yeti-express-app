@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-end mb-4">
     <PlusButton
-      @click="push(new DeliveryCourierPayment('', '', PaymentMethod.MOBILE_PAYMENT, 0, ''))"
+      @click="push(new DeliveryCourierPayout('', '', PaymentMethod.MOBILE_PAYMENT, 0, ''))"
     />
   </div>
   <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
@@ -31,9 +31,9 @@
 
 <script setup lang="ts">
 import { useFieldArray } from 'vee-validate';
-import { DeliveryCourierPayment } from '@views/deliveries/domain';
+import { DeliveryCourierPayout } from '@views/deliveries/domain';
 import { PaymentMethod } from '@/views/deliveries/domain/PaymentMethod';
 import { PlusButton, TrashButton, FieldForm, Text } from '@/components/';
 
-const { remove, push, fields } = useFieldArray<DeliveryCourierPayment>('payments');
+const { remove, push, fields } = useFieldArray<DeliveryCourierPayout>('payments');
 </script>

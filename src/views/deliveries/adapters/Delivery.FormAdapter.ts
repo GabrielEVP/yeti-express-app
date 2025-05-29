@@ -1,7 +1,7 @@
 import { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
-import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
+import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
+import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
 import { mapFormToService } from '@/views/services/adapters';
 import { mapFormToClient, mapFormToAddress } from '@/views/clients/adapters';
@@ -16,8 +16,8 @@ export function mapFormToDeliveryReceipt(data: any): DeliveryReceipt {
   );
 }
 
-export function mapFormToDeliveryClientPayment(data: any): DeliveryClientPayment {
-  return new DeliveryClientPayment(
+export function mapFormToDeliveryClientPayment(data: any): DeliveryClientCharge {
+  return new DeliveryClientCharge(
     data.id ?? '',
     data.date ?? new Date().toISOString(),
     data.method ?? null,
@@ -26,8 +26,8 @@ export function mapFormToDeliveryClientPayment(data: any): DeliveryClientPayment
   );
 }
 
-export function mapFormToDeliveryCourierPayment(data: any): DeliveryCourierPayment {
-  return new DeliveryCourierPayment(
+export function mapFormToDeliveryCourierPayment(data: any): DeliveryCourierPayout {
+  return new DeliveryCourierPayout(
     data.id ?? '',
     data.date ?? new Date().toISOString(),
     data.method ?? null,
@@ -42,6 +42,8 @@ export function mapFormToDelivery(form: any): Delivery {
     form.number ?? '',
     form.date ?? new Date().toISOString(),
     form.status ?? DeliveryStatus.PENDING,
+    '' as any,
+    '' as any,
     form.paymentType ?? PaymentType.PARTIAL,
     form.notes ?? '',
     mapFormToService(form.service ?? {}),

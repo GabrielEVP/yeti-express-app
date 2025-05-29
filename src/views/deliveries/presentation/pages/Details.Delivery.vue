@@ -45,9 +45,9 @@
               <div class="space-y-6 pt-8">
                 <DeliveryClientAddressList :address="delivery.getClientAddress()" />
                 <DeliveryReceiptDropdown :receipt="delivery.getReceipt()" />
-                <DeliveryPaymentsDrowdown :DeliveryClientPayments="delivery.getClientPayments()" />
+                <DeliveryPaymentsDrowdown :DeliveryClientPayments="delivery.getClientCharges()" />
                 <DeliveryCourierPaymentsDropdown
-                  :DeliveryCourierpayments="delivery.getCourierPayments()"
+                  :DeliveryCourierpayments="delivery.getCourierPayouts()"
                 />
               </div>
             </div>

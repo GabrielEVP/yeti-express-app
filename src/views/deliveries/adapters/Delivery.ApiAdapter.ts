@@ -2,15 +2,15 @@ import { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryStatus } from '@/views/deliveries/domain/Status';
 import { PaymentType } from '@/views/deliveries/domain/PaymentType';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
-import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
+import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
+import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { adaptClient, adaptClientAddress } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { adaptService } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
 
-function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientPayment {
-  return new DeliveryClientPayment(
+function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientCharge {
+  return new DeliveryClientCharge(
     apiPayment.id,
     apiPayment.date,
     apiPayment.method,
@@ -19,8 +19,8 @@ function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientPayment {
   );
 }
 
-function adaptDeliveryCourierPayment(apiPayment: any): DeliveryCourierPayment {
-  return new DeliveryCourierPayment(
+function adaptDeliveryCourierPayment(apiPayment: any): DeliveryCourierPayout {
+  return new DeliveryCourierPayout(
     apiPayment.id,
     apiPayment.date,
     apiPayment.method,
@@ -44,6 +44,8 @@ export function adaptDelivery(apiData: any): Delivery {
     apiData.number,
     apiData.date,
     apiData.status as DeliveryStatus,
+    '' as any,
+    '' as any,
     apiData.payment_type as PaymentType,
     apiData.notes ?? '',
     adaptService(apiData.service),

@@ -31,7 +31,7 @@
           {{ delivery.getNumber() }}
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ delivery.getDate() }}
+          {{ formatDateCustom(delivery.getDate()) }}
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300">
           {{ delivery.getClient().getLegalName() }}
@@ -40,6 +40,9 @@
           <Bagde>
             {{ delivery.getStatus() }}
           </Bagde>
+        </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300">
+          {{ delivery.getService().getName() }}
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300">
           {{ delivery.getService().getTotalEarning() }}
@@ -61,6 +64,7 @@
 import { ref, onMounted } from 'vue';
 import { usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
+import { formatDateCustom } from '@utils';
 import {
   SideBar,
   Card,

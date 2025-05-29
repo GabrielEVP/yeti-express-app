@@ -1,6 +1,6 @@
 import { PaymentMethod } from '@/views/deliveries/domain/PaymentMethod';
 
-export class DeliveryCourierPayment {
+export class DeliveryCourierPayout {
   private readonly id: string;
   private date: string;
   private method: PaymentMethod;

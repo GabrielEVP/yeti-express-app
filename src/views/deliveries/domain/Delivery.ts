@@ -1,18 +1,32 @@
 import { DeliveryStatus } from '@/views/deliveries/domain/Status';
 import { PaymentType } from '@/views/deliveries/domain/PaymentType';
 import { TimeLineContent } from '@time-line-content/domain';
-import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientPayment } from '@/views/deliveries/domain/DeliveryClientPayment';
-import { DeliveryCourierPayment } from '@/views/deliveries/domain/DeliveryCourierPayment';
+import { DeliveryReceipt } from '@views/deliveries/domain/DeliveryReceipt';
+import { DeliveryClientCharge } from '@views/deliveries/domain/DeliveryClientCharge';
+import { DeliveryCourierPayout } from '@views/deliveries/domain/DeliveryCourierPayout';
 import { Service } from '@/views/services';
 import { Client, ClientAddress } from '@/views/clients/domain/';
 import { Courier } from '@/views/couriers/domain/';
+
+export enum DeliveryCollectionStatus {
+  PENDING = 'pending',
+  PARTIALLY_COLLECTED = 'partially_collected',
+  FULLY_COLLECTED = 'fully_collected',
+}
+
+export enum DeliveryPaymentStatus {
+  PENDING = 'pending',
+  PARTIALLY_PAID = 'partially_paid',
+  PAID = 'paid',
+}
 
 export class Delivery {
   private readonly id: string;
   private number: string;
   private date: Date;
   private status: DeliveryStatus;
+  private collectionStatus: DeliveryCollectionStatus;
+  private paymentStatus: DeliveryPaymentStatus;
   private paymentType: PaymentType;
   private notes: string;
   private readonly service: Service;
@@ -21,8 +35,8 @@ export class Delivery {
   private readonly courier: Courier;
   private readonly timeLine: TimeLineContent[];
   private receipt: DeliveryReceipt;
-  private clientPayments: DeliveryClientPayment[];
-  private courierPayments: DeliveryCourierPayment[];
+  private clientCharges: DeliveryClientCharge[];
+  private courierPayouts: DeliveryCourierPayout[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
   private clientId: string;
@@ -35,6 +49,8 @@ export class Delivery {
     number: string,
     date: Date | string,
     status: DeliveryStatus,
+    collectionStatus: DeliveryCollectionStatus,
+    paymentStatus: DeliveryPaymentStatus,
     paymentType: PaymentType,
     notes: string,
     service: Service,
@@ -43,8 +59,8 @@ export class Delivery {
     courier: Courier,
     timeLine: TimeLineContent[],
     receipt: DeliveryReceipt,
-    clientPayments: DeliveryClientPayment[],
-    courierPayments: DeliveryCourierPayment[],
+    clientCharges: DeliveryClientCharge[],
+    courierPayouts: DeliveryCourierPayout[],
     createdAt: Date | string,
     updatedAt: Date | string,
     serviceId: string,
@@ -56,6 +72,8 @@ export class Delivery {
     this.number = number;
     this.date = typeof date === 'string' ? new Date(date) : date;
     this.status = status;
+    this.collectionStatus = collectionStatus;
+    this.paymentStatus = paymentStatus;
     this.paymentType = paymentType;
     this.notes = notes;
     this.service = service;
@@ -64,8 +82,8 @@ export class Delivery {
     this.courier = courier;
     this.timeLine = timeLine;
     this.receipt = receipt;
-    this.clientPayments = clientPayments;
-    this.courierPayments = courierPayments;
+    this.clientCharges = clientCharges;
+    this.courierPayouts = courierPayouts;
     this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
     this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
     this.serviceId = serviceId;
@@ -88,6 +106,14 @@ export class Delivery {
 
   getStatus(): DeliveryStatus {
     return this.status;
+  }
+
+  getCollectionStatus(): DeliveryCollectionStatus {
+    return this.collectionStatus;
+  }
+
+  getPaymentStatus(): DeliveryPaymentStatus {
+    return this.paymentStatus;
   }
 
   getPaymentType(): PaymentType {
@@ -122,12 +148,12 @@ export class Delivery {
     return this.receipt;
   }
 
-  getClientPayments(): DeliveryClientPayment[] {
-    return [...this.clientPayments];
+  getClientCharges(): DeliveryClientCharge[] {
+    return [...this.clientCharges];
   }
 
-  getCourierPayments(): DeliveryCourierPayment[] {
-    return [...this.courierPayments];
+  getCourierPayouts(): DeliveryCourierPayout[] {
+    return [...this.courierPayouts];
   }
 
   getCreatedAt(): Date {
@@ -155,16 +181,13 @@ export class Delivery {
   }
 
   getRemainingToPay(): number {
-    const totalPaid = this.clientPayments.reduce((sum, payment) => sum + payment.getAmount(), 0);
+    const totalPaid = this.clientCharges.reduce((sum, charge) => sum + charge.getAmount(), 0);
     const totalComision = this.service.getComision();
     return Math.max(totalComision - totalPaid, 0);
   }
 
   getRemainingToCollect(): number {
-    const totalCollected = this.courierPayments.reduce(
-      (sum, payment) => sum + payment.getAmount(),
-      0
-    );
+    const totalCollected = this.courierPayouts.reduce((sum, payout) => sum + payout.getAmount(), 0);
     const earning = this.service.getTotalEarning();
     return Math.max(earning - totalCollected, 0);
   }
