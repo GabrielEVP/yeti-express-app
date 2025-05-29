@@ -1,25 +1,77 @@
 <template>
-  <sidebar>
-    <div class="p-6 space-y-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetriCard v-for="(metric, index) in topMetrics" :key="index" :metric="metric" />
-      </div>
-
+  <sidebar class="bg-gray-50 dark:bg-gray-900 min-h-screen p-6">
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <ActivityView title="Pedidos Hoy">
+        <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">158</div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Porcentaje de ganancia: 12%</p>
+      </ActivityView>
+      <ActivityView title="Monto de los pedidos en bruto">
+        <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">$12.400</div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Porcentaje de ganancia: 18%</p>
+      </ActivityView>
+      <ActivityView title="Cobros">
+        <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">$8.900</div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Porcentaje de efectividad: 85%</p>
+      </ActivityView>
+      <ActivityView title="Pagos a repartidores">
+        <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">$3.100</div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Balance neto: positivo</p>
+      </ActivityView>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div
-        class="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-100 dark:border-gray-700"
+        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow p-4"
       >
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-sm text-gray-600 dark:text-gray-400">Total Facturas</h2>
-          <div class="flex items-center space-x-2 text-xs">
-            <LegendItem label="This year" colorClass="bg-gray-800 dark:bg-gray-200" />
-            <LegendItem label="Last year" colorClass="bg-gray-300 dark:bg-gray-600" />
-          </div>
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Pedidos realizados</h2>
+          <select
+            v-model="rangePedidos"
+            class="border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+          >
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+            <option value="year">Año</option>
+          </select>
         </div>
-        <div class="relative min-h-64 w-full"></div>
+        <div class="relative h-[300px] w-full">
+          <Bar :data="chartPedidosData" :options="chartOptions('Pedidos')" />
+        </div>
       </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetriCard v-for="(metric, index) in bottomMetrics" :key="index" :metric="metric" />
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow p-4"
+      >
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Montos en bruto</h2>
+          <select
+            v-model="rangeMontos"
+            class="border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+          >
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+            <option value="year">Año</option>
+          </select>
+        </div>
+        <div class="relative h-[300px] w-full">
+          <Bar :data="chartMontosData" :options="chartOptions('Montos ($)')" />
+        </div>
+      </div>
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow p-4 col-span-1 md:col-span-2"
+      >
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Cobros vs Pagos</h2>
+          <select
+            v-model="rangeFinanzas"
+            class="border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+          >
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+            <option value="year">Año</option>
+          </select>
+        </div>
+        <div class="relative h-[300px] w-full">
+          <Bar :data="chartFinanzasData" :options="chartOptions('Ingresos vs Pagos ($)')" />
+        </div>
       </div>
     </div>
   </sidebar>
@@ -27,113 +79,135 @@
 
 <script setup lang="ts">
 import Sidebar from '@components/ui/sidebars/Sidebar.vue';
-import MetriCard from '@/views/home/components/MetriCard.vue';
-import LegendItem from '@/views/home/components/LegendItem.vue';
-import { reactive, computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { ActivityView } from '@/components/';
+import { ref, computed } from 'vue';
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
 } from 'chart.js';
+import { Bar } from 'vue-chartjs';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
-const topMetrics = [
-  { label: 'Facturas', value: 7265, percentage: 11.01 },
-  { label: 'Facturas Recurrentes', value: 7265, percentage: 11.01 },
-  { label: 'Clientes', value: 7265, percentage: 11.01 },
-  { label: 'Presupuestos', value: 7265, percentage: 11.01 },
-];
+const rangePedidos = ref<'week' | 'month' | 'year'>('week');
+const rangeMontos = ref<'week' | 'month' | 'year'>('week');
+const rangeFinanzas = ref<'week' | 'month' | 'year'>('week');
 
-const bottomMetrics = [
-  { label: 'Compras', value: 7265, percentage: 11.01 },
-  { label: 'Compras Recurrentes', value: 7265, percentage: 11.01 },
-  { label: 'Productos', value: 7265, percentage: 11.01 },
-  { label: 'Proveedores', value: 7265, percentage: 11.01 },
-];
+const pedidosData = {
+  week: {
+    labels: ['Lun', 'Mar', 'Mié', 'jueve', 'vierne', 'sabado', 'domingo'],
+    data: [12, 14, 18, 18, 18, 18, 18],
+  },
+  month: { labels: ['Semana 1', 'Semana 2'], data: [58, 67] },
+  year: { labels: ['Ene', 'Feb'], data: [200, 240] },
+};
 
-const isDarkMode = computed(() => document.documentElement.classList.contains('dark'));
+const montosData = {
+  week: { labels: ['Lun', 'Mar', 'Mié'], data: [1200, 1400, 1800] },
+  month: { labels: ['Semana 1', 'Semana 2'], data: [5800, 6700] },
+  year: { labels: ['Ene', 'Feb'], data: [20000, 24000] },
+};
 
-const chartColors = computed(() => ({
-  thisYear: isDarkMode.value ? '#e5e7eb' : '#4c9141',
-  lastYear: isDarkMode.value ? '#4b5563' : '#d1d5db',
-  tooltipBg: isDarkMode.value ? '#374151' : 'white',
-  tooltipTitle: isDarkMode.value ? '#e5e7eb' : 'black',
-  tooltipBody: isDarkMode.value ? '#e5e7eb' : 'black',
-  tooltipBorder: isDarkMode.value ? '#4b5563' : '#e5e7eb',
-  xTicks: isDarkMode.value ? '#9ca3af' : '#6b7280',
-  yGrid: isDarkMode.value ? '#374151' : '#f3f4f6',
-  yTicks: isDarkMode.value ? '#9ca3af' : '#6b7280',
-}));
+const finanzasData = {
+  week: {
+    labels: ['Lun', 'Mar', 'Mié'],
+    ingresos: [890, 950, 880],
+    pagos: [310, 320, 300],
+  },
+  month: {
+    labels: ['Semana 1', 'Semana 2'],
+    ingresos: [4500, 4400],
+    pagos: [1700, 1800],
+  },
+  year: {
+    labels: ['Ene', 'Feb'],
+    ingresos: [15000, 16000],
+    pagos: [6200, 6100],
+  },
+};
 
-const chartData = reactive({
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+const chartPedidosData = computed(() => ({
+  labels: pedidosData[rangePedidos.value].labels,
   datasets: [
     {
-      label: 'This year',
-      data: [15000, 21000, 18000, 25000, 23000, 28000, 30000],
-      borderColor: chartColors.value.thisYear,
-      backgroundColor: chartColors.value.thisYear,
-      tension: 0.4,
-      borderWidth: 2,
-    },
-    {
-      label: 'Last year',
-      data: [12000, 19000, 16000, 20000, 18000, 22000, 25000],
-      borderColor: chartColors.value.lastYear,
-      backgroundColor: chartColors.value.lastYear,
-      borderDash: [5, 5],
-      tension: 0.4,
-      borderWidth: 2,
+      label: 'Pedidos',
+      data: pedidosData[rangePedidos.value].data,
+      backgroundColor: '#6366f1',
+      borderRadius: 6,
     },
   ],
-});
+}));
 
-const showChart = ref(false);
-onMounted(() => {
-  showChart.value = true;
-});
+const chartMontosData = computed(() => ({
+  labels: montosData[rangeMontos.value].labels,
+  datasets: [
+    {
+      label: 'Montos en bruto ($)',
+      data: montosData[rangeMontos.value].data,
+      backgroundColor: '#f59e0b',
+      borderRadius: 6,
+    },
+  ],
+}));
 
-const chartOptions = reactive({
-  animation: {
-    duration: 1000,
-  },
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      mode: 'index' as 'index' | 'dataset' | 'point' | 'nearest' | 'x' | 'y',
-      intersect: false,
-      backgroundColor: chartColors.value.tooltipBg,
-      titleColor: chartColors.value.tooltipTitle,
-      bodyColor: chartColors.value.tooltipBody,
-      borderColor: chartColors.value.tooltipBorder,
-      borderWidth: 1,
-      padding: 12,
-      displayColors: false,
+const chartFinanzasData = computed(() => ({
+  labels: finanzasData[rangeFinanzas.value].labels,
+  datasets: [
+    {
+      label: 'Cobros a clientes ($)',
+      data: finanzasData[rangeFinanzas.value].ingresos,
+      backgroundColor: '#3b82f6',
+      borderRadius: 6,
     },
-  },
-  scales: {
-    x: {
-      grid: { display: false },
-      ticks: { color: chartColors.value.xTicks },
+    {
+      label: 'Pagos a repartidores ($)',
+      data: finanzasData[rangeFinanzas.value].pagos,
+      backgroundColor: '#ef4444',
+      borderRadius: 6,
     },
-    y: {
-      grid: { color: chartColors.value.yGrid },
-      ticks: {
-        color: chartColors.value.yTicks,
-        callback: (value: number) => value.toLocaleString(),
+  ],
+}));
+
+function chartOptions(title: string) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#6b7280',
+        },
       },
-      border: { dash: [5, 5] },
+      title: {
+        display: true,
+        text: title,
+        color: '#111827',
+        font: { size: 16 },
+      },
     },
-  },
-  interaction: { intersect: false, mode: 'index' as const },
-});
+    scales: {
+      x: {
+        ticks: {
+          color: '#6b7280',
+        },
+      },
+      y: {
+        type: 'linear' as const,
+        beginAtZero: true,
+        ticks: {
+          callback: function (tickValue: number | string) {
+            return `$${tickValue}`;
+          },
+          color: '#6b7280',
+        },
+      },
+    },
+  };
+}
 </script>

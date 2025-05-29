@@ -2,61 +2,110 @@
   <SideBar>
     <LoadingSkeleton v-if="!service" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
-      <div class="flex justify-end w-full md:w-auto">
-        <ActionsButton title="Acciones" :datas="sectionActions" />
-      </div>
-      <div class="flex justify-center h-full m-auto p-auto">
-        <Card class="w-full max-w-4xl md:col-span-2">
-          <div class="p-6 space-y-5">
-            <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
-              <Receipt class="h-5 w-5" /> Información del Servicio
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <SectionText title="Nombre" :content="service.getName()" />
-              <SectionText title="Precio" :content="service.getAmount()" />
-              <SectionText title="comision" :content="service.getAmount()" />
-              <SectionText title="Total Gastos" :content="service.getTotalExpense()" />
-              <SectionText title="Ganancias" :content="service.getTotalEarning()" />
-            </div>
-            <SectionText title="Descripción" :content="service.getDescription()" />
-            <Dropdown>
-              <template #header>
-                <FileText class="h-5 w-5" />
-                <span class="font-medium"> Gastos ({{ service.getBills().length }}) </span>
-              </template>
-              <template #data>
-                <div
-                  v-if="service.getBills().length > 0"
-                  v-for="bill in service.getBills()"
-                  class="flex justify-between items-center border-b py-2 last:border-0 dark:border-gray-700"
-                >
-                  <div>
-                    <p>{{ bill.getName() }}</p>
-                    <p>Monto: {{ bill.getAmount() }}</p>
-                  </div>
-                </div>
-                <EmptyData v-else class="mt-10" />
-              </template>
-            </Dropdown>
+      <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="hidden md:block">
+          <h1 class="text-3xl font-bold tracking-tight">
+            {{ service.getName() }}
+          </h1>
+          <div class="flex items-center gap-2">
+            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
+            <Text>| {{ service.getAmount() }}</Text>
           </div>
-        </Card>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <ActionsButton title="Acciones" :datas="sectionActions" />
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-8 space-y-6">
+          <Card class="dark:bg-gray-800 dark:text-gray-100">
+            <div class="p-6">
+              <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
+                <Receipt class="h-5 w-5" />
+                Información del Servicio
+              </h2>
+              <div class="space-y-5 mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <SectionText title="Nombre" :content="service.getName()" />
+                  <SectionText title="Comision" :content="service.getComision()" />
+                  <SectionText title="Monto" :content="service.getAmount()" />
+                </div>
+              </div>
+              <Dropdown>
+                <template #header>
+                  <ReceiptText class="h-5 w-5" />
+                  <span class="font-medium"> Gastos ({{ service.getBills().length }}) </span>
+                </template>
+                <template #data>
+                  <div
+                    v-if="service.getBills().length > 0"
+                    v-for="bill in service.getBills()"
+                    :key="bill.getId()"
+                    class="flex justify-between items-center border-b py-2 last:border-0 dark:border-gray-700"
+                  >
+                    <div class="flex justify-between items-start">
+                      <div class="space-y-1">
+                        <p class="font-medium">Nombre: {{ bill.getName() }}</p>
+                        <p class="font-medium">Monto: {{ bill.getAmount() }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <EmptyData v-else class="mt-10" />
+                </template>
+              </Dropdown>
+            </div>
+          </Card>
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
+            <ActivityView title="Total de gastos">
+              <div class="text-2xl font-bold">
+                {{ service.getTotalExpense().toFixed(2) }}
+              </div>
+              <p class="text-xs text-gray-500">
+                Cantidad de gastos: {{ service.getBills().length }}
+              </p>
+            </ActivityView>
+            <ActivityView title="Ganancias">
+              <div class="text-2xl font-bold">
+                {{ service.getTotalEarning().toFixed(2) }}
+              </div>
+              <p class="text-xs text-gray-500">
+                Porcentaje de ganancia: {{ service.getEarningPercentage() }}
+              </p>
+            </ActivityView>
+            <ActivityView title="Ultima Actualizacion">
+              <div class="text-2xl font-bold">{{ formatDateShort(service.getUpdatedAt()) }}</div>
+              <p class="text-xs text-gray-500">{{ formatRelativeDate(service.getUpdatedAt()) }}</p>
+            </ActivityView>
+            <ActivityView title="Creacion del cliente">
+              <div class="text-2xl font-bold">{{ formatDateShort(service.getCreatedAt()) }}</div>
+              <p class="text-xs text-gray-500">{{ formatRelativeDate(service.getCreatedAt()) }}</p>
+            </ActivityView>
+          </div>
+        </div>
+        <div class="md:col-span-4 min-h-[40rem] max-h-[40rem] overflow-y-auto pr-2">
+          <MenuTimeLineContent class="min-h-[40rem]" :lineContents="lineContents" />
+        </div>
       </div>
     </div>
   </SideBar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Receipt } from 'lucide-vue-next';
+import { Receipt, ReceiptText } from 'lucide-vue-next';
+import { formatDateShort, formatRelativeDate } from '@utils';
 import {
   SideBar,
   SectionText,
   Card,
   ActionsButton,
   LoadingSkeleton,
+  ActivityView,
+  Dropdown,
   EmptyData,
 } from '@/components/';
+import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import { Service } from '@/views/services/domain/';
 import { ServiceRepositoryImpl } from '@/views/services';
 import { GetServiceByIdUseCase } from '@views/services';
@@ -69,10 +118,10 @@ const service = ref<Service | null>(null);
 const loading = ref(true);
 
 const route = useRoute();
-const courierId = route.params.id as string;
+const serviceId = route.params.id as string;
 
 const loadData = async () => {
-  service.value = await getServiceByIdUseCase.execute(courierId);
+  service.value = await getServiceByIdUseCase.execute(serviceId);
   loading.value = false;
 };
 
@@ -80,10 +129,12 @@ onMounted(() => {
   loadData();
 });
 
+const lineContents = computed(() => []);
+
 const sectionActions = [
   {
     content: 'Editar Service',
-    url: AppRoutesService.edit(courierId),
+    url: AppRoutesService.edit(serviceId),
   },
 ];
 </script>

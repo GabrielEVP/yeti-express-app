@@ -88,4 +88,9 @@ export class Service {
   getTotalEarning(): number {
     return this.amount - this.getTotalExpense();
   }
+
+  getEarningPercentage(): number {
+    if (this.amount === 0) return 0;
+    return (this.getTotalEarning() / this.amount) * 100;
+  }
 }
