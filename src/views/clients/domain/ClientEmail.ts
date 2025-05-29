@@ -1,6 +1,6 @@
 export class ClientEmail {
   private readonly id: string;
-  private email: string;
+  private readonly email: string;
 
   constructor(id: string, email: string) {
     this.id = id;
@@ -13,9 +13,5 @@ export class ClientEmail {
 
   getEmail(): string {
     return this.email;
-  }
-
-  setEmail(newEmail: string): void {
-    this.email = newEmail;
   }
 }

@@ -86,7 +86,7 @@ import {
   UpdateClientUseCase,
 } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
-import { mapFormToClient } from '@/views/clients/adapters/Client.FormAdapter';
+import { ClientFormAdapter } from '@views/clients/adapters/';
 import { AppRoutesClient } from '@/views/clients/presentation/routes';
 import { TABS_FORM_CLIENT } from '@/views/clients/presentation/constants';
 import { AdressesForm, PhonesForm, EmailsForm } from '@/views/clients/presentation/components/';
@@ -110,11 +110,12 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
     return client;
   },
   create: (formValues) => {
-    const client = mapFormToClient(formValues);
+    const client = ClientFormAdapter.fromForm(formValues);
     return createClientUseCase.execute(client);
   },
   update: (formValues, id) => {
-    const client = mapFormToClient({ ...formValues, id });
+    console.log(formValues);
+    const client = ClientFormAdapter.fromForm(formValues);
     return updateClientUseCase.execute(id, client);
   },
   defaultRoute: AppRoutesClient.list,

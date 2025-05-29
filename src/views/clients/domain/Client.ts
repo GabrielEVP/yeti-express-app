@@ -1,24 +1,24 @@
-import { ClientAddress } from './ClientAddress';
-import { ClientPhone } from './ClientPhone';
-import { ClientEmail } from './ClientEmail';
-import { ClientType } from './Type';
-import { Delivery, DeliveryStatus } from '@views/deliveries';
-import { TimeLineContent } from '@time-line-content/domain';
 import dayjs from 'dayjs';
+import { ClientAddress } from '@/views/clients/domain/ClientAddress';
+import { ClientPhone } from '@/views/clients/domain/ClientPhone';
+import { ClientEmail } from '@/views/clients/domain/ClientEmail';
+import { ClientType } from '@/views/clients/domain/Type';
+import { TimeLineContent } from '@/time-line-content/domain';
+import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
 
 export class Client {
   private readonly id: string;
-  private legalName: string;
-  private type: ClientType;
-  private registrationNumber: string;
-  private notes: string;
-  private events: TimeLineContent[];
-  private addresses: ClientAddress[];
-  private emails: ClientEmail[];
-  private phones: ClientPhone[];
+  private readonly legalName: string;
+  private readonly type: ClientType;
+  private readonly registrationNumber: string;
+  private readonly notes: string;
+  private readonly timeLineContent: TimeLineContent[];
+  private readonly addresses: ClientAddress[];
+  private readonly emails: ClientEmail[];
+  private readonly phones: ClientPhone[];
   private readonly deliveries: Delivery[];
-  private createdAt: Date;
-  private updatedAt: Date;
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
 
   constructor(
     id: string,
@@ -26,7 +26,7 @@ export class Client {
     type: ClientType.VENEZOLANO,
     registrationNumber: string,
     notes: string,
-    events: TimeLineContent[],
+    timeLineContent: TimeLineContent[],
     addresses: ClientAddress[],
     emails: ClientEmail[],
     phones: ClientPhone[],
@@ -39,7 +39,7 @@ export class Client {
     this.type = type;
     this.registrationNumber = registrationNumber;
     this.notes = notes;
-    this.events = events;
+    this.timeLineContent = timeLineContent;
     this.addresses = addresses;
     this.emails = emails;
     this.phones = phones;
@@ -63,8 +63,8 @@ export class Client {
   getNotes(): string {
     return this.notes;
   }
-  getEvents(): TimeLineContent[] {
-    return [...this.events];
+  getTimeLineContent(): TimeLineContent[] {
+    return [...this.timeLineContent];
   }
   getAddresses(): ClientAddress[] {
     return [...this.addresses];

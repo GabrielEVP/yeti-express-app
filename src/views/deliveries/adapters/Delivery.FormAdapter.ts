@@ -4,7 +4,7 @@ import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCh
 import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
 import { mapFormToService } from '@/views/services/adapters';
-import { mapFormToClient, mapFormToAddress } from '@/views/clients/adapters';
+import { ClientFormAdapter, ClientAddressFormAdapter } from '@/views/clients/adapters';
 import { mapFormToCourier } from '@/views/couriers/adapters';
 
 export function mapFormToDeliveryReceipt(data: any): DeliveryReceipt {
@@ -45,8 +45,8 @@ export function mapFormToDelivery(form: any): Delivery {
     form.paymentType ?? PaymentType.PARTIAL,
     form.notes ?? '',
     mapFormToService(form.service ?? {}),
-    mapFormToClient(form.client ?? {}),
-    mapFormToAddress(form.clientAddress ?? {}),
+    ClientFormAdapter.fromForm(form.client ?? {}),
+    ClientAddressFormAdapter.fromForm(form.clientAddress ?? {}),
     mapFormToCourier(form.courier ?? {}),
     [],
     mapFormToDeliveryReceipt(form.receipt ?? {}),

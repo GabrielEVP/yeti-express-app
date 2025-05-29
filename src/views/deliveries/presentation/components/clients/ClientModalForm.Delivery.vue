@@ -71,7 +71,7 @@ import { ClientTypeOptions } from '@/views/clients/domain/Type';
 import { BasicClientSchema } from '@views/deliveries/schemas/Delivery.ClientBasicSchema';
 import { CreateClientUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
-import { mapFormToClient } from '@/views/clients/adapters/Client.FormAdapter';
+import { ClientFormAdapter } from '@views/clients/adapters/';
 
 defineProps<{
   isOpen: boolean;
@@ -87,7 +87,7 @@ const createClientUseCase = new CreateClientUseCase(repository);
 const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
   modal: true,
   create: (formValues) => {
-    const client = mapFormToClient(formValues);
+    const client = ClientFormAdapter.fromForm(formValues);
     return createClientUseCase.execute(client);
   },
   messages: {

@@ -1,6 +1,6 @@
 export class ClientAddress {
   private readonly id: string;
-  private address: string;
+  private readonly address: string;
 
   constructor(id: string, address: string) {
     this.id = id;
@@ -13,9 +13,5 @@ export class ClientAddress {
 
   getAddress(): string {
     return this.address;
-  }
-
-  setAddress(newAddress: string): void {
-    this.address = newAddress;
   }
 }

@@ -135,7 +135,10 @@ onMounted(() => {
 });
 
 const lineContents = computed(() =>
-  adaptTimeLineContentToUI(client.value?.getEvents() ?? [], CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS)
+  adaptTimeLineContentToUI(
+    client.value?.getTimeLineContent() ?? [],
+    CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS
+  )
 );
 
 const sectionActions = [

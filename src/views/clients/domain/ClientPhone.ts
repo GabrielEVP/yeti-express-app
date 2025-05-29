@@ -1,6 +1,6 @@
 export class ClientPhone {
   private readonly id: string;
-  private phone: string;
+  private readonly phone: string;
 
   constructor(id: string, phone: string) {
     this.id = id;
@@ -13,9 +13,5 @@ export class ClientPhone {
 
   getPhone(): string {
     return this.phone;
-  }
-
-  setPhone(newPhone: string): void {
-    this.phone = newPhone;
   }
 }

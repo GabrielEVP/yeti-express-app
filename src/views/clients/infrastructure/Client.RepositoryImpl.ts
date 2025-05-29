@@ -1,7 +1,7 @@
 import type { IClientRepository } from '@/views/clients/domain/IClientRepository';
 import type { Client } from '@/views/clients/domain/Client';
 import { ClientApi } from '@views/clients/infrastructure/Client.Api';
-import { adaptClient, adaptClientForApi } from '@/views/clients/adapters';
+import { ClientApiAdapter } from '@/views/clients/adapters';
 
 interface ClientFilterParams {
   search?: string;
@@ -15,29 +15,28 @@ interface ClientFilterParams {
 export class ClientRepositoryImpl implements IClientRepository {
   async getAll(): Promise<Client[]> {
     const response = await ClientApi.getAll();
-    return response.map(adaptClient);
+    return response.map((client) => ClientApiAdapter.fromApi(client));
   }
 
   async getById(id: string): Promise<Client | null> {
     try {
       const response = await ClientApi.getById(id);
-      console.log(response);
-      return adaptClient(response);
+      return ClientApiAdapter.fromApi(response);
     } catch (error) {
       throw new Error(String(error));
     }
   }
 
   async create(client: Client): Promise<Client> {
-    const payload = adaptClientForApi(client);
+    const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.create(payload);
-    return adaptClient(response);
+    return ClientApiAdapter.fromApi(response);
   }
 
   async update(id: string, client: Client): Promise<Client> {
-    const payload = adaptClientForApi(client);
+    const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.update(id, payload);
-    return adaptClient(response);
+    return ClientApiAdapter.fromApi(response);
   }
 
   async delete(id: string): Promise<void> {
@@ -46,13 +45,13 @@ export class ClientRepositoryImpl implements IClientRepository {
 
   async search(query: string): Promise<Client[]> {
     const response = await ClientApi.search(query);
-    return response.map(adaptClient);
+    return response.map((client) => ClientApiAdapter.fromApi(client));
   }
 
   async getFilterAll(params: ClientFilterParams): Promise<{ data: Client[]; total: number }> {
     const response = await ClientApi.getFilterAll(params);
     return {
-      data: response.data.map(adaptClient),
+      data: response.data.map((client) => ClientApiAdapter.fromApi(client)),
       total: response.total,
     };
   }

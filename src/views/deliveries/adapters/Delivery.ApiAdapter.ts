@@ -4,7 +4,7 @@ import { PaymentType } from '@/views/deliveries/domain/PaymentType';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
 import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
-import { adaptClient, adaptClientAddress } from '@/views/clients/adapters/';
+import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { adaptService } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
@@ -49,8 +49,8 @@ export function adaptDelivery(apiData: any): Delivery {
     apiData.payment_type as PaymentType,
     apiData.notes ?? '',
     adaptService(apiData.service),
-    adaptClient(apiData.client),
-    adaptClientAddress(apiData.client_address),
+    ClientApiAdapter.fromApi(apiData.client),
+    ClientAddressApiAdapter.fromApi(apiData.client_address),
     adaptCourier(apiData.courier),
     Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
     adaptDeliveryReceipt(apiData.receipt),
