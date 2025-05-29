@@ -98,6 +98,7 @@ import { Courier } from '@/views/couriers';
 import { CourierRepositoryImpl } from '@/views/couriers';
 import { GetCourierByIdUseCase } from '@views/couriers';
 import { AppRoutesCourier } from '@/views/couriers/presentation/routes/';
+import { TableDeliveries, ChartDelivery } from '@/views/couriers/presentation/components/';
 
 const repository = new CourierRepositoryImpl();
 const getCourierByIdUseCase = new GetCourierByIdUseCase(repository);

@@ -8,14 +8,15 @@ import { adaptClient, adaptClientAddress } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { adaptService } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
+import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
+import { DeliveryCollectionStatus } from '@/views/deliveries/domain';
 
 function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientCharge {
   return new DeliveryClientCharge(
     apiPayment.id,
     apiPayment.date,
     apiPayment.method,
-    apiPayment.amount,
-    apiPayment.delivery_id
+    apiPayment.amount
   );
 }
 
@@ -24,8 +25,7 @@ function adaptDeliveryCourierPayment(apiPayment: any): DeliveryCourierPayout {
     apiPayment.id,
     apiPayment.date,
     apiPayment.method,
-    apiPayment.amount,
-    apiPayment.delivery_id
+    apiPayment.amount
   );
 }
 
@@ -44,8 +44,8 @@ export function adaptDelivery(apiData: any): Delivery {
     apiData.number,
     apiData.date,
     apiData.status as DeliveryStatus,
-    '' as any,
-    '' as any,
+    apiData.DeliveryCollectionStatus as DeliveryCollectionStatus,
+    apiData.DeliveryPaymentStatus as DeliveryPaymentStatus,
     apiData.payment_type as PaymentType,
     apiData.notes ?? '',
     adaptService(apiData.service),
@@ -75,8 +75,8 @@ export function adaptDeliveryForApi(delivery: Delivery): any {
     payment_type: delivery.getPaymentType(),
     notes: delivery.getNotes(),
     receipt: adaptDeliveryReceiptForApi(delivery.getReceipt()),
-    client_payments: delivery.getClientPayments(),
-    courier_payments: delivery.getCourierPayments(),
+    client_payments: delivery.getClientCharges(),
+    courier_payments: delivery.getCourierPayouts(),
     client_id: delivery.getClientId(),
     courier_id: delivery.getCourierId(),
     service_id: delivery.getServiceId(),
@@ -93,12 +93,40 @@ function adaptDeliveryReceiptForApi(deliveryReceipt: DeliveryReceipt): any {
   };
 }
 
-export function adaptDeliveryLite(apiData: any): Delivery {
+export function adaptDeliveryToCourier(apiData: any): Delivery {
   return new Delivery(
     apiData.id,
     apiData.number,
     apiData.date,
     apiData.status as DeliveryStatus,
+    null as any,
+    apiData.DeliveryCourierPayout as DeliveryPaymentStatus,
+    apiData.payment_type as PaymentType,
+    apiData.notes ?? '',
+    adaptService(apiData.service),
+    null as any,
+    null as any,
+    null as any,
+    null as any,
+    null as any,
+    [],
+    [],
+    '',
+    '',
+    '',
+    '',
+    '',
+    ''
+  );
+}
+export function adaptDeliveryToClient(apiData: any): Delivery {
+  return new Delivery(
+    apiData.id,
+    apiData.number,
+    apiData.date,
+    apiData.status as DeliveryStatus,
+    apiData.DeliveryCollectionStatus as DeliveryCollectionStatus,
+    null as any,
     apiData.payment_type as PaymentType,
     apiData.notes ?? '',
     adaptService(apiData.service),

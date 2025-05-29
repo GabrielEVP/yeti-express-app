@@ -1,5 +1,5 @@
 import { Courier } from '@/views/couriers/';
-import { adaptDelivery } from '@views/deliveries';
+import { adaptDeliveryToClient } from '@views/deliveries';
 
 export function adaptCourier(apiData: any): Courier {
   return new Courier(
@@ -8,7 +8,7 @@ export function adaptCourier(apiData: any): Courier {
     apiData.last_name,
     apiData.phone,
     apiData.active,
-    apiData.deliveries ? apiData.deliveries.map(adaptDelivery) : [],
+    apiData.deliveries ? apiData.deliveries.map(adaptDeliveryToClient) : [],
     apiData.created_at,
     apiData.updated_at
   );

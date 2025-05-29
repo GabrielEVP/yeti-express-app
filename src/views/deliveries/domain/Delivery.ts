@@ -6,36 +6,26 @@ import { DeliveryClientCharge } from '@views/deliveries/domain/DeliveryClientCha
 import { DeliveryCourierPayout } from '@views/deliveries/domain/DeliveryCourierPayout';
 import { Service } from '@/views/services';
 import { Client, ClientAddress } from '@/views/clients/domain/';
+import { DeliveryCollectionStatus } from '@/views/deliveries/domain/';
 import { Courier } from '@/views/couriers/domain/';
-
-export enum DeliveryCollectionStatus {
-  PENDING = 'pending',
-  PARTIALLY_COLLECTED = 'partially_collected',
-  FULLY_COLLECTED = 'fully_collected',
-}
-
-export enum DeliveryPaymentStatus {
-  PENDING = 'pending',
-  PARTIALLY_PAID = 'partially_paid',
-  PAID = 'paid',
-}
+import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
 
 export class Delivery {
   private readonly id: string;
   private number: string;
   private date: Date;
   private status: DeliveryStatus;
-  private collectionStatus: DeliveryCollectionStatus;
-  private paymentStatus: DeliveryPaymentStatus;
   private paymentType: PaymentType;
   private notes: string;
   private readonly service: Service;
   private readonly client: Client;
   private readonly clientAddress: ClientAddress;
+  private clientCharges: DeliveryClientCharge[];
+  private paymentStatus: DeliveryPaymentStatus;
   private readonly courier: Courier;
+  private collectionStatus: DeliveryCollectionStatus;
   private readonly timeLine: TimeLineContent[];
   private receipt: DeliveryReceipt;
-  private clientCharges: DeliveryClientCharge[];
   private courierPayouts: DeliveryCourierPayout[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;

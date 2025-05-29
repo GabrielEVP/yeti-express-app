@@ -6,14 +6,10 @@
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">
             Información del empleado
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <FieldForm label="Nombre" name="name" id="name" required />
-            <SelectForm label="Rol" name="role" :items="[...RoleOptions]" />
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <FieldForm label="Email" name="email" id="email" required />
-            <FieldForm label="Contraseña" name="password" id="password" type="password" required />
-          </div>
+          <FieldForm label="Nombre" name="name" id="name" required />
+          <FieldForm label="Email" name="email" id="email" required />
+          <FieldForm label="Contraseña" name="password" id="password" type="password" required />
+          <SelectForm label="Permisos" name="role" :items="[...RoleOptions]" />
           <div class="flex justify-end space-x-2">
             <CancelButton @click="router.back()" />
             <AcceptButton :disabled="!meta.valid" />

@@ -6,10 +6,8 @@
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">
             Información del Repartidor
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <FieldForm label="Nombre" name="firstName" id="firstName" required />
-            <FieldForm label="Apellido" name="lastName" id="lastName" required />
-          </div>
+          <FieldForm label="Nombre" name="firstName" id="firstName" required />
+          <FieldForm label="Apellido" name="lastName" id="lastName" required />
           <FieldForm label="Teléfono" name="phone" id="phone" required />
           <div class="flex justify-end space-x-2">
             <CancelButton @click="router.back()" />

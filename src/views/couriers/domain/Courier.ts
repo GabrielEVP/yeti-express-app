@@ -1,4 +1,5 @@
-import { Delivery, DeliveryPaymentStatus } from '@views/deliveries';
+import { Delivery } from '@views/deliveries';
+import { DeliveryPaymentStatus } from '@views/deliveries/domain';
 import dayjs from 'dayjs';
 
 export class Courier {

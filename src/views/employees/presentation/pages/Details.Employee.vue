@@ -1,45 +1,52 @@
 <template>
   <SideBar>
-    <LoadingSkeleton v-if="loading" />
-    <div v-else-if="employee" class="space-y-8 text-gray-900 dark:text-gray-100">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 class="text-3xl font-bold tracking-tight">{{ employee.getName() }}</h1>
+    <LoadingSkeleton v-if="!employee" />
+    <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
+      <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="hidden md:block">
+          <h1 class="text-3xl font-bold tracking-tight">
+            {{ employee.getName() }}
+          </h1>
           <div class="flex items-center gap-2">
-            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">ID</h5>
-            <Text>| {{ employee.id }}</Text>
+            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Permisos</h5>
+            <Text>| {{ employee.getRole() }}</Text>
           </div>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 justify-end">
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100">
-          <div class="p-6">
-            <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
-              <Building2 class="h-5 w-5" />
-              Información del Empleado
-            </h2>
-            <div class="space-y-5">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <SectionText title="Nombre" :content="employee.getName()" />
-                <SectionText title="Email" :content="employee.getEmail()" />
-                <SectionText title="Rol" :content="employee.getRole()" />
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-8 space-y-6">
+          <Card class="dark:bg-gray-800 dark:text-gray-100">
+            <div class="p-6">
+              <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
+                <Building2 class="h-5 w-5" />
+                Información del Cliente
+              </h2>
+              <div class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <SectionText title="Nombre" :content="employee.getName()" />
+                  <SectionText title="Correo electronico" :content="employee.getEmail()" />
+                  <SectionText title="Permisos" :content="employee.getRole()" />
+                </div>
               </div>
             </div>
+          </Card>
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
+            <ActivityView title="Ultima Actualizacion">
+              <div class="text-2xl font-bold">{{ formatDateShort(employee.getUpdatedAt()) }}</div>
+              <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getUpdatedAt()) }}</p>
+            </ActivityView>
+            <ActivityView title="Creacion del empleado">
+              <div class="text-2xl font-bold">{{ formatDateShort(employee.getCreatedAt()) }}</div>
+              <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getCreatedAt()) }}</p>
+            </ActivityView>
           </div>
-        </Card>
-      </div>
-      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <ActivityView title="Fecha de Creación">
-          <div class="text-2xl font-bold">{{ formatDateShort(employee.getCreatedAt()) }}</div>
-          <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getCreatedAt()) }}</p>
-        </ActivityView>
-        <ActivityView title="Última Actualización">
-          <div class="text-2xl font-bold">{{ formatDateShort(employee.getCreatedAt()) }}</div>
-          <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getCreatedAt()) }}</p>
-        </ActivityView>
+        </div>
+        <div class="md:col-span-4 max-h-[55rem] overflow-y-auto pr-2">
+          <MenuTimeLineContent class="h-[55rem]" :lineContents="lineContents" />
+        </div>
       </div>
     </div>
   </SideBar>
@@ -59,6 +66,7 @@ import {
   ActivityView,
   LoadingSkeleton,
 } from '@/components/';
+import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import type { Employee } from '@/views/employees/domain/Employee';
 import { EmployeeRepositoryImpl } from '@/views/employees/infrastructure/Employee.RepositoryImpl';
 import { GetEmployeeByIdUseCase } from '@/views/employees/use-cases/Employee.GetByIdUseCase';

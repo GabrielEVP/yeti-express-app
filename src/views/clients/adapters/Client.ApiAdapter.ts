@@ -4,7 +4,7 @@ import { ClientEmail } from '@/views/clients/domain/ClientEmail';
 import { ClientPhone } from '@/views/clients/domain/ClientPhone';
 import { ClientType } from '@/views/clients/domain/Type';
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
-import { adaptDeliveryLite } from '@views/deliveries/adapters/Delivery.ApiAdapter';
+import { adaptDeliveryToClient } from '@views/deliveries/adapters/Delivery.ApiAdapter';
 
 export function adaptClient(apiData: any): Client {
   const events = Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [];
@@ -15,7 +15,7 @@ export function adaptClient(apiData: any): Client {
   const emails = Array.isArray(apiData.emails) ? apiData.emails.map(adaptClientEmail) : [];
   const phones = Array.isArray(apiData.phones) ? apiData.phones.map(adaptClientPhone) : [];
   const deliveries = Array.isArray(apiData.deliveries)
-    ? apiData.deliveries.map(adaptDeliveryLite)
+    ? apiData.deliveries.map(adaptDeliveryToClient)
     : [];
 
   return new Client(

@@ -7,3 +7,5 @@ export * from './IDeliveryRepository';
 export * from './PaymentMethod';
 export * from './PaymentType';
 export * from './Status';
+export * from './CollectionStatus';
+export * from './PaymentStatus';

@@ -70,7 +70,7 @@
           </div>
         </div>
         <div class="md:col-span-4 max-h-[55rem] overflow-y-auto pr-2">
-          <MenuTimeLineContent :lineContents="lineContents" />
+          <MenuTimeLineContent class="h-[55rem]" :lineContents="lineContents" />
         </div>
       </div>
       <div class="space-y-4">
