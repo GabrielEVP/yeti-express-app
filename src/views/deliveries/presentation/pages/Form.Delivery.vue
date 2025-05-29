@@ -53,7 +53,7 @@
                 :items="courierOptions"
               />
             </div>
-            <div class="flex flex-row gap-6 mb-8">
+            <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
               <SelectForm
                 label="Cliente"
                 name="clientId"
@@ -68,7 +68,9 @@
                 :items="clientsAddressOptions"
               />
               <div class="flex items-center justify-center m-auto mt-4">
-                <PlusButton @click="openModalClientForm" />
+                <PlusButton @click="openModalClientForm">
+                  <span class="text-white ml-4">Agregar nuevo Cliente</span>
+                </PlusButton>
               </div>
               <DeliveryClientModalForm
                 :isOpen="isModalClientFormOpen"

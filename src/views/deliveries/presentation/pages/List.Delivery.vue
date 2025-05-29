@@ -47,6 +47,9 @@
         <TableContent class="text-gray-600 dark:text-gray-300">
           {{ delivery.getService().getTotalEarning() }}
         </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300">
+          {{ delivery.getStatus() }}
+        </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
             <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />

@@ -12,8 +12,6 @@ export { default as PlusButton } from '@/components/buttons/Plus.vue';
 export { default as TrashButton } from '@/components/buttons/Trash.vue';
 export { default as DownloadButton } from '@/components/buttons/Download.vue';
 
-// CHARTS (global)
-
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';
 export { default as TableBilling } from '@views/clients/presentation/components/deliveries/TableDelivery.Client.vue';
@@ -61,11 +59,10 @@ export { default as ConfirmationModal } from '@/components/ui/modals/Confirmatio
 export { default as Modal } from '@/components/ui/modals/Modal.vue';
 
 // UI – SIDEBAR HELPERS
-export { default as SideBar } from '@/components/ui/sidebars/Sidebar.vue';
+export { default as SideBar } from '@/layouts/BarLayourt.vue';
 export { default as SidebarItems } from '@/components/ui/sidebars/SidebarItems.vue';
 export { default as SidebarToggleMode } from '@/components/ui/sidebars/SidebarToggleMode.vue';
 export { default as SidebarProfileMenu } from '@components/ui/sidebars/SidebarProfileMenu.vue';
-export * from '@/components/ui/sidebars/useSidebarState';
 
 // UI – TABLES
 export { default as Table } from '@/components/ui/tables/Table.vue';

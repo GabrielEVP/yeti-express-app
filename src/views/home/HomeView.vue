@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from '@components/ui/sidebars/Sidebar.vue';
+import Sidebar from '@/layouts/BarLayourt.vue';
 import { ActivityView } from '@/components/';
 import { ref, computed } from 'vue';
 import {
