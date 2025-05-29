@@ -9,9 +9,9 @@
         <div class="border rounded-md p-3 bg-muted/30 dark:border-gray-700 dark:bg-gray-700">
           <div class="flex justify-between items-start">
             <div class="space-y-1 text-sm">
-              <p><span class="font-medium">Nombre Completo:</span> {{ receipt.fullName }}</p>
-              <p><span class="font-medium">Teléfono:</span> {{ receipt.phone }}</p>
-              <p><span class="font-medium">Dirección:</span> {{ receipt.address }}</p>
+              <p><span class="font-medium">Nombre Completo:</span> {{ receipt.getFullName() }}</p>
+              <p><span class="font-medium">Teléfono:</span> {{ receipt.getPhone() }}</p>
+              <p><span class="font-medium">Dirección:</span> {{ receipt.getAddress() }}</p>
             </div>
           </div>
         </div>

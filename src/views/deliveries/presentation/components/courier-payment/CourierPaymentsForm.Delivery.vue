@@ -1,8 +1,6 @@
 <template>
   <div class="flex justify-end mb-4">
-    <PlusButton
-      @click="push(new DeliveryCourierPayout('', '', PaymentMethod.MOBILE_PAYMENT, 0, ''))"
-    />
+    <PlusButton @click="push(new DeliveryCourierPayout('', '', PaymentMethod.MOBILE_PAYMENT, 0))" />
   </div>
   <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
     <Text>No hay pagos agregados</Text>

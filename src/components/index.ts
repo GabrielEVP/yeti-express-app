@@ -13,7 +13,6 @@ export { default as TrashButton } from '@/components/buttons/Trash.vue';
 export { default as DownloadButton } from '@/components/buttons/Download.vue';
 
 // CHARTS (global)
-export { default as ChartLine } from '@/components/charts/ChartLine.vue';
 
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';

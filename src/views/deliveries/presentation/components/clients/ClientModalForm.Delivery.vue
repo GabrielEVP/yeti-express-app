@@ -16,7 +16,7 @@
           label="Tipo de cliente"
           name="type"
           id="type"
-          :items="ClientTypeOptions"
+          :items="Array.from(ClientTypeOptions)"
           required
         />
         <FieldForm

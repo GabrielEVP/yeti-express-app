@@ -21,8 +21,7 @@ export function mapFormToDeliveryClientPayment(data: any): DeliveryClientCharge 
     data.id ?? '',
     data.date ?? new Date().toISOString(),
     data.method ?? null,
-    data.amount ?? 0,
-    data.deliveryId ?? ''
+    data.amount ?? 0
   );
 }
 
@@ -31,8 +30,7 @@ export function mapFormToDeliveryCourierPayment(data: any): DeliveryCourierPayou
     data.id ?? '',
     data.date ?? new Date().toISOString(),
     data.method ?? null,
-    data.amount ?? 0,
-    data.deliveryId ?? ''
+    data.amount ?? 0
   );
 }
 

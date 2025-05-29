@@ -1,9 +1,6 @@
-import { Employee, EmployeeEvent } from '@/views/employees/domain/';
-import { adaptEvents } from '@/adapters/';
+import { Employee } from '@/views/employees/domain/';
 
 export const adaptEmployee = (apiData: any): Employee => {
-  const events = Array.isArray(apiData.events) ? apiData.events.map(adaptEmployeeEvent) : [];
-
   return new Employee(
     apiData.id,
     apiData.name,
@@ -12,7 +9,7 @@ export const adaptEmployee = (apiData: any): Employee => {
     apiData.role,
     apiData.active,
     apiData.userId,
-    events,
+    [],
     apiData.created_at,
     apiData.updated_at
   );
@@ -30,16 +27,3 @@ export const adaptEmployeeForApi = (employee: Employee): any => {
     updated_at: employee.getUpdatedAt(),
   };
 };
-
-export function adaptEmployeeEvent(apiEvent: any): EmployeeEvent {
-  const eventData = adaptEvents(apiEvent);
-  return new EmployeeEvent(
-    eventData.id,
-    eventData.event,
-    eventData.section,
-    eventData.referenceTable,
-    eventData.referenceId,
-    new Date(eventData.createdAt),
-    apiEvent.employer_id
-  );
-}

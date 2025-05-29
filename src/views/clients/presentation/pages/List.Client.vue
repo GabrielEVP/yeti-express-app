@@ -26,7 +26,7 @@
       :totalItems="clients.length"
       @updatePage="updatePage"
     >
-      <TableRow v-for="client in paginatedItems" :key="client.id">
+      <TableRow v-for="client in paginatedItems" :key="client.getId()">
         <TableContent class="text-black dark:text-white">
           {{ client.getLegalName() }}
         </TableContent>
