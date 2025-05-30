@@ -82,9 +82,11 @@
             </ActivityView>
           </div>
         </div>
-        <div class="md:col-span-4 min-h-[40rem] max-h-[40rem] overflow-y-auto pr-2">
-          <MenuTimeLineContent class="min-h-[40rem]" :lineContents="lineContents" />
-        </div>
+        <Card
+          class="md:col-span-4 max-h-[26rem] md:h-[40rem] md:min-h-[40rem] md:max-h-[56rem] overflow-y-auto pr-2"
+        >
+          <MenuTimeLineContent :lineContents="lineContents" />
+        </Card>
       </div>
     </div>
   </SideBar>

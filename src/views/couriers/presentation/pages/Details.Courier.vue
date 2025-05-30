@@ -60,9 +60,11 @@
             </ActivityView>
           </div>
         </div>
-        <div class="md:col-span-4 min-h-[35rem] max-h-[35rem] overflow-y-auto pr-2">
-          <MenuTimeLineContent class="min-h-[35rem]" :lineContents="lineContents" />
-        </div>
+        <Card
+          class="md:col-span-4 max-h-[26rem] md:h-[36rem] md:min-h-[36rem] md:max-h-[56rem] overflow-y-auto pr-2"
+        >
+          <MenuTimeLineContent :lineContents="lineContents" />
+        </Card>
       </div>
       <div class="space-y-4">
         <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>

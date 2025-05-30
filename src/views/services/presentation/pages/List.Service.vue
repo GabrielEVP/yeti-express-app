@@ -7,11 +7,28 @@
       @cancel="close"
     />
     <Card class="p-3">
-      <div class="mx-auto grid gap-4 items-center grid-cols-1 md:flex md:flex-wrap">
-        <div class="flex-grow flex gap-2">
-          <SearchForm v-model="searchQuery" placeholder="Buscar Servicio" @input="runSearch" />
+      <div class="flex gap-4 md:flex-row sm:justify-between">
+        <div class="md:flex gap-4">
+          <SearchForm
+            class="hidden md:block"
+            v-model="searchQuery"
+            placeholder="Buscar Servicio"
+            @input="runSearch"
+          />
+          <FilterButton class="w-full sm:w-auto">
+            <SearchForm
+              class="sm:hidden"
+              v-model="searchQuery"
+              placeholder="Buscar Servicio"
+              @input="runSearch"
+            />
+          </FilterButton>
         </div>
-        <NewButton label="Nuevo Servicio" :URL="AppRoutesService.new" />
+        <NewButton
+          label="Nuevo Servicio"
+          :URL="AppRoutesService.new"
+          class="w-full sm:w-auto md:w-auto"
+        />
       </div>
     </Card>
     <TableDashboard
@@ -47,6 +64,38 @@
           </div>
         </TableContent>
       </TableRow>
+      <template #mobile-rows>
+        <div class="lg:hidden space-y-4">
+          <div
+            v-for="service in paginatedItems"
+            :key="service.getId()"
+            class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-3">
+              <div class="w-full">
+                <p
+                  class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words"
+                >
+                  {{ service.getName() }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
+                  Comision {{ formatToDollars(service.getComision()) }}
+                </p>
+              </div>
+              <Bagde class="break-words text-right">
+                {{ formatToDollars(service.getTotalEarning()) }}
+              </Bagde>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex gap-2">
+                <EyeButton :route="AppRoutesService.details(service.getId())" />
+                <EditButton :route="AppRoutesService.edit(service.getId())" />
+                <TrashButton @click="open(service.getId())" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </TableDashboard>
   </SideBar>
 </template>
@@ -58,6 +107,7 @@ import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
   Card,
+  Bagde,
   TableContent,
   TableRow,
   TableDashboard,
@@ -67,6 +117,8 @@ import {
   EditButton,
   EyeButton,
   ConfirmationModal,
+  FilterButton,
+  SelectForm,
 } from '@/components/';
 import { Service } from '@/views/services/domain/';
 import {
@@ -77,6 +129,7 @@ import {
 import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
 import { TABLE_HEADER_SERVICE } from '@/views/services/presentation/constants/';
 import { AppRoutesService } from '@/views/services/presentation/routes';
+import { formatToDollars } from '@utils';
 
 const repository = new ServiceRepositoryImpl();
 const getServicesUseCase = new GetServicesUseCase(repository);

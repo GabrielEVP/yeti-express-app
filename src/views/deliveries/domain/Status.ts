@@ -9,3 +9,13 @@ export const DeliveryStatusOptions = [
   { value: DeliveryStatus.PAID, label: 'Pagado' },
   { value: DeliveryStatus.REFUSED, label: 'Rechazado' },
 ] as const;
+
+export const DeliveryStatusLabels: Record<DeliveryStatus, string> = {
+  [DeliveryStatus.PENDING]: 'Pendiente',
+  [DeliveryStatus.PAID]: 'Pagado',
+  [DeliveryStatus.REFUSED]: 'Rechazado',
+};
+
+export function getDeliveryStatusLabel(status: DeliveryStatus): string {
+  return DeliveryStatusLabels[status];
+}

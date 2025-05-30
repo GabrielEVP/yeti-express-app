@@ -1,6 +1,6 @@
 <template>
   <sidebar class="bg-gray-50 dark:bg-gray-900 min-h-screen p-6">
-    <div class="grid grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
       <ActivityView title="Pedidos Hoy">
         <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">158</div>
         <p class="text-xs text-gray-500 dark:text-gray-400">Porcentaje de ganancia: 12%</p>

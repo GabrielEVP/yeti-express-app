@@ -2,14 +2,14 @@
   <SideBar>
     <LoadingSkeleton v-if="!delivery" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+      <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="hidden md:block">
           <h1 class="text-3xl font-bold tracking-tight">Delivery #{{ delivery.getNumber() }}</h1>
           <div class="flex items-center gap-2">
             <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
             |
             <Bagde>
-              {{ delivery.getStatus() }}
+              {{ delivery.getStatusToFormat() }}
             </Bagde>
           </div>
         </div>
@@ -53,7 +53,11 @@
             </div>
           </div>
         </Card>
-        <MenuTimeLineContent :lineContents="lineContents" />
+        <Card
+          class="md:col-span-4 max-h-[26rem] md:h-[56rem] md:min-h-[56rem] md:max-h-[56rem] overflow-y-auto pr-2"
+        >
+          <MenuTimeLineContent :lineContents="lineContents" />
+        </Card>
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ActivityView title="Restante a Pagar">

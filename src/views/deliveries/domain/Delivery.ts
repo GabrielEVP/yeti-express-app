@@ -1,4 +1,4 @@
-import { DeliveryStatus } from '@/views/deliveries/domain/Status';
+import { DeliveryStatus, getDeliveryStatusLabel } from '@/views/deliveries/domain/Status';
 import { PaymentType } from '@/views/deliveries/domain/PaymentType';
 import { TimeLineContent } from '@time-line-content/domain';
 import { DeliveryReceipt } from '@views/deliveries/domain/DeliveryReceipt';
@@ -169,7 +169,9 @@ export class Delivery {
   getClientAddressId(): string {
     return this.clientAddressId;
   }
-
+  getStatusToFormat(): string {
+    return getDeliveryStatusLabel(this.status);
+  }
   getRemainingToPay(): number {
     const totalPaid = this.clientCharges.reduce((sum, charge) => sum + charge.getAmount(), 0);
     const totalComision = this.service.getComision();

@@ -7,14 +7,36 @@
       @cancel="close"
     />
     <Card class="p-3">
-      <div class="mx-auto grid gap-4 items-center grid-cols-1 md:flex md:flex-wrap">
-        <div class="flex-grow flex gap-2">
-          <SearchForm v-model="searchQuery" placeholder="Buscar Cliente" @input="runSearch" />
-          <div class="relative">
-            <FilterButton> </FilterButton>
-          </div>
+      <div class="flex gap-4 md:flex-row sm:justify-between">
+        <div class="md:flex gap-4">
+          <SearchForm
+            class="hidden md:block"
+            v-model="searchQuery"
+            placeholder="Buscar Cliente"
+            @input="runSearch"
+          />
+          <FilterButton class="w-full sm:w-auto">
+            <SelectForm
+              label="Tipo de cliente"
+              name="type"
+              id="type"
+              :items="Array.from(ClientTypeOptions)"
+            >
+              <option value="">Todos</option>
+            </SelectForm>
+            <SearchForm
+              class="sm:hidden"
+              v-model="searchQuery"
+              placeholder="Buscar Cliente"
+              @input="runSearch"
+            />
+          </FilterButton>
         </div>
-        <NewButton label="Nuevo Cliente" :URL="AppRoutesClient.new" />
+        <NewButton
+          label="Nuevo Cliente"
+          :URL="AppRoutesClient.new"
+          class="w-full sm:w-auto md:w-auto"
+        />
       </div>
     </Card>
     <TableDashboard
@@ -27,13 +49,13 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="client in paginatedItems" :key="client.getId()">
-        <TableContent class="text-black dark:text-white">
+        <TableContent class="text-black dark:text-white break-words">
           {{ client.getLegalName() }}
         </TableContent>
-        <TableContent class="text-black dark:text-white">
-          {{ client.getType() }}
+        <TableContent class="text-black dark:text-white break-words">
+          <Bagde>{{ client.getFormatType() }}</Bagde>
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
+        <TableContent class="text-gray-600 dark:text-gray-300 break-words">
           {{ client.getRegistrationNumber() }}
         </TableContent>
         <TableContent>
@@ -44,6 +66,38 @@
           </div>
         </TableContent>
       </TableRow>
+      <template #mobile-rows>
+        <div class="lg:hidden space-y-4">
+          <div
+            v-for="client in paginatedItems"
+            :key="client.getId()"
+            class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-3">
+              <div class="w-full">
+                <p
+                  class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words"
+                >
+                  {{ client.getLegalName() }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
+                  {{ client.getRegistrationNumber() }}
+                </p>
+              </div>
+              <Bagde class="break-words text-right">
+                {{ client.getFormatType() }}
+              </Bagde>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex gap-2">
+                <EyeButton :route="AppRoutesClient.details(client.getId())" />
+                <EditButton :route="AppRoutesClient.edit(client.getId())" />
+                <TrashButton @click="open(client.getId())" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </TableDashboard>
   </SideBar>
 </template>
@@ -55,6 +109,7 @@ import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
   Card,
+  Bagde,
   TableContent,
   TableRow,
   TableDashboard,
@@ -64,8 +119,10 @@ import {
   EditButton,
   EyeButton,
   ConfirmationModal,
+  FilterButton,
+  SelectForm,
 } from '@/components/';
-import { Client } from '@/views/clients/domain/';
+import { Client, ClientTypeOptions } from '@/views/clients/domain/';
 import {
   GetClientsUseCase,
   DeleteClientUseCase,

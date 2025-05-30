@@ -7,14 +7,36 @@
       @cancel="close"
     />
     <Card class="p-3">
-      <div class="mx-auto grid gap-4 items-center grid-cols-1 md:flex md:flex-wrap">
-        <div class="flex-grow flex gap-2">
-          <SearchForm v-model="searchQuery" placeholder="Buscar Delivery" @input="runSearch" />
-          <div class="relative">
-            <FilterButton> </FilterButton>
-          </div>
+      <div class="flex gap-4 md:flex-row sm:justify-between">
+        <div class="md:flex gap-4">
+          <SearchForm
+            class="hidden md:block"
+            v-model="searchQuery"
+            placeholder="Buscar Delivery"
+            @input="runSearch"
+          />
+          <FilterButton class="w-full sm:w-auto">
+            <SelectForm
+              label="Estado de la Orden"
+              name="type"
+              id="type"
+              :items="Array.from(DeliveryStatusOptions)"
+            >
+              <option value="">Todos</option>
+            </SelectForm>
+            <SearchForm
+              class="sm:hidden"
+              v-model="searchQuery"
+              placeholder="Buscar Delivery"
+              @input="runSearch"
+            />
+          </FilterButton>
         </div>
-        <NewButton label="Nueva Orden" :URL="AppRoutesDelivery.new" />
+        <NewButton
+          label="Nueva orden"
+          :URL="AppRoutesDelivery.new"
+          class="w-full sm:w-auto md:w-auto"
+        />
       </div>
     </Card>
     <TableDashboard
@@ -27,28 +49,26 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="delivery in paginatedItems" :key="delivery.getId()">
-        <TableContent class="text-black dark:text-white">
+        <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getNumber() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
+        <TableContent class="text-black dark:text-white break-words">
           {{ formatDateCustom(delivery.getDate()) }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
+        <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getClient().getLegalName() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          <Bagde>
-            {{ delivery.getStatus() }}
-          </Bagde>
+        <TableContent class="text-black dark:text-white break-words">
+          {{ delivery.getCourier().getFullName() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
+        <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getService().getName() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
+        <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getService().getTotalEarning() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ delivery.getStatus() }}
+        <TableContent class="text-black dark:text-white break-words">
+          <Bagde> {{ delivery.getStatusToFormat() }} </Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -59,6 +79,39 @@
           </div>
         </TableContent>
       </TableRow>
+      <template #mobile-rows>
+        <div class="lg:hidden space-y-4">
+          <div
+            v-for="delivery in paginatedItems"
+            :key="delivery.getId()"
+            class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-3">
+              <div class="w-full">
+                <p
+                  class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words"
+                >
+                  {{ delivery.getNumber() }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
+                  {{ formatDateCustom(delivery.getDate()) }}
+                </p>
+              </div>
+              <Bagde>
+                {{ delivery.getStatusToFormat() }}
+              </Bagde>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex gap-2">
+                <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />
+                <EditButton :route="AppRoutesDelivery.edit(delivery.getId())" />
+                <DownloadButton @click="handleDownload(delivery.getId())" />
+                <TrashButton @click="open(delivery.getId())" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </TableDashboard>
   </SideBar>
 </template>
@@ -71,6 +124,7 @@ import { formatDateCustom } from '@utils';
 import {
   SideBar,
   Card,
+  Bagde,
   TableContent,
   TableRow,
   TableDashboard,
@@ -81,8 +135,10 @@ import {
   EyeButton,
   DownloadButton,
   ConfirmationModal,
+  FilterButton,
+  SelectForm,
 } from '@/components/';
-import { Delivery } from '@/views/deliveries/domain/';
+import { Delivery, DeliveryStatus, DeliveryStatusOptions } from '@/views/deliveries/domain/';
 import {
   GetAllDeliveriesUseCase,
   DeleteDeliveryUseCase,
