@@ -17,3 +17,17 @@ export const ClientTypeOptions = [
   { value: ClientType.PASAPORT, label: 'Pasaporte' },
   { value: ClientType.PERSONAL_SIGNATURE, label: 'Firma Personal' },
 ] as const;
+
+export const ClientTypeLabelMap: Record<ClientType, string> = {
+  [ClientType.VENEZOLANO]: 'Venezolano',
+  [ClientType.FOREING]: 'Extranjero',
+  [ClientType.LEGAL]: 'Juridico',
+  [ClientType.COMMUNE]: 'Comuna',
+  [ClientType.GOVERNMENT]: 'Gubernamental',
+  [ClientType.PASAPORT]: 'Pasaporte',
+  [ClientType.PERSONAL_SIGNATURE]: 'Firma Personal',
+};
+
+export function formatClientType(type: ClientType): string {
+  return ClientTypeLabelMap[type] ?? 'Tipo desconocido';
+}

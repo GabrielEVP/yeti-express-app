@@ -1,5 +1,5 @@
 <template>
-  <Card class="p-9">
+  <div class="p-9">
     <h1 class="mb-10 text-2xl font-bold text-black dark:text-white">Actividad Reciente</h1>
     <div>
       <Line v-if="lineContents.length > 0">
@@ -13,7 +13,7 @@
       </Line>
       <EmptyData v-else class="mt-10" />
     </div>
-  </Card>
+  </div>
 </template>
 
 <script setup lang="ts">

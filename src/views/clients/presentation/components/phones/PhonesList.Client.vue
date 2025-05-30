@@ -9,7 +9,7 @@
         v-if="phones.length > 0"
         v-for="phone in phones"
         :key="phone.getId()"
-        class="flex justify-between items-center border-b py-2 last:border-0 dark:border-gray-700"
+        class="border rounded-md p-3 bg-muted/30 dark:border-gray-700 dark:bg-gray-700"
       >
         <div>
           <p>{{ phone.getPhone() }}</p>

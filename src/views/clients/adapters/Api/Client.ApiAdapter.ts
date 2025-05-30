@@ -13,7 +13,7 @@ export class ClientApiAdapter extends Client {
       apiData.type,
       apiData.registration_number,
       apiData.notes,
-      apiData.time_line_content?.map(adaptTimeLineContent) ?? [],
+      apiData.events?.map(adaptTimeLineContent) ?? [],
       apiData.addresses?.map(ClientAddressApiAdapter.fromApi) ?? [],
       apiData.emails?.map(ClientEmailApiAdapter.fromApi) ?? [],
       apiData.phones?.map(ClientPhoneApiAdapter.fromApi) ?? [],

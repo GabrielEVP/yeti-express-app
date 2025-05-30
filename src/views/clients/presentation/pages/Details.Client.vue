@@ -8,28 +8,32 @@
             {{ client.getLegalName() }}
           </h1>
           <div class="flex items-center gap-2">
-            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Registro</h5>
-            <Text>| {{ client.getRegistrationNumber() }}</Text>
+            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">
+              Tipo de documento
+            </h5>
+            <Text
+              >| <Bagde>{{ client.getFormatType() }}</Bagde>
+            </Text>
           </div>
         </div>
         <div class="flex gap-2 justify-end">
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="md:col-span-8 space-y-6">
           <Card class="dark:bg-gray-800 dark:text-gray-100">
             <div class="p-6">
               <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
-                <Building2 class="h-5 w-5" />
+                <UsersIcon class="h-5 w-5" />
                 Información del Cliente
               </h2>
               <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SectionText title="Nombre Legal" :content="client.getLegalName()" />
-                  <SectionText title="tipo de documento" :content="client.getType()" />
+                  <SectionText title="Tipo de documento" :content="client.getFormatType()" />
                   <SectionText
-                    title="Número de registro"
+                    title="Número de documento"
                     :content="client.getRegistrationNumber()"
                   />
                 </div>
@@ -45,18 +49,18 @@
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Total de Ganancias del mes">
               <div class="text-2xl font-bold">
-                {{ client.getEarningsDeliveryOfCurrentMonth().toFixed(2) }}
+                {{ formatToDollars(client.getEarningsDeliveryOfCurrentMonth()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Ganancias totales: {{ client.getEarningsDelivery().toFixed(2) }}
+                Ganancias totales: {{ formatToDollars(client.getEarningsDelivery()) }}
               </p>
             </ActivityView>
             <ActivityView title="Deliverys Pendientes">
               <div class="text-2xl font-bold">
-                {{ client.getEarningsPendingOfDeliveries().toFixed(2) }}
+                {{ formatToDollars(client.getEarningsPendingOfDeliveries()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Pendientes por pagar: {{ client.getPendingLenghtDeliveries() }}
+                Pendientes por cobrar: {{ client.getPendingLenghtDeliveries() }}
               </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
@@ -69,13 +73,15 @@
             </ActivityView>
           </div>
         </div>
-        <div class="md:col-span-4 max-h-[55rem] overflow-y-auto pr-2">
-          <MenuTimeLineContent class="h-[55rem]" :lineContents="lineContents" />
-        </div>
+        <Card
+          class="md:col-span-4 max-h-[26rem] md:h-[56rem] md:min-h-[56rem] md:max-h-[56rem] overflow-y-auto pr-2"
+        >
+          <MenuTimeLineContent :lineContents="lineContents" />
+        </Card>
       </div>
       <div class="space-y-4">
         <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
-        <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
+        <div class="grid gap-4 lg:grid-cols-2 grid-cols-1">
           <TableDeliveries :deliveries="client.getDeliveries()" />
           <ChartDelivery
             :deliveries="client.getDeliveries()"
@@ -91,12 +97,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Building2 } from 'lucide-vue-next';
-import { formatDateShort, formatRelativeDate } from '@/utils/';
+import { UsersIcon } from 'lucide-vue-next';
+import { formatDateShort, formatRelativeDate, formatToDollars } from '@/utils/';
 import {
   SideBar,
   SectionText,
   Card,
+  Bagde,
   ActionsButton,
   LoadingSkeleton,
   ActivityView,

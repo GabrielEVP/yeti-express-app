@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { ClientAddress } from '@/views/clients/domain/ClientAddress';
 import { ClientPhone } from '@/views/clients/domain/ClientPhone';
 import { ClientEmail } from '@/views/clients/domain/ClientEmail';
-import { ClientType } from '@/views/clients/domain/Type';
+import { ClientType, formatClientType } from '@/views/clients/domain/Type';
 import { TimeLineContent } from '@/time-line-content/domain';
 import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
 
@@ -84,6 +84,10 @@ export class Client {
 
   getUpdatedAt(): Date {
     return this.updatedAt;
+  }
+
+  getFormatType(): string {
+    return formatClientType(this.type);
   }
 
   getEarningsDelivery(): number {
