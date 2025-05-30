@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/';
 import router from '@/router/router';
 
 export const apiClient = axios.create({
-  baseURL: 'http://localhost:80/api',
+  baseURL: 'https://yeti-express-api-production.up.railway.app/api',
   withCredentials: true,
 });
 
