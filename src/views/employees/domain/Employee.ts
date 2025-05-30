@@ -1,5 +1,5 @@
 import { Role } from '@/views/employees/domain/Role';
-import { EmployeeEvent } from '@/views/employees/domain/EmployeeEvent';
+import { TimeLineContent } from '@time-line-content/domain';
 
 export class Employee {
   readonly id: string;
@@ -9,7 +9,7 @@ export class Employee {
   private role: Role;
   private active: boolean;
   private userId: string;
-  private events: EmployeeEvent[];
+  private timeLineContent: TimeLineContent[];
   private createdAt: Date;
   private updatedAt: Date;
 
@@ -21,7 +21,7 @@ export class Employee {
     role: Role,
     active: boolean,
     userId: string,
-    events: EmployeeEvent[],
+    timeLineContent: TimeLineContent[],
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -32,7 +32,7 @@ export class Employee {
     this.role = role;
     this.active = active;
     this.userId = userId;
-    this.events = events;
+    this.timeLineContent = timeLineContent;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
 
@@ -62,17 +62,13 @@ export class Employee {
   getUserId(): string {
     return this.userId;
   }
-  getEvents(): EmployeeEvent[] {
-    return [...this.events];
+  getEvents(): TimeLineContent[] {
+    return [...this.timeLineContent];
   }
   getCreatedAt(): Date {
     return this.createdAt;
   }
   getUpdatedAt(): Date {
     return this.updatedAt;
-  }
-
-  addEvent(event: EmployeeEvent): void {
-    this.events.push(event);
   }
 }

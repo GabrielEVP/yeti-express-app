@@ -1,19 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { Employee } from '../Employee';
 import { Role } from '../Role';
-import { EmployeeEvent } from '../EmployeeEvent';
 
 describe('Employee', () => {
   it('should create an Employee instance with valid data', () => {
-    const event = new EmployeeEvent(
-      'event1',
-      'update_employee',
-      'profile',
-      'employees',
-      'emp1',
-      new Date('2024-01-01T00:00:00Z'),
-      'emp1'
-    );
     const employee = new Employee(
       'emp1',
       'John Doe',
@@ -22,7 +12,7 @@ describe('Employee', () => {
       Role.ADMIN,
       true,
       'user1',
-      [event],
+      [],
       new Date('2024-01-01T00:00:00Z'),
       new Date('2024-01-02T00:00:00Z')
     );
@@ -68,16 +58,7 @@ describe('Employee', () => {
       new Date(),
       new Date()
     );
-    const event = new EmployeeEvent(
-      'event2',
-      'update_employee',
-      'profile',
-      'employees',
-      'emp3',
-      new Date(),
-      'emp3'
-    );
-    employee.addEvent(event);
+
     expect(employee.getEvents().length).toBe(1);
     expect(employee.getEvents()[0].getId()).toBe('event2');
   });

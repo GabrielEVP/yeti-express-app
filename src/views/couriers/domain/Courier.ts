@@ -1,3 +1,4 @@
+import { TimeLineContent } from '@time-line-content/domain';
 import { Delivery } from '@views/deliveries';
 import { DeliveryPaymentStatus } from '@views/deliveries/domain';
 import dayjs from 'dayjs';
@@ -8,6 +9,7 @@ export class Courier {
   private lastName: string;
   private phone: string;
   private active: boolean;
+  private readonly timeLineContent: TimeLineContent[];
   private readonly deliveries: Delivery[];
   private createdAt: Date;
   private updatedAt: Date;
@@ -18,6 +20,7 @@ export class Courier {
     lastName: string,
     phone: string,
     active: boolean,
+    timeLineContent: TimeLineContent[],
     deliveries: Delivery[],
     createdAt: Date,
     updatedAt: Date
@@ -27,6 +30,7 @@ export class Courier {
     this.lastName = lastName;
     this.phone = phone;
     this.active = active;
+    this.timeLineContent = timeLineContent;
     this.deliveries = deliveries;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -54,6 +58,10 @@ export class Courier {
 
   isActive(): boolean {
     return this.active;
+  }
+
+  getTimeLineContent(): TimeLineContent[] {
+    return this.timeLineContent;
   }
 
   getDeliveries(): Delivery[] {

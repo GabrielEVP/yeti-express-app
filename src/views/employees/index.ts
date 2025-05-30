@@ -1,6 +1,5 @@
 export * from './adapters/Employee.ApiAdapter';
 export * from './domain/Employee';
-export * from './domain/EmployeeEvent';
 export * from './domain/IEmployeeRepository';
 export * from './domain/Role';
 export * from './factory/Employee.Factory';
