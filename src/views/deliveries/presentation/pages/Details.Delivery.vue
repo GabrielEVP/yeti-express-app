@@ -17,8 +17,8 @@
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-6">
-        <Card class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100 p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100 lg:p-6 p-4">
           <div class="p-6">
             <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
               <Building2 class="h-5 w-5" />
@@ -54,7 +54,7 @@
           </div>
         </Card>
         <Card
-          class="max-h-[26rem] md:h-[56rem] md:min-h-[56rem] md:max-h-[56rem] overflow-y-auto pr-2"
+          class="max-h-[26rem] md:h-[49rem] md:min-h-[49rem] md:max-h-[56rem] overflow-y-auto pr-2"
         >
           <MenuTimeLineContent :lineContents="lineContents" />
         </Card>

@@ -69,20 +69,10 @@ export class Service {
     return this.bills;
   }
 
-  addBill(bill: Bill): void {
-    this.bills.push(bill);
-  }
-
-  removeBill(billId: string): void {
-    this.bills = this.bills.filter((bill) => bill.getId() !== billId);
-  }
-
-  clearBills(): void {
-    this.bills = [];
-  }
-
   getTotalExpense(): number {
-    return this.bills.reduce((total, bill) => total + bill.getAmount(), 0);
+    const totalBills = this.bills.reduce((total, bill) => total + bill.getAmount(), 0);
+    const totalExpense = totalBills + this.getComision();
+    return totalExpense;
   }
 
   getTotalEarning(): number {
