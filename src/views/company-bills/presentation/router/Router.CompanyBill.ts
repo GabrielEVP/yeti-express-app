@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import { Details, Form, List } from '@/views/company-bills/presentation/pages';
+import { Form, List } from '@/views/company-bills/presentation/pages';
 
 export const CompanyBillRouter: Array<RouteRecordRaw> = [
   {
@@ -18,13 +18,6 @@ export const CompanyBillRouter: Array<RouteRecordRaw> = [
     path: '/company-bills/edit/:id',
     name: 'CompanyBillEdit',
     component: Form,
-    meta: { requiresAuth: true },
-    props: true,
-  },
-  {
-    path: '/company-bills/:id',
-    name: 'CompanyBill',
-    component: Details,
     meta: { requiresAuth: true },
     props: true,
   },

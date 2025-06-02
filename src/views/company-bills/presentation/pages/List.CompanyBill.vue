@@ -1,7 +1,8 @@
 <template>
+  <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :company-bill-id="selectedId" @close="CloseDetails" />
   <ConfirmationModal
     :isOpen="isOpen"
-    message="¿Estás seguro que quieres eliminar esta factura?"
+    message="¿Estás seguro que quieres eliminar esta gastos?"
     @confirm="handleDeleteConfirmation"
     @cancel="close"
   />
@@ -12,20 +13,20 @@
           <SearchForm
             class="hidden md:block"
             v-model="searchQuery"
-            placeholder="Buscar Factura"
+            placeholder="Buscar Gastos"
             @input="runSearch"
           />
           <FilterButton class="w-full sm:w-auto">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
-              placeholder="Buscar Factura"
+              placeholder="Buscar Gasto"
               @input="runSearch"
             />
           </FilterButton>
         </div>
         <NewButton
-          label="Nueva Factura"
+          label="Nueva Gasto"
           :URL="AppRoutesCompanyBill.new"
           class="w-full sm:w-auto md:w-auto"
         />
@@ -41,13 +42,18 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="bill in paginatedItems" :key="bill.getId()">
-        <TableContent>{{ formatDateShort(bill.getDate()) }}</TableContent>
         <TableContent>{{ bill.getName() }}</TableContent>
+        <TableContent>{{ formatDateShort(bill.getDate()) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.getAmount()) }}</TableContent>
         <TableContent>{{ bill.getFormattedMethod() }}</TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesCompanyBill.details(bill.getId())" />
+            <Button
+              class="bg-gray-600 hover:bg-gray-700 text-white transition-colors"
+              @click="() => OpenDetails(String(bill.getId()))"
+            >
+              <Eye class="w-4 h-4" />
+            </Button>
             <EditButton :route="AppRoutesCompanyBill.edit(bill.getId())" />
             <TrashButton @click="() => open(bill.getId())" />
           </div>
@@ -75,7 +81,10 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesCompanyBill.details(bill.getId())" />
+                <Button
+                  class="bg-gray-600 hover:bg-gray-700 text-white transition-colors"
+                  @click="() => OpenDetails(String(bill.getId()))"
+                />
                 <EditButton :route="AppRoutesCompanyBill.edit(bill.getId())" />
                 <TrashButton @click="() => open(bill.getId())" />
               </div>
@@ -89,7 +98,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { usePagination, useSearch, useModal } from '@/composables/';
+import ModalDetails from '../components/ModalDetails.CompanyBill.vue';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
@@ -101,9 +111,9 @@ import {
   NewButton,
   TrashButton,
   EditButton,
-  EyeButton,
   ConfirmationModal,
   FilterButton,
+  Button,
 } from '@/components/';
 import { formatDateShort, formatToDollars } from '@/utils/';
 import { CompanyBill } from '@/views/company-bills/domain/';
@@ -115,6 +125,7 @@ import {
 import { CompanyBillRepositoryImpl } from '@/views/company-bills/infrastructure/CompanyBill.RepositoryImpl';
 import { TABLE_HEADER_COMPANY_BILL } from '@/views/company-bills/presentation/constants/';
 import { AppRoutesCompanyBill } from '@/views/company-bills/presentation/routes';
+import { Eye } from 'lucide-vue-next';
 
 const repository = new CompanyBillRepositoryImpl();
 const getCompanyBillsUseCase = new GetCompanyBillsUseCase(repository);
@@ -122,6 +133,8 @@ const deleteCompanyBillUseCase = new DeleteCompanyBillUseCase(repository);
 const searchCompanyBillsUseCase = new SearchCompanyBillsUseCase(repository);
 
 const bills = ref<CompanyBill[]>([]);
+
+const { isOpen: IsOpenDetails, selectedId, open: OpenDetails, close: CloseDetails } = useModal<string>();
 
 const { searchQuery, applySearch } = useSearch<CompanyBill>({
   fetchFn: searchCompanyBillsUseCase.execute.bind(searchCompanyBillsUseCase),
@@ -147,8 +160,8 @@ const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePag
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteCompanyBillUseCase.execute.bind(deleteCompanyBillUseCase),
-  successMessage: 'Factura eliminada exitosamente',
-  errorMessage: 'Error al eliminar la factura',
+  successMessage: 'Gasto eliminada exitosamente',
+  errorMessage: 'Error al eliminar la gastos',
   onAfterDelete: async () => {
     await runSearch();
   },

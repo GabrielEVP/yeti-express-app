@@ -10,7 +10,7 @@
             <FieldForm label="Nombre" name="name" id="name" required />
             <FieldForm label="Fecha" name="date" id="date" type="date" required />
           </div>
-          <FieldForm
+          <TextAreaForm
             label="Descripción"
             name="description"
             id="description"
@@ -21,8 +21,9 @@
             <SelectForm
               label="Método de Pago"
               name="method"
+              placeholder="Selecciona un metodo de pago"
               id="method"
-              :options="{ ...paymentMethods }"
+              :items="[...PaymentMethodOptions]"
               required
             />
             <FieldForm label="Monto" name="amount" id="amount" type="number" step="0.01" required />
@@ -41,7 +42,15 @@
 import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
-import { SideBar, Card, FieldForm, SelectForm, AcceptButton, CancelButton } from '@/components';
+import {
+  SideBar,
+  Card,
+  FieldForm,
+  SelectForm,
+  AcceptButton,
+  CancelButton,
+  TextAreaForm,
+} from '@/components';
 import { CompanyBill } from '@/views/company-bills/domain/CompanyBill';
 import { PaymentMethodOptions } from '@/views/company-bills/domain/enums/PaymentMethod';
 import { CompanyBillSchema } from '@/views/company-bills/schemas/CompanyBill.Schema';
