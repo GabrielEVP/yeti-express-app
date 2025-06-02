@@ -2,20 +2,16 @@
   <DangerAlert :show="showError" :message="alertMessage" />
   <SuccessAlert :show="showSuccess" :message="alertMessage" />
   <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-    <!-- Overlay para móvil -->
     <div
       v-if="isMobileMenuOpen"
       class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
       @click="closeMobileMenu"
     ></div>
-
-    <!-- Sidebar -->
     <aside
       :class="[
         'fixed left-0 h-full transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg flex flex-col w-20 z-50',
-        // En móvil: oculto por defecto, visible cuando isMobileMenuOpen es true
-        'md:translate-x-0', // Siempre visible en desktop
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', // En móvil controlado por estado
+        'md:translate-x-0',
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       ]"
     >
       <div class="p-3 flex items-center shrink-0">
@@ -38,8 +34,6 @@
         <div class="relative px-3"></div>
       </div>
     </aside>
-
-    <!-- Botón hamburger para móvil -->
     <button
       @click="toggleMobileMenu"
       class="fixed bottom-4 right-4 z-50 md:hidden bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-colors duration-200"
@@ -67,14 +61,7 @@
         />
       </svg>
     </button>
-
-    <!-- Main content -->
-    <main
-      :class="[
-        'transition-all duration-300 p-6',
-        'ml-0 md:ml-20', // Sin margen en móvil, con margen en desktop
-      ]"
-    >
+    <main :class="['transition-all duration-300 p-6', 'ml-0 md:ml-20']">
       <slot></slot>
     </main>
   </div>
@@ -89,6 +76,7 @@ import {
   BookUser,
   Bike,
   SquareChartGantt,
+  Banknote,
 } from 'lucide-vue-next';
 import logo from '@/assets/yeti.webp';
 import { DangerAlert, SuccessAlert } from '@/components/';
@@ -109,6 +97,7 @@ const navigationItems = [
   { route: '/couriers', title: 'Repartidor', icon: Bike },
   { route: '/employees', title: 'Empleados', icon: BookUser },
   { route: '/services', title: 'Servicios', icon: SquareChartGantt },
+  { route: '/company-bills', title: 'Gastos', icon: Banknote },
 ];
 
 function toggleDarkMode() {

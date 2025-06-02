@@ -6,6 +6,7 @@ import { DeliveryRouter } from '@/views/deliveries';
 import { EmployeeRouter } from '@views/employees';
 import { CourierRouter } from '@views/couriers';
 import { ServiceRouter } from '@views/services';
+import { CompanyBillRouter } from '@/views/company-bills/';
 import { UserRouter } from '@/views/users/router/Router.User';
 import { useAuthStore } from '@/stores/';
 import { storeToRefs } from 'pinia';
@@ -28,6 +29,7 @@ const routes: Array<RouteRecordRaw> = [
   ...EmployeeRouter,
   ...DeliveryRouter,
   ...ServiceRouter,
+  ...CompanyBillRouter,
   ...UserRouter,
 ];
 
