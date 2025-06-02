@@ -169,13 +169,9 @@ export class Delivery {
   getClientAddressId(): string {
     return this.clientAddressId;
   }
+
   getStatusToFormat(): string {
     return getDeliveryStatusLabel(this.status);
-  }
-  getRemainingToPay(): number {
-    const totalPaid = this.clientCharges.reduce((sum, charge) => sum + charge.getAmount(), 0);
-    const totalComision = this.service.getComision();
-    return Math.max(totalComision - totalPaid, 0);
   }
 
   getRemainingToCollect(): number {

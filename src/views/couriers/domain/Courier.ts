@@ -89,9 +89,7 @@ export class Courier {
   }
 
   getTotalPendingToPay(): number {
-    return this.deliveries
-      .filter((delivery) => delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID)
-      .reduce((sum, delivery) => sum + delivery.getRemainingToPay(), 0);
+    return 0;
   }
 
   getPaidAmountThisMonth(): number {

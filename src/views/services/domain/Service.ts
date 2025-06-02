@@ -76,7 +76,7 @@ export class Service {
   }
 
   getTotalEarning(): number {
-    return this.amount - this.getTotalExpense();
+    return this.getTotalExpense();
   }
 
   getEarningPercentage(): number {

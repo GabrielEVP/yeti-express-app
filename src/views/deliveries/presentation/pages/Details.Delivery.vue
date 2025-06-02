@@ -36,37 +36,41 @@
                 <SectionText title="Cliente" :content="delivery.getClient().getLegalName()" />
                 <SectionText
                   title="Importe Total"
-                  :content="delivery.getService().getTotalEarning()"
+                  :content="formatToDollars(delivery.getService().getTotalEarning())"
                 />
                 <SectionText title="Repartidor" :content="delivery.getCourier().getFullName()" />
-                <SectionText title="Comision" :content="delivery.getService().getComision()" />
               </div>
               <SectionText title="Nota" :content="delivery.getNotes()" />
               <div class="space-y-6 pt-8">
                 <DeliveryClientAddressList :address="delivery.getClientAddress()" />
                 <DeliveryReceiptDropdown :receipt="delivery.getReceipt()" />
                 <DeliveryPaymentsDrowdown :DeliveryClientPayments="delivery.getClientCharges()" />
-                <DeliveryCourierPaymentsDropdown
-                  :DeliveryCourierpayments="delivery.getCourierPayouts()"
-                />
               </div>
             </div>
           </div>
         </Card>
         <Card
-          class="max-h-[26rem] md:h-[49rem] md:min-h-[49rem] md:max-h-[56rem] overflow-y-auto pr-2"
+          class="max-h-[26rem] md:h-[43rem] md:min-h-[43rem] md:max-h-[43rem] overflow-y-auto pr-2"
         >
           <MenuTimeLineContent :lineContents="lineContents" />
         </Card>
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <ActivityView title="Restante a Pagar">
-          <div class="text-2xl font-bold">{{ delivery.getRemainingToPay() }}</div>
-          <p class="text-xs text-gray-500">Total: {{ delivery.getService().getComision() }}</p>
+        <ActivityView title="Total Facturado">
+          <div class="text-2xl font-bold">
+            {{ formatToDollars(delivery.getRemainingToCollect()) }}
+          </div>
+          <p class="text-xs text-gray-500">
+            Total: {{ formatToDollars(delivery.getService().getTotalEarning()) }}
+          </p>
         </ActivityView>
         <ActivityView title="Restante a Cobrar">
-          <div class="text-2xl font-bold">{{ delivery.getRemainingToCollect() }}</div>
-          <p class="text-xs text-gray-500">Total: {{ delivery.getService().getTotalEarning() }}</p>
+          <div class="text-2xl font-bold">
+            {{ formatToDollars(delivery.getRemainingToCollect()) }}
+          </div>
+          <p class="text-xs text-gray-500">
+            Total: {{ formatToDollars(delivery.getService().getTotalEarning()) }}
+          </p>
         </ActivityView>
         <ActivityView title="Ultima Actualizacion">
           <div class="text-2xl font-bold">{{ formatDateShort(delivery.getUpdatedAt()) }}</div>
@@ -85,7 +89,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
-import { formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
+import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
 import {
   SideBar,
   SectionText,
