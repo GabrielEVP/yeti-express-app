@@ -28,10 +28,10 @@
             <FieldForm label="Nombre" name="name" id="name" required />
             <TextAreaForm label="Descripción" name="description" id="description" required />
             <FieldForm label="Monto" name="amount" id="amount" type="number" required />
-            <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
+              <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
               <div class="flex justify-end mb-4">
                 <PlusButton type="button" @click="push(new Bill('', '', 0))" />
               </div>

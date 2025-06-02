@@ -1,12 +1,15 @@
 <template>
   <Card class="mt-8">
-    <!-- Vista Desktop -->
     <div class="hidden lg:block overflow-x-auto">
       <Table>
         <TableHead>
           <TableRow>
-            <TableContent v-for="(header, index) in headers" :key="index">
-              <div class="flex items-center h-12">
+            <TableContent
+              v-for="(header, index) in headers"
+              :key="index"
+              :class="getHeaderAlignment(header.position)"
+            >
+              <div class="flex items-center h-12" :class="getHeaderFlexAlignment(header.position)">
                 <div
                   class="flex cursor-pointer"
                   v-if="header.sortable"
@@ -30,8 +33,6 @@
         </TableBody>
       </Table>
     </div>
-
-    <!-- Vista Mobile -->
     <div class="lg:hidden">
       <div
         class="p-4 border-b border-gray-200 dark:border-gray-700"
@@ -58,20 +59,15 @@
         </div>
       </slot>
     </div>
-
-    <!-- Paginación responsive -->
     <div
       class="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-700"
     >
-      <!-- Información de resultados -->
       <div class="text-xs text-gray-500 dark:text-gray-400 text-center sm:text-left">
         <span class="hidden sm:inline"
           >Mostrando {{ startIndex + 1 }} a {{ endIndex }} de {{ totalItems }} resultados</span
         >
         <span class="sm:hidden">{{ startIndex + 1 }}-{{ endIndex }} de {{ totalItems }}</span>
       </div>
-
-      <!-- Controles de paginación -->
       <div class="flex gap-2 items-center">
         <button
           @click="emit('updatePage', currentPage - 1)"
@@ -81,14 +77,11 @@
           <ChevronLeft class="h-4 w-4" />
           <span class="hidden sm:inline">Anterior</span>
         </button>
-
-        <!-- Indicador de página en móvil -->
         <div
           class="sm:hidden flex items-center px-3 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md"
         >
           {{ currentPage }} / {{ totalPages }}
         </div>
-
         <button
           @click="emit('updatePage', currentPage + 1)"
           :disabled="currentPage >= totalPages"
@@ -108,9 +101,18 @@ import { defineProps, defineEmits } from 'vue';
 import { ChevronLeft, ChevronRight, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-vue-next';
 import { Card, Table, TableBody, TableContent, TableHead, TableRow } from '@/components';
 
+type HeaderPosition = 'left' | 'center' | 'right';
+
+interface TableHeader {
+  label: string;
+  key: string;
+  sortable?: boolean;
+  position?: HeaderPosition;
+}
+
 const props = defineProps({
   headers: {
-    type: Array as PropType<Array<{ label: string; key: string; sortable?: boolean }>>,
+    type: Array as PropType<Array<TableHeader>>,
     required: true,
   },
   currentPage: {
@@ -159,5 +161,31 @@ function getSortIcon(headerKey: string) {
     return sortConfig.value.order === 'asc' ? ChevronUp : ChevronDown;
   }
   return ChevronsUpDown;
+}
+
+function getHeaderAlignment(position?: HeaderPosition): string {
+  switch (position) {
+    case 'left':
+      return 'text-left';
+    case 'center':
+      return 'text-center';
+    case 'right':
+      return 'text-right';
+    default:
+      return 'text-left'; // Por defecto alineado a la izquierda
+  }
+}
+
+function getHeaderFlexAlignment(position?: HeaderPosition): string {
+  switch (position) {
+    case 'left':
+      return 'justify-start';
+    case 'center':
+      return 'justify-center';
+    case 'right':
+      return 'justify-end';
+    default:
+      return 'justify-start'; // Por defecto alineado a la izquierda
+  }
 }
 </script>
