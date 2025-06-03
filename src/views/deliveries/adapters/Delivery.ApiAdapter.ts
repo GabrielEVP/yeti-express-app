@@ -6,7 +6,7 @@ import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCh
 import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
-import { adaptService } from '@/views/services/';
+import { ServiceApiAdapter } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
 import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
 
@@ -28,7 +28,7 @@ export function adaptDelivery(apiData: any): Delivery {
     apiData.payment_type as PaymentType,
     apiData.DeliveryPaymentStatus as DeliveryPaymentStatus,
     apiData.notes ?? '',
-    adaptService(apiData.service),
+    ServiceApiAdapter.fromApi(apiData.service),
     ClientApiAdapter.fromApi(apiData.client),
     ClientAddressApiAdapter.fromApi(apiData.client_address),
     adaptCourier(apiData.courier),
@@ -74,7 +74,7 @@ export function adaptDeliveryToCourier(apiData: any): Delivery {
     apiData.payment_type as PaymentType,
     apiData.payment_status as DeliveryPaymentStatus,
     apiData.notes ?? '',
-    adaptService(apiData.service),
+    ServiceApiAdapter.fromApi(apiData.service),
     null as any,
     null as any,
     null as any,
@@ -97,7 +97,7 @@ export function adaptDeliveryToClient(apiData: any): Delivery {
     apiData.payment_type as PaymentType,
     apiData.payment_status as DeliveryPaymentStatus,
     apiData.notes ?? '',
-    adaptService(apiData.service),
+    ServiceApiAdapter.fromApi(apiData.service),
     null as any,
     null as any,
     null as any,

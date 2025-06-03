@@ -13,7 +13,7 @@ export class ServiceApiAdapter {
       apiData.active,
       new Date(apiData.created_at),
       new Date(apiData.updated_at),
-      apiData.bills?.map(BillApiAdapter.fromApi) ?? [],
+      apiData.bills?.map(BillApiAdapter.fromApi) ?? []
     );
   }
 
@@ -28,5 +28,4 @@ export class ServiceApiAdapter {
       bills: service.getBills().map(BillApiAdapter.toApi),
     };
   }
-
-} 
+}
