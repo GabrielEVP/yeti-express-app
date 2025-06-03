@@ -2,23 +2,28 @@
   <Modal :is-open="isOpen" @close="handleCloseModal">
     <LoadingSkeleton v-if="!bill" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div class="md:col-span-8 space-y-6">
-          <div class="p-6">
+      <div class="flex justify-center">
+        <div class="w-full max-w-4xl">
+          <div class="p-6 flex flex-col items-center text-center space-y-6">
             <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
               <Building2 class="h-5 w-5" />
-              Información de la Factura
+              Información del Gasto
             </h2>
-            <div class="space-y-5">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="w-full max-w-2xl space-y-5">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
                 <SectionText title="Nombre" :content="bill.getName()" />
                 <SectionText title="Fecha" :content="formatDateShort(bill.getDate())" />
                 <SectionText title="Método de Pago" :content="bill.getFormattedMethod()" />
                 <SectionText title="Monto" :content="formatToDollars(bill.getAmount())" />
               </div>
-              <div>
+              <div class="text-center">
                 <h3 class="text-lg font-medium mb-2">Descripción</h3>
-                <p class="text-gray-700 dark:text-gray-300">{{ bill.getDescription() }}</p>
+                <p
+                  class="text-left text-gray-700 dark:text-gray-300 max-w-2xl mx-auto break-words whitespace-pre-wrap leading-relaxed"
+                >
+                  {{ bill.getDescription() }}
+                </p>
               </div>
             </div>
           </div>

@@ -1,5 +1,10 @@
 <template>
-  <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :company-bill-id="selectedId" @close="CloseDetails" />
+  <ModalDetails
+    v-if="selectedId !== null"
+    :is-open="IsOpenDetails"
+    :company-bill-id="selectedId"
+    @close="CloseDetails"
+  />
   <ConfirmationModal
     :isOpen="isOpen"
     message="¿Estás seguro que quieres eliminar esta gastos?"
@@ -45,7 +50,9 @@
         <TableContent>{{ bill.getName() }}</TableContent>
         <TableContent>{{ formatDateShort(bill.getDate()) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.getAmount()) }}</TableContent>
-        <TableContent>{{ bill.getFormattedMethod() }}</TableContent>
+        <TableContent>
+          <Badge>{{ bill.getFormattedMethod() }}</Badge>
+        </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
             <Button
@@ -84,7 +91,9 @@
                 <Button
                   class="bg-gray-600 hover:bg-gray-700 text-white transition-colors"
                   @click="() => OpenDetails(String(bill.getId()))"
-                />
+                >
+                  <Eye class="w-4 h-4" />
+                </Button>
                 <EditButton :route="AppRoutesCompanyBill.edit(bill.getId())" />
                 <TrashButton @click="() => open(bill.getId())" />
               </div>
@@ -104,6 +113,7 @@ import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
   Card,
+  Bagde,
   TableContent,
   TableRow,
   TableDashboard,
@@ -134,7 +144,12 @@ const searchCompanyBillsUseCase = new SearchCompanyBillsUseCase(repository);
 
 const bills = ref<CompanyBill[]>([]);
 
-const { isOpen: IsOpenDetails, selectedId, open: OpenDetails, close: CloseDetails } = useModal<string>();
+const {
+  isOpen: IsOpenDetails,
+  selectedId,
+  open: OpenDetails,
+  close: CloseDetails,
+} = useModal<string>();
 
 const { searchQuery, applySearch } = useSearch<CompanyBill>({
   fetchFn: searchCompanyBillsUseCase.execute.bind(searchCompanyBillsUseCase),
