@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import { ClientAddress } from '@/views/clients/domain/ClientAddress';
-import { ClientPhone } from '@/views/clients/domain/ClientPhone';
-import { ClientEmail } from '@/views/clients/domain/ClientEmail';
-import { ClientType, formatClientType } from '@/views/clients/domain/Type';
+import { ClientAddress, ClientDeliveryDebt } from '@/views/clients/domain/';
+import { ClientPhone } from '@/views/clients/domain/';
+import { ClientEmail } from '@/views/clients/domain/';
+import { ClientType, formatClientType } from '@/views/clients/domain/';
 import { TimeLineContent } from '@/time-line-content/domain';
 import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
 
@@ -12,25 +12,29 @@ export class Client {
   private readonly type: ClientType;
   private readonly registrationNumber: string;
   private readonly notes: string;
+  private readonly allowCredit: boolean;
   private readonly timeLineContent: TimeLineContent[];
   private readonly addresses: ClientAddress[];
   private readonly emails: ClientEmail[];
   private readonly phones: ClientPhone[];
   private readonly deliveries: Delivery[];
+  private readonly deliveriesDebts: ClientDeliveryDebt[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
 
   constructor(
     id: string,
     legalName: string,
-    type: ClientType.VENEZOLANO,
+    type: ClientType,
     registrationNumber: string,
     notes: string,
+    allowCredit: boolean,
     timeLineContent: TimeLineContent[],
     addresses: ClientAddress[],
     emails: ClientEmail[],
     phones: ClientPhone[],
     deliveries: Delivery[],
+    deliveriesDebts: ClientDeliveryDebt[],
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -39,11 +43,13 @@ export class Client {
     this.type = type;
     this.registrationNumber = registrationNumber;
     this.notes = notes;
+    this.allowCredit = allowCredit;
     this.timeLineContent = timeLineContent;
     this.addresses = addresses;
     this.emails = emails;
     this.phones = phones;
     this.deliveries = deliveries;
+    this.deliveriesDebts = deliveriesDebts;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -51,33 +57,55 @@ export class Client {
   getId(): string {
     return this.id;
   }
+
   getLegalName(): string {
     return this.legalName;
   }
+
   getType(): string {
     return this.type;
   }
+
   getRegistrationNumber(): string {
     return this.registrationNumber;
   }
+
   getNotes(): string {
     return this.notes;
   }
+
+  getAllowCredit(): boolean {
+    return this.allowCredit;
+  }
+
+  canPayWithCredit(): boolean {
+    return this.allowCredit;
+  }
+
   getTimeLineContent(): TimeLineContent[] {
     return [...this.timeLineContent];
   }
+
   getAddresses(): ClientAddress[] {
     return [...this.addresses];
   }
+
   getEmails(): ClientEmail[] {
     return [...this.emails];
   }
+
   getPhones(): ClientPhone[] {
     return [...this.phones];
   }
+
   getDeliveries(): Delivery[] {
     return [...this.deliveries];
   }
+
+  getDeliveryDebt(): ClientDeliveryDebt[] {
+    return [...this.deliveriesDebts];
+  }
+
   getCreatedAt(): Date {
     return this.createdAt;
   }
@@ -92,15 +120,12 @@ export class Client {
 
   getEarningsDelivery(): number {
     let earning = 0;
-
     for (const delivery of this.getDeliveries()) {
       const isPaid = delivery.getStatus() === DeliveryStatus.PAID;
-
       if (isPaid) {
         earning += delivery.getService().getTotalEarning();
       }
     }
-
     return earning;
   }
 
@@ -108,56 +133,32 @@ export class Client {
     let earningOfMonth = 0;
     const currentMonth = dayjs().month();
     const currentYear = dayjs().year();
-
     for (const delivery of this.getDeliveries()) {
-      const deliveryDate = dayjs(delivery.getDate());
-      const deliveryMonth = deliveryDate.month();
-      const deliveryYear = deliveryDate.year();
-
-      const isCurrentMonth = deliveryMonth === currentMonth && deliveryYear === currentYear;
-      const isPaid = delivery.getStatus() === DeliveryStatus.PAID;
-
-      if (isCurrentMonth && isPaid) {
-        earningOfMonth += delivery.getService().getTotalEarning();
-      }
     }
-
     return earningOfMonth;
   }
 
   getEarningsPendingOfDeliveries(): number {
     let pendingEarning = 0;
-
     for (const delivery of this.getDeliveries()) {
-      if (delivery.getStatus() === DeliveryStatus.PENDING) {
-        pendingEarning += delivery.getService().getTotalEarning();
-      }
     }
-
     return pendingEarning;
   }
 
   getPendingDeliveries(): Delivery[] {
     let pendingDeliveries: Delivery[] = [];
-
     for (const delivery of this.getDeliveries()) {
-      if (delivery.getStatus() === DeliveryStatus.PENDING) {
-        pendingDeliveries.push(delivery);
-      }
     }
-
     return pendingDeliveries;
   }
 
   getPendingLenghtDeliveries(): number {
     let deliveries = 0;
-
     for (const delivery of this.getDeliveries()) {
       if (delivery.getStatus() === DeliveryStatus.PENDING) {
         deliveries++;
       }
     }
-
     return deliveries;
   }
 }

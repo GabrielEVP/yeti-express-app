@@ -12,45 +12,39 @@ import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
 
 export class Delivery {
   private readonly id: string;
-  private number: string;
-  private date: Date;
-  private status: DeliveryStatus;
-  private paymentType: PaymentType;
-  private notes: string;
+  private readonly number: string;
+  private readonly date: Date;
+  private readonly status: DeliveryStatus;
+  private readonly paymentType: PaymentType;
+  private readonly paymentStatus: DeliveryPaymentStatus;
+  private readonly notes: string;
   private readonly service: Service;
   private readonly client: Client;
   private readonly clientAddress: ClientAddress;
-  private clientCharges: DeliveryClientCharge[];
-  private paymentStatus: DeliveryPaymentStatus;
   private readonly courier: Courier;
-  private collectionStatus: DeliveryCollectionStatus;
-  private readonly timeLine: TimeLineContent[];
-  private receipt: DeliveryReceipt;
-  private courierPayouts: DeliveryCourierPayout[];
+  private readonly timeLineContent: TimeLineContent[];
+  private readonly receipt: DeliveryReceipt;
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
-  private clientId: string;
-  private courierId: string;
-  private serviceId: string;
-  private clientAddressId: string;
+  private readonly clientId: string;
+  private readonly courierId: string;
+  private readonly serviceId: string;
+  private readonly clientAddressId: string;
 
   constructor(
     id: string,
     number: string,
     date: Date | string,
     status: DeliveryStatus,
-    collectionStatus: DeliveryCollectionStatus,
-    paymentStatus: DeliveryPaymentStatus,
     paymentType: PaymentType,
+    paymentStatus: DeliveryPaymentStatus,
     notes: string,
     service: Service,
     client: Client,
     clientAddress: ClientAddress,
     courier: Courier,
-    timeLine: TimeLineContent[],
+    timeLineContent: TimeLineContent[],
     receipt: DeliveryReceipt,
-    clientCharges: DeliveryClientCharge[],
-    courierPayouts: DeliveryCourierPayout[],
     createdAt: Date | string,
     updatedAt: Date | string,
     serviceId: string,
@@ -62,7 +56,6 @@ export class Delivery {
     this.number = number;
     this.date = typeof date === 'string' ? new Date(date) : date;
     this.status = status;
-    this.collectionStatus = collectionStatus;
     this.paymentStatus = paymentStatus;
     this.paymentType = paymentType;
     this.notes = notes;
@@ -70,10 +63,8 @@ export class Delivery {
     this.client = client;
     this.clientAddress = clientAddress;
     this.courier = courier;
-    this.timeLine = timeLine;
+    this.timeLineContent = timeLineContent;
     this.receipt = receipt;
-    this.clientCharges = clientCharges;
-    this.courierPayouts = courierPayouts;
     this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
     this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
     this.serviceId = serviceId;
@@ -96,10 +87,6 @@ export class Delivery {
 
   getStatus(): DeliveryStatus {
     return this.status;
-  }
-
-  getCollectionStatus(): DeliveryCollectionStatus {
-    return this.collectionStatus;
   }
 
   getPaymentStatus(): DeliveryPaymentStatus {
@@ -131,19 +118,11 @@ export class Delivery {
   }
 
   getTimeLine(): TimeLineContent[] {
-    return [...this.timeLine];
+    return [...this.timeLineContent];
   }
 
   getReceipt(): DeliveryReceipt {
     return this.receipt;
-  }
-
-  getClientCharges(): DeliveryClientCharge[] {
-    return [...this.clientCharges];
-  }
-
-  getCourierPayouts(): DeliveryCourierPayout[] {
-    return [...this.courierPayouts];
   }
 
   getCreatedAt(): Date {
@@ -179,8 +158,6 @@ export class Delivery {
   }
 
   getRemainingToCollect(): number {
-    const totalCollected = this.courierPayouts.reduce((sum, payout) => sum + payout.getAmount(), 0);
-    const earning = this.service.getTotalEarning();
-    return Math.max(earning - totalCollected, 0);
+    return 0;
   }
 }

@@ -1,5 +1,5 @@
-import { Client } from '@/views/clients/domain/Client';
-import { ClientType } from '@/views/clients/domain/Type';
+import { Client } from '@/views/clients/domain/';
+import { ClientType } from '@/views/clients/domain/';
 import { ClientAddress } from '../domain';
 
 export const createDefaultClient = (): Client => {

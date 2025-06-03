@@ -1,4 +1,4 @@
-import type { Client } from '@/views/clients/domain/Client';
+import type { Client } from '@/views/clients/domain/';
 
 export interface IClientRepository {
   getAll(): Promise<Client[]>;

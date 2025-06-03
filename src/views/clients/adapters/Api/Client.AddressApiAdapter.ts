@@ -1,4 +1,4 @@
-import { ClientAddress } from '@/views/clients/domain/ClientAddress';
+import { ClientAddress } from '@/views/clients/domain/';
 
 export class ClientAddressApiAdapter extends ClientAddress {
   static fromApi(apiData: any): ClientAddress {

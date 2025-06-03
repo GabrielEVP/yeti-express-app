@@ -1,4 +1,4 @@
-import { ClientEmail } from '@/views/clients/domain/ClientEmail';
+import { ClientEmail } from '@/views/clients/domain/';
 
 export class ClientEmailApiAdapter extends ClientEmail {
   static fromApi(apiData: any): ClientEmail {

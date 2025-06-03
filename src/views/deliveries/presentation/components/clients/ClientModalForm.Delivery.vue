@@ -67,7 +67,7 @@ import { useFieldArray } from 'vee-validate';
 import { useVeeForm } from '@/composables/';
 import { ModalForm, FieldForm, SelectForm, TextAreaForm } from '@/components/';
 import { Client, ClientAddress, ClientPhone } from '@/views/clients/domain/';
-import { ClientTypeOptions } from '@/views/clients/domain/Type';
+import { ClientTypeOptions } from '@/views/clients/domain/';
 import { BasicClientSchema } from '@views/deliveries/schemas/Delivery.ClientBasicSchema';
 import { CreateClientUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';

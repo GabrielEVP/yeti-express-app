@@ -1,4 +1,4 @@
-import { ClientPhone } from '@/views/clients/domain/ClientPhone';
+import { ClientPhone } from '@/views/clients/domain/';
 
 export class ClientPhoneApiAdapter extends ClientPhone {
   static fromApi(apiData: any): ClientPhone {

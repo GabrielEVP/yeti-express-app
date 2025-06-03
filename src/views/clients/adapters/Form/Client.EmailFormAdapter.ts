@@ -1,4 +1,4 @@
-import { ClientEmail } from '@/views/clients/domain/ClientEmail';
+import { ClientEmail } from '@/views/clients/domain/';
 
 export class ClientEmailFormAdapter extends ClientEmail {
   static fromForm(form: any): ClientEmail {
