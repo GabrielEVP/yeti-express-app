@@ -1,4 +1,4 @@
-import { Bill } from '@views/services/domain/Bill';
+import { Bill } from '@views/services/domain/bill/Bill';
 
 export class Service {
   readonly id: string;
@@ -76,7 +76,7 @@ export class Service {
   }
 
   getTotalEarning(): number {
-    return this.getTotalExpense();
+    return this.amount - this.getTotalExpense();
   }
 
   getEarningPercentage(): number {

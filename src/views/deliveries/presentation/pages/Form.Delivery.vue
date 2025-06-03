@@ -137,7 +137,7 @@ import {
 import { DeliveryClientModalForm } from '@/views/deliveries/presentation/components';
 import { Courier } from '@views/couriers/domain/Courier';
 import { Client } from '@views/clients/domain/';
-import { Service } from '@views/services/domain/Service';
+import { Service } from '@views/services/domain/service/Service';
 
 const activeTab = ref('general');
 const router = useRouter();

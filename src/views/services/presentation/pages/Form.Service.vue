@@ -93,8 +93,8 @@ import {
   TrashButton,
   Text,
 } from '@/components';
-import { Service } from '@/views/services/domain/Service';
-import { Bill } from '@/views/services/domain/Bill';
+import { Service } from '@views/services/domain/service/Service';
+import { Bill } from '@/views/services/domain/';
 import { serviceSchema } from '@/views/services/schemas';
 import {
   GetServiceByIdUseCase,
@@ -102,7 +102,7 @@ import {
   UpdateServiceUseCase,
 } from '@/views/services/use-cases/';
 import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
-import { mapFormToService } from '@/views/services/adapters/Service.FormAdapter';
+import { mapFormToService } from '@views/services/adapters/form/Service.FormAdapter';
 import { AppRoutesService } from '@/views/services/presentation/routes';
 import { TABS_FORM_SERVICE } from '@/views/services/presentation/constants';
 

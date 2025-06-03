@@ -1,5 +1,5 @@
-import { Service } from '@/views/services/domain/Service';
-import { Bill } from '@/views/services/domain/Bill';
+import { Service } from '@views/services/';
+import { Bill } from '@/views/services/';
 
 export function mapFormToService(form: any): Service {
   const bills: Bill[] = (form.bills ?? []).map(

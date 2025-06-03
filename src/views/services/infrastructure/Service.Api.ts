@@ -1,6 +1,6 @@
 import { apiClient } from '@/services/';
 import { serviceApiRoutes } from '@views/services/infrastructure/routes/Service.ApiRoutes';
-import type { Service } from '@/views/services/domain/Service';
+import type { Service } from '@views/services/domain/service/Service';
 
 export const ServiceApi = {
   async getAll(): Promise<Service[]> {

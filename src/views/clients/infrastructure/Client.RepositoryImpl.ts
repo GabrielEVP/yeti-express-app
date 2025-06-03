@@ -1,5 +1,5 @@
 import type { IClientRepository } from '@/views/clients/domain/IClientRepository';
-import type { Client } from '@/views/clients/domain/Client';
+import type { Client } from '@/views/clients/domain/';
 import { ClientApi } from '@views/clients/infrastructure/Client.Api';
 import { ClientApiAdapter } from '@/views/clients/adapters';
 

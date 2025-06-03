@@ -108,8 +108,7 @@ import {
   EmptyData,
 } from '@/components/';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
-import { Service } from '@/views/services/domain/';
-import { ServiceRepositoryImpl } from '@/views/services';
+import { Service, ServiceRepositoryImpl } from '@/views/services';
 import { GetServiceByIdUseCase } from '@views/services';
 import { AppRoutesService } from '@/views/services/presentation/routes/';
 
