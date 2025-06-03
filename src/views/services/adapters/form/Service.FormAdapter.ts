@@ -1,5 +1,5 @@
 import { Service } from '@views/services/';
-import { BillFormAdapter } from '@/views/services/adapters/form/Service.BillFormAdapter';
+import { BillFormAdapter } from '@/views/services/adapters/form/';
 
 export class ServiceFormAdapter {
   static fromForm(form: any): Service {
