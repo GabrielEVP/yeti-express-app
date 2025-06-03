@@ -2,7 +2,7 @@ import { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
 import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
-import { DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
+import { DeliveryPaymentStatus, DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
 import { mapFormToService } from '@/views/services/adapters';
 import { ClientFormAdapter, ClientAddressFormAdapter } from '@/views/clients/adapters';
 import { mapFormToCourier } from '@/views/couriers/adapters';
@@ -40,9 +40,8 @@ export function mapFormToDelivery(form: any): Delivery {
     form.number ?? '',
     form.date ?? new Date().toISOString(),
     form.status ?? DeliveryStatus.PENDING,
-    '' as any,
-    '' as any,
     form.paymentType ?? PaymentType.PARTIAL,
+    form.paymentStatus ?? DeliveryPaymentStatus.PENDING,
     form.notes ?? '',
     mapFormToService(form.service ?? {}),
     ClientFormAdapter.fromForm(form.client ?? {}),
@@ -50,8 +49,6 @@ export function mapFormToDelivery(form: any): Delivery {
     mapFormToCourier(form.courier ?? {}),
     [],
     mapFormToDeliveryReceipt(form.receipt ?? {}),
-    [],
-    [],
     form.createdAt ?? new Date().toISOString(),
     form.updatedAt ?? new Date().toISOString(),
     form.serviceId ?? '',

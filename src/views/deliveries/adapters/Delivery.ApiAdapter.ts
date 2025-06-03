@@ -9,25 +9,6 @@ import { adaptCourier } from '@/views/couriers/';
 import { adaptService } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
 import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
-import { DeliveryCollectionStatus } from '@/views/deliveries/domain';
-
-function adaptDeliveryClientPayment(apiPayment: any): DeliveryClientCharge {
-  return new DeliveryClientCharge(
-    apiPayment.id,
-    apiPayment.date,
-    apiPayment.method,
-    apiPayment.amount
-  );
-}
-
-function adaptDeliveryCourierPayment(apiPayment: any): DeliveryCourierPayout {
-  return new DeliveryCourierPayout(
-    apiPayment.id,
-    apiPayment.date,
-    apiPayment.method,
-    apiPayment.amount
-  );
-}
 
 function adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
   return new DeliveryReceipt(
