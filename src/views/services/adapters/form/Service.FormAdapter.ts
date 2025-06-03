@@ -1,20 +1,30 @@
 import { Service } from '@views/services/';
-import { Bill } from '@/views/services/';
+import { BillFormAdapter } from '@/views/services/adapters/form/Service.BillFormAdapter';
 
-export function mapFormToService(form: any): Service {
-  const bills: Bill[] = (form.bills ?? []).map(
-    (bill: any) => new Bill(bill.id ?? '', bill.name ?? '', Number(bill.amount ?? 0))
-  );
+export class ServiceFormAdapter {
+  static fromForm(form: any): Service {
+    return new Service(
+      form.id,
+      form.name,
+      form.description,
+      form.amount,
+      form.comision,
+      form.active,
+      new Date(form.created_at),
+      new Date(form.updated_at),
+      form.bills?.map(BillFormAdapter.fromForm) ?? []
+    );
+  }
 
-  return new Service(
-    form.id ?? '',
-    form.name,
-    form.description,
-    Number(form.amount),
-    Number(form.comision),
-    Boolean(form.active),
-    form.createdAt ? new Date(form.createdAt) : new Date(),
-    form.updatedAt ? new Date(form.updatedAt) : new Date(),
-    bills
-  );
+  static toForm(service: Service): any {
+    return {
+      id: service.getId(),
+      name: service.getName(),
+      description: service.getDescription(),
+      amount: service.getAmount(),
+      comision: service.getComision(),
+      active: service.isActive(),
+      bills: service.getBills().map(BillFormAdapter.toForm),
+    };
+  }
 }

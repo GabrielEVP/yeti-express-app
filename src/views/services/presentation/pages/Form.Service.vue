@@ -102,7 +102,7 @@ import {
   UpdateServiceUseCase,
 } from '@/views/services/use-cases/';
 import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
-import { mapFormToService } from '@views/services/adapters/form/Service.FormAdapter';
+import { ServiceFormAdapter } from '@views/services/adapters/form/Service.FormAdapter';
 import { AppRoutesService } from '@/views/services/presentation/routes';
 import { TABS_FORM_SERVICE } from '@/views/services/presentation/constants';
 
@@ -125,11 +125,11 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Service>({
     return service;
   },
   create: (formValues) => {
-    const service = mapFormToService(formValues);
+    const service = ServiceFormAdapter.fromForm(formValues);
     return createServiceUseCase.execute(service);
   },
   update: (formValues, id) => {
-    const service = mapFormToService({ ...formValues, id });
+    const service = ServiceFormAdapter.fromForm({ ...formValues, id });
     return updateServiceUseCase.execute(id, service);
   },
   defaultRoute: AppRoutesService.list,

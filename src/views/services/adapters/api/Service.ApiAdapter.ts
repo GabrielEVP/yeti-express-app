@@ -1,5 +1,4 @@
 import { Service } from '@views/services/domain/service/Service';
-import { Bill } from '@/views/services/domain/bill/Bill';
 import { BillApiAdapter } from '@/views/services/adapters/api/Service.BillApiAdapter';
 
 export class ServiceApiAdapter {

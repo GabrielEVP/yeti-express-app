@@ -19,15 +19,15 @@ export class ServiceRepositoryImpl implements IServiceRepository {
   }
 
   async create(service: Service): Promise<Service> {
-    const payload = adaptServiceForApi(service);
+    const payload = ServiceApiAdapter.toApi(service);
     const response = await ServiceApi.create(payload);
-    return adaptService(response);
+    return ServiceApiAdapter.fromApi(response);
   }
 
   async update(id: string, service: Service): Promise<Service> {
-    const payload = adaptServiceForApi(service);
+    const payload = ServiceApiAdapter.toApi(service);
     const response = await ServiceApi.update(id, payload);
-    return adaptService(response);
+    return ServiceApiAdapter.fromApi(response);
   }
 
   async delete(id: string): Promise<void> {
@@ -36,6 +36,6 @@ export class ServiceRepositoryImpl implements IServiceRepository {
 
   async search(query: string): Promise<Service[]> {
     const response = await ServiceApi.search(query);
-    return response.map(adaptService);
+    return response.map((service) => ServiceApiAdapter.fromApi(service));
   }
 }
