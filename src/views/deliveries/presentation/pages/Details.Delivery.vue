@@ -31,8 +31,8 @@
                   title="Fecha de Emisión"
                   :content="formatDateCustom(delivery.getDate())"
                 />
-                <SectionText title="Estado" :content="delivery.getStatus()" />
-                <SectionText title="Forma de Pago" :content="delivery.getPaymentType()" />
+                <SectionText title="Estado" :content="delivery.getStatusToFormat()" />
+                <SectionText title="Forma de Pago" :content="delivery.getPaymentTypeToFormat()" />
                 <SectionText title="Cliente" :content="delivery.getClient().getLegalName()" />
                 <SectionText
                   title="Importe Total"
@@ -94,6 +94,7 @@ import {
   SideBar,
   SectionText,
   Card,
+  Bagde,
   ActionsButton,
   LoadingSkeleton,
   ActivityView,
@@ -108,7 +109,6 @@ import {
   DeliveryClientAddressList,
   DeliveryReceiptDropdown,
   DeliveryPaymentsDrowdown,
-  DeliveryCourierPaymentsDropdown,
 } from '@/views/deliveries/presentation/components/';
 
 const repository = new DeliveryRepositoryImpl();

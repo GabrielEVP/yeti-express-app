@@ -49,7 +49,7 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="delivery in paginatedItems" :key="delivery.getId()">
-        <TableContent class="text-black dark:text-white break-words">
+        <TableContent class="text-black dark:text-white break-words ">
           {{ delivery.getNumber() }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
@@ -64,10 +64,10 @@
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getService().getName() }}
         </TableContent>
-        <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getService().getTotalEarning() }}
+        <TableContent class="text-black text-right dark:text-white break-words">
+          {{  formatToDollars(delivery.getService().getTotalEarning()) }}
         </TableContent>
-        <TableContent class="text-black dark:text-white break-words">
+        <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde> {{ delivery.getStatusToFormat() }} </Bagde>
         </TableContent>
         <TableContent>
@@ -120,7 +120,7 @@
 import { ref, onMounted } from 'vue';
 import { usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
-import { formatDateCustom } from '@utils';
+import { formatDateCustom, formatToDollars } from '@utils';
 import {
   SideBar,
   Card,
@@ -138,7 +138,7 @@ import {
   FilterButton,
   SelectForm,
 } from '@/components/';
-import { Delivery, DeliveryStatus, DeliveryStatusOptions } from '@/views/deliveries/domain/';
+import { Delivery, DeliveryStatusOptions } from '@/views/deliveries/domain/';
 import {
   GetAllDeliveriesUseCase,
   DeleteDeliveryUseCase,

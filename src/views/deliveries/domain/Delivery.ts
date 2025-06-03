@@ -1,5 +1,5 @@
 import { DeliveryStatus, getDeliveryStatusLabel } from '@/views/deliveries/domain/Status';
-import { PaymentType } from '@/views/deliveries/domain/PaymentType';
+import { PaymentType, getPaymentTypeLabel } from '@/views/deliveries/domain/PaymentType';
 import { TimeLineContent } from '@time-line-content/domain';
 import { DeliveryReceipt } from '@views/deliveries/domain/DeliveryReceipt';
 import { DeliveryClientCharge } from '@views/deliveries/domain/DeliveryClientCharge';
@@ -172,6 +172,10 @@ export class Delivery {
 
   getStatusToFormat(): string {
     return getDeliveryStatusLabel(this.status);
+  }
+
+  getPaymentTypeToFormat(): string {
+    return getPaymentTypeLabel(this.paymentType);
   }
 
   getRemainingToCollect(): number {
