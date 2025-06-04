@@ -97,6 +97,7 @@ const navigationItems = [
   { route: '/couriers', title: 'Repartidor', icon: Bike },
   { route: '/employees', title: 'Empleados', icon: BookUser },
   { route: '/services', title: 'Servicios', icon: SquareChartGantt },
+  { route: '/clientsdebt', title: 'Gastos', icon: Banknote },
   { route: '/company-bills', title: 'Gastos', icon: Banknote },
 ];
 

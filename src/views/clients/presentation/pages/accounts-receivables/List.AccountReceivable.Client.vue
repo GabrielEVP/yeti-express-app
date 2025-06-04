@@ -29,7 +29,7 @@
       </div>
     </Card>
     <TableDashboard
-      :headers="[...TABLE_HEADER_CLIENT]"
+      :headers="[...TABLE_HEADER_ACCOUNT_RECEIVABLE]"
       :currentPage="currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
@@ -46,6 +46,9 @@
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300 break-words">
           {{ client.getRegistrationNumber() }}
+        </TableContent>
+        <TableContent class="text-gray-600 dark:text-gray-300 text-right break-words">
+          {{ formatToDollars(5) }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -92,7 +95,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { usePagination, useSearch } from '@/composables/';
-import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
+import { formatToDollars } from '@utils';
 import {
   SideBar,
   Card,
@@ -101,27 +104,19 @@ import {
   TableRow,
   TableDashboard,
   SearchForm,
-  NewButton,
-  TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationModal,
   FilterButton,
   SelectForm,
 } from '@/components/';
 import { Client, ClientTypeOptions } from '@/views/clients/domain/';
-import {
-  GetClientsUseCase,
-  DeleteClientUseCase,
-  SearchClientsUseCase,
-} from '@/views/clients/use-cases/';
+import { GetClientsUseCase, SearchClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
-import { TABLE_HEADER_CLIENT } from '@/views/clients/presentation/constants/';
+import { TABLE_HEADER_ACCOUNT_RECEIVABLE } from '@/views/clients/presentation/constants/';
 import { AppRoutesClient } from '@/views/clients/presentation/routes';
 
 const repository = new ClientRepositoryImpl();
 const getClientsUseCase = new GetClientsUseCase(repository);
-const deleteClientUseCase = new DeleteClientUseCase(repository);
 const searchClientsUseCase = new SearchClientsUseCase(repository);
 
 const clients = ref<Client[]>([]);
