@@ -58,4 +58,8 @@ export class ClientDeliveryDebt {
   getPaidAmount(): number {
     return this.payments.reduce((total, payment) => total + payment.getAmount(), 0);
   }
+
+  getRemainingAmount(): number {
+    return this.amount - this.getPaidAmount();
+  }
 }

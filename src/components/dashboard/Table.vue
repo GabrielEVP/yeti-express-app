@@ -106,36 +106,18 @@ type HeaderPosition = 'left' | 'center' | 'right';
 interface TableHeader {
   label: string;
   key: string;
-  sortable?: boolean;
   position?: HeaderPosition;
+  sortable?: boolean;
 }
 
-const props = defineProps({
-  headers: {
-    type: Array as PropType<Array<TableHeader>>,
-    required: true,
-  },
-  currentPage: {
-    type: Number,
-    required: true,
-  },
-  totalPages: {
-    type: Number,
-    required: true,
-  },
-  startIndex: {
-    type: Number,
-    required: true,
-  },
-  endIndex: {
-    type: Number,
-    required: true,
-  },
-  totalItems: {
-    type: Number,
-    required: true,
-  },
-});
+const props = defineProps<{
+  headers: any[];
+  currentPage: number;
+  totalPages: number;
+  startIndex: number;
+  endIndex: number;
+  totalItems: number;
+}>();
 
 const emit = defineEmits(['updatePage', 'sort']);
 

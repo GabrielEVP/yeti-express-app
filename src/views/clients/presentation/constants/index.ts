@@ -1,3 +1,3 @@
 export * from './TableHeader.Client';
 export * from './TabsForm.Client';
-export * from './TableHeaderAccountReceivable.Client';
+export * from './TableHeaderDebt.Client';

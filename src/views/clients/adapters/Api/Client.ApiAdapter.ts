@@ -20,7 +20,7 @@ export class ClientApiAdapter extends Client {
       apiData.emails?.map(ClientEmailApiAdapter.fromApi) ?? [],
       apiData.phones?.map(ClientPhoneApiAdapter.fromApi) ?? [],
       apiData.deliveries?.map(adaptDeliveryToClient) ?? [],
-      apiData.delivery_debts?.map((debt: any) => ClientDeliveryDebtApiAdapter.fromApi(debt)) ?? [],
+      apiData.client_delivery_debts?.map(ClientDeliveryDebtApiAdapter.fromApi) ?? [],
       new Date(apiData.created_at),
       new Date(apiData.updated_at)
     );

@@ -77,6 +77,7 @@ import {
   Bike,
   SquareChartGantt,
   Banknote,
+  WalletMinimal,
 } from 'lucide-vue-next';
 import logo from '@/assets/yeti.webp';
 import { DangerAlert, SuccessAlert } from '@/components/';
@@ -99,8 +100,8 @@ const navigationItems = [
   { route: '/services', title: 'Servicios', icon: SquareChartGantt },
   { route: '/clientsdebt', title: 'Gastos', icon: Banknote },
   { route: '/company-bills', title: 'Gastos', icon: Banknote },
+  { route: '/debts', title: 'Cuentas por cobrar', icon: WalletMinimal },
 ];
-
 function toggleDarkMode() {
   isDarkMode.value = !isDarkMode.value;
   updateDarkMode();

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ClientAddress, ClientDeliveryDebt } from '@/views/clients/domain/';
+import { ClientAddress, ClientDeliveryDebt, DebtStatus } from '@/views/clients/domain/';
 import { ClientPhone } from '@/views/clients/domain/';
 import { ClientEmail } from '@/views/clients/domain/';
 import { ClientType, formatClientType } from '@/views/clients/domain/';
@@ -116,6 +116,16 @@ export class Client {
 
   getFormatType(): string {
     return formatClientType(this.type);
+  }
+
+  getDebtsAmount(): number {
+    let totalDebt = 0;
+    for (const debt of this.deliveriesDebts) {
+      if (debt.getStatus() !== DebtStatus.PAID) {
+        totalDebt += debt.getRemainingAmount();
+      }
+    }
+    return totalDebt;
   }
 
   getEarningsDelivery(): number {

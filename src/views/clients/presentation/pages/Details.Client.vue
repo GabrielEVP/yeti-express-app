@@ -48,9 +48,7 @@
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Total de Ganancias del mes">
-              <div class="text-2xl font-bold">
-                {{}}
-              </div>
+              <div class="text-2xl font-bold">{{}}</div>
               <p class="text-xs text-gray-500">Ganancias totales: {{}}</p>
             </ActivityView>
             <ActivityView title="Deliverys Pendientes">

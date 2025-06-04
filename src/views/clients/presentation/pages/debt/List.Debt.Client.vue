@@ -29,7 +29,11 @@
       </div>
     </Card>
     <TableDashboard
+<<<<<<< HEAD:src/views/clients/presentation/pages/accounts-receivables/List.AccountReceivable.Client.vue
       :headers="[...TABLE_HEADER_ACCOUNT_RECEIVABLE]"
+=======
+      :headers="[...TABLE_HEADER_CLIENT_DEBT]"
+>>>>>>> a424d06 (Refactor TypeScript props using type annotations):src/views/clients/presentation/pages/debt/List.Debt.Client.vue
       :currentPage="currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
@@ -38,23 +42,25 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="client in paginatedItems" :key="client.getId()">
-        <TableContent class="text-black dark:text-white break-words">
+        <TableContent class="text-left text-black dark:text-white break-words">
           {{ client.getLegalName() }}
         </TableContent>
-        <TableContent class="text-black dark:text-white break-words">
+        <TableContent class="text-center text-black dark:text-white break-words">
           <Bagde>{{ client.getFormatType() }}</Bagde>
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300 break-words">
+        <TableContent class="text-center text-gray-600 dark:text-gray-300 break-words">
           {{ client.getRegistrationNumber() }}
         </TableContent>
+<<<<<<< HEAD:src/views/clients/presentation/pages/accounts-receivables/List.AccountReceivable.Client.vue
         <TableContent class="text-gray-600 dark:text-gray-300 text-right break-words">
           {{ formatToDollars(5) }}
+=======
+        <TableContent class="text-right text-gray-600 dark:text-gray-300 break-words">
+          {{ formatToDollars(client.getDebtsAmount()) }}
+>>>>>>> a424d06 (Refactor TypeScript props using type annotations):src/views/clients/presentation/pages/debt/List.Debt.Client.vue
         </TableContent>
         <TableContent>
-          <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesClient.details(client.getId())" />
-            <EditButton :route="AppRoutesClient.edit(client.getId())" />
-          </div>
+          <Deliverie :client="client" />
         </TableContent>
       </TableRow>
       <template #mobile-rows>
@@ -74,6 +80,9 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
                   {{ client.getRegistrationNumber() }}
                 </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
+                  {{ formatToDollars(client.getDebtsAmount()) }}
+                </p>
               </div>
               <Bagde class="break-words text-right">
                 {{ client.getFormatType() }}
@@ -81,8 +90,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesClient.details(client.getId())" />
-                <EditButton :route="AppRoutesClient.edit(client.getId())" />
+                <Deliverie :client="client" />
               </div>
             </div>
           </div>
@@ -104,16 +112,24 @@ import {
   TableRow,
   TableDashboard,
   SearchForm,
+<<<<<<< HEAD:src/views/clients/presentation/pages/accounts-receivables/List.AccountReceivable.Client.vue
   EditButton,
   EyeButton,
+=======
+>>>>>>> a424d06 (Refactor TypeScript props using type annotations):src/views/clients/presentation/pages/debt/List.Debt.Client.vue
   FilterButton,
   SelectForm,
 } from '@/components/';
+import Deliverie from '@/views/clients/presentation/components/debt/deliverie.vue';
 import { Client, ClientTypeOptions } from '@/views/clients/domain/';
 import { GetClientsUseCase, SearchClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
+<<<<<<< HEAD:src/views/clients/presentation/pages/accounts-receivables/List.AccountReceivable.Client.vue
 import { TABLE_HEADER_ACCOUNT_RECEIVABLE } from '@/views/clients/presentation/constants/';
 import { AppRoutesClient } from '@/views/clients/presentation/routes';
+=======
+import { TABLE_HEADER_CLIENT_DEBT } from '@/views/clients/presentation/constants/';
+>>>>>>> a424d06 (Refactor TypeScript props using type annotations):src/views/clients/presentation/pages/debt/List.Debt.Client.vue
 
 const repository = new ClientRepositoryImpl();
 const getClientsUseCase = new GetClientsUseCase(repository);
@@ -140,6 +156,18 @@ onMounted(async () => {
 
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(
   clients,
-  15
+  10
 );
+
+const handlePayment = (clientId, deliveryId, type) => {
+  console.log('Procesando pago:', clientId, deliveryId, type);
+};
+
+const processPayment = (paymentData) => {
+  console.log('Procesando pago:', paymentData);
+};
+
+const closeModal = () => {
+  console.log('Cerrando modal de pago');
+};
 </script>

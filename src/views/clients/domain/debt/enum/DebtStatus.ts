@@ -1,15 +1,19 @@
-export type DebtStatus = 'pending' | 'partial_paid' | 'paid';
+export enum DebtStatus {
+  PENDING = 'pending',
+  PARTIAL_PAID = 'partial_paid',
+  PAID = 'paid',
+}
 
 export const DebtStatusOptions = [
-  { value: 'pending' as DebtStatus, label: 'Pendiente' },
-  { value: 'partial_paid' as DebtStatus, label: 'Parcialmente pagado' },
-  { value: 'paid' as DebtStatus, label: 'Pagado' },
+  { value: DebtStatus.PENDING, label: 'Pendiente' },
+  { value: DebtStatus.PARTIAL_PAID, label: 'Parcialmente pagado' },
+  { value: DebtStatus.PAID, label: 'Pagado' },
 ] as const;
 
 const DebtStatusLabels: Record<DebtStatus, string> = {
-  pending: 'Pendiente',
-  partial_paid: 'Parcialmente pagado',
-  paid: 'Pagado',
+  [DebtStatus.PENDING]: 'Pendiente',
+  [DebtStatus.PARTIAL_PAID]: 'Parcialmente pagado',
+  [DebtStatus.PAID]: 'Pagado',
 };
 
 export function getDebtStatusLabel(status: DebtStatus | string): string {
