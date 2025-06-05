@@ -1,1 +1,1 @@
-export * from './Debt.Schema';
+export * from './DebtPayment.Schema';

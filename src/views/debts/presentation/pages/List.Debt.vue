@@ -51,7 +51,7 @@
           {{ formatToDollars(client.getDebtsAmount()) }}
         </TableContent>
         <TableContent>
-          <Deliverie :client="client" />
+          <DeliveriesDropdown :client="client as Client" />
         </TableContent>
       </TableRow>
       <template #mobile-rows>
@@ -81,7 +81,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <Deliverie :client="client" />
+                <DeliveriesDropdown :client="client as Client" />
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@ import {
   FilterButton,
   SelectForm,
 } from '@/components/';
-import Deliverie from '@/views/debts/presentation/components/deliverie.vue';
+import { DeliveriesDropdown } from '@/views/debts/presentation/components/';
 import { Client, ClientTypeOptions } from '@/views/clients/domain/';
 import { GetClientsUseCase, SearchClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
