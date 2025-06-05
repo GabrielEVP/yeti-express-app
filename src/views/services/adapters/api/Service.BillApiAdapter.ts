@@ -1,16 +1,21 @@
 import { Bill } from '@/views/services/domain/bill/Bill';
 
 export class BillApiAdapter {
-  static fromApi(apiData: any): Bill {
+  public id: string;
+  public name: string;
+  public amount: number;
 
-    return new Bill(
-        apiData.id,
-        apiData.name,
-        apiData.amount,
-    );
+  constructor(id: string, name: string, amount: number) {
+    this.id = id;
+    this.name = name;
+    this.amount = amount;
   }
 
-  static toApi(bill: Bill): any {
+  static fromApi(BillApiAdapter: BillApiAdapter): Bill {
+    return new Bill(BillApiAdapter.id, BillApiAdapter.name, BillApiAdapter.amount);
+  }
+
+  static toApi(bill: Bill): BillApiAdapter {
     return {
       id: bill.getId(),
       name: bill.getName(),

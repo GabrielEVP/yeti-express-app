@@ -34,21 +34,15 @@
             </div>
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
-            <ActivityView title="Total de gastos del mes">
+            <ActivityView title="Pedidos entregados">
               <div class="text-2xl font-bold">
                 {{ courier.getPaidAmountThisMonth().toFixed(2) }}
               </div>
-              <p class="text-xs text-gray-500">
-                Gastos totales: {{ courier.getTotalPaid().toFixed(2) }}
-              </p>
             </ActivityView>
-            <ActivityView title="Deliverys Pendientes">
+            <ActivityView title="Pedidos por entregar">
               <div class="text-2xl font-bold">
                 {{ courier.getTotalPendingToPay().toFixed(2) }}
               </div>
-              <p class="text-xs text-gray-500">
-                Pendientes por pagar: {{ courier.getPendingDeliveries().length }}
-              </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.getUpdatedAt()) }}</div>

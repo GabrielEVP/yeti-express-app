@@ -41,7 +41,8 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="courier in paginatedItems" :key="courier.getId()">
-        <TableContent>{{ courier.getFullName() }}</TableContent>
+        <TableContent>{{ courier.getFirstName() }}</TableContent>
+        <TableContent>{{ courier.getLastName() }}</TableContent>
         <TableContent>{{ courier.getPhone() }}</TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
