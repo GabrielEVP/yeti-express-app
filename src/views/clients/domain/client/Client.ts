@@ -3,8 +3,9 @@ import { ClientAddress } from '@/views/clients/domain/';
 import { ClientPhone } from '@/views/clients/domain/';
 import { ClientEmail } from '@/views/clients/domain/';
 import { ClientType, formatClientType } from '@/views/clients/domain/';
-import { TimeLineContent } from '@/time-line-content/domain';
+import { Debt } from '@/views/debts/domain';
 import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
+import { TimeLineContent } from '@/time-line-content/domain';
 
 export class Client {
   private readonly id: string;
@@ -18,7 +19,7 @@ export class Client {
   private readonly emails: ClientEmail[];
   private readonly phones: ClientPhone[];
   private readonly deliveries: Delivery[];
-  private readonly deliveriesDebts: any[];
+  private readonly debts: Debt[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
 
@@ -34,7 +35,7 @@ export class Client {
     emails: ClientEmail[],
     phones: ClientPhone[],
     deliveries: Delivery[],
-    deliveriesDebts: any[],
+    debts: Debt[],
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -49,7 +50,7 @@ export class Client {
     this.emails = emails;
     this.phones = phones;
     this.deliveries = deliveries;
-    this.deliveriesDebts = deliveriesDebts;
+    this.debts = debts;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -102,8 +103,8 @@ export class Client {
     return [...this.deliveries];
   }
 
-  getDeliveryDebt(): any[] {
-    return [...this.deliveriesDebts];
+  getDeliveryDebt(): Debt[] {
+    return [...this.debts];
   }
 
   getCreatedAt(): Date {
@@ -120,7 +121,7 @@ export class Client {
 
   getDebtsAmount(): number {
     let totalDebt = 0;
-    for (const debt of this.deliveriesDebts) {
+    for (const debt of this.debts) {
     }
     return totalDebt;
   }

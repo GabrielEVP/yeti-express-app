@@ -8,6 +8,7 @@ import { CourierRouter } from '@views/couriers';
 import { ServiceRouter } from '@views/services';
 import { CompanyBillRouter } from '@/views/company-bills/';
 import { UserRouter } from '@/views/users/router/Router.User';
+import { DebtRouter } from '@/views/debts/';
 import { useAuthStore } from '@/stores/';
 import { storeToRefs } from 'pinia';
 import { setupRouteHistory } from '@/composables/';
@@ -31,6 +32,7 @@ const routes: Array<RouteRecordRaw> = [
   ...ServiceRouter,
   ...CompanyBillRouter,
   ...UserRouter,
+  ...DebtRouter,
 ];
 
 const router = createRouter({

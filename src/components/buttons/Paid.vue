@@ -6,6 +6,7 @@
     <slot />
   </Button>
 </template>
+
 <script setup lang="ts">
 import { Button } from '@components';
 import { CreditCard } from 'lucide-vue-next';

@@ -1,5 +1,4 @@
 export * from './adapter/api/DebtPayment.ApiAdapter';
-export * from './adapter/form/DebtFormAdapter';
 export * from './adapter/form/DebtPayment.FormAdapter';
 export * from './domain/DebtPayment';
 export * from './domain/IDebtPayment';
@@ -7,4 +6,10 @@ export * from './domain/enum/PaymentMethod';
 export * from './infrastructure/Debt.RepositoryImpl';
 export * from './presentation/constants/TableHeader.Debt';
 export * from './schema/Debt.Schema';
+export * from './use-cases/DebtPayment.CreateUseCase';
+export * from './use-cases/DebtPayment.DeleteUseCase';
 export * from './use-cases/DebtPayment.GetAllUseCase';
+export * from './use-cases/DebtPayment.GetByDebtIdUseCase.ts';
+export * from './use-cases/DebtPayment.GetByIdUseCase';
+export * from './use-cases/DebtPayment.GetByMethodUseCase';
+export * from './use-cases/DebtPayment.UpdateUseCase';

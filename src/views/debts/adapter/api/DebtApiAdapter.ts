@@ -1,7 +1,7 @@
 import { Debt, DebtStatus } from '@/views/debts/domain/';
 import { Client } from '@/views/clients/domain/';
 import { Delivery } from '@/views/deliveries/domain';
-import { DebtPaymentApiAdapter } from '@/views/debts-payments/adapters/';
+import { DebtPaymentApiAdapter } from '@/views/debts-payments/adapter/';
 
 export class DebtApiAdapter {
   static fromApi(apiData: any, client?: Client, delivery?: Delivery): Debt {

@@ -1,12 +1,12 @@
 <template>
   <div v-if="client" class="flex gap-1 justify-center">
     <div class="relative">
-      <Buttondropdown @click.stop="toggleDropdown()">
+      <DropdownButton @click.stop="toggleDropdown()">
         Deliveries
         <Bagde>
           {{ client.getDeliveries().length }}
         </Bagde>
-      </Buttondropdown>
+      </DropdownButton>
       <div
         v-if="activeDropdown"
         class="fixed right-16 mt-2 w-72 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-auto max-h-[80vh] transition-opacity duration-200 ease-in-out"
@@ -15,7 +15,7 @@
         <div class="p-4 space-y-4">
           <div class="flex justify-between items-center">
             <Text>Deliveries pendientes</Text>
-            <Bagde> Total: ${{ client.getId() }} </Bagde>
+            <Bagde>Total: ${{ client.getId() }}</Bagde>
           </div>
           <div class="space-y-3 max-h-80 overflow-y-auto">
             <div
@@ -37,18 +37,18 @@
                 </div>
               </div>
               <div class="flex gap-2 mt-2">
-                <ButtonPaid @click="handlePaidDelivery(delivery)">Pagar delivery</ButtonPaid>
-                <Buttonpartial @click="handlePartialPaidDelivery(delivery)">
+                <PaidButton @click="handlePaidDelivery(delivery)">Pagar delivery</PaidButton>
+                <PartialButton @click="handlePartialPaidDelivery(delivery)">
                   Pagar parcial
-                </Buttonpartial>
+                </PartialButton>
               </div>
             </div>
           </div>
           <div
             class="border-t border-gray-200 dark:border-gray-600 pt-3 flex justify-between gap-4"
           >
-            <ButtonPaid @click="handlePaidDeliveries()">Pagar todos</ButtonPaid>
-            <Buttonpartial @click="handlePartialPaidDeliveries()">Pago parcial</Buttonpartial>
+            <PaidButton @click="handlePaidDeliveries()">Pagar todos</PaidButton>
+            <PartialButton @click="handlePartialPaidDeliveries()">Pago parcial</PartialButton>
           </div>
         </div>
       </div>
@@ -60,13 +60,11 @@
 import { ref } from 'vue';
 import { Client } from '@/views/clients/domain';
 import { Delivery } from '@/views/deliveries/domain';
-import Buttondropdown from './Buttondropdown.vue';
+import { PaidButton, PartialButton, DropdownButton } from '@/components';
 import { Text, Bagde } from '@/components';
-import ButtonPaid from './ButtonPaid.vue';
-import Buttonpartial from './buttonpartial.vue';
 
 const props = defineProps<{
-  client?: Client;
+  client: Client;
 }>();
 
 const activeDropdown = ref<boolean>(false);
