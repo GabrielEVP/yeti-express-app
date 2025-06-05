@@ -2,7 +2,6 @@ import { Client } from '@/views/clients/domain/';
 import { ClientAddressApiAdapter } from '@/views/clients/adapters/Api/Client.AddressApiAdapter';
 import { ClientEmailApiAdapter } from '@/views/clients/adapters/Api/Client.EmailApiAdapter';
 import { ClientPhoneApiAdapter } from '@/views/clients/adapters/Api/Client.PhoneApiAdapter';
-import { ClientDeliveryDebtApiAdapter } from '@/views/clients/adapters/Api/Client.DeliveryDebtApiAdapter';
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
 import { adaptDeliveryToClient } from '@/views/deliveries/adapters/Delivery.ApiAdapter';
 
@@ -20,7 +19,7 @@ export class ClientApiAdapter extends Client {
       apiData.emails?.map(ClientEmailApiAdapter.fromApi) ?? [],
       apiData.phones?.map(ClientPhoneApiAdapter.fromApi) ?? [],
       apiData.deliveries?.map(adaptDeliveryToClient) ?? [],
-      apiData.client_delivery_debts?.map(ClientDeliveryDebtApiAdapter.fromApi) ?? [],
+      [],
       new Date(apiData.created_at),
       new Date(apiData.updated_at)
     );
@@ -36,7 +35,6 @@ export class ClientApiAdapter extends Client {
       addresses: client.getAddresses(),
       emails: client.getEmails(),
       phones: client.getPhones(),
-      delivery_debts: client.getDeliveryDebt().map(ClientDeliveryDebtApiAdapter.toApi),
     };
   }
 

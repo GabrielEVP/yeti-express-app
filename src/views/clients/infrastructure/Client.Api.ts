@@ -1,6 +1,6 @@
 import { apiClient } from '@/services/';
 import { clientApiRoutes } from '@views/clients/infrastructure/routes/Client.ApiRoutes';
-import type { Client } from '@/views/clients/domain/Client';
+import type { Client } from '@/views/clients/domain/';
 
 interface ClientFilterParams {
   search?: string;

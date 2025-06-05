@@ -1,5 +1,5 @@
 import type { IClientRepository } from '@/views/clients/domain/IClientRepository';
-import type { Client } from '@/views/clients/domain/Client';
+import type { Client } from '@/views/clients/domain/';
 
 interface GetClientsByFilterParams {
   search?: string;

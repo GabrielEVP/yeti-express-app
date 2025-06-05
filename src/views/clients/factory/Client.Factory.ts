@@ -9,6 +9,8 @@ export const createDefaultClient = (): Client => {
     ClientType.VENEZOLANO,
     '',
     '',
+    false,
+    [],
     [],
     [],
     [],
