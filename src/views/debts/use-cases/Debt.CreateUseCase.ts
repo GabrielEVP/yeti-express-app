@@ -5,11 +5,6 @@ export class CreateDebtUseCase {
   constructor(private repository: IDebtRepository) {}
 
   async execute(debt: Debt): Promise<Debt> {
-    try {
-      return await this.repository.create(debt);
-    } catch (error) {
-      console.error('Error in CreateDebtUseCase:', error);
-      throw error;
-    }
+    return await this.repository.create(debt);
   }
 }

@@ -5,11 +5,6 @@ export class GetDebtByIdUseCase {
   constructor(private repository: IDebtRepository) {}
 
   async execute(id: string): Promise<Debt | null> {
-    try {
-      return await this.repository.getById(id);
-    } catch (error) {
-      console.error(`Error in GetDebtByIdUseCase for id ${id}:`, error);
-      return null;
-    }
+    return await this.repository.getById(id);
   }
 }

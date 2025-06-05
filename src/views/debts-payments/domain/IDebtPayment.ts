@@ -1,5 +1,5 @@
-import type { DebtPayment } from '@/views/debts/domain';
-import type { PaymentMethod } from '@/views/debts/domain';
+import type { DebtPayment } from '@/views/debts-payments/domain';
+import type { PaymentMethod } from '@/views/debts-payments/domain';
 
 export interface IDebtPaymentRepository {
   getAll(): Promise<DebtPayment[]>;

@@ -1,4 +1,4 @@
-import { PaymentMethod, getPaymentMethodLabel } from '@/views/debts/domain';
+import { PaymentMethod, getPaymentMethodLabel } from '@/views/debts-payments/domain';
 
 export class DebtPayment {
   private readonly id: string;

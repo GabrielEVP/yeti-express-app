@@ -5,11 +5,6 @@ export class GetDebtsUseCase {
   constructor(private repository: IDebtRepository) {}
 
   async execute(): Promise<Debt[]> {
-    try {
-      return await this.repository.getAll();
-    } catch (error) {
-      console.error('Error in GetDebtsUseCase:', error);
-      return [];
-    }
+    return await this.repository.getAll();
   }
 }

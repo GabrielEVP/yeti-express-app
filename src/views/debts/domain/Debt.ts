@@ -1,4 +1,4 @@
-import { DebtPayment } from '@/views/debts/domain';
+import { DebtPayment } from '@/views/debts-payments/domain';
 import { DebtStatus, getDebtStatusLabel } from '@/views/debts/domain';
 import { Client } from '@/views/clients/domain/';
 import { Delivery } from '@/views/deliveries/domain';
