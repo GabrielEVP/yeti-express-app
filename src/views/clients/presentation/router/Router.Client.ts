@@ -1,9 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Details, Form, List } from '@views/clients/presentation/pages';
-<<<<<<< HEAD
-=======
 
->>>>>>> 3b3e9a1 (Remove client delivery debt functionality)
 export const ClientRouter: Array<RouteRecordRaw> = [
   {
     path: '/clients',
