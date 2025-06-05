@@ -18,6 +18,6 @@ export class Bill {
   }
 
   public getAmount(): number {
-    return this.amount;
+    return Number(this.amount);
   }
 }

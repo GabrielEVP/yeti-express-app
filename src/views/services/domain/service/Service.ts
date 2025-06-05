@@ -50,7 +50,7 @@ export class Service {
   }
 
   getComision(): number {
-    return this.comision;
+    return Number(this.comision);
   }
 
   isActive(): boolean {
@@ -71,6 +71,7 @@ export class Service {
 
   getTotalExpense(): number {
     const totalBills = this.bills.reduce((total, bill) => total + bill.getAmount(), 0);
+    console.log(totalBills);
     const totalExpense = totalBills + this.getComision();
     return totalExpense;
   }
