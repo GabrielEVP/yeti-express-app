@@ -1,27 +1,34 @@
 <template>
+  <PaymentModalDebt
+    v-if="selectedDelivery"
+    v-model:isOpen="isOpen"
+    :partial-amount="2"
+    paymentMethod="full"
+    :delivery="selectedDelivery"
+  />
+
   <div class="space-y-2 sm:space-y-3 mt-6">
     <div
       v-for="delivery in paginatedItems"
       :key="delivery.getId()"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
     >
-      <div class="p-3 hidden sm:flex items-center justify-between">
+      <div class="p-3 hidden sm:flex iselectedDeliverytems-center justify-between">
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-3">
             <span
               class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded"
             >
-              {{ delivery.getId() }}
-            </span>
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full">
-              {{ delivery.getPaymentStatus() }}
+              {{ delivery.getNumber() }}
             </span>
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ delivery.getDate() }}
+            {{ formatDateCustom(delivery.getDate()) }}
           </div>
+          <Bagde>
+            {{ delivery.getStatus() }}
+          </Bagde>
         </div>
-
         <div class="flex items-center gap-8">
           <div class="text-right">
             <div class="text-lg font-light text-gray-900 dark:text-gray-100">
@@ -34,11 +41,13 @@
 
           <div class="flex gap-2">
             <button
+              @click="() => open(delivery.getId())"
               class="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-200 shadow-sm"
             >
               Pagar Todo
             </button>
             <button
+              @click="() => open(delivery.getId())"
               class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
             >
               Pago Parcial
@@ -85,14 +94,43 @@
       </div>
     </div>
   </div>
+  <Card v-if="totalPages > 0" class="mt-4">
+    <div class="p-3">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-left">
+          Página {{ currentPage }} de {{ totalPages }} • {{ paginatedItems.length }} entregas
+        </div>
+        <div class="flex items-center justify-center sm:justify-end gap-2">
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            Anterior
+          </button>
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPages"
+            class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </div>
+  </Card>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { Delivery } from '@views/deliveries';
-import { usePagination } from '@composables';
+import { formatDateCustom } from '@utils';
+import { usePagination, useModal } from '@composables';
 import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
+import { Card } from '@components';
+import Bagde from '@components/ui/Bagde.vue';
+import PaymentModalDebt from '../payment/PaymentModal.Debt.vue';
 
 const props = defineProps<{ clientId: string | null }>();
 
@@ -114,5 +152,20 @@ const fetchDeliveries = async () => {
 onMounted(fetchDeliveries);
 watch(() => props.clientId, fetchDeliveries);
 
-const { paginatedItems } = usePagination(deliveries, 15);
+const { currentPage, startIndex, endIndex, totalPages, paginatedItems, updatePage } = usePagination(
+  deliveries,
+  15
+);
+
+const selectedDelivery = ref<Delivery>();
+
+const { isOpen } = useModal();
+
+const open = (deliveryId: string) => {
+  const delivery = paginatedItems.value.find((d) => d.getId() === deliveryId);
+  if (delivery) {
+    selectedDelivery.value = delivery as Delivery;
+    isOpen.value = true;
+  }
+};
 </script>
