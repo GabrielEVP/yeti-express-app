@@ -3,7 +3,7 @@ import { ClientAddressApiAdapter } from '@/views/clients/adapters/Api/Client.Add
 import { ClientEmailApiAdapter } from '@/views/clients/adapters/Api/Client.EmailApiAdapter';
 import { ClientPhoneApiAdapter } from '@/views/clients/adapters/Api/Client.PhoneApiAdapter';
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
-import { adaptDeliveryToClient } from '@/views/deliveries/adapters/Delivery.ApiAdapter';
+import { adaptDeliveryToClient } from '@/views/deliveries/adapters/api/';
 
 export class ClientApiAdapter extends Client {
   static fromApi(apiData: any): Client {

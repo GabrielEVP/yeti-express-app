@@ -2,6 +2,7 @@ export * from './adapters/Courier.ApiAdapter';
 export * from './adapters/Courier.FormAdapter';
 export * from './domain/Courier';
 export * from './domain/ICourierRepository';
+export * from './domain/time-line/CurierUiTimeLine';
 export * from './factory/Courier.Factory';
 export * from './infrastructure/Courier.Api';
 export * from './infrastructure/Courier.RepositoryImpl';

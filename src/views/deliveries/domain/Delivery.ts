@@ -1,14 +1,11 @@
-import { DeliveryStatus, getDeliveryStatusLabel } from '@/views/deliveries/domain/Status';
-import { PaymentType, getPaymentTypeLabel } from '@/views/deliveries/domain/PaymentType';
+import { DeliveryStatus, getDeliveryStatusLabel } from '@/views/deliveries/domain/enum/';
+import { PaymentType, getPaymentTypeLabel } from '@/views/deliveries/domain/enum/';
 import { TimeLineContent } from '@time-line-content/domain';
 import { DeliveryReceipt } from '@views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientCharge } from '@views/deliveries/domain/DeliveryClientCharge';
-import { DeliveryCourierPayout } from '@views/deliveries/domain/DeliveryCourierPayout';
 import { Service } from '@/views/services';
 import { Client, ClientAddress } from '@/views/clients/domain/';
-import { DeliveryCollectionStatus } from '@/views/deliveries/domain/';
 import { Courier } from '@/views/couriers/domain/';
-import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
+import { DeliveryPaymentStatus } from '@/views/deliveries/domain/enum/';
 
 export class Delivery {
   private readonly id: string;
@@ -56,8 +53,8 @@ export class Delivery {
     this.number = number;
     this.date = typeof date === 'string' ? new Date(date) : date;
     this.status = status;
-    this.paymentStatus = paymentStatus;
     this.paymentType = paymentType;
+    this.paymentStatus = paymentStatus;
     this.notes = notes;
     this.service = service;
     this.client = client;

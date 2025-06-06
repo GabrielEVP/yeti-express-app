@@ -1,7 +1,5 @@
 import { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
-import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { DeliveryPaymentStatus, DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
 import { ServiceFormAdapter } from '@views/services';
 import { ClientFormAdapter, ClientAddressFormAdapter } from '@/views/clients/adapters';
@@ -13,24 +11,6 @@ export function mapFormToDeliveryReceipt(data: any): DeliveryReceipt {
     data.fullName ?? '',
     data.phone ?? '',
     data.address ?? ''
-  );
-}
-
-export function mapFormToDeliveryClientPayment(data: any): DeliveryClientCharge {
-  return new DeliveryClientCharge(
-    data.id ?? '',
-    data.date ?? new Date().toISOString(),
-    data.method ?? null,
-    data.amount ?? 0
-  );
-}
-
-export function mapFormToDeliveryCourierPayment(data: any): DeliveryCourierPayout {
-  return new DeliveryCourierPayout(
-    data.id ?? '',
-    data.date ?? new Date().toISOString(),
-    data.method ?? null,
-    data.amount ?? 0
   );
 }
 

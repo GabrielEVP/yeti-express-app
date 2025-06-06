@@ -1,11 +1,13 @@
 import { Delivery } from '@/views/deliveries/domain/Delivery';
-import { DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
+import {
+  DeliveryStatus,
+  PaymentType,
+  DeliveryPaymentStatus,
+} from '@/views/deliveries/domain/enum/';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { createDefaultClient, createDefaultClientAddress } from '@views/clients';
 import { createDefaultCourier } from '@views/couriers';
 import { createDefaultService } from '@views/services';
-import { DeliveryCollectionStatus } from '@/views/deliveries/domain/';
-import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
 
 export const createDefaultDelivery = (): Delivery => {
   return new Delivery(
@@ -13,9 +15,8 @@ export const createDefaultDelivery = (): Delivery => {
     '',
     new Date().toISOString(),
     DeliveryStatus.PENDING,
-    DeliveryCollectionStatus.PENDING,
-    DeliveryPaymentStatus.PENDING,
     PaymentType.PARTIAL,
+    DeliveryPaymentStatus.PENDING,
     '',
     createDefaultService(),
     createDefaultClient(),
@@ -23,8 +24,6 @@ export const createDefaultDelivery = (): Delivery => {
     createDefaultCourier(),
     [],
     new DeliveryReceipt('', '', '', ''),
-    [],
-    [],
     new Date().toISOString(),
     new Date().toISOString(),
     '',

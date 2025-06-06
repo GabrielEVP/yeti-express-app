@@ -119,7 +119,7 @@ import {
   UpdateDeliveryUseCase,
 } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
-import { mapFormToDelivery } from '@/views/deliveries/adapters/Delivery.FormAdapter';
+import { mapFormToDelivery } from '@views/deliveries/adapters/form/Delivery.FormAdapter';
 import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes';
 import {
   SideBar,

@@ -1,14 +1,14 @@
 import { Delivery } from '@/views/deliveries/domain/Delivery';
-import { DeliveryStatus } from '@/views/deliveries/domain/Status';
-import { PaymentType } from '@/views/deliveries/domain/PaymentType';
+import {
+  DeliveryStatus,
+  PaymentType,
+  DeliveryPaymentStatus,
+} from '@/views/deliveries/domain/enum/';
 import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
-import { DeliveryClientCharge } from '@/views/deliveries/domain/DeliveryClientCharge';
-import { DeliveryCourierPayout } from '@/views/deliveries/domain/DeliveryCourierPayout';
 import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { ServiceApiAdapter } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
-import { DeliveryPaymentStatus } from '@/views/deliveries/domain';
 
 function adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
   return new DeliveryReceipt(

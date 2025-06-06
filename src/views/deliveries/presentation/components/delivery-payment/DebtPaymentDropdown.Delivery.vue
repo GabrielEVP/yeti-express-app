@@ -2,23 +2,23 @@
   <Dropdown>
     <template #header>
       <CreditCard class="h-5 w-5" />
-      <span class="font-medium">Pagos al Repartidor ({{ DeliveryCourierpayments.length }}) </span>
+      <span class="font-medium">Cobros al cliente ({{ none.length }}) </span>
     </template>
     <template #data>
-      <div v-if="DeliveryCourierpayments.length > 0" class="space-y-3">
+      <div v-if="none.length > 0" class="space-y-3">
         <div
-          v-for="DeliveryCourierpayment in DeliveryCourierpayments"
-          :key="DeliveryCourierpayment.getId()"
+          v-for="none in none"
+          :key="none.id"
           class="border rounded-md p-3 bg-muted/30 dark:border-gray-700 dark:bg-gray-700"
         >
           <div class="flex justify-between items-start">
             <div class="space-y-1 text-sm">
-              <p class="font-medium">Fecha: {{ DeliveryCourierpayment.getDate() }}</p>
+              <p class="font-medium">Fecha: {{}}</p>
               <p>
                 Método:
-                <span class="font-semibold">{{ DeliveryCourierpayment.getMethod() }}</span>
+                <span class="font-semibold">{{}}</span>
               </p>
-              <p>Monto: {{ DeliveryCourierpayment.getAmount() }}</p>
+              <p>Monto: {{}}</p>
             </div>
           </div>
         </div>
@@ -32,9 +32,10 @@
 import { defineProps } from 'vue';
 import { CreditCard } from 'lucide-vue-next';
 import { Dropdown, EmptyData } from '@/components/';
-import { DeliveryCourierPayout } from '@/views/deliveries/domain';
 
-defineProps<{
-  DeliveryCourierpayments: DeliveryCourierPayout[];
+/**
+ * defineProps<{
+  DeliveryClientPayments: DeliveryClientCharge[];
 }>();
+*/
 </script>

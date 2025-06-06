@@ -92,6 +92,12 @@ export class Courier {
     return 0;
   }
 
+  getDeliveredOrders(): Delivery[] {
+    return this.deliveries.filter(
+      (delivery) => delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID
+    );
+  }
+
   getPaidAmountThisMonth(): number {
     const now = dayjs();
 

@@ -34,7 +34,7 @@
             </div>
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
-            <ActivityView title="Pedidos entregados">
+            <ActivityView title="Pedidos entregados del mes">
               <div class="text-2xl font-bold">
                 {{ courier.getPaidAmountThisMonth().toFixed(2) }}
               </div>
@@ -91,6 +91,7 @@ import {
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import { Courier } from '@/views/couriers';
+import { COURIER_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@/views/couriers/domain/';
 import { CourierRepositoryImpl } from '@/views/couriers';
 import { GetCourierByIdUseCase } from '@views/couriers';
 import { AppRoutesCourier } from '@/views/couriers/presentation/routes/';
@@ -114,7 +115,12 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() =>
+  adaptTimeLineContentToUI(
+    courier.value?.getTimeLineContent() ?? [],
+    COURIER_UI_TIME_LINE_CONTENT_DEFINITIONS
+  )
+);
 
 const sectionActions = [
   {
