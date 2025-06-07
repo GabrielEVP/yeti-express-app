@@ -33,27 +33,25 @@
         </div>
         <div class="flex items-center gap-8">
           <div class="text-right">
-            <div class="text-lg font-light text-gray-900 dark:text-gray-100">
+            <Text>
               {{ delivery.getService().getAmount() }}
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">
-              Resta: {{ delivery.getService().getAmount() }}
-            </div>
+            </Text>
+            <Text> Resta: {{ delivery.getService().getAmount() }} </Text>
           </div>
 
           <div class="flex gap-2">
-            <button
+            <Button
               @click="openFull(delivery as Delivery)"
-              class="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-200 shadow-sm"
+              class="text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200"
             >
               Pagar Todo
-            </button>
-            <button
+            </Button>
+            <Button
               @click="openPartial(delivery as Delivery)"
-              class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+              class="text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Pago Parcial
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -102,20 +100,20 @@
           Página {{ currentPage }} de {{ totalPages }} • {{ paginatedItems.length }} entregas
         </div>
         <div class="flex items-center justify-center sm:justify-end gap-2">
-          <button
+          <Button
             @click="currentPage--"
             :disabled="currentPage === 1"
             class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             Anterior
-          </button>
-          <button
+          </Button>
+          <Button
             @click="currentPage++"
             :disabled="currentPage === totalPages"
             class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             Siguiente
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -125,16 +123,17 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { Delivery } from '@views/deliveries';
-import { formatDateCustom } from '@utils';
-import { usePagination, useModal } from '@composables';
+import { usePagination } from '@/composables/';
+import { formatDateCustom } from '@/utils/';
+import { Card, Bagde, Button, Text } from '@/components/';
 import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
-import { Card } from '@components';
-import Bagde from '@components/ui/Bagde.vue';
 import PaymentFullModalDebt from '../payment/PaymentFullModal.Debt.vue';
 import PaymentPartialModalDebt from '../payment/PaymentPartialModal.Debt.vue';
 
-const props = defineProps<{ clientId: string | null }>();
+const props = defineProps<{
+  clientId: string | null;
+}>();
 
 const repository = new DeliveryRepositoryImpl();
 const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
@@ -151,8 +150,9 @@ const fetchDeliveries = async () => {
   deliveries.value = all.filter((d) => d.getClient().getId() === props.clientId);
 };
 
-onMounted(fetchDeliveries);
 watch(() => props.clientId, fetchDeliveries);
+
+onMounted(fetchDeliveries);
 
 const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveries, 15);
 

@@ -5,9 +5,9 @@ export enum PaymentMethod {
 }
 
 export const PaymentMethodOptions = [
-  { value: PaymentMethod.MOBILE_PAYMENT, label: 'Pago móvil' },
-  { value: PaymentMethod.TRANSFER, label: 'Transferencia' },
   { value: PaymentMethod.CASH, label: 'Efectivo' },
+  { value: PaymentMethod.TRANSFER, label: 'Transferencia' },
+  { value: PaymentMethod.MOBILE_PAYMENT, label: 'Pago móvil' },
 ] as const;
 
 const PaymentMethodLabels: Record<PaymentMethod, string> = {
