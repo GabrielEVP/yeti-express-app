@@ -4,6 +4,7 @@ export * from './domain/DebtPayment';
 export * from './domain/IDebtPayment';
 export * from './domain/enum/PaymentMethod';
 export * from './infrastructure/Debt.RepositoryImpl';
+export * from './schema/DebtPayment.Schema';
 export * from './use-cases/DebtPayment.CreateUseCase';
 export * from './use-cases/DebtPayment.DeleteUseCase';
 export * from './use-cases/DebtPayment.GetAllUseCase';
