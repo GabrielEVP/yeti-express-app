@@ -1,12 +1,14 @@
 <template>
-  <PaymentModalDebt
+  <PaymentFullModalDebt
     v-if="selectedDelivery"
-    v-model:isOpen="isOpen"
-    :partial-amount="2"
-    paymentMethod="full"
+    v-model:isOpen="isFullModalOpen"
     :delivery="selectedDelivery"
   />
-
+  <PaymentPartialModalDebt
+    v-if="selectedDelivery"
+    v-model:isOpen="isPartialModalOpen"
+    :delivery="selectedDelivery"
+  />
   <div class="space-y-2 sm:space-y-3 mt-6">
     <div
       v-for="delivery in paginatedItems"
@@ -41,13 +43,13 @@
 
           <div class="flex gap-2">
             <button
-              @click="() => open(delivery.getId())"
+              @click="openFull(delivery as Delivery)"
               class="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-200 shadow-sm"
             >
               Pagar Todo
             </button>
             <button
-              @click="() => open(delivery.getId())"
+              @click="openPartial(delivery as Delivery)"
               class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
             >
               Pago Parcial
@@ -56,7 +58,6 @@
         </div>
       </div>
     </div>
-
     <div
       v-if="!clientId"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-8"
@@ -130,7 +131,8 @@ import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
 import { Card } from '@components';
 import Bagde from '@components/ui/Bagde.vue';
-import PaymentModalDebt from '../payment/PaymentModal.Debt.vue';
+import PaymentFullModalDebt from '../payment/PaymentFullModal.Debt.vue';
+import PaymentPartialModalDebt from '../payment/PaymentPartialModal.Debt.vue';
 
 const props = defineProps<{ clientId: string | null }>();
 
@@ -152,20 +154,20 @@ const fetchDeliveries = async () => {
 onMounted(fetchDeliveries);
 watch(() => props.clientId, fetchDeliveries);
 
-const { currentPage, startIndex, endIndex, totalPages, paginatedItems, updatePage } = usePagination(
-  deliveries,
-  15
-);
+const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveries, 15);
 
 const selectedDelivery = ref<Delivery>();
 
-const { isOpen } = useModal();
+const isFullModalOpen = ref(false);
+const isPartialModalOpen = ref(false);
 
-const open = (deliveryId: string) => {
-  const delivery = paginatedItems.value.find((d) => d.getId() === deliveryId);
-  if (delivery) {
-    selectedDelivery.value = delivery as Delivery;
-    isOpen.value = true;
-  }
+const openFull = (delivery: Delivery) => {
+  selectedDelivery.value = delivery;
+  isFullModalOpen.value = true;
+};
+
+const openPartial = (delivery: Delivery) => {
+  selectedDelivery.value = delivery;
+  isPartialModalOpen.value = true;
 };
 </script>
