@@ -4,8 +4,9 @@ import { ClientPhone } from '@/views/clients/domain/';
 import { ClientEmail } from '@/views/clients/domain/';
 import { ClientType, formatClientType } from '@/views/clients/domain/';
 import { Debt } from '@/views/debts/domain';
-import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
+import { Delivery, DeliveryStatus, DeliveryPaymentStatus } from '@/views/deliveries/domain';
 import { TimeLineContent } from '@/time-line-content/domain';
+import { DebtStatus } from '@/views/debts/domain';
 
 export class Client {
   private readonly id: string;
@@ -119,54 +120,76 @@ export class Client {
     return formatClientType(this.type);
   }
 
-  getDebtsAmount(): number {
-    let totalDebt = 0;
-    for (const debt of this.debts) {
-    }
-    return totalDebt;
+  getDeliveredDeliveries(): Delivery[] {
+    return this.deliveries.filter((delivery) => delivery.getStatus() === DeliveryStatus.DELIVERED);
   }
 
-  getEarningsDelivery(): number {
-    let earning = 0;
-    for (const delivery of this.getDeliveries()) {
-      const isPaid = delivery.getStatus() === DeliveryStatus.PAID;
-      if (isPaid) {
-        earning += delivery.getService().getTotalEarning();
-      }
-    }
-    return earning;
-  }
-
-  getEarningsDeliveryOfCurrentMonth(): number {
-    let earningOfMonth = 0;
-    const currentMonth = dayjs().month();
-    const currentYear = dayjs().year();
-    for (const delivery of this.getDeliveries()) {
-    }
-    return earningOfMonth;
-  }
-
-  getEarningsPendingOfDeliveries(): number {
-    let pendingEarning = 0;
-    for (const delivery of this.getDeliveries()) {
-    }
-    return pendingEarning;
+  getInTransitDeliveries(): Delivery[] {
+    return this.deliveries.filter((delivery) => delivery.getStatus() === DeliveryStatus.IN_TRANSIT);
   }
 
   getPendingDeliveries(): Delivery[] {
-    let pendingDeliveries: Delivery[] = [];
-    for (const delivery of this.getDeliveries()) {
-    }
-    return pendingDeliveries;
+    return this.deliveries.filter((delivery) => delivery.getStatus() === DeliveryStatus.PENDING);
   }
 
-  getPendingLenghtDeliveries(): number {
-    let deliveries = 0;
-    for (const delivery of this.getDeliveries()) {
-      if (delivery.getStatus() === DeliveryStatus.PENDING) {
-        deliveries++;
-      }
-    }
-    return deliveries;
+  getRefusedDeliveries(): Delivery[] {
+    return this.deliveries.filter((delivery) => delivery.getStatus() === DeliveryStatus.REFUSED);
+  }
+
+  getPaidDeliveries(): Delivery[] {
+    return this.deliveries.filter(
+      (delivery) => delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID
+    );
+  }
+
+  getTotalInvoiced(): number {
+    return this.deliveries.reduce((total, delivery) => {
+      return total + delivery.getService().getAmount();
+    }, 0);
+  }
+
+  getEarningsDelivery(): number {
+    return this.getDeliveries().reduce((total, delivery) => {
+      return delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID
+        ? total + delivery.getService().getTotalEarning()
+        : total;
+    }, 0);
+  }
+
+  getPendingEarnings(): number {
+    return this.getDeliveries().reduce((total, delivery) => {
+      return delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID
+        ? total + delivery.getService().getTotalEarning()
+        : total;
+    }, 0);
+  }
+
+  getEarningsDeliveryOfCurrentMonth(): number {
+    const currentMonth = dayjs().month();
+    const currentYear = dayjs().year();
+
+    return this.getDeliveries().reduce((total, delivery) => {
+      const deliveryDate = dayjs(delivery.getDate());
+      const isPaid = delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID;
+      const isSameMonthAndYear =
+        deliveryDate.month() === currentMonth && deliveryDate.year() === currentYear;
+
+      return isPaid && isSameMonthAndYear ? total + delivery.getService().getTotalEarning() : total;
+    }, 0);
+  }
+
+  getDebtsTotalAmount(): number {
+    return this.debts.reduce((total, debt) => {
+      const status = debt.getStatus();
+      return status === DebtStatus.PENDING || status === DebtStatus.PARTIAL_PAID
+        ? total + debt.getAmount()
+        : total;
+    }, 0);
+  }
+
+  getDebtsPaidAmount(): number {
+    return this.debts.reduce((total, debt) => {
+      return debt.getStatus() === DebtStatus.PAID ? total + debt.getAmount() : total;
+    }, 0);
   }
 }

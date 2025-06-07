@@ -2,7 +2,7 @@
   <SideBar>
     <ClientSelectorModal
       v-model:open="isOpen"
-      :clients="clients"
+      :clients="clients as Client[]"
       @select="selectedClient = $event"
     />
     <ClientSelect :selectedClient="selectedClient as Client" @open="open" />

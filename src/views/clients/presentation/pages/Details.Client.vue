@@ -53,10 +53,10 @@
             </ActivityView>
             <ActivityView title="Deliverys Pendientes">
               <div class="text-2xl font-bold">
-                {{ formatToDollars(client.getEarningsPendingOfDeliveries()) }}
+                {{ formatToDollars(client.getDebtsTotalAmount()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Pendientes por cobrar: {{ client.getPendingLenghtDeliveries() }}
+                Pendientes por cobrar: {{ client.getPendingDeliveries().length }}
               </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">

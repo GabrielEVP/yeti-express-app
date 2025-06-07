@@ -17,19 +17,21 @@
       >
         <section class="text-center">
           <Text>Entregas</Text>
-          <Bagde>2</Bagde>
+          <Bagde>
+            {{ selectedClient?.getDeliveredDeliveries().length || '0' }}
+          </Bagde>
         </section>
         <section class="text-center">
-          <Text>Total</Text>
-          <Bagde>3</Bagde>
+          <Text>Total Facturado</Text>
+          <Bagde>{{ formatToDollars(selectedClient?.getTotalInvoiced() || 0) }}</Bagde>
         </section>
         <section class="text-center">
-          <Text>Pagado</Text>
-          <Bagde>4</Bagde>
+          <Text>Total de Ganancia</Text>
+          <Bagde>{{ formatToDollars(selectedClient?.getEarningsDelivery() || 0) }}</Bagde>
         </section>
         <section class="text-center">
-          <Text>Pendiente</Text>
-          <Bagde>5</Bagde>
+          <Text>Deuda Pendiente</Text>
+          <Bagde>{{ formatToDollars(selectedClient?.getDebtsTotalAmount() || 0) }}</Bagde>
         </section>
       </footer>
     </div>
@@ -39,6 +41,7 @@
 <script setup lang="ts">
 import { Bagde, Button, Card, Text } from '@components';
 import { Client } from '@/views/clients/domain/';
+import { formatToDollars } from '@utils';
 
 defineProps<{
   selectedClient: Client;

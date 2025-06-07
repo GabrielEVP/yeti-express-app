@@ -10,22 +10,15 @@
       <header class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Seleccionar Cliente</h3>
-          <Button
-            @click="emitClose"
-            class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            cerrar
-          </Button>
+          <X @click="emitClose" class="w-6 h-6 text-black dark:text-white cursor-pointer" />
         </div>
       </header>
-
       <section class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
         <Input v-model="clientSearch" placeholder="Buscar cliente" />
       </section>
-
       <footer class="flex-1 overflow-y-auto p-4 sm:p-6">
         <div
-          v-for="client in clients"
+          v-for="client in filteredClients"
           :key="client.getId()"
           @click="select(client)"
           class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
@@ -43,13 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { X } from 'lucide-vue-next';
 import { Client } from '@views/clients';
-import { Input, Bagde, Button } from '@/components/';
+import { Input, Bagde } from '@/components/';
 
-defineProps<{
+const props = defineProps<{
   open: boolean;
-  clients: any[];
+  clients: Client[];
 }>();
 
 const emit = defineEmits<{
@@ -58,6 +52,12 @@ const emit = defineEmits<{
 }>();
 
 const clientSearch = ref('');
+
+const filteredClients = computed(() =>
+  props.clients.filter((client) =>
+    client.getLegalName().toLowerCase().includes(clientSearch.value.toLowerCase())
+  )
+);
 
 const select = (client: Client) => {
   emit('select', client);

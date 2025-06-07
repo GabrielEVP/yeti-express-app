@@ -28,7 +28,7 @@
             {{ formatDateCustom(delivery.getDate()) }}
           </div>
           <Bagde>
-            {{ delivery.getStatus() }}
+            {{ delivery.getStatusToFormat() }}
           </Bagde>
         </div>
         <div class="flex items-center gap-8">
