@@ -7,7 +7,6 @@ export * from './domain/IDeliveryRepository';
 export * from './domain/enum/PaymentStatus';
 export * from './domain/enum/PaymentType';
 export * from './domain/enum/Status';
-export * from './factory/Delivery.Factory';
 export * from './infrastructure/Delivery.Api';
 export * from './infrastructure/Delivery.RepositoryImpl';
 export * from './infrastructure/routes/Delivery.ApiRoutes';

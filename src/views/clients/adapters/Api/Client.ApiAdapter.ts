@@ -4,6 +4,7 @@ import { ClientEmailApiAdapter } from '@/views/clients/adapters/Api/Client.Email
 import { ClientPhoneApiAdapter } from '@/views/clients/adapters/Api/Client.PhoneApiAdapter';
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
 import { adaptDeliveryToClient } from '@/views/deliveries/adapters/api/';
+import { DebtApiAdapter } from '@/views/debts/adapter/';
 
 export class ClientApiAdapter extends Client {
   static fromApi(apiData: any): Client {
@@ -19,7 +20,7 @@ export class ClientApiAdapter extends Client {
       apiData.emails?.map(ClientEmailApiAdapter.fromApi) ?? [],
       apiData.phones?.map(ClientPhoneApiAdapter.fromApi) ?? [],
       apiData.deliveries?.map(adaptDeliveryToClient) ?? [],
-      [],
+      apiData.debts?.map(DebtApiAdapter.fromApi) ?? [],
       new Date(apiData.created_at),
       new Date(apiData.updated_at)
     );

@@ -6,6 +6,7 @@ import { Service } from '@/views/services';
 import { Client, ClientAddress } from '@/views/clients/domain/';
 import { Courier } from '@/views/couriers/domain/';
 import { DeliveryPaymentStatus } from '@/views/deliveries/domain/enum/';
+import { Debt } from '@/views/debts/domain';
 
 export class Delivery {
   private readonly id: string;
@@ -21,6 +22,7 @@ export class Delivery {
   private readonly courier: Courier;
   private readonly timeLineContent: TimeLineContent[];
   private readonly receipt: DeliveryReceipt;
+  private readonly debts: Debt[];
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
   private readonly clientId: string;
@@ -42,6 +44,7 @@ export class Delivery {
     courier: Courier,
     timeLineContent: TimeLineContent[],
     receipt: DeliveryReceipt,
+    debts: Debt[],
     createdAt: Date | string,
     updatedAt: Date | string,
     serviceId: string,
@@ -62,6 +65,7 @@ export class Delivery {
     this.courier = courier;
     this.timeLineContent = timeLineContent;
     this.receipt = receipt;
+    this.debts = debts;
     this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
     this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
     this.serviceId = serviceId;
@@ -120,6 +124,10 @@ export class Delivery {
 
   getReceipt(): DeliveryReceipt {
     return this.receipt;
+  }
+
+  getDebts(): Debt[] {
+    return this.debts;
   }
 
   getCreatedAt(): Date {

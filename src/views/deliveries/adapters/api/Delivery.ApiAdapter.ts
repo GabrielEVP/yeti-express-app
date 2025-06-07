@@ -9,6 +9,7 @@ import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapt
 import { adaptCourier } from '@/views/couriers/';
 import { ServiceApiAdapter } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
+import { DebtApiAdapter } from '@/views/debts/adapter/';
 
 function adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
   return new DeliveryReceipt(
@@ -34,6 +35,7 @@ export function adaptDelivery(apiData: any): Delivery {
     adaptCourier(apiData.courier),
     Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
     adaptDeliveryReceipt(apiData.receipt),
+    apiData.debts?.map(DebtApiAdapter.fromApi) ?? [],
     apiData.created_at,
     apiData.updated_at,
     apiData.service_id,
@@ -80,6 +82,7 @@ export function adaptDeliveryToCourier(apiData: any): Delivery {
     null as any,
     [],
     null as any,
+    [],
     '',
     '',
     '',
@@ -103,6 +106,7 @@ export function adaptDeliveryToClient(apiData: any): Delivery {
     null as any,
     [],
     null as any,
+    [],
     '',
     '',
     '',
