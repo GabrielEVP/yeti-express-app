@@ -75,7 +75,31 @@
             <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />
             <EditButton :route="AppRoutesDelivery.edit(delivery.getId())" />
             <DownloadButton @click="handleDownload(delivery.getId())" />
-            <TrashButton @click="open(delivery.getId())" />
+            <TrashButton
+              v-if="delivery.getStatus() == DeliveryStatus.PENDING"
+              @click="open(delivery.getId())"
+            />
+            <Transit
+              v-if="
+                delivery.getStatus() == DeliveryStatus.PENDING &&
+                delivery.getStatus() != DeliveryStatus.DELIVERED
+              "
+              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.IN_TRANSIT)"
+            />
+            <Cancelled
+              v-if="
+                delivery.getStatus() == DeliveryStatus.IN_TRANSIT &&
+                delivery.getStatus() != DeliveryStatus.DELIVERED
+              "
+              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.REFUSED)"
+            />
+            <Delivered
+              v-if="
+                delivery.getStatus() != DeliveryStatus.DELIVERED &&
+                delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+              "
+              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.DELIVERED)"
+            />
           </div>
         </TableContent>
       </TableRow>
@@ -107,6 +131,12 @@
                 <EditButton :route="AppRoutesDelivery.edit(delivery.getId())" />
                 <DownloadButton @click="handleDownload(delivery.getId())" />
                 <TrashButton @click="open(delivery.getId())" />
+                <DownloadButton
+                  @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.IN_TRANSIT)"
+                />
+                <DownloadButton
+                  @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.DELIVERED)"
+                />
               </div>
             </div>
           </div>
@@ -147,11 +177,18 @@ import {
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
 import { TABLE_HEADER_DELIVERY } from '@/views/deliveries/presentation/constants/';
 import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes';
+import { UpdateDeliveryStatusUseCase } from '@/views/deliveries/use-cases/UpdateDeliveryStatusUseCase';
+import { DeliveryStatus } from '@/views/deliveries/domain/enum';
+import Delivered from '../components/button/Delivered.vue';
+import Transit from '../components/button/Transit.vue';
+import { CANCELLED } from 'dns';
+import Cancelled from '../components/button/Cancelled.vue';
 
 const repository = new DeliveryRepositoryImpl();
 const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
 const deleteDeliveryUseCase = new DeleteDeliveryUseCase(repository);
 const searchDeliveriesUseCase = new SearchDeliveriesUseCase(repository);
+const updateDeliveryStatus = new UpdateDeliveryStatusUseCase(repository);
 
 const deliveries = ref<Delivery[]>([]);
 
@@ -193,4 +230,13 @@ const handleDeleteConfirmation = async () => {
 const handleDownload = async (deliveryId: string) => {
   await confirmDelete();
 };
+
+async function handleUpdateStatus(id: string, status: DeliveryStatus) {
+  try {
+    await updateDeliveryStatus.execute(id, status);
+    deliveries.value = await getDeliveriesUseCase.execute();
+  } catch (error) {
+    console.error('Error updating status:', error);
+  }
+}
 </script>

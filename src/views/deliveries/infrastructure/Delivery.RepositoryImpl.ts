@@ -3,6 +3,7 @@ import type { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryApi } from '@/views/deliveries/infrastructure/Delivery.Api';
 import { DeliveryApiAdapter } from '@/views/deliveries/adapters';
 import { apiClient } from '@/services/';
+import { DeliveryStatus } from '../domain';
 
 interface DeliveryFilterParams {
   search?: string;
@@ -102,5 +103,10 @@ export class DeliveryRepositoryImpl implements IDeliveryRepository {
 
   async getTicketPDF(id: string): Promise<Blob> {
     return await DeliveryApi.getTicketPDF(id);
+  }
+
+  async updateStatus(id: string, status: DeliveryStatus): Promise<Delivery> {
+    const response = await DeliveryApi.updateStatus(id, status);
+    return DeliveryApiAdapter.fromApi(response)!;
   }
 }

@@ -1,4 +1,5 @@
 import type { Delivery } from '@/views/deliveries/domain/Delivery';
+import { DeliveryStatus } from './enum';
 
 export interface IDeliveryRepository {
   getAll(): Promise<Delivery[]>;
@@ -16,4 +17,10 @@ export interface IDeliveryRepository {
     perPage?: number;
   }): Promise<{ data: Delivery[]; total: number }>;
   getTicketPDF(id: string): Promise<Blob>;
+  getPaymentPending(): Promise<Delivery[]>;
+  getPartiallyPaid(): Promise<Delivery[]>;
+  getPaid(): Promise<Delivery[]>;
+  getReceived(): Promise<Delivery[]>;
+  getInTransit(): Promise<Delivery[]>;
+  updateStatus(id: string, status: DeliveryStatus): Promise<Delivery>;
 }

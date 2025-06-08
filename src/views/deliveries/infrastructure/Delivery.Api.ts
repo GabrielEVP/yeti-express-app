@@ -2,6 +2,7 @@ import { apiClient } from '@/services/';
 import { deliveryApiRoutes } from '@/views/deliveries/infrastructure/routes/Delivery.ApiRoutes';
 import type { Delivery } from '@/views/deliveries/domain/Delivery';
 import { DeliveryApiAdapter } from '@/views/deliveries/adapters';
+import { DeliveryStatus } from '@/views/deliveries/domain/enum';
 
 interface DeliveryFilterParams {
   search?: string;
@@ -87,6 +88,14 @@ export const DeliveryApi = {
     const response = await apiClient.get(deliveryApiRoutes.ticket(id), {
       responseType: 'blob',
     });
+    return response.data;
+  },
+
+  async updateStatus(id: string, status: DeliveryStatus): Promise<DeliveryApiAdapter> {
+    const response = await apiClient.put<DeliveryApiAdapter>(
+      `${deliveryApiRoutes.list}/${id}/status`,
+      { status }
+    );
     return response.data;
   },
 };
