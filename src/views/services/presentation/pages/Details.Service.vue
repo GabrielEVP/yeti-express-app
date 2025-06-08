@@ -96,7 +96,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
-import { formatToDollars, formatPercentage, formatDateShort, formatRelativeDate } from '@utils';
+import { formatToDollars, formatPercentage, formatDateShort, formatRelativeDate } from '@/utils/';
 import {
   SideBar,
   SectionText,
