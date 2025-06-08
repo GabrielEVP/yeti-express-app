@@ -3,7 +3,6 @@ export * from './adapters/form/CompanyBill.FormAdapter';
 export * from './domain/CompanyBill';
 export * from './domain/ICompanyBillRepository';
 export * from './domain/enums/PaymentMethod';
-export * from './factory/CompanyBill.Factory';
 export * from './infrastructure/CompanyBill.Api';
 export * from './infrastructure/CompanyBill.RepositoryImpl';
 export * from './infrastructure/routes/CompanyBill.ApiRoutes';

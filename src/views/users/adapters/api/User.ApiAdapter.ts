@@ -41,14 +41,3 @@ export class UserApiAdapter {
     );
   }
 }
-/**
-export function adaptPasswordForApi(passwordData: {
-  password: string;
-  confirmPassword: string;
-}): any {
-  return {
-    password: passwordData.password,
-    confirm_Password: passwordData.confirmPassword,
-  };
-}
-*/
