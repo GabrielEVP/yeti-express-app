@@ -6,7 +6,7 @@ import { ServiceApiAdapter } from '@/views/services/adapters';
 export class ServiceRepositoryImpl implements IServiceRepository {
   async getAll(): Promise<Service[]> {
     const response = await ServiceApi.getAll();
-    return response.map((service) => ServiceApiAdapter.fromApi(service));
+    return response.map(ServiceApiAdapter.fromApi);
   }
 
   async getById(id: string): Promise<Service | null> {
@@ -36,6 +36,6 @@ export class ServiceRepositoryImpl implements IServiceRepository {
 
   async search(query: string): Promise<Service[]> {
     const response = await ServiceApi.search(query);
-    return response.map((service) => ServiceApiAdapter.fromApi(service));
+    return response.map(ServiceApiAdapter.fromApi);
   }
 }

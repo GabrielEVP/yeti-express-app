@@ -111,6 +111,8 @@ import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import { Service, ServiceRepositoryImpl } from '@/views/services';
 import { GetServiceByIdUseCase } from '@views/services';
 import { AppRoutesService } from '@/views/services/presentation/routes/';
+import { SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/services/domain/time-line';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 
 const repository = new ServiceRepositoryImpl();
 const getServiceByIdUseCase = new GetServiceByIdUseCase(repository);
@@ -130,7 +132,12 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() =>
+  adaptTimeLineContentToUI(
+    service.value?.getTimeLineContent() ?? [],
+    SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS
+  )
+);
 
 const sectionActions = [
   {

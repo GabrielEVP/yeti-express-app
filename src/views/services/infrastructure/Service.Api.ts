@@ -1,24 +1,24 @@
 import { apiClient } from '@/services/';
 import { serviceApiRoutes } from '@views/services/infrastructure/routes/Service.ApiRoutes';
-import type { Service } from '@views/services/domain/service/Service';
+import { ServiceApiAdapter } from '@/views/services/adapters';
 
 export const ServiceApi = {
-  async getAll(): Promise<Service[]> {
+  async getAll(): Promise<ServiceApiAdapter[]> {
     const response = await apiClient.get(serviceApiRoutes.list);
     return response.data;
   },
 
-  async getById(id: string): Promise<Service> {
+  async getById(id: string): Promise<ServiceApiAdapter> {
     const response = await apiClient.get(serviceApiRoutes.details(id));
     return response.data;
   },
 
-  async create(data: Service): Promise<Service> {
+  async create(data: ServiceApiAdapter): Promise<ServiceApiAdapter> {
     const response = await apiClient.post(serviceApiRoutes.list, data);
     return response.data;
   },
 
-  async update(id: string, data: Service): Promise<Service> {
+  async update(id: string, data: ServiceApiAdapter): Promise<ServiceApiAdapter> {
     const response = await apiClient.put(serviceApiRoutes.details(id), data);
     return response.data;
   },
@@ -27,7 +27,7 @@ export const ServiceApi = {
     await apiClient.delete(serviceApiRoutes.details(id));
   },
 
-  async search(query: string): Promise<Service[]> {
+  async search(query: string): Promise<ServiceApiAdapter[]> {
     const response = await apiClient.get(serviceApiRoutes.search(query));
     return response.data;
   },

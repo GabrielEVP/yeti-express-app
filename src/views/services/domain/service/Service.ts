@@ -1,15 +1,17 @@
 import { Bill } from '@views/services/domain/bill/Bill';
+import { TimeLineContent } from '@/time-line-content/domain';
 
 export class Service {
-  readonly id: string;
-  private name: string;
-  private description: string;
-  private amount: number;
-  private comision: number;
-  private active: boolean;
-  private createdAt: Date;
-  private updatedAt: Date;
-  private bills: Bill[] = [];
+  private readonly id: string;
+  private readonly name: string;
+  private readonly description: string;
+  private readonly amount: number;
+  private readonly comision: number;
+  private readonly active: boolean;
+  private readonly timeLineContent: TimeLineContent[];
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
+  private readonly bills: Bill[] = [];
 
   constructor(
     id: string,
@@ -18,6 +20,7 @@ export class Service {
     amount: number,
     comision: number,
     active: boolean,
+    timeLineContent: TimeLineContent[],
     createdAt: Date,
     updatedAt: Date,
     bills: Bill[] = []
@@ -28,6 +31,7 @@ export class Service {
     this.amount = amount;
     this.comision = comision;
     this.active = active;
+    this.timeLineContent = timeLineContent;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.bills = bills;
@@ -55,6 +59,10 @@ export class Service {
 
   isActive(): boolean {
     return this.active;
+  }
+
+  getTimeLineContent(): TimeLineContent[] {
+    return [...this.timeLineContent];
   }
 
   getCreatedAt(): Date {

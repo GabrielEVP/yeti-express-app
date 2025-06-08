@@ -1,5 +1,6 @@
 import { Service } from '@views/services/domain/service/Service';
 import { BillApiAdapter } from '@/views/services/adapters/api/Service.BillApiAdapter';
+import { adaptTimeLineContent } from '@time-line-content/adapter';
 
 export class ServiceApiAdapter {
   public id: string;
@@ -8,8 +9,9 @@ export class ServiceApiAdapter {
   public amount: number;
   public comision: number;
   public active: boolean;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public events: any[];
+  public created_at: Date;
+  public updated_at: Date;
   public bills: BillApiAdapter[] = [];
 
   constructor(
@@ -19,8 +21,9 @@ export class ServiceApiAdapter {
     amount: number,
     comision: number,
     active: boolean,
-    createdAt: Date,
-    updatedAt: Date,
+    events: any[],
+    created_at: Date,
+    updated_at: Date,
     bills: BillApiAdapter[] = []
   ) {
     this.id = id;
@@ -29,21 +32,23 @@ export class ServiceApiAdapter {
     this.amount = amount;
     this.comision = comision;
     this.active = active;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this.events = events;
+    this.created_at = created_at;
+    this.updated_at = updated_at;
     this.bills = bills;
   }
 
-  static fromApi(serviceApiAdapter: ServiceApiAdapter): Service {
+  static fromApi(serviceApiAdapter: Partial<ServiceApiAdapter>): Service {
     return new Service(
-      serviceApiAdapter.id,
-      serviceApiAdapter.name,
-      serviceApiAdapter.description,
-      serviceApiAdapter.amount,
-      serviceApiAdapter.comision,
-      serviceApiAdapter.active,
-      new Date(serviceApiAdapter.createdAt),
-      new Date(serviceApiAdapter.updatedAt),
+      serviceApiAdapter.id ?? '',
+      serviceApiAdapter.name ?? '',
+      serviceApiAdapter.description ?? '',
+      serviceApiAdapter.amount ?? 0,
+      serviceApiAdapter.comision ?? 0,
+      serviceApiAdapter.active ?? true,
+      serviceApiAdapter.events?.map(adaptTimeLineContent) ?? [],
+      new Date(serviceApiAdapter.created_at ?? new Date()),
+      new Date(serviceApiAdapter.updated_at ?? new Date()),
       serviceApiAdapter.bills?.map(BillApiAdapter.fromApi) ?? []
     );
   }
@@ -56,8 +61,9 @@ export class ServiceApiAdapter {
       amount: service.getAmount(),
       comision: service.getComision(),
       active: service.isActive(),
-      createdAt: service.getCreatedAt(),
-      updatedAt: service.getUpdatedAt(),
+      events: service.getTimeLineContent(),
+      created_at: service.getCreatedAt(),
+      updated_at: service.getUpdatedAt(),
       bills: service.getBills().map(BillApiAdapter.toApi),
     };
   }
