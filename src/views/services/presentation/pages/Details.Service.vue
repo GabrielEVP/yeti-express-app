@@ -27,8 +27,8 @@
               <div class="space-y-5 mb-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SectionText title="Nombre" :content="service.getName()" />
-                  <SectionText title="Comision" :content="service.getComision()" />
-                  <SectionText title="Monto" :content="service.getAmount()" />
+                  <SectionText title="Comision" :content="formatToDollars(service.getComision())" />
+                  <SectionText title="Monto" :content="formatToDollars(service.getAmount())" />
                 </div>
               </div>
               <Dropdown>
@@ -46,7 +46,7 @@
                     <div class="flex justify-between items-start">
                       <div class="space-y-1">
                         <p class="font-medium">Nombre: {{ bill.getName() }}</p>
-                        <p class="font-medium">Monto: {{ bill.getAmount() }}</p>
+                        <p class="font-medium">Monto: {{ formatToDollars(bill.getAmount()) }}</p>
                       </div>
                     </div>
                   </div>
@@ -58,7 +58,7 @@
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Total de gastos">
               <div class="text-2xl font-bold">
-                {{ service.getTotalExpense().toFixed(2) }}
+                {{ formatToDollars(service.getTotalExpense()) }}
               </div>
               <p class="text-xs text-gray-500">
                 Cantidad de gastos: {{ service.getBills().length }}
@@ -66,10 +66,10 @@
             </ActivityView>
             <ActivityView title="Ganancias">
               <div class="text-2xl font-bold">
-                {{ service.getTotalEarning().toFixed(2) }}
+                {{ formatToDollars(service.getTotalEarning()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Porcentaje de ganancia: {{ service.getEarningPercentage() }}
+                Porcentaje de ganancia: {{ formatPercentage(service.getEarningPercentage()) }}
               </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
@@ -96,7 +96,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
-import { formatDateShort, formatRelativeDate } from '@utils';
+import { formatToDollars, formatPercentage, formatDateShort, formatRelativeDate } from '@utils';
 import {
   SideBar,
   SectionText,
@@ -108,10 +108,11 @@ import {
   EmptyData,
 } from '@/components/';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
-import { Service } from '@/views/services/domain/';
-import { ServiceRepositoryImpl } from '@/views/services';
+import { Service, ServiceRepositoryImpl } from '@/views/services';
 import { GetServiceByIdUseCase } from '@views/services';
 import { AppRoutesService } from '@/views/services/presentation/routes/';
+import { SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/services/domain/time-line';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 
 const repository = new ServiceRepositoryImpl();
 const getServiceByIdUseCase = new GetServiceByIdUseCase(repository);
@@ -131,7 +132,12 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() =>
+  adaptTimeLineContentToUI(
+    service.value?.getTimeLineContent() ?? [],
+    SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS
+  )
+);
 
 const sectionActions = [
   {

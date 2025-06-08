@@ -10,12 +10,12 @@
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
           <SearchForm
-            class="hidden md:block"
+            class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Servicio"
             @input="runSearch"
           />
-          <FilterButton class="w-full sm:w-auto">
+          <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
@@ -40,21 +40,21 @@
       :totalItems="services.length"
       @updatePage="updatePage"
     >
-      <TableRow v-for="service in paginatedItems" :key="service.id">
+      <TableRow v-for="service in paginatedItems" :key="service.getId()">
         <TableContent class="text-black dark:text-white">
           {{ service.getName() }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ service.getAmount() }}
+        <TableContent class="text-right text-gray-600 dark:text-gray-300">
+          {{ formatToDollars(service.getAmount()) }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ service.getComision() }}
+        <TableContent class="text-right text-gray-600 dark:text-gray-300">
+          {{ formatToDollars(service.getComision()) }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ service.getTotalExpense() }}
+        <TableContent class="text-right text-gray-600 dark:text-gray-300">
+          {{ formatToDollars(service.getTotalExpense()) }}
         </TableContent>
-        <TableContent class="text-gray-600 dark:text-gray-300">
-          {{ service.getTotalEarning() }}
+        <TableContent class="text-right text-gray-600 dark:text-gray-300">
+          {{ formatToDollars(service.getTotalEarning()) }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -104,6 +104,7 @@
 import { ref, onMounted } from 'vue';
 import { usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
+import { formatToDollars } from '@utils';
 import {
   SideBar,
   Card,
@@ -129,7 +130,6 @@ import {
 import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
 import { TABLE_HEADER_SERVICE } from '@/views/services/presentation/constants/';
 import { AppRoutesService } from '@/views/services/presentation/routes';
-import { formatToDollars } from '@utils';
 
 const repository = new ServiceRepositoryImpl();
 const getServicesUseCase = new GetServicesUseCase(repository);
@@ -162,8 +162,8 @@ const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePag
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteServiceUseCase.execute.bind(deleteServiceUseCase),
-  successMessage: 'Repartidor eliminado exitosamente',
-  errorMessage: 'Error al eliminar el repartidor',
+  successMessage: 'Servicio eliminado exitosamente',
+  errorMessage: 'Error al eliminar el Servicio',
   onAfterDelete: async () => {
     await runSearch();
   },

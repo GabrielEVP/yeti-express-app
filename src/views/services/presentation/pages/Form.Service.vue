@@ -28,10 +28,10 @@
             <FieldForm label="Nombre" name="name" id="name" required />
             <TextAreaForm label="Descripción" name="description" id="description" required />
             <FieldForm label="Monto" name="amount" id="amount" type="number" required />
-            <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
+              <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
               <div class="flex justify-end mb-4">
                 <PlusButton type="button" @click="push(new Bill('', '', 0))" />
               </div>
@@ -93,8 +93,8 @@ import {
   TrashButton,
   Text,
 } from '@/components';
-import { Service } from '@/views/services/domain/Service';
-import { Bill } from '@/views/services/domain/Bill';
+import { Service } from '@views/services/domain/service/Service';
+import { Bill } from '@/views/services/domain/';
 import { serviceSchema } from '@/views/services/schemas';
 import {
   GetServiceByIdUseCase,
@@ -102,7 +102,7 @@ import {
   UpdateServiceUseCase,
 } from '@/views/services/use-cases/';
 import { ServiceRepositoryImpl } from '@/views/services/infrastructure/Service.RepositoryImpl';
-import { mapFormToService } from '@/views/services/adapters/Service.FormAdapter';
+import { ServiceFormAdapter } from '@views/services/adapters/form/Service.FormAdapter';
 import { AppRoutesService } from '@/views/services/presentation/routes';
 import { TABS_FORM_SERVICE } from '@/views/services/presentation/constants';
 
@@ -125,11 +125,11 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Service>({
     return service;
   },
   create: (formValues) => {
-    const service = mapFormToService(formValues);
+    const service = ServiceFormAdapter.fromForm(formValues);
     return createServiceUseCase.execute(service);
   },
   update: (formValues, id) => {
-    const service = mapFormToService({ ...formValues, id });
+    const service = ServiceFormAdapter.fromForm({ ...formValues, id });
     return updateServiceUseCase.execute(id, service);
   },
   defaultRoute: AppRoutesService.list,

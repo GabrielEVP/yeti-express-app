@@ -1,5 +1,5 @@
-import { Client } from '@/views/clients/domain/Client';
-import { ClientType } from '@/views/clients/domain/Type';
+import { Client } from '@/views/clients/domain/';
+import { ClientType } from '@/views/clients/domain/';
 import { ClientAddressFormAdapter } from './Client.AddressFormAdapter';
 import { ClientEmailFormAdapter } from './Client.EmailFormAdapter';
 import { ClientPhoneFormAdapter } from './Client.PhoneFormAdapter';
@@ -12,10 +12,12 @@ export class ClientFormAdapter {
       form.type as ClientType.VENEZOLANO,
       form.registrationNumber,
       form.notes ?? '',
+      form.allow_credit,
       [],
       (form.addresses ?? []).map(ClientAddressFormAdapter.fromForm),
       (form.emails ?? []).map(ClientEmailFormAdapter.fromForm),
       (form.phones ?? []).map(ClientPhoneFormAdapter.fromForm),
+      [],
       [],
       new Date(),
       new Date()
@@ -29,6 +31,7 @@ export class ClientFormAdapter {
       type: client.getType(),
       registrationNumber: client.getRegistrationNumber(),
       notes: client.getNotes(),
+      allow_credit: client.getAllowCredit(),
       addresses: client.getAddresses(),
       emails: client.getEmails(),
       phones: client.getPhones(),

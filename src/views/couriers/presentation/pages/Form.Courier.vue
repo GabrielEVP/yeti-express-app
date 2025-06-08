@@ -32,7 +32,7 @@ import {
   UpdateCourierUseCase,
 } from '@/views/couriers/use-cases/';
 import { CourierRepositoryImpl } from '@/views/couriers/infrastructure/Courier.RepositoryImpl';
-import { mapFormToCourier } from '@/views/couriers/adapters/Courier.FormAdapter';
+import { CourierFormAdapter } from '@/views/couriers/adapters/form/Courier.FormAdapter';
 import { AppRoutesCourier } from '@/views/couriers/presentation/routes/';
 
 const router = useRouter();
@@ -52,11 +52,11 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Courier>({
     return courier;
   },
   create: (formValues) => {
-    const courier = mapFormToCourier(formValues);
+    const courier = CourierFormAdapter.fromForm(formValues);
     return createCourierUseCase.execute(courier);
   },
   update: (formValues, id) => {
-    const courier = mapFormToCourier({ ...formValues, id });
+    const courier = CourierFormAdapter.fromForm({ ...formValues, id });
     return updateCourierUseCase.execute(id, courier);
   },
   defaultRoute: AppRoutesCourier.list,

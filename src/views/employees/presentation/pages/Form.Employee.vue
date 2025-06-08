@@ -34,7 +34,7 @@ import {
   UpdateEmployeeUseCase,
 } from '@/views/employees/use-cases/';
 import { EmployeeRepositoryImpl } from '@/views/employees/infrastructure/Employee.RepositoryImpl';
-import { mapFormToEmployee } from '@/views/employees/adapters/Employee.FormAdapter';
+import { EmployeeFormAdapter } from '@/views/employees/adapters/form/Employee.FormAdapter';
 import { AppRoutesEmployee } from '@/views/employees/presentation/routes/';
 
 const router = useRouter();
@@ -55,11 +55,11 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
     return employee;
   },
   create: (formValues) => {
-    const employee = mapFormToEmployee(formValues);
+    const employee = EmployeeFormAdapter.fromForm(formValues);
     return createEmployeeUseCase.execute(employee);
   },
   update: (formValues, id) => {
-    const employee = mapFormToEmployee({ ...formValues, id });
+    const employee = EmployeeFormAdapter.fromForm({ ...formValues, id });
     return updateEmployeeUseCase.execute(id, employee);
   },
   defaultRoute: AppRoutesEmployee.list,

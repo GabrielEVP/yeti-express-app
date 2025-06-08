@@ -33,7 +33,7 @@ const props = defineProps<ChartProps>();
 
 function mapDeliveriesToBarChartData(
   deliveries: Delivery[] = [],
-  label = 'Ganancias Mensual de deliverys'
+  label = 'Entregas Mensuales'
 ): BarChartData {
   const groupedByMonth: Record<string, number> = {};
 
@@ -46,10 +46,8 @@ function mapDeliveriesToBarChartData(
       year: 'numeric',
     });
 
-    const amount = delivery.getService().getTotalEarning();
-    if (isNaN(amount)) continue;
-
-    groupedByMonth[month] = (groupedByMonth[month] || 0) + amount;
+    // Contamos las entregas por mes
+    groupedByMonth[month] = (groupedByMonth[month] || 0) + 1;
   }
 
   const labels = Object.keys(groupedByMonth);

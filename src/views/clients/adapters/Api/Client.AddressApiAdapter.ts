@@ -1,13 +1,24 @@
-import { ClientAddress } from '@/views/clients/domain/ClientAddress';
+import { ClientAddress } from '@/views/clients/domain/';
 
-export class ClientAddressApiAdapter extends ClientAddress {
-  static fromApi(apiData: any): ClientAddress {
-    return new ClientAddressApiAdapter(apiData.id, apiData.address);
+export class ClientAddressApiAdapter {
+  public id: string;
+  public address: string;
+
+  constructor(id: string, address: string) {
+    this.id = id;
+    this.address = address;
+  }
+
+  static fromApi(apiData: any): ClientAddress | null {
+    if (!apiData) return null;
+
+    return new ClientAddress(apiData.id ?? '', apiData.address ?? '');
   }
 
   static toApi(clientAddress: ClientAddress): any {
+    if (!clientAddress) return null;
+
     return {
-      id: clientAddress.getId(),
       address: clientAddress.getAddress(),
     };
   }

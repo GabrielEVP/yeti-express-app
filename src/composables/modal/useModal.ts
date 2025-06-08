@@ -1,17 +1,17 @@
 import { ref } from 'vue';
 
-export function useModal() {
+export function useModal<T = string>() {
   const isOpen = ref(false);
-  const selectedId = ref<string>('');
+  const selectedId = ref<T | null>(null);
 
-  const open = (id: string) => {
+  const open = (id: T) => {
     isOpen.value = true;
     selectedId.value = id;
   };
 
   const close = () => {
     isOpen.value = false;
-    selectedId.value = '';
+    selectedId.value = null;
   };
 
   return {

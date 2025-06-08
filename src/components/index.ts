@@ -11,6 +11,9 @@ export { default as NewButton } from '@/components/buttons/New.vue';
 export { default as PlusButton } from '@/components/buttons/Plus.vue';
 export { default as TrashButton } from '@/components/buttons/Trash.vue';
 export { default as DownloadButton } from '@/components/buttons/Download.vue';
+export { default as PaidButton } from '@/components/buttons/Paid.vue';
+export { default as PartialButton } from '@/components/buttons/Partial.vue';
+export { default as DropdownButton } from '@/components/buttons/Dropdown.vue';
 
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';

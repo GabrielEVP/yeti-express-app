@@ -14,8 +14,8 @@
               Tu Información
             </h2>
             <div class="space-y-5">
-              <SectionText title="Nombre" :content="user.name" />
-              <SectionText title="Email" :content="user.email" />
+              <SectionText title="Nombre" :content="user.getName()" />
+              <SectionText title="Email" :content="user.getEmail()" />
             </div>
           </div>
         </Card>
@@ -33,7 +33,17 @@ import { SideBar, SectionText, Card, ActionsButton } from '@/components/';
 const authStore = useAuthStore();
 const userData = authStore.getUser;
 
-const user = ref<User>(userData || ({} as User));
+const user = ref<User>(
+  userData
+    ? new User(
+        userData.getId(),
+        userData.getName(),
+        userData.getEmail(),
+        userData.getProfileImage(),
+        userData.getPassword()
+      )
+    : new User('', '', '', null, '')
+);
 
 const sectionActions = [
   {

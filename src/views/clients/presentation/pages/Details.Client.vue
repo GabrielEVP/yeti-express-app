@@ -57,10 +57,10 @@
             </ActivityView>
             <ActivityView title="Deliverys Pendientes">
               <div class="text-2xl font-bold">
-                {{ formatToDollars(client.getEarningsPendingOfDeliveries()) }}
+                {{ formatToDollars(client.getDebtsTotalAmount()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Pendientes por cobrar: {{ client.getPendingLenghtDeliveries() }}
+                Pendientes por cobrar: {{ client.getPendingDeliveries().length }}
               </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
@@ -80,11 +80,11 @@
         </Card>
       </div>
       <div class="space-y-4">
-        <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
+        <h2 class="text-2xl font-bold tracking-tight">Deliverys pendientes por cobrar</h2>
         <div class="grid gap-4 lg:grid-cols-2 grid-cols-1">
-          <TableDeliveries :deliveries="client.getDeliveries()" />
+          <TableDeliveries :deliveries="client.getPendingDeliveries()" />
           <ChartDelivery
-            :deliveries="client.getDeliveries()"
+            :deliveries="client.getPaidDeliveries()"
             title="Estadistica mensual de los deliverys"
             label="Total deliverys"
           />

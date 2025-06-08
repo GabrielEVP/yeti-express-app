@@ -77,7 +77,7 @@ import {
   TabsTitle,
   TabsContent,
 } from '@/components';
-import { Client } from '@/views/clients/domain/Client';
+import { Client } from '@/views/clients/domain/';
 import { ClientTypeOptions } from '@views/clients/domain';
 import { ClientSchema } from '@/views/clients/schemas';
 import {

@@ -1,18 +1,18 @@
 import { TimeLineContent } from '@time-line-content/domain';
-import { Delivery } from '@views/deliveries';
+import { Delivery, DeliveryStatus } from '@views/deliveries';
 import { DeliveryPaymentStatus } from '@views/deliveries/domain';
 import dayjs from 'dayjs';
 
 export class Courier {
   readonly id: string;
-  private firstName: string;
-  private lastName: string;
-  private phone: string;
-  private active: boolean;
+  private readonly firstName: string;
+  private readonly lastName: string;
+  private readonly phone: string;
+  private readonly active: boolean;
   private readonly timeLineContent: TimeLineContent[];
   private readonly deliveries: Delivery[];
-  private createdAt: Date;
-  private updatedAt: Date;
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
 
   constructor(
     id: string,
@@ -77,35 +77,21 @@ export class Courier {
   }
 
   getPendingDeliveries(): Delivery[] {
-    return this.deliveries.filter(
-      (delivery) => delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID
-    );
+    return this.deliveries.filter((delivery) => delivery.getStatus() !== DeliveryStatus.DELIVERED);
   }
 
-  getTotalPaid(): number {
-    return this.deliveries
-      .filter((delivery) => delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID)
-      .reduce((sum, delivery) => sum + delivery.getService().getComision(), 0);
+  getDeliveredDeliveries(): Delivery[] {
+    return this.deliveries.filter((delivery) => delivery.getStatus() === DeliveryStatus.DELIVERED);
   }
 
-  getTotalPendingToPay(): number {
-    return this.deliveries
-      .filter((delivery) => delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID)
-      .reduce((sum, delivery) => sum + delivery.getRemainingToPay(), 0);
-  }
-
-  getPaidAmountThisMonth(): number {
+  getDeliveredThisMonth(): Delivery[] {
     const now = dayjs();
 
-    return this.deliveries
-      .filter((delivery) => {
-        const deliveryDate = dayjs(delivery.getUpdatedAt());
-        return (
-          delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID &&
-          deliveryDate.month() === now.month() &&
-          deliveryDate.year() === now.year()
-        );
-      })
-      .reduce((sum, delivery) => sum + delivery.getService().getComision(), 0);
+    return this.deliveries.filter((delivery) => {
+      const deliveryDate = dayjs(delivery.getUpdatedAt());
+      delivery.getStatus() === DeliveryStatus.DELIVERED &&
+        deliveryDate.month() === now.month() &&
+        deliveryDate.year() === now.year();
+    });
   }
 }
