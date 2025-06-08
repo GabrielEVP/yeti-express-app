@@ -73,24 +73,24 @@ import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components
 import { Delivery } from '@/views/deliveries';
 import { DebtPayment, PaymentMethodOptions } from '@views/debts-payments/domain';
 import { DebtPaymentSchema } from '@views/debts-payments/schema';
-import { CreateDebtPaymentUseCase } from '@/views/debts-payments/';
+import { CreatePartialDebtPaymentUseCase } from '@/views/debts-payments/';
 import { DebtPaymentRepositoryImpl } from '@/views/debts-payments/';
 import { DebtPaymentFormAdapter } from '@views/debts-payments/';
 import FieldRadio from '@components/forms/FieldRadio.vue';
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
 
 const repository = new DebtPaymentRepositoryImpl();
-const createDebtPaymentUseCase = new CreateDebtPaymentUseCase(repository);
+const createDebtPartialPaymentUseCase = new CreatePartialDebtPaymentUseCase(repository);
 
-const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
+const { initializeForm, onSubmit, meta } = useVeeForm<{ debtId: string }>({
   modal: true,
   create: (formValues) => {
     const payment = DebtPaymentFormAdapter.fromFormPartialPayment(formValues);
-    return createDebtPaymentUseCase.execute(payment);
+    return createDebtPartialPaymentUseCase.execute(payment);
   },
   messages: {
     createError: 'Error al crear el pago',
@@ -98,7 +98,9 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   },
   validation: {
     schema: DebtPaymentSchema,
-    initialValues: {},
+    initialValues: {
+      debtId: props.delivery.getDebts()?.getId() ?? '',
+    },
   },
 });
 

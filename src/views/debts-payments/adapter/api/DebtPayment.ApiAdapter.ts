@@ -7,7 +7,8 @@ export class DebtPaymentApiAdapter extends DebtPayment {
       apiData.id,
       apiData.amount,
       apiData.date,
-      apiData.method as PaymentMethod
+      apiData.method as PaymentMethod,
+      apiData.debt_id
     );
   }
 
@@ -17,6 +18,7 @@ export class DebtPaymentApiAdapter extends DebtPayment {
       amount: payment.getAmount(),
       date: payment.getPaidAt().toISOString(),
       method: payment.getMethod(),
+      debt_id: payment.getDebtId(),
     };
   }
 }

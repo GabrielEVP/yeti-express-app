@@ -34,6 +34,7 @@
             </div>
           </div>
           <div class="mb-8">
+            <FieldHidden name="debtId" id="debtId" :value="delivery.getDebts()?.getId()" />
             <Text>Forma de Pago</Text>
             <div v-for="field in PaymentMethodOptions" :key="field.value" class="mt-8">
               <FieldRadio name="method" :id="field.value" :value="field.value">
@@ -62,23 +63,24 @@ import FieldRadio from '@components/forms/FieldRadio.vue';
 import { Delivery } from '@/views/deliveries';
 import { DebtPayment, PaymentMethodOptions } from '@views/debts-payments/domain';
 import { FullDebtPaymentSchema } from '@views/debts-payments/schema';
-import { CreateDebtPaymentUseCase } from '@/views/debts-payments/';
+import { CreateFullDebtPaymentUseCase } from '@/views/debts-payments/';
 import { DebtPaymentRepositoryImpl } from '@/views/debts-payments/';
 import { DebtPaymentFormAdapter } from '@views/debts-payments/';
+import FieldHidden from '@components/forms/FieldHidden.vue';
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
 
 const repository = new DebtPaymentRepositoryImpl();
-const createClientUseCase = new CreateDebtPaymentUseCase(repository);
+const createFullDebtPaymentUseCase = new CreateFullDebtPaymentUseCase(repository);
 
-const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
+const { initializeForm, onSubmit, meta } = useVeeForm<{ debtId: string }>({
   modal: true,
   create: (formValues) => {
     const client = DebtPaymentFormAdapter.fromFormFullPayment(formValues);
-    return createClientUseCase.execute(client);
+    return createFullDebtPaymentUseCase.execute(client);
   },
   messages: {
     createError: 'Error al crear el pago',
@@ -86,7 +88,9 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   },
   validation: {
     schema: FullDebtPaymentSchema,
-    initialValues: {},
+    initialValues: {
+      debtId: props.delivery.getDebts()?.getId() ?? '',
+    },
   },
 });
 
