@@ -34,10 +34,19 @@
               :items="Array.from(ClientTypeOptions)"
               required
             />
+
             <FieldForm
               label="Número de documento"
               name="registrationNumber"
               id="registrationNumber"
+              required
+            />
+            <SelectForm
+              label="Credito"
+              name="allowCredit"
+              id="allowCredit"
+              placeholder="Selecciona si el cliente puede pagar a credito"
+              :items="Array.from(allowCreditOptions)"
               required
             />
           </TabsContent>
@@ -92,6 +101,11 @@ import { TABS_FORM_CLIENT } from '@/views/clients/presentation/constants';
 import { AdressesForm, PhonesForm, EmailsForm } from '@/views/clients/presentation/components/';
 
 const activeTab = ref('general');
+
+const allowCreditOptions = [
+  { value: '1', label: 'Si' },
+  { value: '0', label: 'No' },
+];
 
 const router = useRouter();
 const route = useRoute();

@@ -16,7 +16,7 @@ export class Delivery {
   private readonly number: string;
   private readonly date: Date;
   private readonly status: DeliveryStatus;
-  private readonly paymentType: PaymentType;
+  private paymentType: PaymentType;
   private readonly paymentStatus: DeliveryPaymentStatus;
   private readonly notes: string;
   private readonly service: Service;
@@ -107,6 +107,10 @@ export class Delivery {
 
   getService(): Service {
     return this.service;
+  }
+
+  setPaymentType(paymentType: PaymentType): void {
+    this.paymentType = paymentType;
   }
 
   getClient(): Client | null {

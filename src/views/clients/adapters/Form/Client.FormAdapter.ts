@@ -12,7 +12,7 @@ export class ClientFormAdapter {
       form.type as ClientType.VENEZOLANO,
       form.registrationNumber,
       form.notes ?? '',
-      form.allow_credit,
+      form.allowCredit,
       [],
       (form.addresses ?? []).map(ClientAddressFormAdapter.fromForm),
       (form.emails ?? []).map(ClientEmailFormAdapter.fromForm),

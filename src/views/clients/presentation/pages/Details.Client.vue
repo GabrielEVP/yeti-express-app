@@ -36,6 +36,7 @@
                     title="Número de documento"
                     :content="client.getRegistrationNumber()"
                   />
+                  <SectionText title="Credito" :content="credit" />
                 </div>
                 <SectionText title="Notas" :content="client.getNotes()" />
                 <div class="space-y-6 pt-8">
@@ -147,6 +148,8 @@ const lineContents = computed(() =>
     CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS
   )
 );
+
+const credit = computed(() => (client.value?.getAllowCredit() ? 'Si' : 'No'));
 
 const sectionActions = [
   {

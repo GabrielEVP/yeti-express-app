@@ -35,6 +35,33 @@
           <TabsContent tab="general" :activeTab="activeTab">
             <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
               <SelectForm
+                label="Cliente"
+                name="clientId"
+                placeholder="Selecciona un Cliente"
+                :items="clientsOptions"
+                @update:modelValue="loadAddress"
+              />
+              <div>
+                <SelectForm
+                  label="Direccion de recogida"
+                  name="clientAddressId"
+                  placeholder="Selecciona un direccion de recogida"
+                  :items="clientsAddressOptions"
+                />
+              </div>
+              <div class="flex items-center justify-center m-auto mt-4">
+                <PlusButton @click="openModalClientForm">
+                  <span class="text-white ml-4">Agregar nuevo Cliente</span>
+                </PlusButton>
+              </div>
+              <DeliveryClientModalForm
+                :isOpen="isModalClientFormOpen"
+                @close="closeModalClientForm"
+                @addClient="handleAddClient"
+              />
+            </div>
+            <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
+              <SelectForm
                 label="Servicio"
                 name="serviceId"
                 placeholder="Selecciona un servicio"
@@ -45,37 +72,13 @@
                 name="paymentType"
                 placeholder="Selecciona una forma de pago"
                 :items="[...PaymentTypeOptions]"
+                :disabled="selectedClientAllowCredit"
               />
               <SelectForm
                 label="Repartidor"
                 name="courierId"
                 placeholder="Selecciona un repartidor"
                 :items="courierOptions"
-              />
-            </div>
-            <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-              <SelectForm
-                label="Cliente"
-                name="clientId"
-                placeholder="Selecciona un Cliente"
-                :items="clientsOptions"
-                @update:modelValue="loadAddress"
-              />
-              <SelectForm
-                label="Direccion de recogida"
-                name="clientAddressId"
-                placeholder="Selecciona un direccion de recogida"
-                :items="clientsAddressOptions"
-              />
-              <div class="flex items-center justify-center m-auto mt-4">
-                <PlusButton @click="openModalClientForm">
-                  <span class="text-white ml-4">Agregar nuevo Cliente</span>
-                </PlusButton>
-              </div>
-              <DeliveryClientModalForm
-                :isOpen="isModalClientFormOpen"
-                @close="closeModalClientForm"
-                @addClient="handleAddClient"
               />
             </div>
           </TabsContent>
@@ -100,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
@@ -111,7 +114,7 @@ import { GetCouriersUseCase } from '@/views/couriers/use-cases/';
 import { GetClientsUseCase } from '@/views/clients/use-cases/';
 import { GetServicesUseCase } from '@/views/services/use-cases/';
 import { Delivery } from '@/views/deliveries/domain/Delivery';
-import { PaymentTypeOptions } from '@views/deliveries/domain';
+import { PaymentType, PaymentTypeOptions } from '@views/deliveries/domain';
 import { DeliverySchema } from '@/views/deliveries/schemas';
 import {
   GetDeliveryByIdUseCase,
@@ -138,6 +141,7 @@ import { DeliveryClientModalForm } from '@/views/deliveries/presentation/compone
 import { Courier } from '@views/couriers/domain/Courier';
 import { Client } from '@views/clients/domain/';
 import { Service } from '@views/services/domain/service/Service';
+import { createDeliveryFormDefaults } from '@views/deliveries/factory/DeliveryFactory';
 
 const activeTab = ref('general');
 const router = useRouter();
@@ -165,7 +169,9 @@ const isModalClientFormOpen = ref(false);
 
 const currentDelivery = ref<Delivery | null>(null);
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Delivery>({
+const selectedClientAllowCredit = ref(true);
+
+const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
   id: deliveryId,
   getById: async (id) => {
     const delivery = await getDeliveryById.execute(id);
@@ -190,7 +196,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Delivery>({
   },
   validation: {
     schema: DeliverySchema,
-    initialValues: {},
+    initialValues: createDeliveryFormDefaults(),
   },
 });
 
@@ -222,12 +228,16 @@ function loadAddress(clientId: string) {
   if (client) {
     const addresses = client.getAddresses();
 
+    if (client.getAllowCredit()) {
+      selectedClientAllowCredit.value = false;
+    } else {
+      selectedClientAllowCredit.value = true;
+    }
+
     clientsAddressOptions.value = addresses.map((address) => ({
       label: address.getAddress(),
       value: address.getId(),
     }));
-  } else {
-    return;
   }
 }
 
