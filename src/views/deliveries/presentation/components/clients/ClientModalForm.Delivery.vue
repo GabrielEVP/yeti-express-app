@@ -72,6 +72,7 @@ import { BasicClientSchema } from '@views/deliveries/schemas/Delivery.ClientBasi
 import { CreateClientUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
 import { ClientFormAdapter } from '@views/clients/adapters/';
+import { createDefaultClientAddress } from '@/views/clients/factory/Client.Factory';
 
 defineProps<{
   isOpen: boolean;
@@ -84,7 +85,10 @@ const emit = defineEmits<{
 const repository = new ClientRepositoryImpl();
 const createClientUseCase = new CreateClientUseCase(repository);
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
+const { initializeForm, onSubmit, meta } = useVeeForm<{
+  addresses: { address: string }[];
+  phones: { phone: string }[];
+}>({
   modal: true,
   create: (formValues) => {
     const client = ClientFormAdapter.fromForm(formValues);
@@ -96,7 +100,10 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
   },
   validation: {
     schema: BasicClientSchema,
-    initialValues: {},
+    initialValues: {
+      addresses: [{ address: '' }],
+      phones: [{ phone: '' }],
+    },
   },
 });
 

@@ -1,4 +1,4 @@
-import { Client } from '@/views/clients/domain/';
+import { Client, ClientPhone } from '@/views/clients/domain/';
 import { ClientType } from '@/views/clients/domain/';
 import { ClientAddress } from '../domain';
 
@@ -11,9 +11,9 @@ export const createDefaultClient = (): Client => {
     '',
     false,
     [],
+    [createDefaultClientAddress()],
     [],
-    [],
-    [],
+    [new ClientPhone('', '')],
     [],
     [],
     new Date(),
