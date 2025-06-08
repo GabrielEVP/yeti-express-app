@@ -17,9 +17,7 @@
       :key="delivery.getId()"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
     >
-      <!-- Vista móvil -->
       <div class="sm:hidden p-4 space-y-4">
-        <!-- Header con número y estado -->
         <div class="flex items-start justify-between">
           <div class="flex flex-col gap-2">
             <span
@@ -73,8 +71,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Vista escritorio -->
       <div class="p-4 hidden sm:flex items-center justify-between">
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-3">

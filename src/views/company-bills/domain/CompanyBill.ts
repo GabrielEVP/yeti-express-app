@@ -5,7 +5,7 @@ import {
 
 export class CompanyBill {
   private readonly id: string;
-  private date: Date;
+  private date: string;
   private name: string;
   private description: string;
   private method: PaymentMethod;
@@ -16,7 +16,7 @@ export class CompanyBill {
 
   constructor(
     id: string,
-    date: Date,
+    date: string,
     name: string,
     description: string,
     method: PaymentMethod,
@@ -39,7 +39,7 @@ export class CompanyBill {
   getId(): string {
     return this.id;
   }
-  getDate(): Date {
+  getDate(): string {
     return this.date;
   }
   getName(): string {

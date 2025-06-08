@@ -5,7 +5,7 @@ export class CompanyBillApiAdapter extends CompanyBill {
   static fromApi(apiData: any): CompanyBill {
     return new CompanyBill(
       apiData.id,
-      new Date(apiData.date),
+      apiData.date,
       apiData.name,
       apiData.description,
       apiData.method as PaymentMethod,
@@ -19,7 +19,7 @@ export class CompanyBillApiAdapter extends CompanyBill {
   static toApi(bill: CompanyBill): any {
     return {
       id: bill.getId(),
-      date: bill.getDate().toISOString().split('T')[0],
+      date: bill.getDate(),
       name: bill.getName(),
       description: bill.getDescription(),
       method: bill.getMethod(),

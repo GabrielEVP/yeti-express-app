@@ -13,7 +13,7 @@
             <div class="w-full max-w-2xl space-y-5">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
                 <SectionText title="Nombre" :content="bill.getName()" />
-                <SectionText title="Fecha" :content="formatDateShort(bill.getDate())" />
+                <SectionText title="Fecha" :content="formatDateCustom(bill.getDate())" />
                 <SectionText title="Método de Pago" :content="bill.getFormattedMethod()" />
                 <SectionText title="Monto" :content="formatToDollars(bill.getAmount())" />
               </div>
@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Building2 } from 'lucide-vue-next';
-import { formatDateShort, formatRelativeDate, formatToDollars } from '@/utils/';
-import { SectionText, Card, LoadingSkeleton, Modal } from '@/components/';
+import { formatDateCustom, formatToDollars } from '@/utils/';
+import { SectionText, LoadingSkeleton, Modal } from '@/components/';
 import { CompanyBill } from '@/views/company-bills/domain';
 import { CompanyBillRepositoryImpl } from '@/views/company-bills/infrastructure/CompanyBill.RepositoryImpl';
 import { GetCompanyBillByIdUseCase } from '@/views/company-bills/use-cases/CompanyBill.GetByIdUseCase';

@@ -1,27 +1,27 @@
 <template>
-  <ModalDetails
-    v-if="selectedId !== null"
-    :is-open="IsOpenDetails"
-    :company-bill-id="selectedId"
-    @close="CloseDetails"
-  />
-  <ConfirmationModal
-    :isOpen="isOpen"
-    message="¿Estás seguro que quieres eliminar esta gastos?"
-    @confirm="handleDeleteConfirmation"
-    @cancel="close"
-  />
   <SideBar>
+    <ModalDetails
+      v-if="selectedId !== null"
+      :is-open="IsOpenDetails"
+      :company-bill-id="selectedId"
+      @close="CloseDetails"
+    />
+    <ConfirmationModal
+      :isOpen="isOpen"
+      message="¿Estás seguro que quieres eliminar esta gastos?"
+      @confirm="handleDeleteConfirmation"
+      @cancel="close"
+    />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
           <SearchForm
-            class="hidden md:block"
+            class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Gastos"
             @input="runSearch"
           />
-          <FilterButton class="w-full sm:w-auto">
+          <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
@@ -48,7 +48,7 @@
     >
       <TableRow v-for="bill in paginatedItems" :key="bill.getId()">
         <TableContent>{{ bill.getName() }}</TableContent>
-        <TableContent>{{ formatDateShort(bill.getDate()) }}</TableContent>
+        <TableContent>{{ formatDateCustom(bill.getDate()) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.getAmount()) }}</TableContent>
         <TableContent>
           <Badge>{{ bill.getFormattedMethod() }}</Badge>
@@ -79,7 +79,7 @@
                   {{ bill.getName() }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
-                  {{ formatDateShort(bill.getDate()) }}
+                  {{ formatDateCustom(bill.getDate()) }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
                   {{ formatToDollars(bill.getAmount()) }} - {{ bill.getFormattedMethod() }}
@@ -113,7 +113,6 @@ import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
   Card,
-  Bagde,
   TableContent,
   TableRow,
   TableDashboard,
@@ -125,7 +124,7 @@ import {
   FilterButton,
   Button,
 } from '@/components/';
-import { formatDateShort, formatToDollars } from '@/utils/';
+import { formatDateCustom, formatToDollars } from '@/utils/';
 import { CompanyBill } from '@/views/company-bills/domain/';
 import {
   GetCompanyBillsUseCase,

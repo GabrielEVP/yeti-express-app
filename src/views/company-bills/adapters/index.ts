@@ -1,2 +1,2 @@
-export * from './Api';
-export * from './Form';
+export * from './Api/CompanyBill.ApiAdapter';
+export * from './form/CompanyBill.FormAdapter';

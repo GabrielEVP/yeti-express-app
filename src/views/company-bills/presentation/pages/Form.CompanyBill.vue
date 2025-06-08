@@ -72,9 +72,7 @@ const getCompanyBillById = new GetCompanyBillByIdUseCase(repository);
 const createCompanyBillUseCase = new CreateCompanyBillUseCase(repository);
 const updateCompanyBillUseCase = new UpdateCompanyBillUseCase(repository);
 
-const paymentMethods = ref(PaymentMethodOptions);
-
-const { initializeForm, onSubmit, meta } = useVeeForm<CompanyBill>({
+const { initializeForm, onSubmit, meta, values } = useVeeForm<CompanyBill>({
   id: billId,
   getById: async (id) => {
     const bill = await getCompanyBillById.execute(id);
@@ -91,16 +89,18 @@ const { initializeForm, onSubmit, meta } = useVeeForm<CompanyBill>({
   },
   defaultRoute: AppRoutesCompanyBill.list,
   messages: {
-    createError: 'Error al crear la factura',
-    updateError: 'Error al actualizar la factura',
-    createSuccess: 'Factura creada correctamente',
-    updateSuccess: 'Factura actualizada correctamente',
+    createError: 'Error al crear el gasto',
+    updateError: 'Error al actualizar el gasto',
+    createSuccess: 'Gasto creada correctamente',
+    updateSuccess: 'Gasto actualizada correctamente',
   },
   validation: {
     schema: CompanyBillSchema,
     initialValues: {},
   },
 });
+
+console.log(values);
 
 onMounted(initializeForm);
 </script>

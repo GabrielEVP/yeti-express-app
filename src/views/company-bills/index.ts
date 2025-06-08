@@ -1,5 +1,5 @@
 export * from './adapters/Api/CompanyBill.ApiAdapter';
-export * from './adapters/Form/CompanyBill.FormAdapter';
+export * from './adapters/form/CompanyBill.FormAdapter';
 export * from './domain/CompanyBill';
 export * from './domain/ICompanyBillRepository';
 export * from './domain/enums/PaymentMethod';
