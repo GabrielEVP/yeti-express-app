@@ -1,5 +1,5 @@
 import { Courier } from '@/views/couriers/';
-import { adaptDeliveryToCourier } from '@views/deliveries';
+import { DeliveryApiAdapter } from '@views/deliveries';
 
 export class CourierApiAdapter extends Courier {
   static fromApi(apiData: any): Courier {
@@ -10,7 +10,7 @@ export class CourierApiAdapter extends Courier {
       apiData.phone,
       apiData.active,
       apiData.timeLineContent,
-      apiData.deliveries ? apiData.deliveries.map(adaptDeliveryToCourier) : [],
+      apiData.deliveries.map(DeliveryApiAdapter.fromApiToCourier) ?? [],
       new Date(apiData.createdAt),
       new Date(apiData.updatedAt)
     );
@@ -24,7 +24,7 @@ export class CourierApiAdapter extends Courier {
       courier.getPhone(),
       courier.isActive(),
       courier.getTimeLineContent(),
-      courier.getDeliveries().map(adaptDeliveryToCourier),
+      courier.getDeliveries().map(DeliveryApiAdapter.toApi),
       courier.getCreatedAt(),
       courier.getUpdatedAt()
     );
