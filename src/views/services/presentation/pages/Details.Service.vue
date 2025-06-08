@@ -69,7 +69,7 @@
                 {{ formatToDollars(service.getTotalEarning()) }}
               </div>
               <p class="text-xs text-gray-500">
-                Porcentaje de ganancia: {{ formatPercentage(service.getEarningPercentage()) }}
+                Porcentaje de ganancia: {{ service.getEarningPercentage() }}
               </p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
@@ -96,7 +96,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
-import { formatToDollars, formatDateShort, formatRelativeDate } from '@/utils/';
+import { formatToDollars, formatDateShort, formatRelativeDate } from '@/utils';
 import {
   SideBar,
   SectionText,
