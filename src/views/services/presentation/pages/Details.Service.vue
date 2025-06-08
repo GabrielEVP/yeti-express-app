@@ -96,7 +96,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
-import { formatToDollars, formatPercentage, formatDateShort, formatRelativeDate } from '@utils';
+import { formatToDollars, formatPercentage, formatDateShort, formatRelativeDate } from '@/utils';
 import {
   SideBar,
   SectionText,
@@ -107,7 +107,7 @@ import {
   Dropdown,
   EmptyData,
 } from '@/components/';
-import { MenuTimeLineContent } from '@time-line-content/presentation/';
+import { MenuTimeLineContent } from '@/time-line-content/presentation/';
 import { Service, ServiceRepositoryImpl } from '@/views/services';
 import { GetServiceByIdUseCase } from '@views/services';
 import { AppRoutesService } from '@/views/services/presentation/routes/';
