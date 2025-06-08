@@ -23,21 +23,15 @@
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Monto Total</Text>
               <Text>
-                {{ delivery?.getService().getAmount() }}
+                {{ delivery.getDebts().getAmount() }}
               </Text>
             </div>
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <Text>Pendiente</Text>
+              <Text>Cantidad a Pagar</Text>
               <Text>
-                {{ delivery?.getService().getAmount() }}
+                {{ delivery.getDebts().getRemainingAmount() }}
               </Text>
             </div>
-          </div>
-          <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <Text>Cantidad a Pagar</Text>
-            <Text>
-              {{ delivery?.getService().getAmount() }}
-            </Text>
           </div>
           <div class="mb-8">
             <Text>Forma de Pago</Text>

@@ -28,15 +28,15 @@
             {{ formatDateCustom(delivery.getDate()) }}
           </div>
           <Bagde>
-            {{ delivery.getStatusToFormat() }}
+            {{ delivery.getPaymentStatusToFormat() }}
           </Bagde>
         </div>
         <div class="flex items-center gap-8">
           <div class="text-right">
             <Text>
-              {{ delivery.getService().getAmount() }}
+              {{ delivery.getDebts().getAmount() }}
             </Text>
-            <Text> Resta: {{ delivery.getService().getAmount() }} </Text>
+            <Text> Resta: {{ delivery.getDebts().getRemainingAmount() }} </Text>
           </div>
 
           <div class="flex gap-2">

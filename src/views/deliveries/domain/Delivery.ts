@@ -5,7 +5,10 @@ import { DeliveryReceipt } from '@views/deliveries/domain/DeliveryReceipt';
 import { Service } from '@/views/services';
 import { Client, ClientAddress } from '@/views/clients/domain/';
 import { Courier } from '@/views/couriers/domain/';
-import { DeliveryPaymentStatus } from '@/views/deliveries/domain/enum/';
+import {
+  DeliveryPaymentStatus,
+  getDeliveryPaymentStatusLabel,
+} from '@/views/deliveries/domain/enum/';
 import { Debt } from '@/views/debts/domain';
 
 export class Delivery {
@@ -22,7 +25,7 @@ export class Delivery {
   private readonly courier: Courier;
   private readonly timeLineContent: TimeLineContent[];
   private readonly receipt: DeliveryReceipt;
-  private readonly debts: Debt[];
+  private readonly debts: Debt;
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
   private readonly clientId: string;
@@ -44,7 +47,7 @@ export class Delivery {
     courier: Courier,
     timeLineContent: TimeLineContent[],
     receipt: DeliveryReceipt,
-    debts: Debt[],
+    debts: Debt,
     createdAt: Date | string,
     updatedAt: Date | string,
     serviceId: string,
@@ -126,7 +129,7 @@ export class Delivery {
     return this.receipt;
   }
 
-  getDebts(): Debt[] {
+  getDebts(): Debt {
     return this.debts;
   }
 
@@ -160,6 +163,10 @@ export class Delivery {
 
   getPaymentTypeToFormat(): string {
     return getPaymentTypeLabel(this.paymentType);
+  }
+
+  getPaymentStatusToFormat(): string {
+    return getDeliveryPaymentStatusLabel(this.paymentStatus);
   }
 
   getRemainingToCollect(): number {

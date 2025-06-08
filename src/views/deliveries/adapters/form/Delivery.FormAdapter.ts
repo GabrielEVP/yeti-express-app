@@ -29,7 +29,7 @@ export function mapFormToDelivery(form: any): Delivery {
     mapFormToCourier(form.courier ?? {}),
     [],
     mapFormToDeliveryReceipt(form.receipt ?? {}),
-    [],
+    null as any,
     form.createdAt ?? new Date().toISOString(),
     form.updatedAt ?? new Date().toISOString(),
     form.serviceId ?? '',
