@@ -1,7 +1,7 @@
 export class Bill {
-  private id: string;
-  private name: string;
-  private amount: number;
+  private readonly id: string;
+  private readonly name: string;
+  private readonly amount: number;
 
   constructor(id: string, name: string, amount: number) {
     this.id = id;

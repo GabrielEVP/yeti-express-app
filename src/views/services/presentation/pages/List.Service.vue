@@ -10,12 +10,12 @@
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
           <SearchForm
-            class="hidden md:block"
+            class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Servicio"
             @input="runSearch"
           />
-          <FilterButton class="w-full sm:w-auto">
+          <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
@@ -40,7 +40,7 @@
       :totalItems="services.length"
       @updatePage="updatePage"
     >
-      <TableRow v-for="service in paginatedItems" :key="service.id">
+      <TableRow v-for="service in paginatedItems" :key="service.getId()">
         <TableContent class="text-black dark:text-white">
           {{ service.getName() }}
         </TableContent>
