@@ -91,11 +91,8 @@ export const DeliveryApi = {
     return response.data;
   },
 
-  async updateStatus(id: string, status: DeliveryStatus): Promise<DeliveryApiAdapter> {
-    const response = await apiClient.put<DeliveryApiAdapter>(
-      `${deliveryApiRoutes.list}/${id}/status`,
-      { status }
-    );
+  async updateStatus(id: string, status: DeliveryStatus): Promise<DeliveryApiAdapter[]> {
+    const response = await apiClient.put(`${deliveryApiRoutes.list}/${id}/status`, { status });
     return response.data;
   },
 };

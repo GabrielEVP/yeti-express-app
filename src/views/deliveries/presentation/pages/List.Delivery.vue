@@ -181,7 +181,6 @@ import { UpdateDeliveryStatusUseCase } from '@/views/deliveries/use-cases/Update
 import { DeliveryStatus } from '@/views/deliveries/domain/enum';
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
-import { CANCELLED } from 'dns';
 import Cancelled from '../components/button/Cancelled.vue';
 
 const repository = new DeliveryRepositoryImpl();
@@ -232,11 +231,7 @@ const handleDownload = async (deliveryId: string) => {
 };
 
 async function handleUpdateStatus(id: string, status: DeliveryStatus) {
-  try {
-    await updateDeliveryStatus.execute(id, status);
-    deliveries.value = await getDeliveriesUseCase.execute();
-  } catch (error) {
-    console.error('Error updating status:', error);
-  }
+  await updateDeliveryStatus.execute(id, status);
+  runSearch();
 }
 </script>

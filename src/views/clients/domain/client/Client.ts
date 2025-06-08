@@ -142,6 +142,14 @@ export class Client {
     );
   }
 
+  getDeliveriesWithDebt(): Delivery[] {
+    return this.deliveries.filter(
+      (delivery) =>
+        delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID &&
+        delivery.getStatus() === DeliveryStatus.DELIVERED
+    );
+  }
+
   getTotalInvoiced(): number {
     return this.deliveries.reduce((total, delivery) => {
       return total + delivery.getService().getAmount();

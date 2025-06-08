@@ -35,17 +35,21 @@
     <DeliveryList
       :clientId="selectedClient?.getId() ?? null"
       :paymentStatus="selectedPaymentStatus"
+      :deliveries="filteredDeliveries"
     />
   </SideBar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { SideBar } from '@components';
 import { useModal } from '@composables';
 import { Client } from '@/views/clients/domain/';
 import { GetClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
+import { Delivery, DeliveryPaymentStatus } from '@/views/deliveries/domain/';
+import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
+import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
@@ -58,13 +62,38 @@ const paymentStatusOptions = [
 ];
 
 const repository = new ClientRepositoryImpl();
+const deliveryRepository = new DeliveryRepositoryImpl();
 const getClientsUseCase = new GetClientsUseCase(repository);
+const getDeliveriesUseCase = new GetAllDeliveriesUseCase(deliveryRepository);
 
 const selectedPaymentStatus = ref('all');
 const searchTerm = ref('');
 
 const clients = ref<Client[]>([]);
 const selectedClient = ref<Client | null>(null);
+const allDeliveries = ref<Delivery[]>([]);
+
+const filteredDeliveries = computed(() => {
+  if (!selectedClient.value) return [];
+
+  let deliveries = selectedClient.value.getDeliveriesWithDebt();
+
+  switch (selectedPaymentStatus.value) {
+    case 'pending':
+      deliveries = deliveries.filter((d) => d.getPaymentStatus() === DeliveryPaymentStatus.PENDING);
+      break;
+    case 'partially-paid':
+      deliveries = deliveries.filter(
+        (d) => d.getPaymentStatus() === DeliveryPaymentStatus.PARTIALLY_PAID
+      );
+      break;
+    case 'paid':
+      deliveries = deliveries.filter((d) => d.getPaymentStatus() === DeliveryPaymentStatus.PAID);
+      break;
+  }
+
+  return deliveries;
+});
 
 onMounted(async () => {
   clients.value = await getClientsUseCase.execute();

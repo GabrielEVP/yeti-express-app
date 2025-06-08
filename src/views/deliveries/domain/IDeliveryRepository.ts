@@ -22,5 +22,5 @@ export interface IDeliveryRepository {
   getPaid(): Promise<Delivery[]>;
   getReceived(): Promise<Delivery[]>;
   getInTransit(): Promise<Delivery[]>;
-  updateStatus(id: string, status: DeliveryStatus): Promise<Delivery>;
+  updateStatus(id: string, status: DeliveryStatus): Promise<Delivery[]>;
 }

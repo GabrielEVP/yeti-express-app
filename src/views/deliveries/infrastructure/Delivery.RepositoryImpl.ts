@@ -105,8 +105,10 @@ export class DeliveryRepositoryImpl implements IDeliveryRepository {
     return await DeliveryApi.getTicketPDF(id);
   }
 
-  async updateStatus(id: string, status: DeliveryStatus): Promise<Delivery> {
+  async updateStatus(id: string, status: DeliveryStatus): Promise<Delivery[]> {
     const response = await DeliveryApi.updateStatus(id, status);
-    return DeliveryApiAdapter.fromApi(response)!;
+    return response
+      .map((delivery: DeliveryApiAdapter) => DeliveryApiAdapter.fromApi(delivery)!)
+      .filter(Boolean);
   }
 }

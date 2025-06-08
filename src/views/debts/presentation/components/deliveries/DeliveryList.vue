@@ -233,12 +233,21 @@ import PaymentPartialModalDebt from '../payment/PaymentPartialModal.Debt.vue';
 const props = defineProps<{
   clientId: string | null;
   paymentStatus: string;
+  deliveries: Delivery[];
 }>();
 
 const repository = new DeliveryRepositoryImpl();
 const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
 
 const deliveries = ref<Delivery[]>([]);
+
+watch(
+  () => props.deliveries,
+  (newDeliveries) => {
+    deliveries.value = newDeliveries;
+  },
+  { immediate: true }
+);
 
 const fetchDeliveries = async () => {
   if (!props.clientId) {

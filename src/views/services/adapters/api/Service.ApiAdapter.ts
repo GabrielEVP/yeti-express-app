@@ -38,7 +38,7 @@ export class ServiceApiAdapter {
     this.bills = bills;
   }
 
-  static fromApi(serviceApiAdapter: Partial<ServiceApiAdapter>): Service {
+  static fromApi(serviceApiAdapter: ServiceApiAdapter): Service {
     return new Service(
       serviceApiAdapter.id ?? '',
       serviceApiAdapter.name ?? '',

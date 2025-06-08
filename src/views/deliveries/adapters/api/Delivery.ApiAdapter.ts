@@ -85,8 +85,6 @@ export class DeliveryApiAdapter {
   }
 
   static fromApi(apiData: any): Delivery | null {
-    console.log(apiData);
-
     if (!apiData) return null;
 
     return new Delivery(

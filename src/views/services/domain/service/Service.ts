@@ -79,7 +79,6 @@ export class Service {
 
   getTotalExpense(): number {
     const totalBills = this.bills.reduce((total, bill) => total + bill.getAmount(), 0);
-    console.log(totalBills);
     const totalExpense = totalBills + this.getComision();
     return totalExpense;
   }
