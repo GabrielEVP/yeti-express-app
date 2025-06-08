@@ -1,1 +1,1 @@
-export * from "./User.ApiAdapter";
+export * from './api/User.ApiAdapter';

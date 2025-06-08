@@ -3,7 +3,7 @@ import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
 import { DeliveryPaymentStatus, DeliveryStatus, PaymentType } from '@/views/deliveries/domain/';
 import { ServiceFormAdapter } from '@views/services';
 import { ClientFormAdapter, ClientAddressFormAdapter } from '@/views/clients/adapters';
-import { mapFormToCourier } from '@/views/couriers/adapters';
+import { CourierFormAdapter } from '@/views/couriers/adapters/form/';
 
 export function mapFormToDeliveryReceipt(data: any): DeliveryReceipt {
   return new DeliveryReceipt(
@@ -26,7 +26,7 @@ export function mapFormToDelivery(form: any): Delivery {
     ServiceFormAdapter.fromForm(form.service ?? {}),
     ClientFormAdapter.fromForm(form.client ?? {}),
     ClientAddressFormAdapter.fromForm(form.clientAddress ?? {}),
-    mapFormToCourier(form.courier ?? {}),
+    CourierFormAdapter.fromForm(form.courier ?? {}),
     [],
     mapFormToDeliveryReceipt(form.receipt ?? {}),
     null as any,

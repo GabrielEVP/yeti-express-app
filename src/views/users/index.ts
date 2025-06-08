@@ -1,10 +1,8 @@
-export * from "./adapters/User.ApiAdapter";
-export { default as Form } from "./components/Form.User.vue";
-export { default as FormPassword } from "./components/FormPassword.User.vue";
-export { default as Details } from "./components/Details.User.vue";
-export * from "./constans/User.PasswordDefaultFormValue";
-export * from "./constans/User.DefaultFormValue";
-export * from "./models/User";
-export * from "./router/Router.User";
-export * from "./schemas/User.Schema";
-export * from "./services/User.ApiPetitions";
+export * from './adapters/api/User.ApiAdapter';
+export * from './constans/User.DefaultFormValue';
+export * from './constans/User.PasswordDefaultFormValue';
+export * from './constans/User.RoutesDictionary';
+export * from './domain/User';
+export * from './router/Router.User';
+export * from './schemas/User.Schema';
+export * from './services/User.ApiPetitions';
