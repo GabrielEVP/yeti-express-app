@@ -9,11 +9,17 @@ export class ClientAddressApiAdapter {
     this.address = address;
   }
 
-  static fromApi(clientAddressApiAdapter: ClientAddressApiAdapter): ClientAddress {
-    return new ClientAddress(clientAddressApiAdapter.id, clientAddressApiAdapter.address);
+  static fromApi(apiData: any): ClientAddress | null {
+    if (!apiData) return null;
+
+    return new ClientAddress(apiData.id ?? '', apiData.address ?? '');
   }
 
-  static toApi(clientAddress: ClientAddress): ClientAddressApiAdapter {
-    return new ClientAddressApiAdapter(clientAddress.getId(), clientAddress.getAddress());
+  static toApi(clientAddress: ClientAddress): any {
+    if (!clientAddress) return null;
+
+    return {
+      address: clientAddress.getAddress(),
+    };
   }
 }

@@ -15,7 +15,7 @@ interface ClientFilterParams {
 export class ClientRepositoryImpl implements IClientRepository {
   async getAll(): Promise<Client[]> {
     const response = await ClientApi.getAll();
-    return response.map((client) => ClientApiAdapter.fromApi(client));
+    return response.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean);
   }
 
   async getById(id: string): Promise<Client | null> {
@@ -30,13 +30,13 @@ export class ClientRepositoryImpl implements IClientRepository {
   async create(client: Client): Promise<Client> {
     const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.create(payload);
-    return ClientApiAdapter.fromApi(response);
+    return ClientApiAdapter.fromApi(response)!;
   }
 
   async update(id: string, client: Client): Promise<Client> {
     const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.update(id, payload);
-    return ClientApiAdapter.fromApi(response);
+    return ClientApiAdapter.fromApi(response)!;
   }
 
   async delete(id: string): Promise<void> {
@@ -45,13 +45,13 @@ export class ClientRepositoryImpl implements IClientRepository {
 
   async search(query: string): Promise<Client[]> {
     const response = await ClientApi.search(query);
-    return response.map((client) => ClientApiAdapter.fromApi(client));
+    return response.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean);
   }
 
   async getFilterAll(params: ClientFilterParams): Promise<{ data: Client[]; total: number }> {
     const response = await ClientApi.getFilterAll(params);
     return {
-      data: response.data.map((client) => ClientApiAdapter.fromApi(client)),
+      data: response.data.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean),
       total: response.total,
     };
   }

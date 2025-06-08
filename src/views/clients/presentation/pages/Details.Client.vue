@@ -48,8 +48,12 @@
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Total de Ganancias del mes">
-              <div class="text-2xl font-bold">{{}}</div>
-              <p class="text-xs text-gray-500">Ganancias totales: {{}}</p>
+              <div class="text-2xl font-bold">
+                {{ formatToDollars(client.getEarningsDeliveryOfCurrentMonth()) }}
+              </div>
+              <p class="text-xs text-gray-500">
+                Ganancias totales: {{ formatToDollars(client.getEarningsDelivery()) }}
+              </p>
             </ActivityView>
             <ActivityView title="Deliverys Pendientes">
               <div class="text-2xl font-bold">
@@ -76,11 +80,11 @@
         </Card>
       </div>
       <div class="space-y-4">
-        <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
+        <h2 class="text-2xl font-bold tracking-tight">Deliverys pendientes por cobrar</h2>
         <div class="grid gap-4 lg:grid-cols-2 grid-cols-1">
-          <TableDeliveries :deliveries="client.getDeliveries()" />
+          <TableDeliveries :deliveries="client.getPendingDeliveries()" />
           <ChartDelivery
-            :deliveries="client.getDeliveries()"
+            :deliveries="client.getPaidDeliveries()"
             title="Estadistica mensual de los deliverys"
             label="Total deliverys"
           />

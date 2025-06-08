@@ -1,6 +1,7 @@
 import { apiClient } from '@/services/';
 import { clientApiRoutes } from '@views/clients/infrastructure/routes/Client.ApiRoutes';
 import type { Client } from '@/views/clients/domain/';
+import { ClientApiAdapter } from '@/views/clients/adapters';
 
 interface ClientFilterParams {
   search?: string;
@@ -12,7 +13,7 @@ interface ClientFilterParams {
 }
 
 export const ClientApi = {
-  async getAll(): Promise<Client[]> {
+  async getAll(): Promise<ClientApiAdapter[]> {
     try {
       const response = await apiClient.get(clientApiRoutes.list);
       return response.data;
@@ -21,7 +22,7 @@ export const ClientApi = {
     }
   },
 
-  async getById(id: string): Promise<Client> {
+  async getById(id: string): Promise<ClientApiAdapter> {
     try {
       const response = await apiClient.get(clientApiRoutes.details(id));
       return response.data;
@@ -30,7 +31,7 @@ export const ClientApi = {
     }
   },
 
-  async create(data: Client): Promise<Client> {
+  async create(data: ClientApiAdapter): Promise<ClientApiAdapter> {
     try {
       const response = await apiClient.post(clientApiRoutes.list, data);
       return response.data;
@@ -39,7 +40,7 @@ export const ClientApi = {
     }
   },
 
-  async update(id: string, data: Client): Promise<Client> {
+  async update(id: string, data: ClientApiAdapter): Promise<ClientApiAdapter> {
     try {
       const response = await apiClient.put(clientApiRoutes.details(id), data);
       return response.data;
@@ -56,7 +57,7 @@ export const ClientApi = {
     }
   },
 
-  async search(query: string): Promise<Client[]> {
+  async search(query: string): Promise<ClientApiAdapter[]> {
     try {
       const response = await apiClient.get(clientApiRoutes.search(query));
       return response.data;
@@ -65,7 +66,9 @@ export const ClientApi = {
     }
   },
 
-  async getFilterAll(params: ClientFilterParams): Promise<{ data: Client[]; total: number }> {
+  async getFilterAll(
+    params: ClientFilterParams
+  ): Promise<{ data: ClientApiAdapter[]; total: number }> {
     try {
       const response = await apiClient.get(clientApiRoutes.list, {
         params: {

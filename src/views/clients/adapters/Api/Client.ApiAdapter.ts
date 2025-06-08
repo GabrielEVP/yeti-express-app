@@ -5,8 +5,58 @@ import { ClientPhoneApiAdapter } from '@/views/clients/adapters/Api/Client.Phone
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
 import { DeliveryApiAdapter } from '@/views/deliveries/adapters/api/';
 import { DebtApiAdapter } from '@/views/debts/adapter/';
+import { TimeLineContent } from '@time-line-content/domain';
+import { Delivery } from '@/views/deliveries/domain/Delivery';
+import { Debt } from '@/views/debts/domain/Debt';
 
-export class ClientApiAdapter extends Client {
+export class ClientApiAdapter {
+  public id: string;
+  public legal_name: string;
+  public type: string;
+  public registration_number: string;
+  public notes: string;
+  public allow_credit: boolean;
+  public events: TimeLineContent[];
+  public addresses: ClientAddressApiAdapter[];
+  public emails: ClientEmailApiAdapter[];
+  public phones: ClientPhoneApiAdapter[];
+  public deliveries: Delivery[];
+  public debts: Debt[];
+  public created_at: Date;
+  public updated_at: Date;
+
+  constructor(
+    id: string,
+    legal_name: string,
+    type: string,
+    registration_number: string,
+    notes: string,
+    allow_credit: boolean,
+    events: TimeLineContent[],
+    addresses: ClientAddressApiAdapter[],
+    emails: ClientEmailApiAdapter[],
+    phones: ClientPhoneApiAdapter[],
+    deliveries: Delivery[],
+    debts: Debt[],
+    created_at: Date,
+    updated_at: Date
+  ) {
+    this.id = id;
+    this.legal_name = legal_name;
+    this.type = type;
+    this.registration_number = registration_number;
+    this.notes = notes;
+    this.allow_credit = allow_credit;
+    this.events = events;
+    this.addresses = addresses;
+    this.emails = emails;
+    this.phones = phones;
+    this.deliveries = deliveries;
+    this.debts = debts;
+    this.created_at = created_at;
+    this.updated_at = updated_at;
+  }
+
   static fromApi(apiData: any): Client | null {
     if (!apiData) return null;
 
