@@ -34,9 +34,9 @@
         <div class="flex items-center gap-8">
           <div class="text-right">
             <Text>
-              {{ delivery.getDebts().getAmount() }}
+              {{ delivery.getDebts()?.getAmount() }}
             </Text>
-            <Text> Resta: {{ delivery.getDebts().getRemainingAmount() }} </Text>
+            <Text> Resta: {{ delivery.getDebts()?.getRemainingAmount() }} </Text>
           </div>
 
           <div class="flex gap-2">
@@ -147,7 +147,7 @@ const fetchDeliveries = async () => {
   }
 
   const all = await getDeliveriesUseCase.execute();
-  deliveries.value = all.filter((d) => d.getClient().getId() === props.clientId);
+  deliveries.value = all.filter((d) => d.getClient()?.getId() === props.clientId);
 };
 
 watch(() => props.clientId, fetchDeliveries);

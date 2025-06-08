@@ -7,26 +7,30 @@ import { DeliveryApiAdapter } from '@/views/deliveries/adapters/api/';
 import { DebtApiAdapter } from '@/views/debts/adapter/';
 
 export class ClientApiAdapter extends Client {
-  static fromApi(apiData: any): Client {
+  static fromApi(apiData: any): Client | null {
+    if (!apiData) return null;
+
     return new Client(
-      apiData.id,
-      apiData.legal_name,
-      apiData.type,
-      apiData.registration_number,
-      apiData.notes,
-      apiData.allow_credit,
+      apiData.id ?? '',
+      apiData.legal_name ?? '',
+      apiData.type ?? '',
+      apiData.registration_number ?? '',
+      apiData.notes ?? '',
+      apiData.allow_credit ?? false,
       apiData.events?.map(adaptTimeLineContent) ?? [],
       apiData.addresses?.map(ClientAddressApiAdapter.fromApi) ?? [],
       apiData.emails?.map(ClientEmailApiAdapter.fromApi) ?? [],
       apiData.phones?.map(ClientPhoneApiAdapter.fromApi) ?? [],
       apiData.deliveries?.map(DeliveryApiAdapter.fromApiToClient) ?? [],
       apiData.debts?.map(DebtApiAdapter.fromApi) ?? [],
-      new Date(apiData.created_at),
-      new Date(apiData.updated_at)
+      apiData.created_at ? new Date(apiData.created_at) : new Date(),
+      apiData.updated_at ? new Date(apiData.updated_at) : new Date()
     );
   }
 
   static toApi(client: Client): any {
+    if (!client) return null;
+
     return {
       legal_name: client.getLegalName(),
       type: client.getType(),
@@ -39,22 +43,24 @@ export class ClientApiAdapter extends Client {
     };
   }
 
-  static fromApiToDelivery(apiData: any): Client {
+  static fromApiToDelivery(apiData: any): Client | null {
+    if (!apiData) return null;
+
     return new Client(
-      apiData.id,
-      apiData.legal_name,
-      apiData.type,
-      apiData.registration_number,
-      apiData.notes,
-      apiData.allow_credit,
+      apiData.id ?? '',
+      apiData.legal_name ?? '',
+      apiData.type ?? '',
+      apiData.registration_number ?? '',
+      apiData.notes ?? '',
+      apiData.allow_credit ?? false,
       [],
       apiData.addresses?.map(ClientAddressApiAdapter.fromApi) ?? [],
       [],
       [],
       [],
       [],
-      new Date(apiData.created_at),
-      new Date(apiData.updated_at)
+      apiData.created_at ? new Date(apiData.created_at) : new Date(),
+      apiData.updated_at ? new Date(apiData.updated_at) : new Date()
     );
   }
 }

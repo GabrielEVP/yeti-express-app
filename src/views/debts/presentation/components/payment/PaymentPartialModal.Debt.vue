@@ -23,13 +23,13 @@
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Monto Total</Text>
                 <Text>
-                  {{ delivery.getDebts().getAmount() }}
+                  {{ delivery.getDebts()?.getAmount() }}
                 </Text>
               </div>
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Pendiente</Text>
                 <Text>
-                  {{ delivery.getDebts().getRemainingAmount() }}
+                  {{ delivery.getDebts()?.getRemainingAmount() }}
                 </Text>
               </div>
             </div>
@@ -39,8 +39,8 @@
               label="Monto"
               type="number"
               name="amount"
-              :max="String(delivery.getDebts().getRemainingAmount())"
-              :placeholder="String(delivery.getDebts().getRemainingAmount())"
+              :max="String(delivery.getDebts()?.getRemainingAmount())"
+              :placeholder="String(delivery.getDebts()?.getRemainingAmount())"
             />
           </div>
           <div class="mb-4">

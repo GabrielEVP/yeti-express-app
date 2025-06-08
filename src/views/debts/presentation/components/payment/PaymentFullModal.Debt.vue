@@ -23,13 +23,13 @@
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Monto Total</Text>
               <Text>
-                {{ delivery.getDebts().getAmount() }}
+                {{ delivery.getDebts()?.getAmount() }}
               </Text>
             </div>
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Cantidad a Pagar</Text>
               <Text>
-                {{ delivery.getDebts().getRemainingAmount() }}
+                {{ delivery.getDebts()?.getRemainingAmount() }}
               </Text>
             </div>
           </div>

@@ -8,16 +8,16 @@ export class Debt {
   private readonly amount: number;
   private readonly status: DebtStatus;
   private readonly payments: DebtPayment[];
-  private readonly client: Client;
-  private readonly delivery: Delivery;
+  private readonly client: Client | null;
+  private readonly delivery: Delivery | null;
 
   constructor(
     id: string,
     amount: number,
     status: DebtStatus,
     payments: DebtPayment[],
-    client: Client,
-    delivery: Delivery
+    client: Client | null,
+    delivery: Delivery | null
   ) {
     this.id = id;
     this.amount = amount;
@@ -34,6 +34,7 @@ export class Debt {
   getAmount(): number {
     return this.amount;
   }
+
   getStatus(): DebtStatus {
     return this.status;
   }
@@ -46,13 +47,14 @@ export class Debt {
     return [...this.payments];
   }
 
-  getClient(): Client {
+  getClient(): Client | null {
     return this.client;
   }
 
-  getDelivery(): Delivery {
+  getDelivery(): Delivery | null {
     return this.delivery;
   }
+
   getPaidAmount(): number {
     return this.payments.reduce((total, payment) => total + payment.getAmount(), 0);
   }

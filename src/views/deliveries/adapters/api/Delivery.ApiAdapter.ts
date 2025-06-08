@@ -4,54 +4,50 @@ import {
   PaymentType,
   DeliveryPaymentStatus,
 } from '@/views/deliveries/domain/enum/';
-import { DeliveryReceipt } from '@/views/deliveries/domain/DeliveryReceipt';
+import { DeliveryReceiptApiAdapter } from '@/views/deliveries/adapters/';
 import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapters/';
 import { adaptCourier } from '@/views/couriers/';
 import { ServiceApiAdapter } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
 import { DebtApiAdapter } from '@/views/debts/adapter/';
+import { DeliveryReceipt } from '@views/deliveries/domain';
 
 export class DeliveryApiAdapter extends Delivery {
-  private static adaptDeliveryReceipt(apiReceipt: any): DeliveryReceipt {
-    return new DeliveryReceipt(
-      apiReceipt.id,
-      apiReceipt.full_name,
-      apiReceipt.phone,
-      apiReceipt.address
-    );
-  }
+  static fromApi(apiData: any): Delivery | null {
+    if (!apiData) return null;
 
-  static fromApi(apiData: any): Delivery {
     return new Delivery(
-      apiData.id,
-      apiData.number,
-      apiData.date,
-      apiData.status as DeliveryStatus,
-      apiData.payment_type as PaymentType,
-      apiData.DeliveryPaymentStatus as DeliveryPaymentStatus,
+      apiData.id ?? '',
+      apiData.number ?? '',
+      apiData.date ?? '',
+      (apiData.status as DeliveryStatus) ?? DeliveryStatus.PENDING,
+      (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
+      (apiData.DeliveryPaymentStatus as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
       ServiceApiAdapter.fromApi(apiData.service),
       ClientApiAdapter.fromApi(apiData.client),
       ClientAddressApiAdapter.fromApi(apiData.client_address),
       adaptCourier(apiData.courier),
       Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
-      this.adaptDeliveryReceipt(apiData.receipt),
+      DeliveryReceiptApiAdapter.fromApi(apiData.receipt),
       DebtApiAdapter.fromApi(apiData.debts),
-      apiData.created_at,
-      apiData.updated_at,
-      apiData.service_id,
-      apiData.client_id,
-      apiData.client_address_id,
-      apiData.courier_id
+      apiData.created_at ?? '',
+      apiData.updated_at ?? '',
+      apiData.service_id ?? '',
+      apiData.client_id ?? '',
+      apiData.client_address_id ?? '',
+      apiData.courier_id ?? ''
     );
   }
 
   static toApi(delivery: Delivery): any {
+    if (!delivery) return null;
+
     return {
       status: delivery.getStatus(),
       payment_type: delivery.getPaymentType(),
       notes: delivery.getNotes(),
-      receipt: this.adaptDeliveryReceiptForApi(delivery.getReceipt()),
+      receipt: DeliveryReceiptApiAdapter.toApi(delivery.getReceipt() as DeliveryReceipt),
       client_id: delivery.getClientId(),
       courier_id: delivery.getCourierId(),
       service_id: delivery.getServiceId(),
@@ -59,31 +55,24 @@ export class DeliveryApiAdapter extends Delivery {
     };
   }
 
-  private static adaptDeliveryReceiptForApi(deliveryReceipt: DeliveryReceipt): any {
-    return {
-      id: deliveryReceipt.getId(),
-      full_name: deliveryReceipt.getFullName(),
-      phone: deliveryReceipt.getPhone(),
-      address: deliveryReceipt.getAddress(),
-    };
-  }
+  static fromApiToCourier(apiData: any): Delivery | null {
+    if (!apiData) return null;
 
-  static fromApiToCourier(apiData: any): Delivery {
     return new Delivery(
-      apiData.id,
-      apiData.number,
-      apiData.date,
-      apiData.status as DeliveryStatus,
-      apiData.payment_type as PaymentType,
-      apiData.payment_status as DeliveryPaymentStatus,
+      apiData.id ?? '',
+      apiData.number ?? '',
+      apiData.date ?? '',
+      (apiData.status as DeliveryStatus) ?? DeliveryStatus.PENDING,
+      (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
+      (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
       ServiceApiAdapter.fromApi(apiData.service),
-      null as any,
-      null as any,
-      null as any,
+      null,
+      null,
+      null,
       [],
-      null as any,
-      null as any,
+      null,
+      null,
       '',
       '',
       '',
@@ -93,22 +82,24 @@ export class DeliveryApiAdapter extends Delivery {
     );
   }
 
-  static fromApiToClient(apiData: any): Delivery {
+  static fromApiToClient(apiData: any): Delivery | null {
+    if (!apiData) return null;
+
     return new Delivery(
-      apiData.id,
-      apiData.number,
-      apiData.date,
-      apiData.status as DeliveryStatus,
-      apiData.payment_type as PaymentType,
-      apiData.payment_status as DeliveryPaymentStatus,
+      apiData.id ?? '',
+      apiData.number ?? '',
+      apiData.date ?? '',
+      (apiData.status as DeliveryStatus) ?? DeliveryStatus.PENDING,
+      (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
+      (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
       ServiceApiAdapter.fromApi(apiData.service),
-      null as any,
-      null as any,
-      null as any,
+      null,
+      null,
+      null,
       [],
-      null as any,
-      null as any,
+      null,
+      null,
       '',
       '',
       '',

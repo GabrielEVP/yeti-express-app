@@ -20,12 +20,12 @@ export class Delivery {
   private readonly paymentStatus: DeliveryPaymentStatus;
   private readonly notes: string;
   private readonly service: Service;
-  private readonly client: Client;
-  private readonly clientAddress: ClientAddress;
-  private readonly courier: Courier;
-  private readonly timeLineContent: TimeLineContent[];
-  private readonly receipt: DeliveryReceipt;
-  private readonly debts: Debt;
+  private readonly client: Client | null;
+  private readonly clientAddress: ClientAddress | null;
+  private readonly courier: Courier | null;
+  private readonly timeLineContent: TimeLineContent[] | null;
+  private readonly receipt: DeliveryReceipt | null;
+  private readonly debts: Debt | null;
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
   private readonly clientId: string;
@@ -42,12 +42,12 @@ export class Delivery {
     paymentStatus: DeliveryPaymentStatus,
     notes: string,
     service: Service,
-    client: Client,
-    clientAddress: ClientAddress,
-    courier: Courier,
+    client: Client | null,
+    clientAddress: ClientAddress | null,
+    courier: Courier | null,
     timeLineContent: TimeLineContent[],
-    receipt: DeliveryReceipt,
-    debts: Debt,
+    receipt: DeliveryReceipt | null,
+    debts: Debt | null,
     createdAt: Date | string,
     updatedAt: Date | string,
     serviceId: string,
@@ -63,11 +63,11 @@ export class Delivery {
     this.paymentStatus = paymentStatus;
     this.notes = notes;
     this.service = service;
-    this.client = client;
+    this.client = client ?? null;
     this.clientAddress = clientAddress;
     this.courier = courier;
     this.timeLineContent = timeLineContent;
-    this.receipt = receipt;
+    this.receipt = receipt ?? null;
     this.debts = debts;
     this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
     this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
@@ -109,27 +109,27 @@ export class Delivery {
     return this.service;
   }
 
-  getClient(): Client {
+  getClient(): Client | null {
     return this.client;
   }
 
-  getClientAddress(): ClientAddress {
+  getClientAddress(): ClientAddress | null {
     return this.clientAddress;
   }
 
-  getCourier(): Courier {
+  getCourier(): Courier | null {
     return this.courier;
   }
 
-  getTimeLine(): TimeLineContent[] {
-    return [...this.timeLineContent];
+  getTimeLine(): TimeLineContent[] | null {
+    return this.timeLineContent ? [...this.timeLineContent] : null;
   }
 
-  getReceipt(): DeliveryReceipt {
+  getReceipt(): DeliveryReceipt | null {
     return this.receipt;
   }
 
-  getDebts(): Debt {
+  getDebts(): Debt | null {
     return this.debts;
   }
 
@@ -153,7 +153,7 @@ export class Delivery {
     return this.serviceId;
   }
 
-  getClientAddressId(): string {
+  getClientAddressId(): string | null {
     return this.clientAddressId;
   }
 
