@@ -33,12 +33,18 @@
                 />
                 <SectionText title="Estado" :content="delivery.getStatusToFormat()" />
                 <SectionText title="Forma de Pago" :content="delivery.getPaymentTypeToFormat()" />
-                <SectionText title="Cliente" :content="delivery.getClient().getLegalName()" />
+                <SectionText
+                  title="Cliente"
+                  :content="delivery.getClient()?.getLegalName() ?? 'Sin cliente'"
+                />
                 <SectionText
                   title="Importe Total"
                   :content="formatToDollars(delivery.getService().getTotalEarning())"
                 />
-                <SectionText title="Repartidor" :content="delivery.getCourier().getFullName()" />
+                <SectionText
+                  title="Repartidor"
+                  :content="delivery.getCourier()?.getFullName() ?? 'Sin asignar'"
+                />
               </div>
               <SectionText title="Nota" :content="delivery.getNotes()" />
               <div class="space-y-6 pt-8">
@@ -107,7 +113,6 @@ import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes/';
 import {
   DeliveryClientAddressList,
   DeliveryReceiptDropdown,
-  DeliveryPaymentsDrowdown,
 } from '@/views/deliveries/presentation/components/';
 
 const repository = new DeliveryRepositoryImpl();

@@ -41,7 +41,7 @@ export class DebtRepositoryImpl implements IDebtRepository {
     try {
       const payload = DebtApiAdapter.toApi(debt);
       const { data } = await apiClient.put(`${this.baseUrl}/${id}/status`, payload);
-      return DebtApiAdapter.fromApi(data);
+      return DebtApiAdapter.fromApi(data)!;
     } catch (error) {
       console.error(`Error updating status of debt with id ${id}:`, error);
       throw error;
@@ -52,7 +52,7 @@ export class DebtRepositoryImpl implements IDebtRepository {
     try {
       const payload = DebtApiAdapter.toApi(debt);
       const { data } = await apiClient.post(this.baseUrl, payload);
-      return DebtApiAdapter.fromApi(data);
+      return DebtApiAdapter.fromApi(data)!;
     } catch (error) {
       console.error('Error creating debt:', error);
       throw error;
@@ -63,7 +63,7 @@ export class DebtRepositoryImpl implements IDebtRepository {
     try {
       const payload = DebtApiAdapter.toApi(debt);
       const { data } = await apiClient.put(`${this.baseUrl}/${id}`, payload);
-      return DebtApiAdapter.fromApi(data);
+      return DebtApiAdapter.fromApi(data)!;
     } catch (error) {
       console.error(`Error updating debt with id ${id}:`, error);
       throw error;

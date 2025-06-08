@@ -49,23 +49,23 @@
       @updatePage="updatePage"
     >
       <TableRow v-for="delivery in paginatedItems" :key="delivery.getId()">
-        <TableContent class="text-black dark:text-white break-words ">
+        <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getNumber() }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           {{ formatDateCustom(delivery.getDate()) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getClient().getLegalName() }}
+          {{ delivery.getClient()?.getLegalName() }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getCourier().getFullName() }}
+          {{ delivery.getCourier()?.getFullName() }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.getService().getName() }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
-          {{  formatToDollars(delivery.getService().getTotalEarning()) }}
+          {{ formatToDollars(delivery.getService().getTotalEarning()) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde> {{ delivery.getStatusToFormat() }} </Bagde>
