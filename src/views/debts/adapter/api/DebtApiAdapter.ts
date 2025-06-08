@@ -1,17 +1,17 @@
 import { Debt, DebtStatus } from '@/views/debts/domain/';
-import { Client } from '@/views/clients/domain/';
-import { Delivery } from '@/views/deliveries/domain';
+import { ClientApiAdapter } from '@/views/clients/';
+import { DeliveryApiAdapter } from '@/views/deliveries/adapters/';
 import { DebtPaymentApiAdapter } from '@/views/debts-payments/adapter/';
 
 export class DebtApiAdapter {
-  static fromApi(apiData: any, client?: Client, delivery?: Delivery): Debt {
+  static fromApi(apiData: any): Debt {
     return new Debt(
       apiData.id,
       apiData.amount,
       apiData.status as DebtStatus,
       apiData.payments?.map(DebtPaymentApiAdapter.fromApi) ?? [],
-      client ?? apiData.client,
-      delivery ?? apiData.delivery
+      ClientApiAdapter.fromApi(apiData.client),
+      DeliveryApiAdapter.fromApi(apiData.delivery)
     );
   }
 

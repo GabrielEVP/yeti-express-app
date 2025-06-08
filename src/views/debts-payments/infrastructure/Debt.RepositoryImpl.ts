@@ -1,8 +1,14 @@
 import { IDebtPaymentRepository } from '@/views/debts-payments/domain/';
 import { DebtPayment } from '@/views/debts-payments/domain';
-import { PaymentMethod } from '@/views/debts-payments/domain';
 import { DebtPaymentApiAdapter } from '@views/debts-payments/adapter/api';
 import { apiClient } from '@/services';
+
+export const debtPaymentApiRoutes = {
+  list: '/debt-payments',
+  full: '/debt-payments/search/full',
+  partial: '/debt-payments/partial',
+  details: (id: number | string) => `/debt-payments/${id}`,
+};
 
 export class DebtPaymentRepositoryImpl implements IDebtPaymentRepository {
   private readonly baseUrl = '/debt-payments';
@@ -27,30 +33,10 @@ export class DebtPaymentRepositoryImpl implements IDebtPaymentRepository {
     }
   }
 
-  async getByDebtId(debtId: string): Promise<DebtPayment[]> {
-    try {
-      const { data } = await apiClient.get(`${this.baseUrl}/debt/${debtId}`);
-      return data.map(DebtPaymentApiAdapter.fromApi);
-    } catch (error) {
-      console.error(`Error fetching payments for debt ${debtId}:`, error);
-      return [];
-    }
-  }
-
-  async getByMethod(method: PaymentMethod): Promise<DebtPayment[]> {
-    try {
-      const { data } = await apiClient.get(`${this.baseUrl}/method/${method}`);
-      return data.map(DebtPaymentApiAdapter.fromApi);
-    } catch (error) {
-      console.error(`Error fetching debt payments by method ${method}:`, error);
-      return [];
-    }
-  }
-
-  async create(payment: DebtPayment): Promise<DebtPayment> {
+  async createFull(payment: DebtPayment): Promise<DebtPayment> {
     try {
       const payload = DebtPaymentApiAdapter.toApi(payment);
-      const { data } = await apiClient.post(this.baseUrl, payload);
+      const { data } = await apiClient.post(`${this.baseUrl}/full`, payload);
       return DebtPaymentApiAdapter.fromApi(data);
     } catch (error) {
       console.error('Error creating debt payment:', error);
@@ -58,22 +44,13 @@ export class DebtPaymentRepositoryImpl implements IDebtPaymentRepository {
     }
   }
 
-  async update(id: string, payment: DebtPayment): Promise<DebtPayment> {
+  async createPartial(payment: DebtPayment): Promise<DebtPayment> {
     try {
       const payload = DebtPaymentApiAdapter.toApi(payment);
-      const { data } = await apiClient.put(`${this.baseUrl}/${id}`, payload);
+      const { data } = await apiClient.post(`${this.baseUrl}/partial`, payload);
       return DebtPaymentApiAdapter.fromApi(data);
     } catch (error) {
-      console.error(`Error updating debt payment ${id}:`, error);
-      throw error;
-    }
-  }
-
-  async delete(id: string): Promise<void> {
-    try {
-      await apiClient.delete(`${this.baseUrl}/${id}`);
-    } catch (error) {
-      console.error(`Error deleting debt payment ${id}:`, error);
+      console.error('Error creating debt payment:', error);
       throw error;
     }
   }
