@@ -14,6 +14,8 @@ import { DeliveryReceipt } from '@views/deliveries/domain';
 
 export class DeliveryApiAdapter extends Delivery {
   static fromApi(apiData: any): Delivery | null {
+    console.log(apiData);
+
     if (!apiData) return null;
 
     return new Delivery(
@@ -30,7 +32,7 @@ export class DeliveryApiAdapter extends Delivery {
       adaptCourier(apiData.courier),
       Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
       DeliveryReceiptApiAdapter.fromApi(apiData.receipt),
-      DebtApiAdapter.fromApi(apiData.debts),
+      DebtApiAdapter.fromApi(apiData.debt),
       apiData.created_at ?? '',
       apiData.updated_at ?? '',
       apiData.service_id ?? '',

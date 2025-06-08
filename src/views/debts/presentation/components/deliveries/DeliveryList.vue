@@ -34,9 +34,11 @@
         <div class="flex items-center gap-8">
           <div class="text-right">
             <Text>
-              {{ delivery.getDebts()?.getAmount() }}
+              {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
             </Text>
-            <Text> Resta: {{ delivery.getDebts()?.getRemainingAmount() }} </Text>
+            <Text>
+              Resta: {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+            </Text>
           </div>
 
           <div class="flex gap-2">
@@ -124,7 +126,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { Delivery } from '@views/deliveries';
 import { usePagination } from '@/composables/';
-import { formatDateCustom } from '@/utils/';
+import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Card, Bagde, Button, Text } from '@/components/';
 import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';

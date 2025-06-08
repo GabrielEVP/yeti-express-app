@@ -23,13 +23,13 @@
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Monto Total</Text>
                 <Text>
-                  {{ delivery.getDebts()?.getAmount() }}
+                  {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
                 </Text>
               </div>
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Pendiente</Text>
                 <Text>
-                  {{ delivery.getDebts()?.getRemainingAmount() }}
+                  {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
                 </Text>
               </div>
             </div>
@@ -68,6 +68,7 @@
 <script setup lang="ts">
 import { defineProps, onMounted } from 'vue';
 import { useVeeForm } from '@/composables/';
+import { formatToDollars } from '@utils';
 import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components/';
 import { Delivery } from '@/views/deliveries';
 import { DebtPayment, PaymentMethodOptions } from '@views/debts-payments/domain';
