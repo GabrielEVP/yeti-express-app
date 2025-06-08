@@ -3,11 +3,13 @@
     v-if="selectedDelivery"
     v-model:isOpen="isFullModalOpen"
     :delivery="selectedDelivery"
+    @proccess="fetchDeliveries"
   />
   <PaymentPartialModalDebt
     v-if="selectedDelivery"
     v-model:isOpen="isPartialModalOpen"
     :delivery="selectedDelivery"
+    @proccess="fetchDeliveries"
   />
   <div class="space-y-2 sm:space-y-3 mt-6">
     <div

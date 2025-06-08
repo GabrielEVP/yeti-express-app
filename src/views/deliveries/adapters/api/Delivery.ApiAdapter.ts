@@ -24,7 +24,7 @@ export class DeliveryApiAdapter extends Delivery {
       apiData.date ?? '',
       (apiData.status as DeliveryStatus) ?? DeliveryStatus.PENDING,
       (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
-      (apiData.DeliveryPaymentStatus as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
+      (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
       ServiceApiAdapter.fromApi(apiData.service),
       ClientApiAdapter.fromApi(apiData.client),

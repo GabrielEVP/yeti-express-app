@@ -99,6 +99,7 @@ onMounted(() => {
 });
 
 const emit = defineEmits<{
+  (e: 'proccess', value: boolean): void;
   (e: 'update:isOpen', value: boolean): void;
   (e: 'select', delivery: Delivery): void;
 }>();
@@ -107,9 +108,15 @@ const emitClose = () => {
   emit('update:isOpen', false);
 };
 
+const emitProccess = () => {
+  emit('proccess', true);
+};
+
 async function onSubmitform() {
   const createdPaid = await onSubmit();
+
   if (createdPaid) {
+    emitProccess();
     emitClose();
   }
 }
