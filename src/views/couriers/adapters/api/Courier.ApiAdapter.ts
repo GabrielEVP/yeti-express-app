@@ -1,18 +1,54 @@
-import { Courier } from '@/views/couriers/';
+import { Courier } from '@/views/couriers';
+import { Delivery } from '@/views/deliveries';
+import { adaptTimeLineContent } from '@time-line-content/adapter';
 import { DeliveryApiAdapter } from '@views/deliveries';
 
-export class CourierApiAdapter extends Courier {
-  static fromApi(apiData: any): Courier {
+export class CourierApiAdapter {
+  public id: string;
+  public first_name: string;
+  public last_name: string;
+  public phone: string;
+  public active: boolean;
+  public events: any[];
+  public deliveries: DeliveryApiAdapter[] = [];
+  public created_at: Date;
+  public updated_at: Date;
+
+  constructor(
+    id: string,
+    first_name: string,
+    last_name: string,
+    phone: string,
+    active: boolean,
+    events: any[],
+    deliveries: DeliveryApiAdapter[],
+    created_at: Date,
+    updated_at: Date
+  ) {
+    this.id = id;
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.phone = phone;
+    this.active = active;
+    this.events = events;
+    this.deliveries = deliveries;
+    this.created_at = created_at;
+    this.updated_at = updated_at;
+  }
+
+  static fromApi(courierApiAdapter: CourierApiAdapter): Courier {
     return new Courier(
-      apiData.id,
-      apiData.firstName,
-      apiData.lastName,
-      apiData.phone,
-      apiData.active,
-      apiData.timeLineContent,
-      apiData.deliveries.map(DeliveryApiAdapter.fromApiToCourier) ?? [],
-      new Date(apiData.createdAt),
-      new Date(apiData.updatedAt)
+      courierApiAdapter.id,
+      courierApiAdapter.first_name,
+      courierApiAdapter.last_name,
+      courierApiAdapter.phone,
+      courierApiAdapter.active,
+      courierApiAdapter.events?.map(adaptTimeLineContent) ?? [],
+      courierApiAdapter.deliveries
+        ?.map(DeliveryApiAdapter.fromApiToCourier)
+        .filter((d): d is Delivery => d !== null) ?? [],
+      new Date(courierApiAdapter.created_at),
+      new Date(courierApiAdapter.updated_at)
     );
   }
 

@@ -35,14 +35,10 @@
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Pedidos entregados del mes">
-              <div class="text-2xl font-bold">
-                {{ courier.getPaidAmountThisMonth().toFixed(2) }}
-              </div>
+              <div class="text-2xl font-bold">{{ courier.getDeliveredThisMonth().length }}</div>
             </ActivityView>
             <ActivityView title="Pedidos por entregar">
-              <div class="text-2xl font-bold">
-                {{ courier.getTotalPendingToPay().toFixed(2) }}
-              </div>
+              <div class="text-2xl font-bold">{{ courier.getPendingDeliveries().length }}</div>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.getUpdatedAt()) }}</div>
@@ -61,11 +57,11 @@
         </Card>
       </div>
       <div class="space-y-4">
-        <h2 class="text-2xl font-bold tracking-tight">Deliverys</h2>
+        <h2 class="text-2xl font-bold tracking-tight">Deliverys Pendientes</h2>
         <div class="grid gap-4 md:grid-cols-2 grid-cols-1">
-          <TableDeliveries :deliveries="courier.getDeliveries()" />
+          <TableDeliveries :deliveries="courier.getPendingDeliveries()" />
           <ChartDelivery
-            :deliveries="courier.getDeliveries()"
+            :deliveries="courier.getDeliveredDeliveries()"
             title="Estadistica mensual de los deliverys"
             label="Total deliverys"
           />
