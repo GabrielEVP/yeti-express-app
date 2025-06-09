@@ -1,7 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-screen">
-      <Card class="w-full max-w-4xl mx-auto p-6">
+    <div class="flex justify-center items-center min-h-screen p-4">
+      <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
         <form @submit.prevent="onSubmit" class="h-full">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
@@ -16,7 +16,7 @@
                 @update:activeTab="activeTab = $event"
               >
                 <FileText class="w-4 h-4 dark:text-white" />
-                <span class="m-4 dark:text-white">General</span>
+                <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">General</span>
               </TabsTitle>
               <TabsTitle
                 tab="receipt"
@@ -24,77 +24,105 @@
                 @update:activeTab="activeTab = $event"
               >
                 <NotebookPen class="w-4 h-4 dark:text-white" />
-                <span class="m-4 dark:text-white">Persona a recibir</span>
+                <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base"
+                  >Persona a recibir</span
+                >
               </TabsTitle>
               <TabsTitle tab="notes" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                 <NotebookPen class="w-4 h-4 dark:text-white" />
-                <span class="m-4 dark:text-white">Notas</span>
+                <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">Notas</span>
               </TabsTitle>
             </template>
           </Tabs>
+
           <TabsContent tab="general" :activeTab="activeTab">
-            <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-              <SelectForm
-                label="Cliente"
-                name="clientId"
-                placeholder="Selecciona un Cliente"
-                :items="clientsOptions"
-                @update:modelValue="loadAddress"
-              />
-              <div>
+            <div class="space-y-4 mb-6">
+              <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Cliente</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div class="md:col-span-1">
+                  <SelectForm
+                    label="Cliente"
+                    name="clientId"
+                    placeholder="Selecciona un Cliente"
+                    :items="clientsOptions"
+                    @update:modelValue="loadAddress"
+                  />
+                </div>
+                <div class="md:col-span-1">
+                  <SelectForm
+                    label="Dirección de recogida"
+                    name="clientAddressId"
+                    placeholder="Selecciona una dirección"
+                    :items="clientsAddressOptions"
+                  />
+                </div>
+                <div class="flex items-center justify-center w-full">
+                  <PlusButton @click="openModalClientForm" class="w-full md:w-auto">
+                    <span class="text-white ml-2 text-sm md:text-base">Agregar Cliente</span>
+                  </PlusButton>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold dark:text-white border-b pb-2">
+                Detalles del Servicio
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <SelectForm
-                  label="Direccion de recogida"
-                  name="clientAddressId"
-                  placeholder="Selecciona un direccion de recogida"
-                  :items="clientsAddressOptions"
+                  label="Servicio"
+                  name="serviceId"
+                  placeholder="Selecciona un servicio"
+                  :items="serviceOptions"
                 />
+                <SelectForm
+                  label="Forma de pago"
+                  name="paymentType"
+                  placeholder="Forma de pago"
+                  :items="[...PaymentTypeOptions]"
+                  :disabled="selectedClientAllowCredit"
+                />
+                <div class="sm:col-span-2 lg:col-span-1">
+                  <SelectForm
+                    label="Repartidor"
+                    name="courierId"
+                    placeholder="Selecciona un repartidor"
+                    :items="courierOptions"
+                  />
+                </div>
               </div>
-              <div class="flex items-center justify-center m-auto mt-4">
-                <PlusButton @click="openModalClientForm">
-                  <span class="text-white ml-4">Agregar nuevo Cliente</span>
-                </PlusButton>
-              </div>
-              <DeliveryClientModalForm
-                :isOpen="isModalClientFormOpen"
-                @close="closeModalClientForm"
-                @addClient="handleAddClient"
-              />
             </div>
-            <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-              <SelectForm
-                label="Servicio"
-                name="serviceId"
-                placeholder="Selecciona un servicio"
-                :items="serviceOptions"
-              />
-              <SelectForm
-                label="Forma de pago"
-                name="paymentType"
-                placeholder="Selecciona una forma de pago"
-                :items="[...PaymentTypeOptions]"
-                :disabled="selectedClientAllowCredit"
-              />
-              <SelectForm
-                label="Repartidor"
-                name="courierId"
-                placeholder="Selecciona un repartidor"
-                :items="courierOptions"
-              />
-            </div>
+            <DeliveryClientModalForm
+              :isOpen="isModalClientFormOpen"
+              @close="closeModalClientForm"
+              @addClient="handleAddClient"
+            />
           </TabsContent>
           <TabsContent tab="receipt" :activeTab="activeTab">
-            <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
-              <FieldForm label="Nombre completo" name="receipt.fullName" id="number" required />
-              <FieldForm label="Telefono" name="receipt.phone" id="number" required />
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FieldForm label="Nombre completo" name="receipt.fullName" id="fullName" required />
+                <FieldForm label="Teléfono" name="receipt.phone" id="phone" required />
+              </div>
+              <div class="w-full">
+                <FieldForm label="Dirección" name="receipt.address" id="receipt.address" required />
+              </div>
             </div>
-            <FieldForm label="Direccion" name="receipt.address" id="receipt.address" required />
           </TabsContent>
+
           <TabsContent tab="notes" :activeTab="activeTab">
-            <TextAreaForm label="Notas" id="notes" rows="32" />
+            <div class="space-y-4">
+              <TextAreaForm
+                label="Notas"
+                id="notes"
+                placeholder="Ingresa cualquier información adicional sobre la entrega..."
+              />
+            </div>
           </TabsContent>
-          <div class="space-x-2 flex justify-end">
-            <CancelButton @click="router.back()" />
-            <AcceptButton :disabled="!meta.valid" />
+          <div class="mt-6 pt-4 border-t">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:justify-end">
+              <CancelButton @click="router.back()" class="w-full sm:w-auto order-2 sm:order-1" />
+              <AcceptButton :disabled="!meta.valid" class="w-full sm:w-auto order-1 sm:order-2" />
+            </div>
           </div>
         </form>
       </Card>
