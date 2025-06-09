@@ -1,24 +1,24 @@
 import { apiClient } from '@/services/';
 import { employerApiRoutes } from '@views/employees/infrastructure/routes/Employee.ApiRoutes';
-import type { Employee } from '@/views/employees/domain/Employee';
+import type { EmployeeApiAdapter } from '@/views/employees/adapters/';
 
 export const EmployeeApi = {
-  async getAll(): Promise<Employee[]> {
+  async getAll(): Promise<EmployeeApiAdapter[]> {
     const response = await apiClient.get(employerApiRoutes.list);
     return response.data;
   },
 
-  async getById(id: string): Promise<Employee> {
+  async getById(id: string): Promise<EmployeeApiAdapter> {
     const response = await apiClient.get(employerApiRoutes.details(id));
     return response.data;
   },
 
-  async create(data: Employee): Promise<Employee> {
+  async create(data: EmployeeApiAdapter): Promise<EmployeeApiAdapter> {
     const response = await apiClient.post(employerApiRoutes.list, data);
     return response.data;
   },
 
-  async update(id: string, data: Employee): Promise<Employee> {
+  async update(id: string, data: EmployeeApiAdapter): Promise<EmployeeApiAdapter> {
     const response = await apiClient.put(employerApiRoutes.details(id), data);
     return response.data;
   },
@@ -27,7 +27,7 @@ export const EmployeeApi = {
     await apiClient.delete(employerApiRoutes.details(id));
   },
 
-  async search(query: string): Promise<Employee[]> {
+  async search(query: string): Promise<EmployeeApiAdapter[]> {
     const response = await apiClient.get(employerApiRoutes.search(query));
     return response.data;
   },

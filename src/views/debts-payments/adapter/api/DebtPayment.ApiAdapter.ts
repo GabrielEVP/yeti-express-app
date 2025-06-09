@@ -1,14 +1,28 @@
 import { DebtPayment } from '@/views/debts-payments/domain/';
 import { PaymentMethod } from '@/views/debts-payments/domain/';
 
-export class DebtPaymentApiAdapter extends DebtPayment {
-  static fromApi(apiData: any): DebtPayment {
+export class DebtPaymentApiAdapter {
+  public id: string;
+  public amount: number;
+  public date: Date;
+  public method: PaymentMethod;
+  public debt_id: string;
+
+  constructor(id: string, amount: number, date: Date, method: PaymentMethod, debt_id: string) {
+    this.id = id;
+    this.amount = amount;
+    this.date = new Date(date);
+    this.method = method;
+    this.debt_id = debt_id;
+  }
+
+  static fromApi(debtPaymentApiAdapter: DebtPaymentApiAdapter): DebtPayment {
     return new DebtPayment(
-      apiData.id,
-      apiData.amount,
-      apiData.date,
-      apiData.method as PaymentMethod,
-      apiData.debt_id
+      debtPaymentApiAdapter.id,
+      debtPaymentApiAdapter.amount,
+      debtPaymentApiAdapter.date,
+      debtPaymentApiAdapter.method as PaymentMethod,
+      debtPaymentApiAdapter.debt_id
     );
   }
 
