@@ -128,7 +128,19 @@
           {{ formatToDollars(delivery.getService().getTotalEarning()) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
-          <Bagde> {{ delivery.getStatusToFormat() }} </Bagde>
+          <Bagde
+            :class="
+              delivery.getStatus() == DeliveryStatus.PENDING
+                ? 'border-blue-500'
+                : delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+                  ? 'border-yellow-500'
+                  : delivery.getStatus() == DeliveryStatus.DELIVERED
+                    ? 'border-green-500'
+                    : 'border-red-500'
+            "
+          >
+            {{ delivery.getStatusToFormat() }}
+          </Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -184,7 +196,17 @@
                   {{ formatDateCustom(delivery.getDate()) }}
                 </p>
               </div>
-              <Bagde>
+              <Bagde
+                :class="
+                  delivery.getStatus() == DeliveryStatus.PENDING
+                    ? 'border-blue-500'
+                    : delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+                      ? 'border-yellow-500'
+                      : delivery.getStatus() == DeliveryStatus.DELIVERED
+                        ? 'border-green-500'
+                        : 'border-red-500'
+                "
+              >
                 {{ delivery.getStatusToFormat() }}
               </Bagde>
             </div>

@@ -56,10 +56,10 @@ export class Debt {
   }
 
   getPaidAmount(): number {
-    return this.payments.reduce((total, payment) => total + payment.getAmount(), 0);
+    return this.payments.reduce((total, payment) => total + Number(payment.getAmount()), 0);
   }
 
   getRemainingAmount(): number {
-    return this.amount - this.getPaidAmount();
+    return this.amount - Number(this.getPaidAmount());
   }
 }

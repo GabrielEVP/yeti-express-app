@@ -152,14 +152,14 @@ export class Client {
 
   getTotalInvoiced(): number {
     return this.deliveries.reduce((total, delivery) => {
-      return total + delivery.getService().getAmount();
+      return total + Number(delivery.getService().getAmount());
     }, 0);
   }
 
   getEarningsDelivery(): number {
     return this.getDeliveries().reduce((total, delivery) => {
       return delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID
-        ? total + delivery.getService().getTotalEarning()
+        ? total + Number(delivery.getService().getTotalEarning())
         : total;
     }, 0);
   }
@@ -167,7 +167,7 @@ export class Client {
   getPendingEarnings(): number {
     return this.getDeliveries().reduce((total, delivery) => {
       return delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID
-        ? total + delivery.getService().getTotalEarning()
+        ? total + Number(delivery.getService().getTotalEarning())
         : total;
     }, 0);
   }
@@ -182,7 +182,9 @@ export class Client {
       const isSameMonthAndYear =
         deliveryDate.month() === currentMonth && deliveryDate.year() === currentYear;
 
-      return isPaid && isSameMonthAndYear ? total + delivery.getService().getTotalEarning() : total;
+      return isPaid && isSameMonthAndYear
+        ? total + Number(delivery.getService().getTotalEarning())
+        : total;
     }, 0);
   }
 
@@ -190,14 +192,14 @@ export class Client {
     return this.debts.reduce((total, debt) => {
       const status = debt.getStatus();
       return status === DebtStatus.PENDING || status === DebtStatus.PARTIAL_PAID
-        ? total + debt.getAmount()
+        ? total + Number(debt.getAmount())
         : total;
     }, 0);
   }
 
   getDebtsPaidAmount(): number {
     return this.debts.reduce((total, debt) => {
-      return debt.getStatus() === DebtStatus.PAID ? total + debt.getAmount() : total;
+      return debt.getStatus() === DebtStatus.PAID ? total + Number(debt.getAmount()) : total;
     }, 0);
   }
 }

@@ -56,8 +56,8 @@
                     :items="clientsAddressOptions"
                   />
                 </div>
-                <div class="flex items-center justify-center w-full">
-                  <PlusButton @click="openModalClientForm" class="w-full md:w-auto">
+                <div class="flex items-center justify-center w-full col-span-2 xl:col-span-1">
+                  <PlusButton @click="openModalClientForm" class="w-full justify-center xl:w-auto">
                     <span class="text-white ml-2 text-sm md:text-base">Agregar Cliente</span>
                   </PlusButton>
                 </div>
