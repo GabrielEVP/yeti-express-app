@@ -2,7 +2,7 @@ export * from './adapters/api/Employee.ApiAdapter';
 export * from './adapters/form/Employee.FormAdapter';
 export * from './domain/Employee';
 export * from './domain/IEmployeeRepository';
-export * from './domain/Role';
+export * from './domain/enum/Role';
 export * from './factory/Employee.Factory';
 export * from './infrastructure/Employee.Api';
 export * from './infrastructure/Employee.RepositoryImpl';

@@ -44,7 +44,7 @@
         <TableContent>{{ employee.getName() }}</TableContent>
         <TableContent>{{ employee.getEmail() }}</TableContent>
         <TableContent>
-          <Bagde class="break-words text-right">{{ employee.getRole() }} </Bagde>
+          <Bagde class="break-words text-right">{{ employee.getRoleToFormat() }} </Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -73,7 +73,7 @@
                 </p>
               </div>
               <Bagde class="break-words text-right">
-                {{ employee.getRole() }}
+                {{ employee.getRoleToFormat() }}
               </Bagde>
             </div>
             <div class="flex justify-between items-center">

@@ -9,7 +9,8 @@
           </h1>
           <div class="flex items-center gap-2">
             <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Permisos</h5>
-            <Text>| {{ employee.getRole() }}</Text>
+            |
+            <Bagde>{{ employee.getRoleToFormat() }}</Bagde>
           </div>
         </div>
         <div class="flex gap-2 justify-end">
@@ -27,18 +28,18 @@
               <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SectionText title="Nombre" :content="employee.getName()" />
-                  <SectionText title="Correo electronico" :content="employee.getEmail()" />
+                  <SectionText title="Correo Electronico" :content="employee.getEmail()" />
                   <SectionText title="Permisos" :content="employee.getRole()" />
                 </div>
               </div>
             </div>
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
-            <ActivityView title="Ultima Actualizacion">
+            <ActivityView title="Ultima Actualización">
               <div class="text-2xl font-bold">{{ formatDateShort(employee.getUpdatedAt()) }}</div>
               <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getUpdatedAt()) }}</p>
             </ActivityView>
-            <ActivityView title="Creacion del empleado">
+            <ActivityView title="Creación del empleado">
               <div class="text-2xl font-bold">{{ formatDateShort(employee.getCreatedAt()) }}</div>
               <p class="text-xs text-gray-500">{{ formatRelativeDate(employee.getCreatedAt()) }}</p>
             </ActivityView>
@@ -64,9 +65,9 @@ import {
   SectionText,
   Card,
   ActionsButton,
-  Text,
   ActivityView,
   LoadingSkeleton,
+  Bagde,
 } from '@/components/';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import type { Employee } from '@/views/employees/domain/Employee';

@@ -8,8 +8,15 @@
           </h2>
           <FieldForm label="Nombre" name="name" id="name" required />
           <FieldForm label="Email" name="email" id="email" required />
-          <FieldForm label="Contraseña" name="password" id="password" type="password" required />
           <SelectForm label="Permisos" name="role" :items="[...RoleOptions]" />
+          <FieldForm label="Contraseña" name="password" id="password" type="password" required />
+          <FieldForm
+            label="Confirmar Contraseña"
+            name="confirmPassword"
+            id="confirmPassword"
+            type="password"
+            required
+          />
           <div class="flex justify-end space-x-2">
             <CancelButton @click="router.back()" />
             <AcceptButton :disabled="!meta.valid" />
@@ -26,7 +33,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { SideBar, Card, FieldForm, SelectForm, AcceptButton, CancelButton } from '@/components';
 import { Employee } from '@/views/employees/domain/Employee';
-import { RoleOptions } from '@/views/employees/domain/Role';
+import { RoleOptions } from '@/views/employees/domain/enum/Role';
 import { EmployeeSchema } from '@/views/employees/schemas/Employee.Schema';
 import {
   GetEmployeeByIdUseCase,

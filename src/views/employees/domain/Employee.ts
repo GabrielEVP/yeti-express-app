@@ -1,5 +1,6 @@
-import { Role } from '@/views/employees/domain/Role';
+import { Role } from '@/views/employees/domain/enum/Role';
 import { TimeLineContent } from '@time-line-content/domain';
+import { getRoleLabel } from '@/views/employees/domain/enum/Role';
 
 export class Employee {
   private readonly id: string;
@@ -70,5 +71,8 @@ export class Employee {
   }
   getUpdatedAt(): Date {
     return this.updatedAt;
+  }
+  getRoleToFormat(): string {
+    return getRoleLabel(this.role);
   }
 }

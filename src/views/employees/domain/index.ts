@@ -1,3 +1,3 @@
 export * from './Employee';
 export * from './IEmployeeRepository';
-export * from './Role';
+export * from './enum/Role';
