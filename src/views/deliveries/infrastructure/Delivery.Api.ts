@@ -46,7 +46,7 @@ export const DeliveryApi = {
   async getFilterAll(
     params: DeliveryFilterParams
   ): Promise<{ data: DeliveryApiAdapter[]; total: number }> {
-    const response = await apiClient.get(deliveryApiRoutes.list, {
+    const response = await apiClient.get(deliveryApiRoutes.filter, {
       params: {
         search: params.search,
         sortBy: params.sortBy,

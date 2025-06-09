@@ -2,6 +2,7 @@ import { DeliveryStatus } from '@views/deliveries/domain';
 
 export const deliveryApiRoutes = {
   list: '/deliveries',
+  filter: '/deliveries/filter',
   details: (id: number | string) => `/deliveries/${id}`,
   search: (search: string) => `/deliveries/search/${search}`,
   updateStatus: (deliveryStatus: DeliveryStatus) => `/deliveries/${deliveryStatus}/status/`,
