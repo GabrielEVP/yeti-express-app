@@ -70,7 +70,7 @@ export const ClientApi = {
     params: ClientFilterParams
   ): Promise<{ data: ClientApiAdapter[]; total: number }> {
     try {
-      const response = await apiClient.get(clientApiRoutes.list, {
+      const response = await apiClient.get(clientApiRoutes.filter, {
         params: {
           search: params.search,
           sortBy: params.sortBy,

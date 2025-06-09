@@ -16,14 +16,27 @@
             @input="runSearch"
           />
           <FilterButton class="w-full sm:w-auto">
-            <SelectForm
+            <SelectFilter
               label="Tipo de cliente"
               name="type"
               id="type"
-              :items="Array.from(ClientTypeOptions)"
+              :items="clientTypeOptions"
+              v-model="selectedType"
             >
               <option value="">Todos</option>
-            </SelectForm>
+            </SelectFilter>
+            <SelectFilter
+              label="Permitir crédito"
+              name="allowCredit"
+              id="allowCredit"
+              :items="[
+                { value: 'true', label: 'Sí' },
+                { value: 'false', label: 'No' },
+              ]"
+              v-model="selectedCredit"
+            >
+              <option value="">Todos</option>
+            </SelectFilter>
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
@@ -39,14 +52,24 @@
         />
       </div>
     </Card>
+    <div
+      v-if="error"
+      class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+      role="alert"
+    >
+      {{ error }}
+    </div>
     <TableDashboard
+      v-if="!isLoading"
       :headers="[...TABLE_HEADER_CLIENT]"
       :currentPage="currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="clients.length"
+      :totalItems="totalItems"
+      :sortState="sortConfig"
       @updatePage="updatePage"
+      @sort="handleSort"
     >
       <TableRow v-for="client in paginatedItems" :key="client.getId()">
         <TableContent class="text-black dark:text-white break-words">
@@ -99,11 +122,16 @@
         </div>
       </template>
     </TableDashboard>
+    <div v-else class="flex justify-center items-center p-8">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white"
+      ></div>
+    </div>
   </SideBar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
@@ -120,42 +148,87 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
-  SelectForm,
 } from '@/components/';
-import { Client, ClientTypeOptions } from '@/views/clients/domain/';
-import {
-  GetClientsUseCase,
-  DeleteClientUseCase,
-  SearchClientsUseCase,
-} from '@/views/clients/use-cases/';
+import { Client, ClientTypeOptions, formatClientType } from '@/views/clients/domain/';
+import { DeleteClientUseCase, SearchClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/presentation/constants/';
 import { AppRoutesClient } from '@/views/clients/presentation/routes';
+import SelectFilter from '@components/forms/SelectFilter.vue';
 
 const repository = new ClientRepositoryImpl();
-const getClientsUseCase = new GetClientsUseCase(repository);
 const deleteClientUseCase = new DeleteClientUseCase(repository);
 const searchClientsUseCase = new SearchClientsUseCase(repository);
 
 const clients = ref<Client[]>([]);
+const selectedType = ref<string>('');
+const selectedCredit = ref<string>('');
+const isLoading = ref(false);
+const error = ref<string | null>(null);
+const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
+
+const clientTypeOptions = [...ClientTypeOptions];
 
 const { searchQuery, applySearch } = useSearch<Client>({
   fetchFn: searchClientsUseCase.execute.bind(searchClientsUseCase),
   autoSearch: false,
 });
 
+watch([selectedType, selectedCredit, sortConfig], () => {
+  runSearch();
+});
+
 const runSearch = async () => {
-  if (searchQuery.value.trim() === '') {
-    clients.value = await getClientsUseCase.execute();
+  try {
+    isLoading.value = true;
+    error.value = null;
+
+    const filters: Record<string, any> = {};
+
+    if (selectedType.value) {
+      filters.type = selectedType.value;
+    }
+
+    if (selectedCredit.value) {
+      filters.allowCredit = selectedCredit.value === 'true';
+    }
+
+    const response = await repository.getFilterAll({
+      search: searchQuery.value.trim(),
+      filters,
+      page: currentPage.value,
+      perPage: 15,
+      sortBy: sortConfig.value?.column,
+      sortDirection: sortConfig.value?.order,
+    });
+
+    clients.value = response.data;
+    totalItems.value = response.total;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Error al cargar los clientes';
+    clients.value = [];
+    totalItems.value = 0;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
+  if (config) {
+    sortConfig.value = {
+      column: config.column as keyof Client,
+      order: config.order,
+    };
   } else {
-    clients.value = await applySearch();
+    sortConfig.value = null;
   }
 };
 
 onMounted(async () => {
-  clients.value = await getClientsUseCase.execute();
+  await runSearch();
 });
 
+const totalItems = ref(0);
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(
   clients,
   15

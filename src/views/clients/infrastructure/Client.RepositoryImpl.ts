@@ -49,10 +49,18 @@ export class ClientRepositoryImpl implements IClientRepository {
   }
 
   async getFilterAll(params: ClientFilterParams): Promise<{ data: Client[]; total: number }> {
-    const response = await ClientApi.getFilterAll(params);
-    return {
-      data: response.data.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean),
-      total: response.total,
-    };
+    try {
+      const response = await ClientApi.getFilterAll(params);
+      if (!response || !response.data) {
+        return { data: [], total: 0 };
+      }
+      return {
+        data: response.data.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean),
+        total: response.total || 0,
+      };
+    } catch (error) {
+      console.error('Error in getFilterAll:', error);
+      return { data: [], total: 0 };
+    }
   }
 }
