@@ -1,5 +1,5 @@
 <template>
-  <ConfirmationModal
+  <ConfirmationDeleteModal
     :isOpen="isOpen"
     message="¿Estás seguro que quieres eliminar este empleado?"
     @confirm="handleDeleteConfirmation"
@@ -106,7 +106,7 @@ import {
   TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationModal,
+  ConfirmationDeleteModal,
   FilterButton,
   SelectForm,
 } from '@/components/';

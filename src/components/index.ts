@@ -14,6 +14,7 @@ export { default as DownloadButton } from '@/components/buttons/Download.vue';
 export { default as PaidButton } from '@/components/buttons/Paid.vue';
 export { default as PartialButton } from '@/components/buttons/Partial.vue';
 export { default as DropdownButton } from '@/components/buttons/Dropdown.vue';
+export { default as ConfirmationButton } from '@/components/buttons/Confirmation.vue';
 
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';
@@ -58,8 +59,9 @@ export { default as Sheet } from '@/components/ui/Sheet.vue';
 export { default as Text } from '@/components/ui/Text.vue';
 
 // UI – MODALS
-export { default as ConfirmationModal } from '@/components/ui/modals/ConfirmationModal.vue';
+export { default as ConfirmationDeleteModal } from '@components/ui/modals/ConfirmationDeleteModal.vue';
 export { default as Modal } from '@/components/ui/modals/Modal.vue';
+export { default as ConfirmationActionModal } from '@/components/ui/modals/ConfirmationActionModal.vue';
 
 // UI – SIDEBAR HELPERS
 export { default as SideBar } from '@/layouts/BarLayourt.vue';

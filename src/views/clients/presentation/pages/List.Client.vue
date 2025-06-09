@@ -1,6 +1,6 @@
 <template>
   <SideBar>
-    <ConfirmationModal
+    <ConfirmationDeleteModal
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Cliente?"
       @confirm="handleDeleteConfirmation"
@@ -118,7 +118,7 @@ import {
   TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationModal,
+  ConfirmationDeleteModal,
   FilterButton,
   SelectForm,
 } from '@/components/';

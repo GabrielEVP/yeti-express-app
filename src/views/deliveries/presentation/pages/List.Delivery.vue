@@ -1,10 +1,16 @@
 <template>
   <SideBar>
-    <ConfirmationModal
+    <ConfirmationDeleteModal
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta Delivery?"
       @confirm="handleDeleteConfirmation"
       @cancel="close"
+    />
+    <ModalUpdateStatus
+      :isOpen="isStatusModalOpen"
+      :status="selectedStatus"
+      @confirm="confirmStatusUpdate"
+      @cancel="closeStatusModal"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
@@ -73,7 +79,10 @@
         <TableContent>
           <div class="flex gap-1 justify-center">
             <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />
-            <EditButton :route="AppRoutesDelivery.edit(delivery.getId())" />
+            <EditButton
+              v-if="delivery.getStatus() == DeliveryStatus.PENDING"
+              :route="AppRoutesDelivery.edit(delivery.getId())"
+            />
             <DownloadButton @click="handleDownload(delivery.getId())" />
             <TrashButton
               v-if="delivery.getStatus() == DeliveryStatus.PENDING"
@@ -164,7 +173,7 @@ import {
   EditButton,
   EyeButton,
   DownloadButton,
-  ConfirmationModal,
+  ConfirmationDeleteModal,
   FilterButton,
   SelectForm,
 } from '@/components/';
@@ -182,6 +191,7 @@ import { DeliveryStatus } from '@/views/deliveries/domain/enum';
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
 import Cancelled from '../components/button/Cancelled.vue';
+import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 
 const repository = new DeliveryRepositoryImpl();
 const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
@@ -230,8 +240,31 @@ const handleDownload = async (deliveryId: string) => {
   await confirmDelete();
 };
 
+const isStatusModalOpen = ref(false);
+const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
+const selectedDeliveryId = ref<string | undefined>(undefined);
+
+const openStatusModal = (id: string, status: DeliveryStatus) => {
+  selectedDeliveryId.value = id;
+  selectedStatus.value = status;
+  isStatusModalOpen.value = true;
+};
+
+const closeStatusModal = () => {
+  isStatusModalOpen.value = false;
+  selectedStatus.value = undefined;
+  selectedDeliveryId.value = undefined;
+};
+
+const confirmStatusUpdate = async () => {
+  if (selectedDeliveryId.value && selectedStatus.value) {
+    await updateDeliveryStatus.execute(selectedDeliveryId.value, selectedStatus.value);
+    await runSearch();
+    closeStatusModal();
+  }
+};
+
 async function handleUpdateStatus(id: string, status: DeliveryStatus) {
-  await updateDeliveryStatus.execute(id, status);
-  runSearch();
+  openStatusModal(id, status);
 }
 </script>

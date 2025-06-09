@@ -6,7 +6,7 @@
       :company-bill-id="selectedId"
       @close="CloseDetails"
     />
-    <ConfirmationModal
+    <ConfirmationDeleteModal
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta gastos?"
       @confirm="handleDeleteConfirmation"
@@ -120,7 +120,7 @@ import {
   NewButton,
   TrashButton,
   EditButton,
-  ConfirmationModal,
+  ConfirmationDeleteModal,
   FilterButton,
   Button,
 } from '@/components/';
