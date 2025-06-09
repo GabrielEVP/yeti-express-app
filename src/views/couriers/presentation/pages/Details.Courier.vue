@@ -7,10 +7,6 @@
           <h1 class="text-3xl font-bold tracking-tight">
             {{ courier.getFullName() }}
           </h1>
-          <div class="flex items-center gap-2">
-            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
-            <Text>| {{ courier.getId() }}</Text>
-          </div>
         </div>
         <div class="flex gap-2 justify-end">
           <ActionsButton title="Acciones" :datas="sectionActions" />

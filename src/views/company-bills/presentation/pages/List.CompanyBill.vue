@@ -31,7 +31,7 @@
           </FilterButton>
         </div>
         <NewButton
-          label="Nueva Gasto"
+          label="Nuevo Gasto"
           :URL="AppRoutesCompanyBill.new"
           class="w-full sm:w-auto md:w-auto"
         />

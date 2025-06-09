@@ -10,12 +10,12 @@
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
           <SearchForm
-            class="hidden md:block"
+            class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Empleado"
             @input="runSearch"
           />
-          <FilterButton class="w-full sm:w-auto">
+          <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
