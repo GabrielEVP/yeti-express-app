@@ -2,16 +2,16 @@ import { Role } from '@/views/employees/domain/Role';
 import { TimeLineContent } from '@time-line-content/domain';
 
 export class Employee {
-  readonly id: string;
-  private name: string;
-  private email: string;
-  private password: string;
-  private role: Role;
-  private active: boolean;
-  private userId: string;
-  private timeLineContent: TimeLineContent[];
-  private createdAt: Date;
-  private updatedAt: Date;
+  private readonly id: string;
+  private readonly name: string;
+  private readonly email: string;
+  private readonly password: string;
+  private readonly role: Role;
+  private readonly active: boolean;
+  private readonly userId: string;
+  private readonly timeLineContent: TimeLineContent[];
+  private readonly createdAt: Date;
+  private readonly updatedAt: Date;
 
   constructor(
     id: string,
