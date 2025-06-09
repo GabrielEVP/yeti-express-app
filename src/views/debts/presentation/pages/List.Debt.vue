@@ -35,13 +35,15 @@
     <DeliveryList
       :clientId="selectedClient?.getId() ?? null"
       :paymentStatus="selectedPaymentStatus"
-      :deliveries="filteredDeliveries"
+      :deliveries="filteredDeliveries as Delivery[]"
+      :isLoading="isLoading"
+      @refresh="handleRefresh"
     />
   </SideBar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { SideBar } from '@components';
 import { useModal } from '@composables';
 import { Client } from '@/views/clients/domain/';
@@ -49,7 +51,7 @@ import { GetClientsUseCase } from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
 import { Delivery, DeliveryPaymentStatus } from '@/views/deliveries/domain/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
-import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
+import { LoadDeliveriesWithDebtByClientUseCase } from '@/views/deliveries/use-cases/';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
@@ -64,19 +66,21 @@ const paymentStatusOptions = [
 const repository = new ClientRepositoryImpl();
 const deliveryRepository = new DeliveryRepositoryImpl();
 const getClientsUseCase = new GetClientsUseCase(repository);
-const getDeliveriesUseCase = new GetAllDeliveriesUseCase(deliveryRepository);
+const loadDeliveriesWithDebtByClientUseCase = new LoadDeliveriesWithDebtByClientUseCase(
+  deliveryRepository
+);
 
 const selectedPaymentStatus = ref('all');
-const searchTerm = ref('');
 
 const clients = ref<Client[]>([]);
 const selectedClient = ref<Client | null>(null);
 const allDeliveries = ref<Delivery[]>([]);
+const isLoading = ref(false);
 
 const filteredDeliveries = computed(() => {
   if (!selectedClient.value) return [];
 
-  let deliveries = selectedClient.value.getDeliveriesWithDebt();
+  let deliveries = allDeliveries.value;
 
   switch (selectedPaymentStatus.value) {
     case 'pending':
@@ -93,6 +97,32 @@ const filteredDeliveries = computed(() => {
   }
 
   return deliveries;
+});
+
+const loadDeliveries = async (clientId: string) => {
+  try {
+    isLoading.value = true;
+    allDeliveries.value = await loadDeliveriesWithDebtByClientUseCase.execute(clientId);
+  } catch (error) {
+    console.error('Error loading deliveries:', error);
+    allDeliveries.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleRefresh = async () => {
+  if (selectedClient.value) {
+    await loadDeliveries(selectedClient.value.getId());
+  }
+};
+
+watch(selectedClient, async (newClient) => {
+  if (newClient) {
+    await loadDeliveries(newClient.getId());
+  } else {
+    allDeliveries.value = [];
+  }
 });
 
 onMounted(async () => {

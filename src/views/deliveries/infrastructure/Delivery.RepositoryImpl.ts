@@ -111,4 +111,18 @@ export class DeliveryRepositoryImpl implements IDeliveryRepository {
       .map((delivery: DeliveryApiAdapter) => DeliveryApiAdapter.fromApi(delivery)!)
       .filter(Boolean);
   }
+
+  async loadWithDebt(): Promise<Delivery[]> {
+    const response = await DeliveryApi.loadWithDebt();
+    return response
+      .map((delivery: DeliveryApiAdapter) => DeliveryApiAdapter.fromApi(delivery)!)
+      .filter(Boolean);
+  }
+
+  async loadWithDebtByClient(clientId: string): Promise<Delivery[]> {
+    const response = await DeliveryApi.loadWithDebtByClient(clientId);
+    return response
+      .map((delivery: DeliveryApiAdapter) => DeliveryApiAdapter.fromApi(delivery)!)
+      .filter(Boolean);
+  }
 }

@@ -3,13 +3,13 @@
     v-if="selectedDelivery"
     v-model:isOpen="isFullModalOpen"
     :delivery="selectedDelivery"
-    @proccess="fetchDeliveries"
+    @proccess="handlePaymentProcess"
   />
   <PaymentPartialModalDebt
     v-if="selectedDelivery"
     v-model:isOpen="isPartialModalOpen"
     :delivery="selectedDelivery"
-    @proccess="fetchDeliveries"
+    @proccess="handlePaymentProcess"
   />
   <div class="space-y-3 mt-6 px-2 sm:px-0">
     <div
@@ -220,13 +220,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Delivery } from '@views/deliveries';
 import { usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Card, Bagde, Button, Text } from '@/components/';
-import { GetAllDeliveriesUseCase } from '@/views/deliveries/use-cases/';
-import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
 import PaymentFullModalDebt from '../payment/PaymentFullModal.Debt.vue';
 import PaymentPartialModalDebt from '../payment/PaymentPartialModal.Debt.vue';
 
@@ -234,50 +232,23 @@ const props = defineProps<{
   clientId: string | null;
   paymentStatus: string;
   deliveries: Delivery[];
+  isLoading: boolean;
 }>();
 
-const repository = new DeliveryRepositoryImpl();
-const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
+const emit = defineEmits<{
+  (e: 'refresh'): void;
+}>();
 
-const deliveries = ref<Delivery[]>([]);
+const deliveriesRef = ref(props.deliveries);
+const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveriesRef, 15);
 
+// Watch for changes in props.deliveries
 watch(
   () => props.deliveries,
   (newDeliveries) => {
-    deliveries.value = newDeliveries;
-  },
-  { immediate: true }
+    deliveriesRef.value = newDeliveries;
+  }
 );
-
-const fetchDeliveries = async () => {
-  if (!props.clientId) {
-    deliveries.value = [];
-    return;
-  }
-
-  let all: Delivery[] = [];
-  switch (props.paymentStatus) {
-    case 'pending':
-      all = await repository.getPaymentPending();
-      break;
-    case 'partially-paid':
-      all = await repository.getPartiallyPaid();
-      break;
-    case 'paid':
-      all = await repository.getPaid();
-      break;
-    default:
-      all = await getDeliveriesUseCase.execute();
-  }
-
-  deliveries.value = all.filter((d) => d.getClient()?.getId() === props.clientId);
-};
-
-watch([() => props.clientId, () => props.paymentStatus], fetchDeliveries);
-
-onMounted(fetchDeliveries);
-
-const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveries, 15);
 
 const selectedDelivery = ref<Delivery>();
 
@@ -292,6 +263,10 @@ const openFull = (delivery: Delivery) => {
 const openPartial = (delivery: Delivery) => {
   selectedDelivery.value = delivery;
   isPartialModalOpen.value = true;
+};
+
+const handlePaymentProcess = () => {
+  emit('refresh');
 };
 
 // Función para obtener las clases de estado

@@ -95,4 +95,14 @@ export const DeliveryApi = {
     const response = await apiClient.put(`${deliveryApiRoutes.list}/${id}/status`, { status });
     return response.data;
   },
+
+  async loadWithDebt(): Promise<DeliveryApiAdapter[]> {
+    const response = await apiClient.get(`${deliveryApiRoutes.list}/with-debt`);
+    return response.data;
+  },
+
+  async loadWithDebtByClient(clientId: string): Promise<DeliveryApiAdapter[]> {
+    const response = await apiClient.get(`${deliveryApiRoutes.list}/with-debt/client/${clientId}`);
+    return response.data;
+  },
 };
