@@ -29,7 +29,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SectionText title="Nombre" :content="employee.getName()" />
                   <SectionText title="Correo Electronico" :content="employee.getEmail()" />
-                  <SectionText title="Permisos" :content="employee.getRole()" />
+                  <SectionText title="Permisos" :content="employee.getRoleToFormat()" />
                 </div>
               </div>
             </div>
