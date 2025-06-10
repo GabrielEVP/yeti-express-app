@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import HomeView from '@views/home/HomeView.vue';
+import HomeView from '@views/home/presentation/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import { ClientRouter } from '@/views/clients/';
 import { DeliveryRouter } from '@/views/deliveries';
