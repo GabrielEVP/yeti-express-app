@@ -1,37 +1,29 @@
-export interface Delivery {
-  id: string;
-  date: string;
-  amount: number;
-  service: {
-    id: string;
-    name: string;
-    bills: Array<{
-      id: string;
-      amount: number;
-    }>;
-  };
-}
-
 export interface HistoricalDelivery {
   date: string;
-  count: number;
   total: number;
+}
+
+export interface HistoricalInvoiced {
+  date: string;
+  total: number;
+}
+
+export interface HistoricalBalance {
+  date: string;
+  total_expenses: number;
+  total_invoiced: number;
+  total_collected: number;
 }
 
 export interface DashboardStats {
   period: 'day' | 'week' | 'month' | 'year';
   start_date: string;
   end_date: string;
-  deliveries: {
-    total: number;
-    list: Delivery[];
-  };
+  total_delivered: number;
   total_invoiced: number;
-  debt_payments: number;
-  company_bills: number;
-  total_earnings: number;
-  cash_balance: number;
-  historical_data: {
-    deliveries: HistoricalDelivery[];
-  };
+  total_collected: number;
+  total_company_bills: number;
+  historical_delivered: HistoricalDelivery[];
+  historical_invoiced: HistoricalInvoiced[];
+  historical_balance: HistoricalBalance[];
 }
