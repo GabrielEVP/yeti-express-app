@@ -6,7 +6,7 @@ import {
 } from '@/views/deliveries/domain/enum/';
 import { DeliveryReceiptApiAdapter } from '@/views/deliveries/adapters/';
 import { ClientApiAdapter, ClientAddressApiAdapter } from '@/views/clients/adapters/';
-import { adaptCourier } from '@/views/couriers/';
+import { CourierApiAdapter } from '@/views/couriers/adapters/api';
 import { ServiceApiAdapter } from '@/views/services/';
 import { adaptTimeLineContent } from '@time-line-content/adapter';
 import { DebtApiAdapter } from '@/views/debts/adapter/';
@@ -102,7 +102,7 @@ export class DeliveryApiAdapter {
       ServiceApiAdapter.fromApi(apiData.service),
       ClientApiAdapter.fromApi(apiData.client),
       ClientAddressApiAdapter.fromApi(apiData.client_address),
-      adaptCourier(apiData.courier),
+      CourierApiAdapter.fromApi(apiData.courier),
       Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
       DeliveryReceiptApiAdapter.fromApi(apiData.receipt),
       DebtApiAdapter.fromApi(apiData.debt),

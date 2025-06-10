@@ -36,11 +36,11 @@
             <ActivityView title="Pedidos por entregar">
               <div class="text-2xl font-bold">{{ courier.getPendingDeliveries().length }}</div>
             </ActivityView>
-            <ActivityView title="Ultima Actualizacion">
+            <ActivityView title="Última Actualización">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.getUpdatedAt()) }}</div>
               <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.getUpdatedAt()) }}</p>
             </ActivityView>
-            <ActivityView title="Creacion del cliente">
+            <ActivityView title="Creación del cliente">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.getCreatedAt()) }}</div>
               <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.getCreatedAt()) }}</p>
             </ActivityView>
@@ -58,7 +58,7 @@
           <TableDeliveries :deliveries="courier.getPendingDeliveries()" />
           <ChartDelivery
             :deliveries="courier.getDeliveredDeliveries()"
-            title="Estadistica mensual de los deliverys"
+            title="Estadística mensual de los deliverys"
             label="Total deliverys"
           />
         </div>

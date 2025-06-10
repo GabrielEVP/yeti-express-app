@@ -32,7 +32,13 @@
               {{ delivery.getPaymentStatusToFormat() }}
             </span>
           </div>
-          <div class="text-right">
+          <div
+            v-if="
+              !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
+              delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
+            "
+            class="text-right"
+          >
             <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
             </div>
@@ -56,7 +62,13 @@
         </div>
 
         <!-- Botones de acción -->
-        <div class="flex flex-col gap-2.5">
+        <div
+          v-if="
+            !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
+            delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
+          "
+          class="flex flex-col gap-2.5"
+        >
           <button
             @click="openFull(delivery as Delivery)"
             class="w-full px-4 py-3 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-200 shadow-sm active:scale-98"
@@ -87,7 +99,13 @@
             {{ delivery.getPaymentStatusToFormat() }}
           </Bagde>
         </div>
-        <div class="flex items-center gap-8">
+        <div
+          v-if="
+            !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
+            delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
+          "
+          class="flex items-center gap-8"
+        >
           <div class="text-right">
             <Text class="text-lg font-semibold">
               {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
@@ -97,7 +115,13 @@
             </Text>
           </div>
 
-          <div class="flex gap-2">
+          <div
+            v-if="
+              !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
+              delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
+            "
+            class="flex gap-2"
+          >
             <Button
               @click="openFull(delivery as Delivery)"
               class="text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200"

@@ -1,4 +1,4 @@
-export * from './adapters/Courier.ApiAdapter';
+export * from './adapters/api/Courier.ApiAdapter';
 export * from './adapters/api/Courier.ApiAdapter';
 export * from './adapters/form/Courier.FormAdapter';
 export * from './domain/Courier';

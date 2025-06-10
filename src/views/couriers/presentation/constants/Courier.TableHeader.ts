@@ -1,5 +1,5 @@
 export const TABLE_HEADER_COURIER = [
   { label: 'Nombre', key: 'first_name' },
   { label: 'Apellido', key: 'last_name' },
-  { label: 'Telefono', key: 'phone' },
+  { label: 'Teléfono', key: 'phone' },
 ];

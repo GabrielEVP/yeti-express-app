@@ -1,6 +1,5 @@
 import { TimeLineContent } from '@time-line-content/domain';
 import { Delivery, DeliveryStatus } from '@views/deliveries';
-import { DeliveryPaymentStatus } from '@views/deliveries/domain';
 import dayjs from 'dayjs';
 
 export class Courier {
@@ -92,6 +91,12 @@ export class Courier {
       delivery.getStatus() === DeliveryStatus.DELIVERED &&
         deliveryDate.month() === now.month() &&
         deliveryDate.year() === now.year();
+    });
+  }
+  getPendingOrTransitThisMonth(): Delivery[] {
+    return this.deliveries.filter((delivery) => {
+      delivery.getStatus() === DeliveryStatus.PENDING ||
+        delivery.getStatus() === DeliveryStatus.IN_TRANSIT;
     });
   }
 }
