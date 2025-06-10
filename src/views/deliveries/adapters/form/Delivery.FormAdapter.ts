@@ -23,6 +23,7 @@ export function mapFormToDelivery(form: any): Delivery {
     form.paymentType ?? PaymentType.PARTIAL,
     form.paymentStatus ?? DeliveryPaymentStatus.PENDING,
     form.notes ?? '',
+    form.amount ?? 0,
     ServiceFormAdapter.fromForm(form.service ?? {}),
     ClientFormAdapter.fromForm(form.client ?? {}),
     ClientAddressFormAdapter.fromForm(form.clientAddress ?? {}),
