@@ -32,3 +32,4 @@ export * from './use-cases/Client.GetByIdUseCase';
 export * from './use-cases/Client.GetUseCase';
 export * from './use-cases/Client.SearchUseCase';
 export * from './use-cases/Client.UpdateUseCase';
+export * from './use-cases/GetClientDebtReportUseCase';

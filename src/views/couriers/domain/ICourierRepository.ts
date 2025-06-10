@@ -7,4 +7,5 @@ export interface ICourierRepository {
   update(id: string, courier: Courier): Promise<Courier>;
   delete(id: string): Promise<void>;
   search(query: string): Promise<Courier[]>;
+  getDeliveriesReport(id: string): Promise<Blob>;
 }

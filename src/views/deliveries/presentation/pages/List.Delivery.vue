@@ -279,26 +279,23 @@ import {
   FilterButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Delivery, DeliveryStatusOptions, DeliveryStatus } from '@/views/deliveries/domain/';
-import {
-  GetAllDeliveriesUseCase,
-  DeleteDeliveryUseCase,
-  SearchDeliveriesUseCase,
-} from '@/views/deliveries/use-cases/';
+import { Delivery, DeliveryStatus } from '@/views/deliveries/domain/';
+import { DeleteDeliveryUseCase, SearchDeliveriesUseCase } from '@/views/deliveries/use-cases/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries/infrastructure/Delivery.RepositoryImpl';
 import { TABLE_HEADER_DELIVERY } from '@/views/deliveries/presentation/constants/';
 import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes';
 import { UpdateDeliveryStatusUseCase } from '@/views/deliveries/use-cases/UpdateDeliveryStatusUseCase';
+import { GetDeliveryTicketPDFUseCase } from '@/views/deliveries/use-cases/Delivery.GetTicketPdfUseCase';
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
 import Cancelled from '../components/button/Cancelled.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 
 const repository = new DeliveryRepositoryImpl();
-const getDeliveriesUseCase = new GetAllDeliveriesUseCase(repository);
 const deleteDeliveryUseCase = new DeleteDeliveryUseCase(repository);
 const searchDeliveriesUseCase = new SearchDeliveriesUseCase(repository);
 const updateDeliveryStatus = new UpdateDeliveryStatusUseCase(repository);
+const getTicketPDFUseCase = new GetDeliveryTicketPDFUseCase(repository);
 
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -335,7 +332,7 @@ const { searchQuery } = useSearch<Delivery>({
 watch(
   [selectedStatus, selectedPaymentStatus, selectedPaymentMethod, sortConfig, startDate, endDate],
   () => {
-    currentPage.value = 1; // Reset to first page when filters change
+    currentPage.value = 1;
     runSearch();
   }
 );
@@ -427,7 +424,27 @@ const handleDeleteConfirmation = async () => {
 };
 
 const handleDownload = async (deliveryId: string) => {
-  await confirmDelete();
+  try {
+    const blob = await getTicketPDFUseCase.execute(deliveryId);
+    if (blob.type === 'application/json') {
+      // Si recibimos JSON, probablemente es un error
+      const reader = new FileReader();
+      reader.onload = () => {
+        const error = JSON.parse(reader.result as string);
+        console.error('Error from server:', error);
+      };
+      reader.readAsText(blob);
+      return;
+    }
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    // Clean up the URL after a short delay to ensure the PDF loads
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 1000);
+  } catch (error) {
+    console.error('Error opening ticket:', error);
+  }
 };
 
 const openStatusModal = (id: string, status: DeliveryStatus) => {

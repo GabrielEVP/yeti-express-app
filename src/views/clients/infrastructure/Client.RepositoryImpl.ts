@@ -1,6 +1,6 @@
 import type { IClientRepository } from '@/views/clients/domain/IClientRepository';
 import type { Client } from '@/views/clients/domain/';
-import { ClientApi } from '@views/clients/infrastructure/Client.Api';
+import { ClientApi } from '@/views/clients/infrastructure/Client.Api';
 import { ClientApiAdapter } from '@/views/clients/adapters';
 
 interface ClientFilterParams {
@@ -15,7 +15,7 @@ interface ClientFilterParams {
 export class ClientRepositoryImpl implements IClientRepository {
   async getAll(): Promise<Client[]> {
     const response = await ClientApi.getAll();
-    return response.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean);
+    return response.map((client) => ClientApiAdapter.fromApi(client));
   }
 
   async getById(id: string): Promise<Client | null> {
@@ -23,20 +23,20 @@ export class ClientRepositoryImpl implements IClientRepository {
       const response = await ClientApi.getById(id);
       return ClientApiAdapter.fromApi(response);
     } catch (error) {
-      throw new Error(String(error));
+      return null;
     }
   }
 
   async create(client: Client): Promise<Client> {
     const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.create(payload);
-    return ClientApiAdapter.fromApi(response)!;
+    return ClientApiAdapter.fromApi(response);
   }
 
   async update(id: string, client: Client): Promise<Client> {
     const payload = ClientApiAdapter.toApi(client);
     const response = await ClientApi.update(id, payload);
-    return ClientApiAdapter.fromApi(response)!;
+    return ClientApiAdapter.fromApi(response);
   }
 
   async delete(id: string): Promise<void> {
@@ -45,7 +45,7 @@ export class ClientRepositoryImpl implements IClientRepository {
 
   async search(query: string): Promise<Client[]> {
     const response = await ClientApi.search(query);
-    return response.map((client) => ClientApiAdapter.fromApi(client)!).filter(Boolean);
+    return response.map((client) => ClientApiAdapter.fromApi(client));
   }
 
   async getFilterAll(params: ClientFilterParams): Promise<{ data: Client[]; total: number }> {
@@ -62,5 +62,9 @@ export class ClientRepositoryImpl implements IClientRepository {
       console.error('Error in getFilterAll:', error);
       return { data: [], total: 0 };
     }
+  }
+
+  async getDebtReport(id: string): Promise<Blob> {
+    return await ClientApi.getDebtReport(id);
   }
 }

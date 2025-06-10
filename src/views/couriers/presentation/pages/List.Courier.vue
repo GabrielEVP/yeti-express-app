@@ -49,6 +49,7 @@
             <EyeButton :route="AppRoutesCourier.details(courier.getId())" />
             <EditButton :route="AppRoutesCourier.edit(courier.getId())" />
             <TrashButton @click="() => open(courier.getId())" />
+            <DownloadButton @click="() => handleReport(courier as Courier)" />
           </div>
         </TableContent>
       </TableRow>
@@ -76,6 +77,7 @@
                 <EyeButton :route="AppRoutesCourier.details(courier.getId())" />
                 <EditButton :route="AppRoutesCourier.edit(courier.getId())" />
                 <TrashButton @click="() => open(courier.getId())" />
+                <DownloadButton @click="() => handleReport(courier as Courier)" />
               </div>
             </div>
           </div>
@@ -102,13 +104,14 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
-  SelectForm,
+  DownloadButton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/domain/';
 import {
   GetCouriersUseCase,
   DeleteCourierUseCase,
   SearchCouriersUseCase,
+  GetCourierDeliveriesReportUseCase,
 } from '@/views/couriers/use-cases/';
 import { CourierRepositoryImpl } from '@/views/couriers/infrastructure/Courier.RepositoryImpl';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/presentation/constants/';
@@ -118,6 +121,7 @@ const repository = new CourierRepositoryImpl();
 const getCouriersUseCase = new GetCouriersUseCase(repository);
 const deleteCourierUseCase = new DeleteCourierUseCase(repository);
 const searchCouriersUseCase = new SearchCouriersUseCase(repository);
+const getCourierDeliveriesReportUseCase = new GetCourierDeliveriesReportUseCase(repository);
 
 const couriers = ref<Courier[]>([]);
 
@@ -154,5 +158,14 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
+};
+
+const handleReport = async (courier: Courier) => {
+  try {
+    const blob = await getCourierDeliveriesReportUseCase.execute(courier.getId());
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+  } catch (error) {}
 };
 </script>

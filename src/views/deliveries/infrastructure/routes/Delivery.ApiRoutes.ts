@@ -6,5 +6,5 @@ export const deliveryApiRoutes = {
   details: (id: number | string) => `/deliveries/${id}`,
   search: (search: string) => `/deliveries/search/${search}`,
   updateStatus: (deliveryStatus: DeliveryStatus) => `/deliveries/${deliveryStatus}/status/`,
-  ticket: (id: number | string) => `/deliveries/${id}`,
+  ticket: (id: number | string) => `/deliveries/${id}/ticket`,
 };

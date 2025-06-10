@@ -15,4 +15,5 @@ export interface IClientRepository {
     page?: number;
     perPage?: number;
   }): Promise<{ data: Client[]; total: number }>;
+  getDebtReport(id: string): Promise<Blob>;
 }

@@ -86,6 +86,17 @@ export const ClientApi = {
     }
   },
 
+  async getDebtReport(id: string): Promise<Blob> {
+    try {
+      const response = await apiClient.get(clientApiRoutes.debtReport(id), {
+        responseType: 'blob',
+      });
+      return response.data;
+    } catch (error) {
+      throw this.extractError(error);
+    }
+  },
+
   extractError(error: any): Error {
     if (error.response && error.response.data && error.response.data.message) {
       return new Error(error.response.data.message);

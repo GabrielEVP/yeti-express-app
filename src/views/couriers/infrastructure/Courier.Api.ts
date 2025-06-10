@@ -31,4 +31,11 @@ export const CourierApi = {
     const response = await apiClient.get(courierApiRoutes.search(query));
     return response.data;
   },
+
+  async getDeliveriesReport(id: string): Promise<Blob> {
+    const response = await apiClient.get(courierApiRoutes.deliveriesReport(id), {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
 };

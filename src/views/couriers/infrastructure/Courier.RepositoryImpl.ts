@@ -1,6 +1,6 @@
 import type { ICourierRepository } from '@/views/couriers/domain/ICourierRepository';
 import type { Courier } from '@/views/couriers/domain/Courier';
-import { CourierApi } from '@views/couriers/infrastructure/Courier.Api';
+import { CourierApi } from '@/views/couriers/infrastructure/Courier.Api';
 import { CourierApiAdapter } from '@/views/couriers/adapters';
 
 export class CourierRepositoryImpl implements ICourierRepository {
@@ -41,5 +41,9 @@ export class CourierRepositoryImpl implements ICourierRepository {
     return response
       .map((courier: CourierApiAdapter) => CourierApiAdapter.fromApi(courier)!)
       .filter(Boolean);
+  }
+
+  async getDeliveriesReport(id: string): Promise<Blob> {
+    return await CourierApi.getDeliveriesReport(id);
   }
 }

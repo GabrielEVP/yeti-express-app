@@ -86,6 +86,7 @@
             <EyeButton :route="AppRoutesClient.details(client.getId())" />
             <EditButton :route="AppRoutesClient.edit(client.getId())" />
             <TrashButton @click="open(client.getId())" />
+            <DownloadButton @click="handleReport(client)" />
           </div>
         </TableContent>
       </TableRow>
@@ -116,6 +117,7 @@
                 <EyeButton :route="AppRoutesClient.details(client.getId())" />
                 <EditButton :route="AppRoutesClient.edit(client.getId())" />
                 <TrashButton @click="open(client.getId())" />
+                <DownloadButton @click="handleReport(client)" />
               </div>
             </div>
           </div>
@@ -145,12 +147,17 @@ import {
   NewButton,
   TrashButton,
   EditButton,
+  DownloadButton,
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
 } from '@/components/';
-import { Client, ClientTypeOptions, formatClientType } from '@/views/clients/domain/';
-import { DeleteClientUseCase, SearchClientsUseCase } from '@/views/clients/use-cases/';
+import { Client, ClientTypeOptions } from '@/views/clients/domain/';
+import {
+  DeleteClientUseCase,
+  SearchClientsUseCase,
+  GetClientDebtReportUseCase,
+} from '@/views/clients/use-cases/';
 import { ClientRepositoryImpl } from '@/views/clients/infrastructure/Client.RepositoryImpl';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/presentation/constants/';
 import { AppRoutesClient } from '@/views/clients/presentation/routes';
@@ -159,6 +166,7 @@ import SelectFilter from '@components/forms/SelectFilter.vue';
 const repository = new ClientRepositoryImpl();
 const deleteClientUseCase = new DeleteClientUseCase(repository);
 const searchClientsUseCase = new SearchClientsUseCase(repository);
+const getClientDebtReportUseCase = new GetClientDebtReportUseCase(repository);
 
 const clients = ref<Client[]>([]);
 const selectedType = ref<string>('');
@@ -169,7 +177,7 @@ const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(n
 
 const clientTypeOptions = [...ClientTypeOptions];
 
-const { searchQuery, applySearch } = useSearch<Client>({
+const { searchQuery } = useSearch<Client>({
   fetchFn: searchClientsUseCase.execute.bind(searchClientsUseCase),
   autoSearch: false,
 });
@@ -245,5 +253,14 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
+};
+
+const handleReport = async (client: any) => {
+  try {
+    const blob = await getClientDebtReportUseCase.execute(client.getId());
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+  } catch (error) {}
 };
 </script>

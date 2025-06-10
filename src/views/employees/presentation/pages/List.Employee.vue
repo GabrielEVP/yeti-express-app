@@ -108,7 +108,6 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
-  SelectForm,
 } from '@/components/';
 import { Employee } from '@/views/employees/domain/Employee';
 import {
