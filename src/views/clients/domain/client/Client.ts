@@ -152,14 +152,14 @@ export class Client {
 
   getTotalInvoiced(): number {
     return this.deliveries.reduce((total, delivery) => {
-      return total + Number(delivery.getService().getAmount());
+      return total + Number(delivery.getAmount());
     }, 0);
   }
 
   getEarningsDelivery(): number {
     return this.getDeliveries().reduce((total, delivery) => {
       return delivery.getPaymentStatus() === DeliveryPaymentStatus.PAID
-        ? total + Number(delivery.getService().getTotalEarning())
+        ? total + Number(delivery.getAmount())
         : total;
     }, 0);
   }
@@ -167,7 +167,7 @@ export class Client {
   getPendingEarnings(): number {
     return this.getDeliveries().reduce((total, delivery) => {
       return delivery.getPaymentStatus() !== DeliveryPaymentStatus.PAID
-        ? total + Number(delivery.getService().getTotalEarning())
+        ? total + Number(delivery.getAmount())
         : total;
     }, 0);
   }
@@ -182,9 +182,7 @@ export class Client {
       const isSameMonthAndYear =
         deliveryDate.month() === currentMonth && deliveryDate.year() === currentYear;
 
-      return isPaid && isSameMonthAndYear
-        ? total + Number(delivery.getService().getTotalEarning())
-        : total;
+      return isPaid && isSameMonthAndYear ? total + Number(delivery.getAmount()) : total;
     }, 0);
   }
 

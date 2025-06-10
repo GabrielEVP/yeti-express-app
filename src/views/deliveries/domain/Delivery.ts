@@ -19,6 +19,7 @@ export class Delivery {
   private paymentType: PaymentType;
   private readonly paymentStatus: DeliveryPaymentStatus;
   private readonly notes: string;
+  private readonly amount: number;
   private readonly service: Service;
   private readonly client: Client | null;
   private readonly clientAddress: ClientAddress | null;
@@ -41,6 +42,7 @@ export class Delivery {
     paymentType: PaymentType,
     paymentStatus: DeliveryPaymentStatus,
     notes: string,
+    amount: number,
     service: Service,
     client: Client | null,
     clientAddress: ClientAddress | null,
@@ -62,6 +64,7 @@ export class Delivery {
     this.paymentType = paymentType;
     this.paymentStatus = paymentStatus;
     this.notes = notes;
+    this.amount = amount;
     this.service = service;
     this.client = client ?? null;
     this.clientAddress = clientAddress;
@@ -103,6 +106,10 @@ export class Delivery {
 
   getNotes(): string {
     return this.notes;
+  }
+
+  getAmount(): number {
+    return this.amount;
   }
 
   getService(): Service {

@@ -39,7 +39,7 @@
                 />
                 <SectionText
                   title="Importe Total"
-                  :content="formatToDollars(delivery.getService().getTotalEarning())"
+                  :content="formatToDollars(delivery.getAmount())"
                 />
                 <SectionText
                   title="Repartidor"
@@ -65,17 +65,13 @@
           <div class="text-2xl font-bold">
             {{ formatToDollars(delivery.getRemainingToCollect()) }}
           </div>
-          <p class="text-xs text-gray-500">
-            Total: {{ formatToDollars(delivery.getService().getTotalEarning()) }}
-          </p>
+          <p class="text-xs text-gray-500">Total: {{ formatToDollars(delivery.getAmount()) }}</p>
         </ActivityView>
         <ActivityView title="Restante a Cobrar">
           <div class="text-2xl font-bold">
             {{ formatToDollars(delivery.getRemainingToCollect()) }}
           </div>
-          <p class="text-xs text-gray-500">
-            Total: {{ formatToDollars(delivery.getService().getTotalEarning()) }}
-          </p>
+          <p class="text-xs text-gray-500">Total: {{ formatToDollars(delivery.getAmount()) }}</p>
         </ActivityView>
         <ActivityView title="Ultima Actualizacion">
           <div class="text-2xl font-bold">{{ formatDateShort(delivery.getUpdatedAt()) }}</div>

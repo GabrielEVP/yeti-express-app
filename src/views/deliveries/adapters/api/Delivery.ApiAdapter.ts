@@ -26,6 +26,7 @@ export class DeliveryApiAdapter {
   public payment_type: PaymentType;
   public payment_status: DeliveryPaymentStatus;
   public notes: string;
+  public amount: number;
   public service: Service;
   public client: Client | null;
   public client_address: ClientAddress | null;
@@ -48,6 +49,7 @@ export class DeliveryApiAdapter {
     payment_type: PaymentType,
     payment_status: DeliveryPaymentStatus,
     notes: string,
+    amount: number,
     service: Service,
     client: Client | null,
     client_address: ClientAddress | null,
@@ -69,6 +71,7 @@ export class DeliveryApiAdapter {
     this.payment_type = payment_type;
     this.payment_status = payment_status;
     this.notes = notes;
+    this.amount = amount;
     this.service = service;
     this.client = client;
     this.client_address = client_address;
@@ -95,6 +98,7 @@ export class DeliveryApiAdapter {
       (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
       (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
+      apiData.amount ?? 0,
       ServiceApiAdapter.fromApi(apiData.service),
       ClientApiAdapter.fromApi(apiData.client),
       ClientAddressApiAdapter.fromApi(apiData.client_address),
@@ -118,6 +122,7 @@ export class DeliveryApiAdapter {
       status: delivery.getStatus(),
       payment_type: delivery.getPaymentType(),
       notes: delivery.getNotes(),
+      amount: delivery.getAmount(),
       receipt: DeliveryReceiptApiAdapter.toApi(delivery.getReceipt() as DeliveryReceipt),
       client_id: delivery.getClientId(),
       courier_id: delivery.getCourierId(),
@@ -137,6 +142,7 @@ export class DeliveryApiAdapter {
       (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
       (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
+      apiData.amount ?? 0,
       ServiceApiAdapter.fromApi(apiData.service),
       null,
       null,
@@ -164,6 +170,7 @@ export class DeliveryApiAdapter {
       (apiData.payment_type as PaymentType) ?? PaymentType.FULL,
       (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
       apiData.notes ?? '',
+      apiData.amount ?? 0,
       ServiceApiAdapter.fromApi(apiData.service),
       null,
       null,

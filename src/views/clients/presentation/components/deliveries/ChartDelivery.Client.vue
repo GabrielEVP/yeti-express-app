@@ -46,7 +46,7 @@ function mapDeliveriesToBarChartData(
       year: 'numeric',
     });
 
-    const amount = delivery.getService().getTotalEarning();
+    const amount = delivery.getAmount();
     if (isNaN(amount)) continue;
 
     groupedByMonth[month] = (groupedByMonth[month] || 0) + amount;

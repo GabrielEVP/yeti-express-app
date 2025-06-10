@@ -23,7 +23,7 @@
                 {{ formatDateCustom(delivery.getDate()) }}
               </TableContent>
               <TableContent class="text-right">
-                {{ formatToDollars(delivery.getService().getTotalEarning()) }}
+                {{ formatToDollars(delivery.getAmount()) }}
               </TableContent>
               <TableContent class="text-center">
                 <Bagde>
@@ -61,7 +61,7 @@
           </div>
           <div class="flex justify-between items-center">
             <div class="text-lg font-bold text-gray-900 dark:text-gray-50">
-              {{ formatToDollars(delivery.getService().getTotalEarning()) }}
+              {{ formatToDollars(delivery.getAmount()) }}
             </div>
             <div class="flex gap-2">
               <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />

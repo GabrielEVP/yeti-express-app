@@ -125,7 +125,7 @@
           {{ delivery.getService().getName() }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
-          {{ formatToDollars(delivery.getService().getTotalEarning()) }}
+          {{ formatToDollars(delivery.getAmount()) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde
