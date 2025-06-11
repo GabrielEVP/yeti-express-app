@@ -15,7 +15,11 @@
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow v-for="delivery in deliveries" :key="delivery.getId()">
+            <TableRow
+              v-for="delivery in deliveries"
+              :key="delivery.getId()"
+              v-show="delivery.getStatus() === DeliveryStatus.PENDING"
+            >
               <TableContent class="text-gray-900 dark:text-gray-50">
                 {{ delivery.getNumber() }}
               </TableContent>
@@ -26,7 +30,13 @@
                 {{ formatToDollars(delivery.getAmount()) }}
               </TableContent>
               <TableContent class="text-center">
-                <Bagde>
+                <Bagde
+                  :class="
+                    delivery.getStatus() == DeliveryStatus.PENDING
+                      ? 'border-blue-500'
+                      : 'border-gray-500'
+                  "
+                >
                   {{ delivery.getStatusToFormat() }}
                 </Bagde>
               </TableContent>
@@ -92,7 +102,7 @@ import {
   EmptyData,
 } from '@/components/';
 import { formatToDollars, formatDateCustom, TransformBinaryToPdf } from '@/utils/';
-import { Delivery } from '@/views/deliveries/domain';
+import { Delivery, DeliveryStatus } from '@/views/deliveries/domain';
 import { AppRoutesDelivery } from '@views/deliveries';
 import { apiClient } from '@/services/';
 

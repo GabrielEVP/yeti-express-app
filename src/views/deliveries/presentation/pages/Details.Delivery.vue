@@ -8,7 +8,17 @@
           <div class="flex items-center gap-2">
             <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
             |
-            <Bagde>
+            <Bagde
+              :class="
+                delivery.getStatus() == DeliveryStatus.PENDING
+                  ? 'border-blue-500'
+                  : delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+                    ? 'border-yellow-500'
+                    : delivery.getStatus() == DeliveryStatus.DELIVERED
+                      ? 'border-green-500'
+                      : 'border-red-500'
+              "
+            >
               {{ delivery.getStatusToFormat() }}
             </Bagde>
           </div>
@@ -102,7 +112,11 @@ import {
 } from '@/components/';
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
-import { Delivery, CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@/views/deliveries/domain/';
+import {
+  Delivery,
+  CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS,
+  DeliveryStatus,
+} from '@/views/deliveries/domain/';
 import { DeliveryRepositoryImpl } from '@/views/deliveries';
 import { GetDeliveryByIdUseCase } from '@views/deliveries';
 import { AppRoutesDelivery } from '@/views/deliveries/presentation/routes/';

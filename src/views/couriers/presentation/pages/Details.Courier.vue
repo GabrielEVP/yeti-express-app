@@ -34,7 +34,9 @@
               <div class="text-2xl font-bold">{{ courier.getDeliveredThisMonth().length }}</div>
             </ActivityView>
             <ActivityView title="Pedidos por entregar">
-              <div class="text-2xl font-bold">{{ courier.getPendingDeliveries().length }}</div>
+              <div class="text-2xl font-bold">
+                {{ courier.getPendingOrTransitThisMonth().length }}
+              </div>
             </ActivityView>
             <ActivityView title="Última Actualización">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.getUpdatedAt()) }}</div>

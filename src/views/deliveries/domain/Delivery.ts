@@ -59,7 +59,7 @@ export class Delivery {
   ) {
     this.id = id;
     this.number = number;
-    this.date = typeof date === 'string' ? new Date(date) : date;
+    this.date = this.parseDate(date);
     this.status = status;
     this.paymentType = paymentType;
     this.paymentStatus = paymentStatus;
@@ -72,8 +72,8 @@ export class Delivery {
     this.timeLineContent = timeLineContent;
     this.receipt = receipt ?? null;
     this.debts = debts;
-    this.createdAt = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
-    this.updatedAt = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
+    this.createdAt = this.parseDate(createdAt);
+    this.updatedAt = this.parseDate(updatedAt);
     this.serviceId = serviceId;
     this.clientId = clientId;
     this.clientAddressId = clientAddressId;
@@ -182,5 +182,18 @@ export class Delivery {
 
   getRemainingToCollect(): number {
     return 0;
+  }
+  private parseDate(dateValue: Date | string): Date {
+    if (dateValue instanceof Date) {
+      return isNaN(dateValue.getTime()) ? new Date() : dateValue;
+    }
+
+    if (typeof dateValue === 'string' && dateValue.trim() !== '') {
+      const parsed = new Date(dateValue);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
+
+    // Si es string vacío o inválido, usa fecha actual
+    return new Date();
   }
 }

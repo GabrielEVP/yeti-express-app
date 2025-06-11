@@ -88,15 +88,19 @@ export class Courier {
 
     return this.deliveries.filter((delivery) => {
       const deliveryDate = dayjs(delivery.getUpdatedAt());
-      delivery.getStatus() === DeliveryStatus.DELIVERED &&
-        deliveryDate.month() === now.month() &&
-        deliveryDate.year() === now.year();
+      return (
+        delivery.getStatus() === DeliveryStatus.DELIVERED &&
+        deliveryDate.isSame(now, 'month') &&
+        deliveryDate.isSame(now, 'year')
+      );
     });
   }
   getPendingOrTransitThisMonth(): Delivery[] {
     return this.deliveries.filter((delivery) => {
-      delivery.getStatus() === DeliveryStatus.PENDING ||
-        delivery.getStatus() === DeliveryStatus.IN_TRANSIT;
+      return (
+        delivery.getStatus() === DeliveryStatus.PENDING ||
+        delivery.getStatus() === DeliveryStatus.IN_TRANSIT
+      );
     });
   }
 }
