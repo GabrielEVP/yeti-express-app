@@ -1,5 +1,6 @@
 <template>
   <SideBar>
+    <LoadingSkeleton v-if="isLoading" />
     <ConfirmationDeleteModal
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Servicio?"
@@ -120,6 +121,7 @@ import {
   ConfirmationDeleteModal,
   FilterButton,
   SelectForm,
+  LoadingSkeleton,
 } from '@/components/';
 import { Service } from '@/views/services/domain/';
 import {
@@ -137,6 +139,7 @@ const deleteServiceUseCase = new DeleteServiceUseCase(repository);
 const searchServicesUseCase = new SearchServicesUseCase(repository);
 
 const services = ref<Service[]>([]);
+const isLoading = ref(false);
 
 const { searchQuery, applySearch } = useSearch<Service>({
   fetchFn: searchServicesUseCase.execute.bind(searchServicesUseCase),
@@ -144,10 +147,15 @@ const { searchQuery, applySearch } = useSearch<Service>({
 });
 
 const runSearch = async () => {
-  if (searchQuery.value.trim() === '') {
-    services.value = await getServicesUseCase.execute();
-  } else {
-    services.value = await applySearch();
+  try {
+    isLoading.value = true;
+    if (searchQuery.value.trim() === '') {
+      services.value = await getServicesUseCase.execute();
+    } else {
+      services.value = await applySearch();
+    }
+  } finally {
+    isLoading.value = false;
   }
 };
 

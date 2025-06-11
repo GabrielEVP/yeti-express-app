@@ -1,5 +1,6 @@
 <template>
   <SideBar>
+    <LoadingSkeleton v-if="isLoading" />
     <ClientSelectorModal
       v-model:open="isOpen"
       :clients="clients as Client[]"
@@ -44,7 +45,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
-import { SideBar } from '@components';
+import { SideBar, LoadingSkeleton } from '@components';
 import { useModal } from '@composables';
 import { Client } from '@/views/clients/domain/';
 import { GetClientsUseCase } from '@/views/clients/use-cases/';

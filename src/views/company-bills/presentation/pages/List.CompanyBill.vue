@@ -1,5 +1,6 @@
 <template>
   <SideBar>
+    <LoadingSkeleton v-if="isLoading" />
     <ModalDetails
       v-if="selectedId !== null"
       :is-open="IsOpenDetails"
@@ -123,6 +124,7 @@ import {
   ConfirmationDeleteModal,
   FilterButton,
   Button,
+  LoadingSkeleton,
 } from '@/components/';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { CompanyBill } from '@/views/company-bills/domain/';
@@ -155,11 +157,18 @@ const { searchQuery, applySearch } = useSearch<CompanyBill>({
   autoSearch: false,
 });
 
+const isLoading = ref(false);
+
 const runSearch = async () => {
-  if (searchQuery.value.trim() === '') {
-    bills.value = await getCompanyBillsUseCase.execute();
-  } else {
-    bills.value = await applySearch();
+  try {
+    isLoading.value = true;
+    if (searchQuery.value.trim() === '') {
+      bills.value = await getCompanyBillsUseCase.execute();
+    } else {
+      bills.value = await applySearch();
+    }
+  } finally {
+    isLoading.value = false;
   }
 };
 

@@ -6,6 +6,7 @@
     @cancel="close"
   />
   <SideBar>
+    <LoadingSkeleton v-if="isLoading" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -108,6 +109,7 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
+  LoadingSkeleton,
 } from '@/components/';
 import { Employee } from '@/views/employees/domain/Employee';
 import {
@@ -125,6 +127,7 @@ const deleteEmployeeUseCase = new DeleteEmployeeUseCase(repository);
 const searchEmployeesUseCase = new SearchEmployeesUseCase(repository);
 
 const employees = ref<Employee[]>([]);
+const isLoading = ref(false);
 
 const { searchQuery, applySearch } = useSearch<Employee>({
   fetchFn: searchEmployeesUseCase.execute.bind(searchEmployeesUseCase),
@@ -132,11 +135,15 @@ const { searchQuery, applySearch } = useSearch<Employee>({
 });
 
 const runSearch = async () => {
-  if (searchQuery.value.trim() == '') {
-    return (employees.value = await getEmployeesUseCase.execute());
+  try {
+    isLoading.value = true;
+    if (searchQuery.value.trim() == '') {
+      return (employees.value = await getEmployeesUseCase.execute());
+    }
+    employees.value = await applySearch();
+  } finally {
+    isLoading.value = false;
   }
-
-  employees.value = await applySearch();
 };
 
 onMounted(async () => {

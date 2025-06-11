@@ -2,6 +2,7 @@
   <div
     class="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-50 flex items-center justify-center px-4"
   >
+    <DangerAlert :show="showError" :message="alertMessage" />
     <div
       class="relative max-w-md w-full bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl border border-white/20"
     >
@@ -115,14 +116,16 @@
 import { ref, reactive } from 'vue';
 import logo from '@/assets/yeti.webp';
 import { useRouter } from 'vue-router';
-import { FieldForm } from '@/components/';
+import { FieldForm, DangerAlert } from '@/components/';
 import { login as loginService, register as registerService } from '@/views/users';
 import { useAuthStore } from '@views/auth/store/Auth';
+import { useAlert } from '@/composables/';
 
 const router = useRouter();
 const isLogin = ref(true);
 const isLoading = ref(false);
 const authStore = useAuthStore();
+const { showError, alertMessage, triggerError } = useAlert();
 
 const form = reactive({
   name: '',
@@ -158,10 +161,8 @@ async function handleSubmit() {
     } else if (response.type == 'employee') {
       router.push('/deliveries');
     }
-
-    router.push('/home');
   } catch (error: any) {
-    console.error('Error en autenticación:', error.response?.data || error.message);
+    triggerError(error.response.data.message || 'Error en la autenticación');
   } finally {
     isLoading.value = false;
   }
