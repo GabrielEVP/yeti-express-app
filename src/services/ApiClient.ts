@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
   (response) => {
     if (response.data?.user) {
       const authStore = useAuthStore();
-      authStore.setUser(response.data.user);
+      authStore.setUser(response.data.user, response.data.type);
     }
     return response;
   },

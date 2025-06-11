@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { User } from '@/views/users/';
-import { Employee } from '@/views/employees/domain/Employee';
+import { Employee } from '@/views/employees/';
 
 type AuthUser = User | Employee;
 
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
   },
   getters: {
     isAuthenticated: (state) => !!state.accessToken,
-    isUser: (state) => state.type == 'User',
-    isEmployee: (state) => state.type == 'Employee',
+    isUser: (state) => state.type == 'user',
+    isEmployee: (state) => state.type == 'employee',
   },
 });

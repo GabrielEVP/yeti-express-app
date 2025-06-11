@@ -51,10 +51,25 @@ const { handleSubmit, setValues, meta } = useForm<User>({
   initialValues: { ...USERDEFAULTFORMVALUES },
 });
 
+const router = useRouter();
 const authStore = useAuthStore();
-const user = authStore.getUser;
+const user = authStore.user;
+
+if (!user) {
+  router.push('/login');
+}
+
 onMounted(() => {
-  setValues({ ...user });
+  if (user) {
+    const userInstance = new User(
+      user.getId(),
+      user.getName(),
+      user.getEmail(),
+      'getProfileImage' in user ? user.getProfileImage() : null,
+      user.getPassword()
+    );
+    setValues(userInstance);
+  }
 });
 
 const profileImageFile = ref<File | null>(null);
@@ -69,25 +84,29 @@ const handleFileChange = (event: Event) => {
   }
 };
 
-const router = useRouter();
 const { showError, alertMessage, triggerError } = useAlert();
 
 const onSubmit = handleSubmit(async (values) => {
-  const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-  formData.append('name', values.getName());
-  formData.append('email', values.getEmail());
+    formData.append('name', values.getName());
+    formData.append('email', values.getEmail());
 
-  if (profileImageFile.value) {
-    formData.append('profile_image', profileImageFile.value);
-  }
+    if (profileImageFile.value) {
+      formData.append('profile_image', profileImageFile.value);
+    }
 
-  const response = await updateUser(formData);
+    const response = await updateUser(formData);
 
-  if (response.user) {
-    authStore.setUser(response.user);
-  } else {
-    triggerError('Error al actualizar el usuario');
+    if (response.user) {
+      authStore.setUser(response.user, authStore.type || 'user');
+      router.push('/users/details');
+    } else {
+      triggerError('Error al actualizar el usuario');
+    }
+  } catch (error: any) {
+    triggerError(error.response?.data?.message || 'Error al actualizar el usuario');
   }
 });
 </script>

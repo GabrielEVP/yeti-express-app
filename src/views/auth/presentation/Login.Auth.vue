@@ -117,7 +117,7 @@ import logo from '@/assets/yeti.webp';
 import { useRouter } from 'vue-router';
 import { FieldForm } from '@/components/';
 import { login as loginService, register as registerService } from '@/views/users';
-import { useAuthStore } from '@/stores/Auth';
+import { useAuthStore } from '@views/auth/store/Auth';
 
 const router = useRouter();
 const isLogin = ref(true);
@@ -148,13 +148,14 @@ async function handleSubmit() {
       response = await registerService(form.name, form.email, form.password);
     }
 
-    if (response?.access_token && response?.user && response.type == 'user') {
+    if (response?.access_token && response?.user) {
       authStore.setAccessToken(response.access_token);
-      authStore.setUser(response.user, 'User');
+      authStore.setUser(response.user, response.type);
+    }
+
+    if (response.type == 'user') {
       router.push('/home');
-    } else if (response?.access_token && response?.user && response.type == 'employee') {
-      authStore.setAccessToken(response.access_token);
-      authStore.setUser(response.user, 'Employee');
+    } else if (response.type == 'employee') {
       router.push('/deliveries');
     }
 

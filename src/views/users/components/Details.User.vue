@@ -7,7 +7,7 @@
         </div>
       </div>
       <div class="flex justify-center items-center min-h-screen">
-        <Card class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100">
+        <Card v-if="user" class="md:col-span-2 dark:bg-gray-800 dark:text-gray-100">
           <div class="p-6">
             <h2 class="text-xl font-semibold flex items-center gap-2 mb-4">
               <UserRound class="h-5 w-5" />
@@ -24,35 +24,28 @@
   </SideBar>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { UserRound } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/';
-import { User } from '@/views/users/';
 import { SideBar, SectionText, Card, ActionsButton } from '@/components/';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
-const userData = authStore.getUser;
+const user = computed(() => authStore.user);
+const router = useRouter();
 
-const user = ref<User>(
-  userData
-    ? new User(
-        userData.getId(),
-        userData.getName(),
-        userData.getEmail(),
-        userData.getProfileImage(),
-        userData.getPassword()
-      )
-    : new User('', '', '', null, '')
-);
+if (!user.value) {
+  router.push('/login');
+}
 
 const sectionActions = [
   {
     content: 'Editar usuario',
-    url: `/users/edit/`,
+    url: `/users/edit`,
   },
   {
     content: 'Cambiar contraseña',
-    url: `/users/changePassword/`,
+    url: `/users/changePassword`,
   },
 ];
 </script>

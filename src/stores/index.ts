@@ -1,2 +1,2 @@
-export * from "./Alert";
-export * from "./Auth";
+export * from './Alert';
+export * from '../views/auth/store/Auth';
