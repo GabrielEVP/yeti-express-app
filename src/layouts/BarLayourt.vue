@@ -20,7 +20,10 @@
       <hr class="border-gray-200 dark:border-gray-700 mx-3 shrink-0" />
       <nav class="py-6 flex-1">
         <ul class="p-4 space-y-4 flex flex-col">
-          <li v-for="item in navigationItems" :key="item.route">
+          <li
+            v-for="item in isUser ? navigationItemsUser : navigationItemsEmployer"
+            :key="item.route"
+          >
             <NavigationItem :item="item" @click="closeMobileMenu" />
           </li>
         </ul>
@@ -84,6 +87,12 @@ import { DangerAlert, SuccessAlert } from '@/components/';
 import NavigationItem from '@/components/ui/sidebars/SidebarItems.vue';
 import ToggleDarkMode from '@/components/ui/sidebars/SidebarToggleMode.vue';
 import { useAlert } from '@/composables/';
+import { useAuthStore } from '@stores';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+
+const { isUser } = storeToRefs(authStore);
 
 const { showSuccess, showError, alertMessage } = useAlert();
 
@@ -91,7 +100,7 @@ const isDarkMode = ref(false);
 const isSidebarExpanded = ref(false);
 const isMobileMenuOpen = ref(false);
 
-const navigationItems = [
+const navigationItemsUser = [
   { route: '/home', title: 'Inicio', icon: HomeIcon },
   { route: '/deliveries', title: 'Deliverys', icon: ClipboardIcon },
   { route: '/clients', title: 'Clientes', icon: UsersIcon },
@@ -101,6 +110,15 @@ const navigationItems = [
   { route: '/company-bills', title: 'Gastos', icon: Banknote },
   { route: '/debts', title: 'Cuentas por cobrar', icon: WalletMinimal },
 ];
+
+const navigationItemsEmployer = [
+  { route: '/deliveries', title: 'Deliverys', icon: ClipboardIcon },
+  { route: '/clients', title: 'Clientes', icon: UsersIcon },
+  { route: '/couriers', title: 'Repartidor', icon: Bike },
+  { route: '/services', title: 'Servicios', icon: SquareChartGantt },
+  { route: '/company-bills', title: 'Gastos', icon: Banknote },
+];
+
 function toggleDarkMode() {
   isDarkMode.value = !isDarkMode.value;
   updateDarkMode();

@@ -6,6 +6,6 @@ export const DebtRouter: Array<RouteRecordRaw> = [
     path: '/debts',
     name: 'debts',
     component: List,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
 ];

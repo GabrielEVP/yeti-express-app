@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import HomeView from '@views/home/presentation/HomeView.vue';
-import LoginView from '@/views/LoginView.vue';
+import LoginView from '@views/auth/LoginView.vue';
 import { ClientRouter } from '@/views/clients/';
 import { DeliveryRouter } from '@/views/deliveries';
 import { EmployeeRouter } from '@views/employees';
@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/home',
     name: 'Home',
     component: HomeView,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   ...ClientRouter,
   ...CourierRouter,
@@ -44,13 +44,23 @@ setupRouteHistory(router);
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const { isAuthenticated } = storeToRefs(authStore);
+  const { isAuthenticated, isUser, isEmployee } = storeToRefs(authStore);
 
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     next({ path: '/' });
-  } else {
-    next();
+    return;
   }
+
+  if (to.meta.requiresAdmin && !isUser.value) {
+    if (isEmployee.value) {
+      next({ path: '/deliveries' });
+      return;
+    }
+    next({ path: '/' });
+    return;
+  }
+
+  next();
 });
 
 export default router;
