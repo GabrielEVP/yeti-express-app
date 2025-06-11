@@ -7,13 +7,14 @@ type AuthUser = User | Employee;
 interface AuthState {
   accessToken: string | null;
   user: AuthUser | null;
-  type?: string;
+  type: string;
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     accessToken: localStorage.getItem('accessToken') || null,
     user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+    type: localStorage.getItem('type') ? JSON.parse(localStorage.getItem('type')!) : null,
   }),
   actions: {
     setAccessToken(token: string | null) {
@@ -32,6 +33,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = userData;
       localStorage.setItem('user', JSON.stringify(userData));
       this.type = type;
+      localStorage.setItem('type', JSON.stringify(type));
     },
     clearUser() {
       this.user = null;

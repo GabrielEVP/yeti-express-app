@@ -15,11 +15,7 @@
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-              v-for="delivery in deliveries"
-              :key="delivery.getId()"
-              v-show="delivery.getStatus() === DeliveryStatus.PENDING"
-            >
+            <TableRow v-for="delivery in deliveries" :key="delivery.getId()">
               <TableContent class="text-gray-900 dark:text-gray-50">
                 {{ delivery.getNumber() }}
               </TableContent>
@@ -50,8 +46,6 @@
           </TableBody>
         </Table>
       </div>
-
-      <!-- Vista Mobile -->
       <div class="md:hidden space-y-4">
         <div
           v-for="delivery in deliveries"
