@@ -117,9 +117,9 @@ const fetchStats = async (period: string, date: string) => {
         historical_balance: [
           {
             date: 'Hoy',
-            total_expenses: 0,
-            total_invoiced: 0,
             total_collected: 0,
+            total_expenses: 0,
+            balance: 0,
           },
         ],
       };

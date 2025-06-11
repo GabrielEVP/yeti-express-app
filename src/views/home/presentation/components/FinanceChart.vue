@@ -39,23 +39,23 @@ const props = defineProps<{
 
 const chartData = computed(() => {
   const defaultData = {
-    labels: ['Balance'],
+    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
     datasets: [
       {
         label: 'Cobros',
-        data: [0],
+        data: [0, 0, 0, 0, 0, 0, 0],
         backgroundColor: '#3b82f6',
         borderRadius: 6,
       },
       {
         label: 'Gastos',
-        data: [0],
+        data: [0, 0, 0, 0, 0, 0, 0],
         backgroundColor: '#ef4444',
         borderRadius: 6,
       },
       {
-        label: 'Balance en caja',
-        data: [0],
+        label: 'Facturado',
+        data: [0, 0, 0, 0, 0, 0, 0],
         backgroundColor: '#10b981',
         borderRadius: 6,
       },
@@ -66,26 +66,29 @@ const chartData = computed(() => {
     return defaultData;
   }
 
-  const latestBalance = props.historicalBalance[props.historicalBalance.length - 1];
+  const labels = props.historicalBalance.map((b) => b.date);
+  const collectedData = props.historicalBalance.map((b) => b.total_collected);
+  const expensesData = props.historicalBalance.map((b) => b.total_expenses);
+  const balanceData = props.historicalBalance.map((b) => b.balance);
 
   return {
-    labels: ['Balance'],
+    labels,
     datasets: [
       {
-        label: 'Cobros',
-        data: [latestBalance.total_collected],
+        label: 'Ingresos',
+        data: collectedData,
         backgroundColor: '#3b82f6',
         borderRadius: 6,
       },
       {
         label: 'Gastos',
-        data: [latestBalance.total_expenses],
+        data: expensesData,
         backgroundColor: '#ef4444',
         borderRadius: 6,
       },
       {
-        label: 'Balance en caja',
-        data: [latestBalance.total_invoiced - latestBalance.total_expenses],
+        label: 'Balance',
+        data: balanceData,
         backgroundColor: '#10b981',
         borderRadius: 6,
       },

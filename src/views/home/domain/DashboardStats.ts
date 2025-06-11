@@ -10,9 +10,9 @@ export interface HistoricalInvoiced {
 
 export interface HistoricalBalance {
   date: string;
-  total_expenses: number;
-  total_invoiced: number;
   total_collected: number;
+  total_expenses: number;
+  balance: number;
 }
 
 export interface DashboardStats {
