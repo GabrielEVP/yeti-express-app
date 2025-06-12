@@ -13,14 +13,14 @@
             class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Repartidor"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
               placeholder="Buscar Repartidor"
-              @input="runSearch"
+              @input="debouncedSearch"
             />
           </FilterButton>
         </div>
@@ -31,7 +31,9 @@
         />
       </div>
     </Card>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
+      v-else
       :headers="TABLE_HEADER_COURIER"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -89,7 +91,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { usePagination, useSearch, useDebounce } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
@@ -105,6 +107,7 @@ import {
   ConfirmationDeleteModal,
   FilterButton,
   DownloadButton,
+  LoadingSkeleton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/domain/';
 import {
@@ -124,6 +127,7 @@ const searchCouriersUseCase = new SearchCouriersUseCase(repository);
 const getCourierDeliveriesReportUseCase = new GetCourierDeliveriesReportUseCase(repository);
 
 const couriers = ref<Courier[]>([]);
+const isLoading = ref(false);
 
 const { searchQuery, applySearch } = useSearch<Courier>({
   fetchFn: searchCouriersUseCase.execute.bind(searchCouriersUseCase),
@@ -131,12 +135,19 @@ const { searchQuery, applySearch } = useSearch<Courier>({
 });
 
 const runSearch = async () => {
-  if (searchQuery.value.trim() === '') {
-    couriers.value = await getCouriersUseCase.execute();
-  } else {
-    couriers.value = await applySearch();
+  try {
+    isLoading.value = true;
+    if (searchQuery.value.trim() === '') {
+      couriers.value = await getCouriersUseCase.execute();
+    } else {
+      couriers.value = await applySearch();
+    }
+  } finally {
+    isLoading.value = false;
   }
 };
+
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   couriers.value = await getCouriersUseCase.execute();

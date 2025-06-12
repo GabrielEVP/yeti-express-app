@@ -19,7 +19,7 @@
             class="hidden md:block"
             v-model="searchQuery"
             placeholder="Buscar Delivery"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto">
             <div class="flex flex-col gap-2">
@@ -77,7 +77,7 @@
                 class="sm:hidden"
                 v-model="searchQuery"
                 placeholder="Buscar Delivery"
-                @input="runSearch"
+                @input="debouncedSearch"
               />
             </div>
           </FilterButton>
@@ -89,15 +89,9 @@
         />
       </div>
     </Card>
-    <div
-      v-if="error"
-      class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
-      role="alert"
-    >
-      {{ error }}
-    </div>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
-      v-if="!isLoading"
+      v-else
       :headers="[...TABLE_HEADER_DELIVERY]"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -249,17 +243,12 @@
         </div>
       </template>
     </TableDashboard>
-    <div v-else class="flex justify-center items-center p-8">
-      <div
-        class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white"
-      ></div>
-    </div>
   </SideBar>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { useSearch, useDebounce } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
@@ -277,6 +266,7 @@ import {
   DownloadButton,
   ConfirmationDeleteModal,
   FilterButton,
+  LoadingSkeleton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Delivery, DeliveryStatus } from '@/views/deliveries/domain/';
@@ -405,6 +395,8 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
     sortConfig.value = null;
   }
 };
+
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   await runSearch();

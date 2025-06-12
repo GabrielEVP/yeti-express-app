@@ -13,7 +13,7 @@
             class="hidden md:block"
             v-model="searchQuery"
             placeholder="Buscar Cliente"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto">
             <SelectFilter
@@ -41,7 +41,7 @@
               class="sm:hidden"
               v-model="searchQuery"
               placeholder="Buscar Cliente"
-              @input="runSearch"
+              @input="debouncedSearch"
             />
           </FilterButton>
         </div>
@@ -52,15 +52,9 @@
         />
       </div>
     </Card>
-    <div
-      v-if="error"
-      class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
-      role="alert"
-    >
-      {{ error }}
-    </div>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
-      v-if="!isLoading"
+      v-else
       :headers="[...TABLE_HEADER_CLIENT]"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -124,17 +118,12 @@
         </div>
       </template>
     </TableDashboard>
-    <div v-else class="flex justify-center items-center p-8">
-      <div
-        class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white"
-      ></div>
-    </div>
   </SideBar>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { usePagination, useSearch, useDebounce } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
@@ -151,6 +140,7 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
+  LoadingSkeleton,
 } from '@/components/';
 import { Client, ClientTypeOptions } from '@/views/clients/domain/';
 import {
@@ -231,6 +221,8 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
     sortConfig.value = null;
   }
 };
+
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   await runSearch();

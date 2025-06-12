@@ -6,7 +6,6 @@
     @cancel="close"
   />
   <SideBar>
-    <LoadingSkeleton v-if="isLoading" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -14,14 +13,14 @@
             class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Empleado"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
               placeholder="Buscar Empleado"
-              @input="runSearch"
+              @input="debouncedSearch"
             />
           </FilterButton>
         </div>
@@ -32,7 +31,9 @@
         />
       </div>
     </Card>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
+      v-else
       :headers="TABLE_HEADER_EMPLOYEE"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -93,7 +94,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { usePagination, useSearch, useDebounce } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
@@ -145,6 +146,8 @@ const runSearch = async () => {
     isLoading.value = false;
   }
 };
+
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   employees.value = await getEmployeesUseCase.execute();

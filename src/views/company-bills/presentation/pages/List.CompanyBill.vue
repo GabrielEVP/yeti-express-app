@@ -1,6 +1,5 @@
 <template>
   <SideBar>
-    <LoadingSkeleton v-if="isLoading" />
     <ModalDetails
       v-if="selectedId !== null"
       :is-open="IsOpenDetails"
@@ -20,14 +19,14 @@
             class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Gastos"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
               placeholder="Buscar Gasto"
-              @input="runSearch"
+              @input="debouncedSearch"
             />
           </FilterButton>
         </div>
@@ -38,7 +37,9 @@
         />
       </div>
     </Card>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
+      v-else
       :headers="TABLE_HEADER_COMPANY_BILL"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -108,7 +109,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useModal } from '@/composables/';
+import { usePagination, useSearch, useModal, useDebounce } from '@/composables/';
 import ModalDetails from '../components/ModalDetails.CompanyBill.vue';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
@@ -144,6 +145,7 @@ const deleteCompanyBillUseCase = new DeleteCompanyBillUseCase(repository);
 const searchCompanyBillsUseCase = new SearchCompanyBillsUseCase(repository);
 
 const bills = ref<CompanyBill[]>([]);
+const isLoading = ref(false);
 
 const {
   isOpen: IsOpenDetails,
@@ -157,8 +159,6 @@ const { searchQuery, applySearch } = useSearch<CompanyBill>({
   autoSearch: false,
 });
 
-const isLoading = ref(false);
-
 const runSearch = async () => {
   try {
     isLoading.value = true;
@@ -171,6 +171,8 @@ const runSearch = async () => {
     isLoading.value = false;
   }
 };
+
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   bills.value = await getCompanyBillsUseCase.execute();

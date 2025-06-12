@@ -1,6 +1,5 @@
 <template>
   <SideBar>
-    <LoadingSkeleton v-if="isLoading" />
     <ConfirmationDeleteModal
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Servicio?"
@@ -14,14 +13,14 @@
             class="hidden sm:block"
             v-model="searchQuery"
             placeholder="Buscar Servicio"
-            @input="runSearch"
+            @input="debouncedSearch"
           />
           <FilterButton class="w-full sm:w-auto block sm:hidden">
             <SearchForm
               class="sm:hidden"
               v-model="searchQuery"
               placeholder="Buscar Servicio"
-              @input="runSearch"
+              @input="debouncedSearch"
             />
           </FilterButton>
         </div>
@@ -32,7 +31,9 @@
         />
       </div>
     </Card>
+    <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
+      v-else
       :headers="[...TABLE_HEADER_SERVICE]"
       :currentPage="currentPage"
       :totalPages="totalPages"
@@ -103,7 +104,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch } from '@/composables/';
+import { usePagination, useSearch, useDebounce } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import { formatToDollars } from '@utils';
 import {
@@ -120,7 +121,6 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
-  SelectForm,
   LoadingSkeleton,
 } from '@/components/';
 import { Service } from '@/views/services/domain/';
@@ -158,6 +158,7 @@ const runSearch = async () => {
     isLoading.value = false;
   }
 };
+const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   services.value = await getServicesUseCase.execute();

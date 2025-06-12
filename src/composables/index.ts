@@ -6,4 +6,5 @@ export * from './form/useVeeForm';
 export * from './modal/useDeleteModal';
 export * from './modal/useModal';
 export * from './useAlert';
+export * from './useDebounce';
 export * from './usePagination';
