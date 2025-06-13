@@ -108,10 +108,7 @@
             <DownloadButton @click="handleDownload(delivery.id)" />
             <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
             <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
-            <Cancelled
-              v-if="delivery.status == DeliveryStatus.IN_TRANSIT && delivery.status != DeliveryStatus.DELIVERED"
-              @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)"
-            />
+            <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)" />
             <Delivered
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
@@ -152,10 +149,7 @@
                 <DownloadButton @click="handleDownload(delivery.id)" />
                 <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
                 <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
-                <Cancelled
-                  v-if="delivery.status == DeliveryStatus.IN_TRANSIT && delivery.status != DeliveryStatus.DELIVERED"
-                  @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)"
-                />
+                <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)" />
                 <Delivered
                   v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
                   @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
@@ -194,14 +188,7 @@ import {
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Delivery } from '../models';
 import { DeliveryStatus } from '../models';
-import {
-  getAllDeliveries,
-  deleteDeliveryById,
-  searchDeliveries,
-  getFilteredDeliveries,
-  updateDeliveryStatus,
-  getDeliveryTicket,
-} from '@/views/deliveries/services';
+import { deleteDeliveryById, searchDeliveries, getFilteredDeliveries, updateDeliveryStatus, getDeliveryTicket } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 
@@ -277,8 +264,6 @@ const runSearch = async () => {
     const response = await getFilteredDeliveries({
       search: searchQuery.value.trim(),
       filters,
-      page: currentPage.value,
-      perPage: 15,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
     });

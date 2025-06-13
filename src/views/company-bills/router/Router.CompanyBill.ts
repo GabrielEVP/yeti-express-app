@@ -1,5 +1,11 @@
 import { RouteRecordRaw } from 'vue-router';
-import { Form, List } from '@/views/company-bills/presentation/pages';
+import { Form, List } from '@/views/company-bills/pages';
+
+export const AppRoutesCompanyBill = {
+  list: '/company-bills',
+  new: '/company-bills/new',
+  edit: (id: string | number) => `/company-bills/edit/${id}`,
+};
 
 export const CompanyBillRouter: Array<RouteRecordRaw> = [
   {

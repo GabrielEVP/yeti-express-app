@@ -158,8 +158,6 @@ const runSearch = async () => {
     const response = await getFilteredClients({
       search: searchQuery.value.trim(),
       filters,
-      page: currentPage.value,
-      perPage: 15,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
     });
