@@ -67,8 +67,4 @@ export class ClientRepositoryImpl implements IClientRepository {
       return { data: [], total: 0 };
     }
   }
-
-  async getDebtReport(id: string): Promise<Blob> {
-    return await ClientApi.getDebtReport(id);
-  }
 }
