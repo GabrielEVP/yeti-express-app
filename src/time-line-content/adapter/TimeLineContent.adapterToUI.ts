@@ -1,15 +1,8 @@
 import { formatDate } from '@/utils';
-import type {
-  TimeLineContent,
-  UITimeLineContent,
-  UITimeLineContentDefinitionMap,
-} from '@/time-line-content/domain';
+import type { TimeLineContent, UITimeLineContent, UITimeLineContentDefinitionMap } from '@/time-line-content/domain';
 import { Info } from 'lucide-vue-next';
 
-export function adaptTimeLineContentToUI(
-  events: TimeLineContent[],
-  definitions: UITimeLineContentDefinitionMap
-): UITimeLineContent[] {
+export function adaptTimeLineContentToUI(events: TimeLineContent[], definitions: UITimeLineContentDefinitionMap): UITimeLineContent[] {
   if (!events || events.length === 0) return [];
 
   return events.map((event) => {

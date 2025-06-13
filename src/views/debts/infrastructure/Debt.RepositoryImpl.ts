@@ -1,7 +1,7 @@
 import type { IDebtRepository } from '@/views/debts/domain/IDebtRepository';
 import type { Debt } from '@/views/debts/domain/';
 import type { DebtStatus } from '@/views/debts/domain/enum/DebtStatus';
-import { DebtApiAdapter } from '@/views/debts/adapter/api/DebtApiAdapter';
+import { DebtApiAdapter } from '@views/debts/adapter/api/DebtApiAdapter';
 import { apiClient } from '@/services';
 
 export class DebtRepositoryImpl implements IDebtRepository {

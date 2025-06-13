@@ -1,6 +1,6 @@
 import { Debt, DebtStatus } from '@/views/debts/domain/';
-import { ClientApiAdapter } from '@/views/clients/';
-import { DeliveryApiAdapter } from '@/views/deliveries/adapters/';
+import { adaptClient } from '@/views/clients/';
+import { adaptDelivery } from '@/views/deliveries/';
 import { DebtPaymentApiAdapter } from '@/views/debts-payments/adapter/';
 
 export class DebtApiAdapter {
@@ -12,8 +12,8 @@ export class DebtApiAdapter {
       apiData.amount ?? 0,
       (apiData.status as DebtStatus) ?? DebtStatus.PENDING,
       apiData.payments?.map(DebtPaymentApiAdapter.fromApi) ?? [],
-      ClientApiAdapter.fromApi(apiData.client),
-      DeliveryApiAdapter.fromApi(apiData.delivery)
+      adaptClient(apiData.client),
+      adaptDelivery(apiData.delivery)
     );
   }
 

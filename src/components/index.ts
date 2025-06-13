@@ -18,8 +18,6 @@ export { default as ConfirmationButton } from '@/components/buttons/Confirmation
 
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';
-export { default as TableBilling } from '@views/clients/presentation/components/deliveries/TableDelivery.Client.vue';
-export { default as ChartBilling } from '@views/clients/presentation/components/deliveries/ChartDelivery.Client.vue';
 export { default as TableDashboard } from '@/components/dashboard/Table.vue';
 
 // FORMS

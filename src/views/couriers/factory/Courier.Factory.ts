@@ -1,5 +1,3 @@
-import { Courier } from '@/views/couriers/domain/Courier';
+import { Courier } from '@/views/couriers/';
 
-export const createDefaultCourier = (): Courier => {
-  return new Courier('', '', '', '', true, [], [], new Date(), new Date());
-};
+export const createDefaultCourier = (): Courier => {};

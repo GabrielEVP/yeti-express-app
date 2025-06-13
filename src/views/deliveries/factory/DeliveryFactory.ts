@@ -1,44 +1,31 @@
-import {
-  PaymentType,
-  DeliveryStatus,
-  DeliveryPaymentStatus,
-} from '@/views/deliveries/domain/enum/';
-import { Delivery } from '@/views/deliveries/domain/Delivery';
-import { Service } from '@/views/services/domain/service/Service';
+import { Delivery, DeliveryReceipt } from '@/views/deliveries/';
+import { DeliveryStatus } from '@/views/deliveries/';
+import { DeliveryPaymentStatus } from '@/views/deliveries/';
+import { PaymentType } from '@/views/deliveries/';
+import { TimeLineContent } from '@time-line-content/domain';
 
-export function createDeliveryFormDefaults() {
-  const defaultService = new Service(
-    '', // id
-    '', // name
-    '', // description
-    0, // price
-    0, // price
-    false, // category
-    [], // subcategory
-    new Date(), // createdAt
-    new Date() // updatedAt
-  );
+export const createDefaultDeliveryReceipt = (): DeliveryReceipt => ({
+  id: '',
+  fullName: '',
+  phone: '',
+  address: '',
+});
 
-  return new Delivery(
-    '', // id
-    '', // number
-    new Date(), // date
-    DeliveryStatus.PENDING, // status
-    PaymentType.FULL, // paymentType
-    DeliveryPaymentStatus.PENDING, // paymentStatus
-    '', // notes
-    defaultService, // service
-    null, // client
-    null, // clientAddress
-    null, // courier
-    [], // timeLineContent
-    null, // receipt
-    null, // debts
-    new Date(), // createdAt
-    new Date(), // updatedAt
-    '', // serviceId
-    '', // clientId
-    '', // clientAddressId
-    '' // courierId
-  );
-}
+export const createDefaultDelivery = (): Delivery => ({
+  id: '',
+  number: '',
+  date: new Date(),
+  status: DeliveryStatus.PENDING,
+  paymentType: PaymentType.FULL,
+  paymentStatus: DeliveryPaymentStatus.PENDING,
+  notes: '',
+  amount: 0,
+  events: [] as TimeLineContent[],
+  receipt: createDefaultDeliveryReceipt(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  clientId: '',
+  clientAddressId: '',
+  courierId: '',
+  serviceId: '',
+});
