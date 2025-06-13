@@ -31,6 +31,7 @@ export function adaptDeliveryForApi(delivery: Delivery): any {
   return {
     notes: delivery.notes ?? '',
     receipt: adaptReceiptForApi(delivery.receipt),
+    payment_type: delivery.paymentType,
     client_id: delivery.clientId ?? null,
     client_address_id: delivery.clientAddressId ?? null,
     courier_id: delivery.courierId ?? null,

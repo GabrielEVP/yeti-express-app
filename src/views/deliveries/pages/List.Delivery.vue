@@ -67,104 +67,98 @@
       @updatePage="updatePage"
       @sort="handleSort"
     >
-      <TableRow v-for="delivery in deliveries" :key="delivery.getId()">
+      <TableRow v-for="delivery in deliveries" :key="delivery.id">
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getNumber() }}
+          {{ delivery.number }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ formatDateCustom(delivery.getDate()) }}
+          {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getClient()?.getLegalName() }}
+          {{ delivery.clientId }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getCourier()?.getFullName() }}
+          {{ delivery.courierId }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.getService().getName() }}
+          {{ delivery.serviceId }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
-          {{ formatToDollars(delivery.getAmount()) }}
+          {{ formatToDollars(delivery.amount) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde
             :class="
-              delivery.getStatus() == DeliveryStatus.PENDING
+              delivery.status == DeliveryStatus.PENDING
                 ? 'border-blue-500'
-                : delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+                : delivery.status == DeliveryStatus.IN_TRANSIT
                   ? 'border-yellow-500'
-                  : delivery.getStatus() == DeliveryStatus.DELIVERED
+                  : delivery.status == DeliveryStatus.DELIVERED
                     ? 'border-green-500'
                     : 'border-red-500'
             "
           >
-            {{ delivery.getStatusToFormat() }}
+            {{ delivery.status }}
           </Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />
-            <EditButton v-if="delivery.getStatus() == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.getId())" />
-            <DownloadButton @click="handleDownload(delivery.getId())" />
-            <TrashButton v-if="delivery.getStatus() == DeliveryStatus.PENDING" @click="open(delivery.getId())" />
-            <Transit
-              v-if="delivery.getStatus() == DeliveryStatus.PENDING && delivery.getStatus() != DeliveryStatus.DELIVERED"
-              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.IN_TRANSIT)"
-            />
+            <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+            <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
+            <DownloadButton @click="handleDownload(delivery.id)" />
+            <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
+            <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
             <Cancelled
-              v-if="delivery.getStatus() == DeliveryStatus.IN_TRANSIT && delivery.getStatus() != DeliveryStatus.DELIVERED"
-              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.REFUSED)"
+              v-if="delivery.status == DeliveryStatus.IN_TRANSIT && delivery.status != DeliveryStatus.DELIVERED"
+              @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)"
             />
             <Delivered
-              v-if="delivery.getStatus() != DeliveryStatus.DELIVERED && delivery.getStatus() == DeliveryStatus.IN_TRANSIT"
-              @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.DELIVERED)"
+              v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
+              @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
           </div>
         </TableContent>
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="delivery in deliveries" :key="delivery.getId()" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="delivery in deliveries" :key="delivery.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
-                  {{ delivery.getNumber() }}
+                  {{ delivery.number }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
-                  {{ formatDateCustom(delivery.getDate()) }}
+                  {{ formatDateCustom(delivery.date) }}
                 </p>
               </div>
               <Bagde
                 :class="
-                  delivery.getStatus() == DeliveryStatus.PENDING
+                  delivery.status == DeliveryStatus.PENDING
                     ? 'border-blue-500'
-                    : delivery.getStatus() == DeliveryStatus.IN_TRANSIT
+                    : delivery.status == DeliveryStatus.IN_TRANSIT
                       ? 'border-yellow-500'
-                      : delivery.getStatus() == DeliveryStatus.DELIVERED
+                      : delivery.status == DeliveryStatus.DELIVERED
                         ? 'border-green-500'
                         : 'border-red-500'
                 "
               >
-                {{ delivery.getStatusToFormat() }}
+                {{ delivery.status }}
               </Bagde>
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-1 justify-center">
-                <EyeButton :route="AppRoutesDelivery.details(delivery.getId())" />
-                <EditButton v-if="delivery.getStatus() == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.getId())" />
-                <DownloadButton @click="handleDownload(delivery.getId())" />
-                <TrashButton v-if="delivery.getStatus() == DeliveryStatus.PENDING" @click="open(delivery.getId())" />
-                <Transit
-                  v-if="delivery.getStatus() == DeliveryStatus.PENDING && delivery.getStatus() != DeliveryStatus.DELIVERED"
-                  @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.IN_TRANSIT)"
-                />
+                <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+                <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
+                <DownloadButton @click="handleDownload(delivery.id)" />
+                <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
+                <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
                 <Cancelled
-                  v-if="delivery.getStatus() == DeliveryStatus.IN_TRANSIT && delivery.getStatus() != DeliveryStatus.DELIVERED"
-                  @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.REFUSED)"
+                  v-if="delivery.status == DeliveryStatus.IN_TRANSIT && delivery.status != DeliveryStatus.DELIVERED"
+                  @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)"
                 />
                 <Delivered
-                  v-if="delivery.getStatus() != DeliveryStatus.DELIVERED && delivery.getStatus() == DeliveryStatus.IN_TRANSIT"
-                  @click="handleUpdateStatus(delivery.getId(), DeliveryStatus.DELIVERED)"
+                  v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
+                  @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
                 />
               </div>
             </div>
