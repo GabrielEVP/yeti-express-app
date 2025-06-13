@@ -1,10 +1,6 @@
 <template>
   <Sidebar>
-    <GlobalFilter
-      :initial-range="selectedRange"
-      :initial-date="selectedDate"
-      @filter-change="onFilterChange"
-    />
+    <GlobalFilter :initial-range="selectedRange" :initial-date="selectedDate" @filter-change="onFilterChange" />
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
       <ActivityView title="Ordenes realizadas">
         <div v-if="isLoading" class="animate-pulse">
@@ -24,9 +20,7 @@
           <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-2"></div>
         </div>
         <template v-else>
-          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">
-            ${{ formatNumber(stats?.total_invoiced || 0) }}
-          </div>
+          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">${{ formatNumber(stats?.total_invoiced || 0) }}</div>
           <p class="text-xs text-gray-500 dark:text-gray-400">Ingresos totales</p>
         </template>
       </ActivityView>
@@ -36,9 +30,7 @@
           <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-2"></div>
         </div>
         <template v-else>
-          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">
-            ${{ formatNumber(stats?.total_collected || 0) }}
-          </div>
+          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">${{ formatNumber(stats?.total_collected || 0) }}</div>
           <p class="text-xs text-gray-500 dark:text-gray-400">Pagos recibidos</p>
         </template>
       </ActivityView>
@@ -48,9 +40,7 @@
           <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-2"></div>
         </div>
         <template v-else>
-          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">
-            ${{ formatNumber(stats?.total_company_bills || 0) }}
-          </div>
+          <div class="text-3xl font-extrabold text-gray-800 dark:text-gray-100">${{ formatNumber(stats?.total_company_bills || 0) }}</div>
           <p class="text-xs text-gray-500 dark:text-gray-400">Gastos totales</p>
         </template>
       </ActivityView>
@@ -71,23 +61,20 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from '@/layouts/BarLayourt.vue';
-import { Card, ActivityView } from '@/components/';
 import { ref, onMounted } from 'vue';
-import { GetDashboardStatsUseCase } from '@views/home/application/GetDashboardStatsUseCase';
-import { DashboardApi } from '@views/home/infrastructure/Dashboard.Api';
-import type { DashboardStats } from '@views/home/domain/DashboardStats';
-import DeliveriesChart from './components/DeliveriesChart.vue';
-import InvoicedChart from './components/InvoicedChart.vue';
-import FinanceChart from './components/FinanceChart.vue';
-import GlobalFilter from './components/GlobalFilter.vue';
+import Sidebar from '@/layouts/BarLayourt.vue';
+import { ActivityView } from '@/components/';
+import DeliveriesChart from '../components/DeliveriesChart.vue';
+import InvoicedChart from '../components/InvoicedChart.vue';
+import FinanceChart from '../components/FinanceChart.vue';
+import GlobalFilter from '../components/GlobalFilter.vue';
+import type { DashboardStats } from '@views/home/';
+import { getStats } from '@views/home/';
 
 const selectedRange = ref<'day' | 'week' | 'month' | 'year'>('week');
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
 const stats = ref<DashboardStats | null>(null);
 const isLoading = ref(false);
-
-const getDashboardStatsUseCase = new GetDashboardStatsUseCase(DashboardApi);
 
 const formatNumber = (value: number) => {
   return value.toLocaleString('en-US', {
@@ -105,7 +92,7 @@ const onFilterChange = (range: 'day' | 'week' | 'month' | 'year', date: string) 
 const fetchStats = async (period: string, date: string) => {
   isLoading.value = true;
   try {
-    const response = await getDashboardStatsUseCase.execute({ period, date });
+    const response = await getStats({ period, date });
     console.log('API Response:', response);
 
     if (!response?.historical_delivered?.length) {

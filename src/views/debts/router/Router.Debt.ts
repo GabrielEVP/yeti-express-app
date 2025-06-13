@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import { List } from '@/views/debts/presentation/pages';
+import { List } from '@/views/debts/pages';
 
 export const DebtRouter: Array<RouteRecordRaw> = [
   {

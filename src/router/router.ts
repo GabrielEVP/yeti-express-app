@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import HomeView from '@views/home/presentation/HomeView.vue';
-import LoginView from '@views/auth/presentation/Login.Auth.vue';
+import HomeView from '@views/home/pages/HomeView.vue';
+import LoginView from '@views/auth/pages/Login.Auth.vue';
 import { ClientRouter } from '@/views/clients/';
 import { DeliveryRouter } from '@/views/deliveries';
 import { EmployeeRouter } from '@views/employees';
