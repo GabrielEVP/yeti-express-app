@@ -11,20 +11,7 @@ export const deliveryApiRoutes = {
   byClient: (clientId: string | number) => `/deliveries/clients/${clientId}`,
   byCourier: (courierId: string | number) => `/deliveries/couriers/${courierId}`,
   updateStatus: (deliveryId: string | number) => `/deliveries/${deliveryId}/status`,
-  storeClientPayment: (deliveryId: string | number) => `/deliveries/${deliveryId}/client-payments`,
   getTicket: (deliveryId: string | number) => `/deliveries/${deliveryId}/ticket`,
-
-  status: {
-    received: '/deliveries/status/received',
-    cancelled: '/deliveries/status/cancelled',
-    pending: '/deliveries/status/pending',
-    inTransit: '/deliveries/status/in-transit',
-  },
-  payment: {
-    pending: '/deliveries/payment/pending',
-    partiallyPaid: '/deliveries/payment/partially-paid',
-    paid: '/deliveries/payment/paid',
-  },
   withDebt: '/deliveries/with-debt',
   withDebtByClient: (clientId: string | number) => `/deliveries/with-debt/client/${clientId}`,
 };
@@ -79,53 +66,11 @@ export const updateDeliveryStatus = async (deliveryId: string | number, status: 
   await apiClient.put(deliveryApiRoutes.updateStatus(deliveryId), { status });
 };
 
-export const storeClientPayment = async (deliveryId: string | number, payload: { amount: number; method: string }): Promise<void> => {
-  await apiClient.post(deliveryApiRoutes.storeClientPayment(deliveryId), payload);
-};
-
 export const getDeliveryTicket = async (deliveryId: string | number): Promise<Blob> => {
   const response = await apiClient.get(deliveryApiRoutes.getTicket(deliveryId), { responseType: 'blob' });
   return response.data;
 };
 
-// Estado de entregas
-export const getReceivedDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.status.received);
-  return response.data.map(adaptDelivery);
-};
-
-export const getCancelledDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.status.cancelled);
-  return response.data.map(adaptDelivery);
-};
-
-export const getPendingDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.status.pending);
-  return response.data.map(adaptDelivery);
-};
-
-export const getInTransitDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.status.inTransit);
-  return response.data.map(adaptDelivery);
-};
-
-// Estado de pagos
-export const getPaymentPendingDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.payment.pending);
-  return response.data.map(adaptDelivery);
-};
-
-export const getPartiallyPaidDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.payment.partiallyPaid);
-  return response.data.map(adaptDelivery);
-};
-
-export const getPaidDeliveries = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.payment.paid);
-  return response.data.map(adaptDelivery);
-};
-
-// Deudas
 export const getDeliveriesWithDebt = async (): Promise<Delivery[]> => {
   const response = await apiClient.get(deliveryApiRoutes.withDebt);
   return response.data.map(adaptDelivery);

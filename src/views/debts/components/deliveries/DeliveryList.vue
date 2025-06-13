@@ -1,10 +1,5 @@
 <template>
-  <PaymentFullModalDebt
-    v-if="selectedDelivery"
-    v-model:isOpen="isFullModalOpen"
-    :delivery="selectedDelivery"
-    @proccess="handlePaymentProcess"
-  />
+  <PaymentFullModalDebt v-if="selectedDelivery" v-model:isOpen="isFullModalOpen" :delivery="selectedDelivery" @proccess="handlePaymentProcess" />
   <PaymentPartialModalDebt
     v-if="selectedDelivery"
     v-model:isOpen="isPartialModalOpen"
@@ -14,39 +9,29 @@
   <div class="space-y-3 mt-6 px-2 sm:px-0">
     <div
       v-for="delivery in paginatedItems"
-      :key="delivery.getId()"
+      :key="delivery.id"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
     >
       <div class="sm:hidden p-4 space-y-4">
         <div class="flex items-start justify-between">
           <div class="flex flex-col gap-2">
-            <span
-              class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-md"
-            >
-              {{ delivery.getNumber() }}
+            <span class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-md">
+              {{ delivery.number }}
             </span>
-            <span
-              class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full"
-              :class="getStatusClasses(delivery.getPaymentStatusToFormat())"
-            >
-              {{ delivery.getPaymentStatusToFormat() }}
+            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full" :class="getStatusClasses(delivery.status)">
+              {{ delivery.status }}
             </span>
           </div>
           <div
-            v-if="
-              !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
-              delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
-            "
+            v-if="!delivery.status.toLowerCase().includes('pagado') || delivery.status.toLowerCase().includes('parcialmente pagado')"
             class="text-right"
           >
             <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+              {{ formatToDollars(0) }}
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400">Resta pendiente</div>
           </div>
         </div>
-
-        <!-- Fecha -->
         <div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -57,16 +42,11 @@
             />
           </svg>
           <span class="text-sm text-gray-600 dark:text-gray-300">
-            {{ formatDateCustom(delivery.getDate()) }}
+            {{ formatDateCustom(delivery.date) }}
           </span>
         </div>
-
-        <!-- Botones de acción -->
         <div
-          v-if="
-            !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
-            delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
-          "
+          v-if="!delivery.status.toLowerCase().includes('pagado') || delivery.status.toLowerCase().includes('parcialmente pagado')"
           class="flex flex-col gap-2.5"
         >
           <button
@@ -86,40 +66,30 @@
       <div class="p-4 hidden sm:flex items-center justify-between">
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-3">
-            <span
-              class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-md"
-            >
-              {{ delivery.getNumber() }}
+            <span class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-md">
+              {{ delivery.number }}
             </span>
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ formatDateCustom(delivery.getDate()) }}
+            {{ formatDateCustom(delivery.date) }}
           </div>
           <Bagde>
-            {{ delivery.getPaymentStatusToFormat() }}
+            {{ delivery.paymentStatus }}
           </Bagde>
         </div>
         <div
-          v-if="
-            !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
-            delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
-          "
+          v-if="!delivery.paymentStatus.toLowerCase().includes('pagado') || delivery.paymentStatus.toLowerCase().includes('parcialmente pagado')"
           class="flex items-center gap-8"
         >
           <div class="text-right">
             <Text class="text-lg font-semibold">
-              {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+              {{ formatToDollars(0) }}
             </Text>
-            <Text class="text-sm text-gray-500 dark:text-gray-400">
-              Resta: {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
-            </Text>
+            <Text class="text-sm text-gray-500 dark:text-gray-400"> Resta: {{ formatToDollars(0) }} </Text>
           </div>
 
           <div
-            v-if="
-              !delivery.getPaymentStatusToFormat().toLowerCase().includes('pagado') ||
-              delivery.getPaymentStatusToFormat().toLowerCase().includes('parcialmente pagado')
-            "
+            v-if="!delivery.paymentStatus.toLowerCase().includes('pagado') || delivery.paymentStatus.toLowerCase().includes('parcialmente pagado')"
             class="flex gap-2"
           >
             <Button
@@ -138,20 +108,10 @@
         </div>
       </div>
     </div>
-
-    <!-- Estado vacío - sin cliente -->
-    <div
-      v-if="!clientId"
-      class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6 sm:p-8"
-    >
+    <div v-if="!clientId" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6 sm:p-8">
       <div class="text-center">
         <div class="text-gray-400 dark:text-gray-500 mb-3">
-          <svg
-            class="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -160,28 +120,17 @@
             />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
-          Selecciona un cliente
-        </h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-          Elige un cliente para ver sus entregas pendientes
-        </p>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">Selecciona un cliente</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Elige un cliente para ver sus entregas pendientes</p>
       </div>
     </div>
-
-    <!-- Estado vacío - sin entregas -->
     <div
       v-if="paginatedItems.length === 0 && clientId"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6 sm:p-8"
     >
       <div class="text-center">
         <div class="text-gray-400 dark:text-gray-500 mb-3">
-          <svg
-            class="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -191,14 +140,10 @@
           </svg>
         </div>
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No hay entregas</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-          Este cliente no tiene entregas registradas
-        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Este cliente no tiene entregas registradas</p>
       </div>
     </div>
   </div>
-
-  <!-- Paginación -->
   <Card v-if="totalPages > 0" class="mt-6 mx-2 sm:mx-0">
     <div class="p-4">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -213,12 +158,7 @@
             class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 min-w-[100px] justify-center"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             <span class="hidden xs:inline">Anterior</span>
           </Button>
@@ -229,12 +169,7 @@
           >
             <span class="hidden xs:inline">Siguiente</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </Button>
         </div>
@@ -266,7 +201,6 @@ const emit = defineEmits<{
 const deliveriesRef = ref(props.deliveries);
 const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveriesRef, 15);
 
-// Watch for changes in props.deliveries
 watch(
   () => props.deliveries,
   (newDeliveries) => {
@@ -293,7 +227,6 @@ const handlePaymentProcess = () => {
   emit('refresh');
 };
 
-// Función para obtener las clases de estado
 const getStatusClasses = (status: string) => {
   const baseClasses = 'inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full';
 
@@ -318,7 +251,6 @@ const getStatusClasses = (status: string) => {
   transform: scale(0.98);
 }
 
-/* Breakpoint personalizado para xs */
 @media (min-width: 475px) {
   .xs\:inline {
     display: inline;

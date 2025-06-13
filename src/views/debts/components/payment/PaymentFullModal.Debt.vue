@@ -4,9 +4,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50"
     @click.self="emitClose"
   >
-    <div
-      class="bg-white dark:bg-gray-800 w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col"
-    >
+    <div class="bg-white dark:bg-gray-800 w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col">
       <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Pago Completo</h3>
       </div>
@@ -16,25 +14,25 @@
           <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <Text>Numero de orden</Text>
             <Text>
-              {{ delivery?.getNumber() }}
+              {{ delivery?.number }}
             </Text>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Monto Total</Text>
               <Text>
-                {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+                {{ formatToDollars(0) }}
               </Text>
             </div>
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Cantidad a Pagar</Text>
               <Text>
-                {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+                {{ formatToDollars(0) }}
               </Text>
             </div>
           </div>
           <div class="mb-8">
-            <FieldHidden name="debtId" id="debtId" :value="delivery.getDebts()?.getId()" />
+            <FieldHidden name="debtId" id="debtId" value="delivery.getDebts()?.getId()" />
             <Text>Forma de Pago</Text>
             <div v-for="field in PaymentMethodOptions" :key="field.value" class="mt-8">
               <FieldRadio name="method" :id="field.value" :value="field.value">
@@ -61,11 +59,10 @@ import { formatToDollars } from '@utils';
 import { Text, CancelButton, AcceptButton } from '@/components/';
 import FieldRadio from '@components/forms/FieldRadio.vue';
 import { Delivery } from '@/views/deliveries';
-import { DebtPayment, PaymentMethodOptions } from '@views/debts-payments/domain';
-import { FullDebtPaymentSchema } from '@views/debts-payments/schema';
-import { CreateFullDebtPaymentUseCase } from '@/views/debts-payments/';
-import { DebtPaymentRepositoryImpl } from '@/views/debts-payments/';
-import { DebtPaymentFormAdapter } from '@views/debts-payments/';
+import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
+import { FullDebtPaymentSchema } from '@views/debts/';
+import { createDebtPaymentFull } from '@views/debts/';
+
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
 const props = defineProps<{
@@ -73,24 +70,16 @@ const props = defineProps<{
   delivery: Delivery;
 }>();
 
-const repository = new DebtPaymentRepositoryImpl();
-const createFullDebtPaymentUseCase = new CreateFullDebtPaymentUseCase(repository);
-
-const { initializeForm, onSubmit, meta } = useVeeForm<{ debtId: string }>({
+const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   modal: true,
-  create: (formValues) => {
-    const client = DebtPaymentFormAdapter.fromFormFullPayment(formValues);
-    return createFullDebtPaymentUseCase.execute(client);
-  },
+  create: createDebtPaymentFull,
   messages: {
-    createError: 'Error al crear el pago',
-    createSuccess: 'Pago creado correctamente',
+    createError: 'Error al crear el cliente',
+    createSuccess: 'Cliente creado correctamente',
   },
   validation: {
     schema: FullDebtPaymentSchema,
-    initialValues: {
-      debtId: props.delivery.getDebts()?.getId() ?? '',
-    },
+    initialValues: {},
   },
 });
 

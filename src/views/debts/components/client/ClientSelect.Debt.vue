@@ -3,7 +3,7 @@
     <div class="p-4 sm:p-6">
       <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 class="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 truncate">
-          {{ selectedClient?.getLegalName() || 'Selecciona un cliente' }}
+          {{ selectedClient?.legalName || 'Selecciona un cliente' }}
         </h2>
         <Button
           @click="$emit('open')"
@@ -12,26 +12,24 @@
           Cambiar Cliente
         </Button>
       </header>
-      <footer
-        class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t"
-      >
+      <footer class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
         <section class="text-center">
           <Text>Entregas</Text>
           <Bagde>
-            {{ selectedClient?.getDeliveredDeliveries().length || '0' }}
+            {{ '0' }}
           </Bagde>
         </section>
         <section class="text-center">
           <Text>Total Facturado</Text>
-          <Bagde>{{ formatToDollars(selectedClient?.getTotalInvoiced() || 0) }}</Bagde>
+          <Bagde>{{ formatToDollars(0) }}</Bagde>
         </section>
         <section class="text-center">
           <Text>Total de Ganancia</Text>
-          <Bagde>{{ formatToDollars(selectedClient?.getEarningsDelivery() || 0) }}</Bagde>
+          <Bagde>{{ formatToDollars(0) }}</Bagde>
         </section>
         <section class="text-center">
           <Text>Deuda Pendiente</Text>
-          <Bagde>{{ formatToDollars(selectedClient?.getDebtsTotalAmount() || 0) }}</Bagde>
+          <Bagde>{{ formatToDollars(0) }}</Bagde>
         </section>
       </footer>
     </div>
@@ -39,9 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { Bagde, Button, Card, Text } from '@components';
-import { Client } from '@/views/clients/domain/';
 import { formatToDollars } from '@utils';
+import { Bagde, Button, Card, Text } from '@components';
+import { Client } from '@/views/clients';
 
 defineProps<{
   selectedClient: Client;

@@ -4,9 +4,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50"
     @click.self="emitClose"
   >
-    <div
-      class="bg-white dark:bg-gray-800 w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col"
-    >
+    <div class="bg-white dark:bg-gray-800 w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col">
       <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Pago Parcial</h3>
       </div>
@@ -16,32 +14,26 @@
             <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Numero de orden</Text>
               <Text>
-                {{ delivery?.getNumber() }}
+                {{ delivery?.number }}
               </Text>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Monto Total</Text>
                 <Text>
-                  {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+                  {{ formatToDollars(0) }}
                 </Text>
               </div>
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Pendiente</Text>
                 <Text>
-                  {{ formatToDollars(delivery.getDebts()?.getRemainingAmount() ?? 0) }}
+                  {{ formatToDollars(0) }}
                 </Text>
               </div>
             </div>
           </div>
           <div class="mb-6">
-            <FieldForm
-              label="Monto"
-              type="number"
-              name="amount"
-              :max="String(delivery.getDebts()?.getRemainingAmount())"
-              :placeholder="String(delivery.getDebts()?.getRemainingAmount())"
-            />
+            <FieldForm label="Monto" type="number" name="amount" :max="String()" :placeholder="String()" />
           </div>
           <div class="mb-4">
             <Label>Forma de Pago</Label>
@@ -71,36 +63,26 @@ import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
 import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components/';
 import { Delivery } from '@/views/deliveries';
-import { DebtPayment, PaymentMethodOptions } from '@views/debts-payments/domain';
-import { DebtPaymentSchema } from '@views/debts-payments/schema';
-import { CreatePartialDebtPaymentUseCase } from '@/views/debts-payments/';
-import { DebtPaymentRepositoryImpl } from '@/views/debts-payments/';
-import { DebtPaymentFormAdapter } from '@views/debts-payments/';
-import FieldRadio from '@components/forms/FieldRadio.vue';
+import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
+import { FullDebtPaymentSchema } from '@views/debts/';
+import { createDebtPaymentFull } from '@views/debts/';
+import FieldHidden from '@components/forms/FieldHidden.vue';
 
 const props = defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
 
-const repository = new DebtPaymentRepositoryImpl();
-const createDebtPartialPaymentUseCase = new CreatePartialDebtPaymentUseCase(repository);
-
-const { initializeForm, onSubmit, meta } = useVeeForm<{ debtId: string }>({
+const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   modal: true,
-  create: (formValues) => {
-    const payment = DebtPaymentFormAdapter.fromFormPartialPayment(formValues);
-    return createDebtPartialPaymentUseCase.execute(payment);
-  },
+  create: createDebtPaymentFull,
   messages: {
-    createError: 'Error al crear el pago',
-    createSuccess: 'Pago creado correctamente',
+    createError: 'Error al crear el cliente',
+    createSuccess: 'Cliente creado correctamente',
   },
   validation: {
-    schema: DebtPaymentSchema,
-    initialValues: {
-      debtId: props.delivery.getDebts()?.getId() ?? '',
-    },
+    schema: FullDebtPaymentSchema,
+    initialValues: {},
   },
 });
 
