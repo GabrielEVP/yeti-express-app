@@ -8,7 +8,7 @@ export function adaptClient(apiData: any = {}): Client {
     registrationNumber: apiData.registration_number ?? '',
     legalName: apiData.legal_name ?? '',
     notes: apiData.notes ?? '',
-    allowCredit: Boolean(apiData.allow_credit), // Conversión segura a boolean
+    allowCredit: apiData.allow_credit ?? '0',
     userId: apiData.user_id ?? '',
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',

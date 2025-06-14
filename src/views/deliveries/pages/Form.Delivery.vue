@@ -2,7 +2,8 @@
   <SideBar>
     <div class="flex justify-center items-center min-h-screen p-4">
       <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
-        <form @submit.prevent="onSubmit" class="h-full">
+        <LoadingSkeleton v-if="!formReady" />
+        <form v-else @submit.prevent="onSubmit" class="h-full">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
               <option value="general">General</option>
@@ -24,34 +25,12 @@
               </TabsTitle>
             </template>
           </Tabs>
+
           <TabsContent tab="general" :activeTab="activeTab">
-            <div class="space-y-4 mb-6">
-              <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Cliente</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                <div class="md:col-span-1">
-                  <SelectForm
-                    label="Cliente"
-                    name="clientId"
-                    placeholder="Selecciona un Cliente"
-                    :items="clientsOptions"
-                    @update:modelValue="loadAddress"
-                  />
-                </div>
-                <div class="md:col-span-1">
-                  <SelectForm
-                    label="Dirección de recogida"
-                    name="clientAddressId"
-                    placeholder="Selecciona una dirección"
-                    :items="clientsAddressOptions"
-                  />
-                </div>
-                <div class="flex items-center justify-center w-full col-span-2 xl:col-span-1">
-                  <PlusButton @click="openModalClientForm" class="w-full justify-center xl:w-auto">
-                    <span class="text-white ml-2 text-sm md:text-base">Agregar Cliente</span>
-                  </PlusButton>
-                </div>
-              </div>
-            </div>
+            <!-- Componente de Cliente -->
+            <ClientSelector :modelValue="clientSelectorValue" @update:modelValue="handleClientSelectorUpdate" @clientChanged="handleClientChanged" />
+
+            <!-- Detalles del Servicio -->
             <div class="space-y-4">
               <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -61,15 +40,15 @@
                   name="paymentType"
                   placeholder="Forma de pago"
                   :items="[...PaymentTypeOptions]"
-                  :disabled="selectedClientAllowCredit"
+                  :disabled="!selectedClientAllowCredit"
                 />
                 <div class="sm:col-span-2 lg:col-span-1">
                   <SelectForm label="Repartidor" name="courierId" placeholder="Selecciona un repartidor" :items="courierOptions" />
                 </div>
               </div>
             </div>
-            <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="handleAddClient" />
           </TabsContent>
+
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -87,6 +66,7 @@
               <TextAreaForm label="Notas" id="notes" placeholder="Ingresa cualquier información adicional sobre la entrega..." />
             </div>
           </TabsContent>
+
           <div class="mt-6 pt-4 border-t">
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:justify-end">
               <CancelButton @click="router.back()" class="w-full sm:w-auto order-2 sm:order-1" />
@@ -100,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
@@ -112,33 +92,32 @@ import {
   TextAreaForm,
   AcceptButton,
   CancelButton,
-  PlusButton,
   Tabs,
   TabsTitle,
   TabsContent,
+  LoadingSkeleton,
 } from '@/components';
-import { Delivery } from '@views/deliveries/models';
+import { Delivery, PaymentType } from '@views/deliveries/models';
 import { PaymentTypeOptions } from '@views/deliveries/models';
 import { getDeliveryById, createDelivery, updateDelivery } from '../services/Delivery.api';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { DeliveryClientModalForm } from '@views/deliveries/components';
 import { Client } from '@views/clients';
-import { getAllClients } from '@views/clients';
 import { Courier } from '@views/couriers';
 import { getAllCouriers } from '@views/couriers';
 import { Service } from '@views/services';
 import { getAllServices } from '@views/services';
+import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
 
 const activeTab = ref('general');
 const router = useRouter();
 const route = useRoute();
 const deliveryId = route.params.id as string;
-
-const isModalClientFormOpen = ref(false);
+const formReady = ref(false);
 
 const selectedClientAllowCredit = ref(true);
 
+// Form composable para Delivery
 const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
   id: deliveryId,
   getById: getDeliveryById,
@@ -172,61 +151,46 @@ const serviceOptions = computed(() =>
     value: service.id,
   }))
 );
-const clients = ref<Client[]>([]);
-const clientsOptions = computed(() =>
-  clients.value.map((client) => ({
-    label: client.legalName,
-    value: client.id,
-  }))
-);
 
-const clientsAddressOptions = ref<Array<{ label: string; value: string }>>([]);
+const clientSelectorValue = computed(() => ({
+  clientId: values.clientId || '',
+  clientAddressId: values.clientAddressId || '',
+}));
 
-function loadAddress(clientId: string) {
-  const client = clients.value.find((c) => c.id === clientId);
-  if (client) {
-    const addresses = client.addresses;
-
-    if (client.allowCredit) {
-      selectedClientAllowCredit.value = false;
-    } else {
-      selectedClientAllowCredit.value = true;
-    }
-
-    clientsAddressOptions.value = addresses.map((address) => ({
-      label: address.address,
-      value: address.id,
-    }));
+function handleClientSelectorUpdate(clientData: { clientId?: string; clientAddressId?: string }) {
+  if (clientData.clientId !== undefined) {
+    setFieldValue('clientId', clientData.clientId);
+  }
+  if (clientData.clientAddressId !== undefined) {
+    setFieldValue('clientAddressId', clientData.clientAddressId);
   }
 }
-const clientId = ref<string>('');
-const addressId = ref<string>('');
-async function loadFormData() {
-  await initializeForm();
-  const [courierData, clientData, serviceData] = await Promise.all([getAllCouriers(), getAllClients(), getAllServices()]);
-  couriers.value = courierData;
-  clients.value = clientData;
-  services.value = serviceData;
 
-  clientId.value = values.clientId;
-  addressId.value = values.clientAddressId;
+function handleClientChanged(client: Client | null) {
+  if (client) {
+    if (client.allowCredit) {
+      selectedClientAllowCredit.value = true;
+    } else {
+      selectedClientAllowCredit.value = false;
+      setFieldValue('paymentType', PaymentType.FULL);
+    }
+  } else {
+    selectedClientAllowCredit.value = true;
+  }
+}
+
+async function loadFormData() {
+  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
+  couriers.value = courierData;
+  services.value = serviceData;
 }
 
 onMounted(async () => {
   await loadFormData();
   await initializeForm();
+
+  // Esperamos un tick adicional para asegurar que todos los datos estén disponibles
+  await nextTick();
+  formReady.value = true;
 });
-
-function openModalClientForm() {
-  isModalClientFormOpen.value = true;
-}
-
-function closeModalClientForm() {
-  isModalClientFormOpen.value = false;
-}
-
-async function handleAddClient(newClient: Client) {
-  clients.value = await getAllClients();
-  closeModalClientForm();
-}
 </script>

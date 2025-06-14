@@ -1,6 +1,21 @@
 import { Client, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients';
 
-export const createDefaultClient = (): Client => ({
+export const DEFAULT_CLIENT_ADDRESS: ClientAddress = {
+  id: '',
+  address: '',
+};
+
+export const DEFAULT_CLIENT_PHONE: ClientPhone = {
+  id: '',
+  phone: '',
+};
+
+export const DEFAULT_CLIENT_EMAIL: ClientEmail = {
+  id: '',
+  email: '',
+};
+
+export const DEFAULT_CLIENT: Client = {
   id: '',
   legalName: '',
   type: 'venezolano',
@@ -11,22 +26,7 @@ export const createDefaultClient = (): Client => ({
   createdAt: '',
   updatedAt: '',
   events: [],
-  addresses: [],
+  addresses: [DEFAULT_CLIENT_ADDRESS],
   emails: [],
-  phones: [],
-});
-
-export const createDefaultClientAddress = (): ClientAddress => ({
-  id: '',
-  address: '',
-});
-
-export const createDefaultClientPhone = (): ClientPhone => ({
-  id: '',
-  phone: '',
-});
-
-export const createDefaultClientEmail = (): ClientEmail => ({
-  id: '',
-  email: '',
-});
+  phones: [DEFAULT_CLIENT_PHONE],
+};

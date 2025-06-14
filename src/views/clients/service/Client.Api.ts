@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/';
-import { Client, adaptClient, adaptClientForApi } from '@/views/clients/';
+import { Client, ClientAddress, adaptClient, adaptClientForApi } from '@/views/clients/';
 
 export const clientApiRoutes = {
   getAll: '/clients',
@@ -11,11 +11,7 @@ export const clientApiRoutes = {
   search: (query: string) => `/clients/search/${query}`,
   filter: '/clients/filter',
   getDebtReport: (clientId: string | number) => `/clients/${clientId}/debt-report`,
-  getTotalInvoiced: (clientId: string | number) => `/clients/${clientId}/total-invoiced`,
-  getEarningsDelivery: (clientId: string | number) => `/clients/${clientId}/earnings-delivery`,
-  getPendingEarnings: (clientId: string | number) => `/clients/${clientId}/pending-earnings`,
-  getPendingEarningsCount: (clientId: string | number) => `/clients/${clientId}/pending-earnings/count`,
-  getEarningsDeliveryCurrentMonth: (clientId: string | number) => `/clients/${clientId}/earnings-delivery-current-month`,
+  createAddress: (clientId: string | number) => `/clients/${clientId}/addresses`,
 };
 
 export const getAllClients = async (): Promise<Client[]> => {
@@ -59,27 +55,13 @@ export const getClientDebtReport = async (clientId: string): Promise<any> => {
   return response.data;
 };
 
-export const getClientTotalInvoiced = async (clientId: string): Promise<number> => {
-  const response = await apiClient.get(clientApiRoutes.getTotalInvoiced(clientId));
-  return response.data.total ?? 0;
-};
+export interface CreateAddressData {
+  clientId: string;
+  address: string;
+}
 
-export const getClientEarningsDelivery = async (clientId: string): Promise<number> => {
-  const response = await apiClient.get(clientApiRoutes.getEarningsDelivery(clientId));
-  return response.data.total ?? 0;
-};
-
-export const getClientPendingEarnings = async (clientId: string): Promise<number> => {
-  const response = await apiClient.get(clientApiRoutes.getPendingEarnings(clientId));
-  return response.data.total ?? 0;
-};
-
-export const getClientPendingEarningsCount = async (clientId: string): Promise<number> => {
-  const response = await apiClient.get(clientApiRoutes.getPendingEarningsCount(clientId));
-  return response.data.count ?? 0;
-};
-
-export const getClientEarningsDeliveryCurrentMonth = async (clientId: string): Promise<number> => {
-  const response = await apiClient.get(clientApiRoutes.getEarningsDeliveryCurrentMonth(clientId));
-  return response.data.total ?? 0;
+export const createClientAddress = async (data: CreateAddressData): Promise<ClientAddress> => {
+  const { clientId, ...addressData } = data;
+  const response = await apiClient.post(clientApiRoutes.createAddress(clientId), addressData);
+  return response.data;
 };

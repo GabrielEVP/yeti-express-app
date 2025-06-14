@@ -35,6 +35,7 @@ import { Client, ClientAddress, ClientPhone } from '@/views/clients/';
 import { ClientTypeOptions } from '@/views/clients/';
 import { BasicClientSchema } from '@views/deliveries/schema/Delivery.ClientBasicSchema';
 import { createClient } from '@/views/clients/';
+import { DEFAULT_CLIENT } from '@/views/clients/';
 
 defineProps<{
   isOpen: boolean;
@@ -54,7 +55,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
   },
   validation: {
     schema: BasicClientSchema,
-    initialValues: {},
+    initialValues: { ...DEFAULT_CLIENT },
   },
 });
 
