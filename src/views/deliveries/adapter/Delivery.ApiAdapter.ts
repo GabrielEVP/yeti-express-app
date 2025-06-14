@@ -22,6 +22,7 @@ export function adaptDelivery(apiData: any = {}): Delivery {
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',
     clientLegalName: apiData.client_legal_name ?? '',
+    clientAddress: apiData.client_address_name ?? '',
     courierName: apiData.courier_name ?? '',
     serviceName: apiData.service_name ?? '',
     debtId: apiData.debt_id ?? '',

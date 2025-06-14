@@ -8,7 +8,7 @@
       <div v-if="address" class="border rounded-md p-3 bg-muted/30 dark:border-gray-700 dark:bg-gray-700">
         <div class="flex justify-between items-start">
           <div class="space-y-1 text-sm">
-            <p><span class="font-medium">Dirección:</span> {{ address.address }}</p>
+            <p><span class="font-medium">Dirección:</span> {{ address }}</p>
           </div>
         </div>
       </div>
@@ -21,9 +21,8 @@
 import { defineProps } from 'vue';
 import { MapPin } from 'lucide-vue-next';
 import { Dropdown, EmptyData } from '@/components/';
-import { ClientAddress } from '@views/clients';
 
 defineProps<{
-  address: ClientAddress;
+  address: string;
 }>();
 </script>

@@ -39,7 +39,8 @@
                 <SectionText title="Número de Delivery" :content="delivery.number" />
                 <SectionText title="Fecha de Emisión" :content="formatDateCustom(delivery.date)" />
                 <SectionText title="Estado" :content="getDeliveryStatusLabel(delivery.status)" />
-                <SectionText title="Forma de Pago" :content="getDeliveryPaymentStatusLabel(delivery.paymentStatus)" />
+                <SectionText title="Forma de pago" :content="getPaymentTypeLabel(delivery.paymentType)" />
+                <SectionText title="Estado de pago" :content="getDeliveryPaymentStatusLabel(delivery.paymentStatus)" />
                 <SectionText title="Cliente" :content="delivery.clientLegalName ?? 'Sin cliente'" />
                 <SectionText title="Servicio" :content="delivery.serviceName ?? 'Sin Servicio'" />
                 <SectionText title="Importe Total" :content="formatToDollars(delivery.amount)" />
@@ -48,6 +49,7 @@
               <SectionText title="Nota" :content="delivery.notes" />
               <div class="space-y-6 pt-8">
                 <DeliveryReceiptDropdown :receipt="delivery.receipt" />
+                <DeliveryClientAddressList :address="delivery.clientAddress" />
               </div>
             </div>
           </div>
@@ -76,7 +78,7 @@ import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
 import { SideBar, SectionText, Card, Bagde, ActionsButton, LoadingSkeleton, ActivityView } from '@/components/';
-import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/';
+import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel, getPaymentTypeLabel } from '@/views/deliveries/';
 import { getDeliveryById } from '@/views/deliveries/';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { DeliveryClientAddressList, DeliveryReceiptDropdown } from '@views/deliveries/components';
