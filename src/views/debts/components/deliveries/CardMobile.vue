@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Delivery } from '@views/deliveries';
+import { DeliveryPaymentStatus } from '@views/deliveries';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 
 interface Props {
@@ -66,13 +67,11 @@ defineEmits<{
 }>();
 
 const showPaymentInfo = computed(() => {
-  const status = props.delivery.status.toLowerCase();
-  return !status.includes('pagado') || status.includes('parcialmente pagado');
+  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
 });
 
 const showPaymentButtons = computed(() => {
-  const status = props.delivery.paymentStatus?.toLowerCase() || props.delivery.status.toLowerCase();
-  return !status.includes('pagado') || status.includes('parcialmente pagado');
+  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
 });
 
 const getStatusClasses = (status: string) => {

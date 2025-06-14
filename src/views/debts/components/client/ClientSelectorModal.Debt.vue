@@ -40,8 +40,6 @@ const props = defineProps<{
   clients: Client[];
 }>();
 
-console.log(props.clients);
-
 const emit = defineEmits<{
   (e: 'update:open', value: boolean): void;
   (e: 'select', client: Client): void;

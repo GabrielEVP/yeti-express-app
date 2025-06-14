@@ -65,7 +65,7 @@ import { createDebtPaymentFull } from '@views/debts/';
 
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
@@ -79,7 +79,9 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   },
   validation: {
     schema: FullDebtPaymentSchema,
-    initialValues: {},
+    initialValues: {
+      debtId: props.delivery.debtId ?? '',
+    },
   },
 });
 

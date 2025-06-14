@@ -13,7 +13,6 @@
         {{ delivery.paymentStatus }}
       </Bagde>
     </div>
-
     <div v-if="showPaymentSection" class="flex items-center gap-8">
       <div class="text-right">
         <Text class="text-lg font-semibold">
@@ -43,6 +42,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Delivery } from '@views/deliveries';
+import { DeliveryPaymentStatus } from '@views/deliveries';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, Button, Text } from '@/components/';
 
@@ -58,8 +58,7 @@ defineEmits<{
 }>();
 
 const showPaymentSection = computed(() => {
-  const status = props.delivery.paymentStatus?.toLowerCase() || '';
-  return !status.includes('pagado') || status.includes('parcialmente pagado');
+  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
 });
 
 const showPaymentButtons = computed(() => {

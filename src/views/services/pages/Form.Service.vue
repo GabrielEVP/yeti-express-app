@@ -33,7 +33,7 @@
             <div>
               <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
               <div class="flex justify-end mb-4">
-                <PlusButton type="button" @click="push(new Bill('', '', 0))" />
+                <PlusButton type="button" @click="push({ id: '', name: '', amount: 0 })" />
               </div>
               <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
                 <Text>No hay gastos agregados</Text>

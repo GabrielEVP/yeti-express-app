@@ -4,7 +4,7 @@ import { adaptDebtPayment, adaptDebtPaymentForApi } from '@/views/debts/';
 
 export const debtPaymentApiRoutes = {
   list: '/debt-payments',
-  full: '/debt-payments/search/full',
+  full: '/debt-payments/full',
   partial: '/debt-payments/partial',
   details: (id: string | number) => `/debt-payments/${id}`,
 };

@@ -72,25 +72,27 @@ import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components
 import FieldRadio from '@components/forms/FieldRadio.vue';
 import { Delivery } from '@/views/deliveries';
 import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
-import { FullDebtPaymentSchema } from '@views/debts/';
-import { createDebtPaymentFull } from '@views/debts/';
+import { PartialDebtPaymentSchema } from '@views/debts/';
+import { createDebtPaymentPartial } from '@views/debts/';
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   modal: true,
-  create: createDebtPaymentFull,
+  create: createDebtPaymentPartial,
   messages: {
     createError: 'Error al realizar el pago',
     createSuccess: 'Pago creado correctamente',
   },
   validation: {
-    schema: FullDebtPaymentSchema,
-    initialValues: {},
+    schema: PartialDebtPaymentSchema,
+    initialValues: {
+      debtId: props.delivery.debtId ?? '',
+    },
   },
 });
 
