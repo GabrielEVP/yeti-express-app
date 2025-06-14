@@ -16,20 +16,20 @@
         <section class="text-center">
           <Text>Entregas</Text>
           <Bagde>
-            {{ '0' }}
+            {{ stast?.total_deliveries_with_debt ?? 0 }}
           </Bagde>
         </section>
         <section class="text-center">
           <Text>Total Facturado</Text>
-          <Bagde>{{ formatToDollars(0) }}</Bagde>
+          <Bagde>{{ formatToDollars(stast?.total_invoiced ?? 0) }}</Bagde>
         </section>
         <section class="text-center">
           <Text>Total de Ganancia</Text>
-          <Bagde>{{ formatToDollars(0) }}</Bagde>
+          <Bagde>{{ formatToDollars(stast?.total_paid ?? 0) }}</Bagde>
         </section>
         <section class="text-center">
           <Text>Deuda Pendiente</Text>
-          <Bagde>{{ formatToDollars(0) }}</Bagde>
+          <Bagde>{{ formatToDollars(stast?.total_pending ?? 0) }}</Bagde>
         </section>
       </footer>
     </div>
@@ -41,7 +41,15 @@ import { formatToDollars } from '@utils';
 import { Bagde, Button, Card, Text } from '@components';
 import { Client } from '@/views/clients';
 
+interface Stast {
+  total_deliveries_with_debt: number;
+  total_invoiced: number;
+  total_paid: number;
+  total_pending: number;
+}
+
 defineProps<{
-  selectedClient: Client;
+  selectedClient: Client | null;
+  stast: Stast | null;
 }>();
 </script>

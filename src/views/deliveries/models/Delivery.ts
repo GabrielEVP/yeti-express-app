@@ -14,6 +14,7 @@ export interface Delivery {
   amount: number;
   events: TimeLineContent[];
   receipt: DeliveryReceipt;
+  debtRemainingAmount: number;
   createdAt: Date;
   updatedAt: Date;
   clientId: string;

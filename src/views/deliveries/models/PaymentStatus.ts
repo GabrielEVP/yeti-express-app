@@ -1,18 +1,18 @@
 export enum DeliveryPaymentStatus {
   PENDING = 'pending',
-  PARTIALLY_PAID = 'partially_paid',
+  PARTIAL_PAID = 'partial_paid',
   PAID = 'paid',
 }
 
 export const DeliveryPaymentStatusOptions = [
   { label: 'Pendiente', value: DeliveryPaymentStatus.PENDING },
-  { label: 'Parcialmente Pagado', value: DeliveryPaymentStatus.PARTIALLY_PAID },
+  { label: 'Parcialmente Pagado', value: DeliveryPaymentStatus.PARTIAL_PAID },
   { label: 'Pagado', value: DeliveryPaymentStatus.PAID },
 ] as const;
 
 export const DeliveryPaymentStatusLabels: Record<DeliveryPaymentStatus, string> = {
   [DeliveryPaymentStatus.PENDING]: 'Pendiente',
-  [DeliveryPaymentStatus.PARTIALLY_PAID]: 'Parcialmente Pagado',
+  [DeliveryPaymentStatus.PARTIAL_PAID]: 'Parcialmente Pagado',
   [DeliveryPaymentStatus.PAID]: 'Pagado',
 };
 

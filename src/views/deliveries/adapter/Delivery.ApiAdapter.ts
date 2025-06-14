@@ -18,6 +18,7 @@ export function adaptDelivery(apiData: any = {}): Delivery {
       typeof apiData.receipt === 'object' && apiData.receipt !== null
         ? adaptReceipt(apiData.receipt)
         : { id: '', fullName: '', phone: '', address: '' },
+    debtRemainingAmount: apiData.debt_remaining_amount ?? 0,
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',
     clientId: apiData.client_id ?? '',

@@ -1,42 +1,32 @@
 import { apiClient } from '@/services/';
-import { Debt, adaptDebt, adaptDebtForApi } from '@views/debts/';
+import { Client, adaptClient } from '@views/clients';
+import { Delivery, adaptDelivery } from '@views/deliveries';
 
 export const debtApiRoutes = {
-  getAll: '/debts',
-  getById: (id: string | number) => `/debts/${id}`,
-  create: '/debts',
-  update: (id: string | number) => `/debts/${id}`,
-  delete: (id: string | number) => `/debts/${id}`,
-  search: (query: string) => `/debts/search/${query}`,
+  clientsWithDebt: '/debts/clients/with-debt',
+  clientStats: (clientId: string | number) => `/debts/clients/${clientId}/stats`,
+  clientDeliveryWithDebts: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts`,
+  clientDeliveryWithDebtsFilter: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts-filter`,
 };
 
-export const getAllDebts = async (): Promise<Debt[]> => {
-  const response = await apiClient.get(debtApiRoutes.getAll);
-  return Array.isArray(response.data) ? response.data.map(adaptDebt) : [adaptDebt(response.data)];
+export const getClientsWithDebt = async (): Promise<Client[]> => {
+  const response = await apiClient.get(debtApiRoutes.clientsWithDebt);
+  return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
 };
 
-export const getDebtById = async (debtId: string): Promise<Debt> => {
-  const response = await apiClient.get(debtApiRoutes.getById(debtId));
-  return adaptDebt(response.data);
+export const getClientStats = async (clientId: string): Promise<any> => {
+  const response = await apiClient.get(debtApiRoutes.clientStats(clientId));
+  return response.data;
 };
 
-export const createDebt = async (data: Debt): Promise<Debt> => {
-  const payload = adaptDebtForApi(data);
-  const response = await apiClient.post(debtApiRoutes.create, payload);
-  return adaptDebt(response.data);
+export const getClientDeliveryWithDebts = async (clientId: string): Promise<Delivery[]> => {
+  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebts(clientId));
+  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 };
 
-export const updateDebt = async (data: Debt, debtId: string): Promise<Debt> => {
-  const payload = adaptDebtForApi(data);
-  const response = await apiClient.put(debtApiRoutes.update(debtId), payload);
-  return adaptDebt(response.data);
-};
-
-export const deleteDebtById = async (debtId: string): Promise<void> => {
-  await apiClient.delete(debtApiRoutes.delete(debtId));
-};
-
-export const searchDebts = async (query: string): Promise<Debt[]> => {
-  const response = await apiClient.get(debtApiRoutes.search(query));
-  return Array.isArray(response.data) ? response.data.map(adaptDebt) : [adaptDebt(response.data)];
+export const getClientDeliveryWithDebtsFilter = async (clientId: string, paymentStatus: string): Promise<Delivery[]> => {
+  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebtsFilter(clientId), {
+    params: { status: paymentStatus, client_id: clientId },
+  });
+  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 };

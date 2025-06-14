@@ -16,7 +16,6 @@ export function adaptDebtPaymentForApi(payment: DebtPayment): any {
   return {
     id: payment.id ?? null,
     amount: payment.amount,
-    date: payment.date.toISOString(),
     method: payment.method,
     debt_id: payment.debtId,
   };

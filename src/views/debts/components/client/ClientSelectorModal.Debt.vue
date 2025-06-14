@@ -21,7 +21,7 @@
             <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate">
               {{ client.legalName }}
             </h4>
-            <Bagde>{{}} entregas</Bagde>
+            <Bagde>Deudas: {{ client.debtsCount }} </Bagde>
           </section>
         </div>
       </footer>
@@ -39,6 +39,8 @@ const props = defineProps<{
   open: boolean;
   clients: Client[];
 }>();
+
+console.log(props.clients);
 
 const emit = defineEmits<{
   (e: 'update:open', value: boolean): void;

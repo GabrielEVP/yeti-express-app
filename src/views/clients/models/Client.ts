@@ -14,6 +14,8 @@ export interface Client {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  debtsCount?: number;
+  [key: string]: any;
 }
 
 export interface ClientAddress {
@@ -29,4 +31,11 @@ export interface ClientEmail {
 export interface ClientPhone {
   id: string;
   phone: string;
+}
+
+export interface Stast {
+  total_deliveries_with_debt: number;
+  total_invoiced: number;
+  total_paid: number;
+  total_pending: number;
 }

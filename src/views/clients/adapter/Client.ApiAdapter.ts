@@ -2,13 +2,13 @@ import { Client, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
 
 export function adaptClient(apiData: any = {}): Client {
-  return {
+  const baseClient: Client = {
     id: apiData.id ?? '',
-    type: apiData.type ?? '',
+    type: apiData.type ?? 'venezolano',
     registrationNumber: apiData.registration_number ?? '',
     legalName: apiData.legal_name ?? '',
     notes: apiData.notes ?? '',
-    allowCredit: apiData.allow_credit ?? false,
+    allowCredit: Boolean(apiData.allow_credit), // Conversión segura a boolean
     userId: apiData.user_id ?? '',
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',
@@ -17,6 +17,19 @@ export function adaptClient(apiData: any = {}): Client {
     emails: Array.isArray(apiData.emails) ? apiData.emails.map(adaptEmail) : [],
     phones: Array.isArray(apiData.phones) ? apiData.phones.map(adaptPhone) : [],
   };
+
+  if (apiData.debts_count !== undefined && apiData.debts_count !== null) {
+    baseClient.debtsCount = Number(apiData.debts_count);
+  }
+
+  const allowedOptionalFields = ['some_future_field', 'another_field'];
+  allowedOptionalFields.forEach((field) => {
+    if (apiData[field] !== undefined) {
+      baseClient[field] = apiData[field];
+    }
+  });
+
+  return baseClient;
 }
 
 export function adaptClientForApi(client: Client): any {

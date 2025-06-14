@@ -21,19 +21,26 @@
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Monto Total</Text>
                 <Text>
-                  {{ formatToDollars(0) }}
+                  {{ formatToDollars(delivery.amount) }}
                 </Text>
               </div>
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Pendiente</Text>
                 <Text>
-                  {{ formatToDollars(0) }}
+                  {{ formatToDollars(delivery.debtRemainingAmount) }}
                 </Text>
               </div>
             </div>
           </div>
           <div class="mb-6">
-            <FieldForm label="Monto" type="number" name="amount" :max="String()" :placeholder="String()" />
+            <FieldHidden name="debtId" id="debtId" value="delivery.getDebts()?.getId()" />
+            <FieldForm
+              label="Monto"
+              type="number"
+              name="amount"
+              :max="String(delivery.debtRemainingAmount)"
+              :placeholder="String(delivery.debtRemainingAmount)"
+            />
           </div>
           <div class="mb-4">
             <Label>Forma de Pago</Label>
@@ -62,13 +69,14 @@ import { defineProps, onMounted } from 'vue';
 import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
 import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components/';
+import FieldRadio from '@components/forms/FieldRadio.vue';
 import { Delivery } from '@/views/deliveries';
 import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
 import { FullDebtPaymentSchema } from '@views/debts/';
 import { createDebtPaymentFull } from '@views/debts/';
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
-const props = defineProps<{
+defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
@@ -77,8 +85,8 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   modal: true,
   create: createDebtPaymentFull,
   messages: {
-    createError: 'Error al crear el cliente',
-    createSuccess: 'Cliente creado correctamente',
+    createError: 'Error al realizar el pago',
+    createSuccess: 'Pago creado correctamente',
   },
   validation: {
     schema: FullDebtPaymentSchema,

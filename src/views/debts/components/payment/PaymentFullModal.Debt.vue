@@ -21,13 +21,13 @@
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Monto Total</Text>
               <Text>
-                {{ formatToDollars(0) }}
+                {{ formatToDollars(delivery.amount) }}
               </Text>
             </div>
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Cantidad a Pagar</Text>
               <Text>
-                {{ formatToDollars(0) }}
+                {{ formatToDollars(delivery.debtRemainingAmount) }}
               </Text>
             </div>
           </div>
@@ -65,7 +65,7 @@ import { createDebtPaymentFull } from '@views/debts/';
 
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
-const props = defineProps<{
+defineProps<{
   isOpen: boolean;
   delivery: Delivery;
 }>();
@@ -74,8 +74,8 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   modal: true,
   create: createDebtPaymentFull,
   messages: {
-    createError: 'Error al crear el cliente',
-    createSuccess: 'Cliente creado correctamente',
+    createError: 'Error al realizar el pago',
+    createSuccess: 'Pago creado correctamente',
   },
   validation: {
     schema: FullDebtPaymentSchema,
