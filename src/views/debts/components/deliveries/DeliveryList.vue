@@ -16,7 +16,7 @@
       <DeliveryCardDesktop :delivery="delivery as Delivery" @pay-full="openFull" @pay-partial="openPartial" />
     </div>
     <EmptyStateSelectClient v-if="!clientId" />
-    <EmptyStateNoDeliveries v-if="paginatedItems.length === 0 && clientId" :show-action="true" @action="handleCreateDelivery" />
+    <EmptyStateNoDeliveries v-if="paginatedItems.length === 0 && clientId" :show-action="true" />
   </div>
   <PaginationComponent
     :current-page="currentPage"
@@ -29,11 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Delivery } from '@views/deliveries';
 import { usePagination } from '@/composables/';
-import PaymentFullModalDebt from '../payment/PaymentFullModal.Debt.vue';
-import PaymentPartialModalDebt from '../payment/PaymentPartialModal.Debt.vue';
+import PaymentFullModalDebt from '../payment/deliveries/PaymentFullModal.Debt.vue';
+import PaymentPartialModalDebt from '../payment/deliveries/PaymentPartialModal.Debt.vue';
 import DeliveryCardMobile from './CardMobile.vue';
 import DeliveryCardDesktop from './CardDesktop.vue';
 import PaginationComponent from './PaginateDelivery.vue';
@@ -53,7 +53,7 @@ const emit = defineEmits<{
 }>();
 
 const deliveriesRef = ref(props.deliveries);
-const { currentPage, totalPages, paginatedItems, updatePage } = usePagination(deliveriesRef, 15);
+const { currentPage, totalPages, paginatedItems } = usePagination(deliveriesRef, 15);
 
 watch(
   () => props.deliveries,
@@ -78,9 +78,5 @@ const openPartial = (delivery: Delivery) => {
 
 const handlePaymentProcess = () => {
   emit('refresh');
-};
-
-const handleCreateDelivery = () => {
-  emit('create-delivery');
 };
 </script>

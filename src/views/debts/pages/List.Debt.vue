@@ -2,9 +2,16 @@
   <SideBar>
     <ClientSelectorModal v-model:open="isOpen" :clients="clients as Client[]" @select="selectedClient = $event" />
     <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="open" />
-    <StatusFilter v-if="deliveries" v-model="selectedPaymentStatus" :options="paymentStatusOptions" />
+    <StatusFilter
+      v-if="selectedClient && deliveries"
+      :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
+      :stast="clientsStats"
+      v-model="selectedPaymentStatus"
+      :options="paymentStatusOptions"
+      @refresh="handleRefresh"
+    />
     <DeliveryList
-      :client-id="selectedClient?.id || null"
+      :client-id="selectedClient?.id != null ? String(selectedClient.id) : null"
       :payment-status="selectedPaymentStatus"
       :deliveries="filteredDeliveries as Delivery[]"
       :is-loading="isLoading"
@@ -13,6 +20,7 @@
     <LoadingSkeleton v-if="isLoading" />
   </SideBar>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { SideBar, LoadingSkeleton } from '@components';

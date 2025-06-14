@@ -55,7 +55,7 @@ export const getFilteredClients = async (params: Record<string, any>): Promise<C
 };
 
 export const getClientDebtReport = async (clientId: string): Promise<any> => {
-  const response = await apiClient.get(clientApiRoutes.getDebtReport(clientId));
+  const response = await apiClient.get(clientApiRoutes.getDebtReport(clientId), { responseType: 'blob' });
   return response.data;
 };
 

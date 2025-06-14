@@ -39,14 +39,7 @@
 <script setup lang="ts">
 import { formatToDollars } from '@utils';
 import { Bagde, Button, Card, Text } from '@components';
-import { Client } from '@/views/clients';
-
-interface Stast {
-  total_deliveries_with_debt: number;
-  total_invoiced: number;
-  total_paid: number;
-  total_pending: number;
-}
+import { Client, Stast } from '@views/clients';
 
 defineProps<{
   selectedClient: Client | null;

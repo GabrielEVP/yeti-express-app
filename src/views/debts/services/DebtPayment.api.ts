@@ -7,6 +7,8 @@ export const debtPaymentApiRoutes = {
   full: '/debt-payments/full',
   partial: '/debt-payments/partial',
   details: (id: string | number) => `/debt-payments/${id}`,
+  payAll: '/debt-payments/pay-all',
+  payPartialAmount: '/debt-payments/pay-partial-amount',
 };
 
 export const getAllDebtPayments = async (): Promise<DebtPayment[]> => {
@@ -47,6 +49,26 @@ export const createDebtPaymentPartial = async (payment: DebtPayment): Promise<De
     return adaptDebtPayment(response.data);
   } catch (error) {
     console.error('Error creating partial debt payment:', error);
+    throw error;
+  }
+};
+
+export const payAllDebts = async (pay: any): Promise<DebtPayment[]> => {
+  try {
+    const response = await apiClient.post(debtPaymentApiRoutes.payAll, { pay });
+    return Array.isArray(response.data) ? response.data.map(adaptDebtPayment) : [];
+  } catch (error) {
+    console.error('Error paying all debts for client:', error);
+    throw error;
+  }
+};
+
+export const payPartialAmountAcrossDebts = async (pay: any): Promise<DebtPayment[]> => {
+  try {
+    const response = await apiClient.post(debtPaymentApiRoutes.payPartialAmount, { pay });
+    return Array.isArray(response.data) ? response.data.map(adaptDebtPayment) : [];
+  } catch (error) {
+    console.error('Error paying partial amount across debts for client:', error);
     throw error;
   }
 };
