@@ -1,6 +1,7 @@
 export * from './adapter/Client.ApiAdapter';
 export * from './constants/TableHeader.Client';
 export * from './constants/TabsForm.Client';
+export * from './constants/UiTimeLine.Client';
 export * from './factory/Client.Factory';
 export * from './models/AllowCredit';
 export * from './models/Client';

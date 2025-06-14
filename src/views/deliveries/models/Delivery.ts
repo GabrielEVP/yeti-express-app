@@ -1,7 +1,7 @@
 import { DeliveryStatus } from '@/views/deliveries/';
 import { DeliveryPaymentStatus } from '@/views/deliveries/';
 import { PaymentType } from '@/views/deliveries/';
-import { TimeLineContent } from '@time-line-content/domain';
+import { TimeLineContent } from '@time-line-content';
 
 export interface Delivery {
   id: string;

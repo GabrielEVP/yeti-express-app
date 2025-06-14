@@ -76,12 +76,13 @@ import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
 import { SideBar, SectionText, Card, Bagde, ActionsButton, LoadingSkeleton, ActivityView } from '@/components/';
-import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
-import { MenuTimeLineContent } from '@time-line-content/presentation/';
 import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/';
 import { getDeliveryById } from '@/views/deliveries/';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { DeliveryClientAddressList, DeliveryReceiptDropdown } from '@views/deliveries/components';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/components';
+import { DELIVERY_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/deliveries/constants';
 
 const delivery = ref<Delivery | null>(null);
 const loading = ref(true);
@@ -98,7 +99,7 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() => adaptTimeLineContentToUI(delivery.value?.events ?? [], DELIVERY_UI_TIME_LINE_CONTENT_DEFINITIONS));
 const sectionActions = [
   {
     content: 'Editar Delivery',

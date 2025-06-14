@@ -59,7 +59,7 @@ import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateShort, formatRelativeDate } from '@/utils/';
 import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton, Bagde } from '@/components/';
-import { MenuTimeLineContent } from '@time-line-content/presentation/';
+import { MenuTimeLineContent } from '@time-line-content/components/';
 import { Employee, getRoleLabel, Role } from '@/views/employees/';
 import { getEmployeeById } from '@/views/employees/';
 import { AppRoutesEmployee } from '@/views/employees/router/';

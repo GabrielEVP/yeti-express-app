@@ -23,7 +23,6 @@
               <div class="space-y-5 mb-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SectionText title="Nombre" :content="service.name" />
-                  <SectionText title="Comision" :content="formatToDollars(service.comision)" />
                   <SectionText title="Monto" :content="formatToDollars(service.amount)" />
                 </div>
               </div>
@@ -84,10 +83,12 @@ import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate } from '@/utils';
 import { SideBar, SectionText, Card, ActionsButton, LoadingSkeleton, ActivityView, Dropdown, EmptyData } from '@/components/';
-import { MenuTimeLineContent } from '@/time-line-content/presentation/';
 import { Service } from '@/views/services';
 import { getServiceById } from '@/views/services';
 import { AppRoutesService } from '@/views/services/router/';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/components';
+import { SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/services/constants';
 
 const service = ref<Service | null>(null);
 const loading = ref(true);
@@ -104,7 +105,7 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() => adaptTimeLineContentToUI(service.value?.events ?? [], SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS));
 
 const sectionActions = [
   {

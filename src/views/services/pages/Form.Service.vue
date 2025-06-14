@@ -31,7 +31,6 @@
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
-              <FieldForm label="Comisión" name="comision" id="comision" type="number" required />
               <div class="flex justify-end mb-4">
                 <PlusButton type="button" @click="push({ id: '', name: '', amount: 0 })" />
               </div>

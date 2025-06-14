@@ -1,6 +1,7 @@
 export * from './adapter/Service.ApiAdapter';
 export * from './constants/TableHeader.Service';
 export * from './constants/TabsForm.Service';
+export * from './constants/UiTimeLine.Service';
 export * from './factory/Service.Factory';
 export * from './models/Service';
 export * from './router/Router.Service';

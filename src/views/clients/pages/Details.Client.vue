@@ -72,7 +72,8 @@ import { getClientById } from '@/views/clients/service/';
 import { AppRoutesClient } from '@/views/clients/router';
 import { AdressesList, PhonesList, EmailsList } from '@/views/clients/components/';
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
-import { MenuTimeLineContent } from '@time-line-content/presentation/';
+import { MenuTimeLineContent } from '@time-line-content/components';
+import { CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/clients/constants';
 
 const route = useRoute();
 const clientId = route.params.id as string;
@@ -92,7 +93,7 @@ onMounted(() => {
   loadClientData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() => adaptTimeLineContentToUI(client.value?.events ?? [], CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS));
 
 const credit = computed(() => (client.value?.allowCredit ? 'Sí' : 'No'));
 

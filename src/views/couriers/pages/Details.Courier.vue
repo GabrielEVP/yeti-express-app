@@ -54,11 +54,12 @@ import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateShort, formatRelativeDate } from '@/utils/';
 import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton } from '@/components/';
-import { MenuTimeLineContent } from '@time-line-content/presentation/';
-
 import { Courier } from '@/views/couriers';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { getCourierById } from '@/views/couriers/services';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/components';
+import { COURIER_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/couriers/constants';
 
 const courier = ref<Courier | null>(null);
 const loading = ref(true);
@@ -75,7 +76,7 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() => adaptTimeLineContentToUI(courier.value?.events ?? [], COURIER_UI_TIME_LINE_CONTENT_DEFINITIONS));
 
 const sectionActions = [
   {

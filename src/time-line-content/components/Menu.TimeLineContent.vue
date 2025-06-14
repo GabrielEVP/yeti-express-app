@@ -7,7 +7,7 @@
           <LineContent :icon="lineContent.icon">
             <h1 class="font-medium leading-none mb-2">{{ lineContent.title }}</h1>
             <Text class="text-sm text-gray-500">{{ lineContent.text }}</Text>
-            <p class="text-xs text-gray-500">{{ lineContent.date }}</p>
+            <p class="text-xs text-gray-500">{{ formatRelativeDate(lineContent.date) }}</p>
           </LineContent>
         </template>
       </Line>
@@ -17,8 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { Card, Text, Line, LineContent, EmptyData } from '@/components/';
-import type { UITimeLineContent } from '@/time-line-content/domain/';
+import { Text, Line, LineContent, EmptyData } from '@/components/';
+import { formatRelativeDate } from '@utils';
+import type { UITimeLineContent } from '@/time-line-content/';
 
 defineProps<{
   lineContents: UITimeLineContent[];

@@ -1,4 +1,4 @@
-import { TimeLineContent } from '@time-line-content/domain';
+import { TimeLineContent } from '@time-line-content';
 
 export interface Service {
   id: string;

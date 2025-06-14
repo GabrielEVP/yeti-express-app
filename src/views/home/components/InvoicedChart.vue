@@ -16,16 +16,8 @@
 import { computed } from 'vue';
 import { Card } from '@/components/';
 import { Bar } from 'vue-chartjs';
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from 'chart.js';
-import type { HistoricalInvoiced } from '@views/home/domain/DashboardStats';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import type { HistoricalInvoiced } from '@views/home/';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
