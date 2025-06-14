@@ -36,7 +36,7 @@ import { Client, Stast } from '@views/clients';
 const paymentStatusOptions = [
   { label: 'Todos', value: 'all' },
   { label: 'Pendiente', value: 'pending' },
-  { label: 'Pago Parcial', value: 'partial_paid' },
+  { label: 'Pago Parcial', value: 'partially_paid' },
   { label: 'Pagado', value: 'paid' },
 ];
 
@@ -58,7 +58,7 @@ const filteredDeliveries = computed(() => {
     switch (selectedPaymentStatus.value) {
       case 'pending':
         return delivery.paymentStatus === DeliveryPaymentStatus.PENDING;
-      case 'partial_paid':
+      case 'partially_paid':
         return delivery.paymentStatus === DeliveryPaymentStatus.PARTIAL_PAID;
       case 'paid':
         return delivery.paymentStatus === DeliveryPaymentStatus.PAID;

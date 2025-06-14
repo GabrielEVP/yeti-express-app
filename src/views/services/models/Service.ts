@@ -10,6 +10,8 @@ export interface Service {
   bills: Bill[];
   createdAt: string;
   updatedAt: string;
+  totalExpense?: number;
+  totalEarning?: number;
 }
 
 export interface Bill {

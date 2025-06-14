@@ -6,7 +6,7 @@
           {{ delivery.number }}
         </span>
         <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full" :class="getStatusClasses(delivery.status)">
-          {{ delivery.status }}
+          {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
         </span>
       </div>
       <div v-if="showPaymentInfo" class="text-right">
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Delivery } from '@views/deliveries';
+import { Delivery, getDeliveryPaymentStatusLabel } from '@views/deliveries';
 import { DeliveryPaymentStatus } from '@views/deliveries';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 

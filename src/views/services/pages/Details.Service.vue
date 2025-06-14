@@ -53,11 +53,11 @@
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
             <ActivityView title="Total de gastos">
-              <div class="text-2xl font-bold">{{}}</div>
+              <div class="text-2xl font-bold">{{ formatToDollars(service.totalExpense ?? 0) }}</div>
               <p class="text-xs text-gray-500">Cantidad de gastos: {{ service.bills.length }}</p>
             </ActivityView>
             <ActivityView title="Ganancias">
-              <div class="text-2xl font-bold">{{}}</div>
+              <div class="text-2xl font-bold">{{ formatToDollars(service.totalEarning ?? 0) }}</div>
               <p class="text-xs text-gray-500">Porcentaje de ganancia: {{}}</p>
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">

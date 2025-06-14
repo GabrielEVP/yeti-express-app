@@ -17,6 +17,9 @@ export interface Delivery {
   debtRemainingAmount: number;
   createdAt: Date;
   updatedAt: Date;
+  clientLegalName?: string;
+  courierName?: string;
+  serviceName?: string;
   debtId: string;
   clientId: string;
   clientAddressId: string;

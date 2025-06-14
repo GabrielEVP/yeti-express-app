@@ -40,8 +40,7 @@
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="totalItems"
-      :sortState="sortConfig"
+      :totalItems="clients.length"
       @updatePage="updatePage"
       @sort="handleSort"
     >
@@ -50,7 +49,7 @@
           {{ client.legalName }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          <Bagde>{{ client.type }}</Bagde>
+          <Bagde>{{ formatClientType(client.type as ClientType) }}</Bagde>
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300 break-words">
           {{ client.registrationNumber }}
@@ -117,7 +116,7 @@ import {
   LoadingSkeleton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Client, ClientTypeOptions } from '@/views/clients/';
+import { Client, ClientType, ClientTypeOptions, formatClientType } from '@/views/clients/';
 import { searchClients, deleteClientById, getClientDebtReport, getFilteredClients } from '@/views/clients/service/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
@@ -130,6 +129,8 @@ const error = ref<string | null>(null);
 const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
 
 const clientTypeOptions = [...ClientTypeOptions];
+
+const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(clients, 15);
 
 const { searchQuery } = useSearch<Client>({
   fetchFn: searchClients,
@@ -163,11 +164,6 @@ const runSearch = async () => {
     });
 
     clients.value = response;
-    totalItems.value = response.length;
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Error al cargar los clientes';
-    clients.value = [];
-    totalItems.value = 0;
   } finally {
     isLoading.value = false;
   }
@@ -189,9 +185,6 @@ const debouncedSearch = useDebounce(runSearch, 500);
 onMounted(async () => {
   await runSearch();
 });
-
-const totalItems = ref(0);
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(clients, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteClientById,

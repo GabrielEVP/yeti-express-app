@@ -34,7 +34,7 @@
         <TableContent>{{ formatDateCustom(bill.date) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.amount) }}</TableContent>
         <TableContent>
-          <Bagde>{{ bill.method }}</Bagde>
+          <Bagde>{{ formatPaymentMethod(bill.method) }}</Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -98,7 +98,7 @@ import {
   Bagde,
 } from '@/components/';
 import { ModalDetails } from '@/views/company-bills/components';
-import { CompanyBill } from '@/views/company-bills/';
+import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
 import { getAllCompanyBills, deleteCompanyBillById, searchCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';

@@ -10,7 +10,7 @@
         {{ formatDateCustom(delivery.date) }}
       </div>
       <Bagde>
-        {{ delivery.paymentStatus }}
+        {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
       </Bagde>
     </div>
     <div v-if="showPaymentSection" class="flex items-center gap-8">
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Delivery } from '@views/deliveries';
+import { Delivery, getDeliveryPaymentStatusLabel } from '@views/deliveries';
 import { DeliveryPaymentStatus } from '@views/deliveries';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, Button, Text } from '@/components/';

@@ -10,6 +10,8 @@ export function adaptService(apiData: any = {}): Service {
     comision: apiData.comision ?? 0,
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',
+    totalEarning: apiData.total_earning ?? 0,
+    totalExpense: apiData.total_expense ?? 0,
     events: Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
     bills: Array.isArray(apiData.bills) ? apiData.bills.map(adaptBill) : [],
   };

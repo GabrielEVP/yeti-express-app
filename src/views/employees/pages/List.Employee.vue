@@ -32,7 +32,7 @@
         <TableContent>{{ employee.name }}</TableContent>
         <TableContent>{{ employee.email }}</TableContent>
         <TableContent>
-          <Bagde class="break-words text-right">{{ employee.role }} </Bagde>
+          <Bagde class="break-words text-right">{{ getRoleLabel(employee.role as Role) }} </Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
@@ -92,7 +92,7 @@ import {
   FilterButton,
   LoadingSkeleton,
 } from '@/components/';
-import { Employee } from '@/views/employees/';
+import { Employee, getRoleLabel, Role } from '@/views/employees/';
 import { getAllEmployees, deleteEmployeeById, searchEmployees } from '@/views/employees/';
 import { AppRoutesEmployee } from '@/views/employees/';
 import { TABLE_HEADER_EMPLOYEE } from '@/views/employees/';

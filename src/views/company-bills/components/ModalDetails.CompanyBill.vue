@@ -33,7 +33,7 @@
           <div class="flex justify-between items-center py-3 border-b border-gray-50 dark:border-gray-800">
             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Método de Pago</span>
             <span class="text-sm text-gray-900 dark:text-white">
-              {{ bill.method }}
+              {{ formatPaymentMethod(bill.method) }}
             </span>
           </div>
         </div>
@@ -54,7 +54,7 @@ import { ref, onMounted, watch } from 'vue';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { LoadingSkeleton, Modal } from '@/components/';
-import { CompanyBill } from '@/views/company-bills/';
+import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
 import { getCompanyBillById } from '@/views/company-bills/services';
 
 const bill = ref<CompanyBill | null>(null);

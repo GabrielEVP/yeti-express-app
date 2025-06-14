@@ -30,12 +30,6 @@
             </div>
           </Card>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2 lg:p-8">
-            <ActivityView title="Pedidos entregados del mes">
-              <div class="text-2xl font-bold">{{}}</div>
-            </ActivityView>
-            <ActivityView title="Pedidos por entregar">
-              <div class="text-2xl font-bold">{{}}</div>
-            </ActivityView>
             <ActivityView title="Última Actualización">
               <div class="text-2xl font-bold">{{ formatDateShort(courier.updatedAt) }}</div>
               <p class="text-xs text-gray-500">{{ formatRelativeDate(courier.updatedAt) }}</p>

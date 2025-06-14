@@ -39,10 +39,10 @@
           {{ formatToDollars(service.comision) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
-          {{ formatToDollars(service.amount) }}
+          {{ formatToDollars(service.totalExpense ?? 0) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
-          {{ formatToDollars(service.amount) }}
+          {{ formatToDollars(service.totalEarning ?? 0) }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">

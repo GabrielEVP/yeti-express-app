@@ -19,7 +19,7 @@
                       : 'border-red-500'
               "
             >
-              {{ delivery.status }}
+              {{ getDeliveryStatusLabel(delivery.status) }}
             </Bagde>
           </div>
         </div>
@@ -38,11 +38,12 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <SectionText title="Número de Delivery" :content="delivery.number" />
                 <SectionText title="Fecha de Emisión" :content="formatDateCustom(delivery.date)" />
-                <SectionText title="Estado" :content="delivery.status" />
-                <SectionText title="Forma de Pago" :content="delivery.paymentStatus" />
-                <SectionText title="Cliente" :content="delivery.clientId ?? 'Sin cliente'" />
+                <SectionText title="Estado" :content="getDeliveryStatusLabel(delivery.status)" />
+                <SectionText title="Forma de Pago" :content="getDeliveryPaymentStatusLabel(delivery.paymentStatus)" />
+                <SectionText title="Cliente" :content="delivery.clientLegalName ?? 'Sin cliente'" />
+                <SectionText title="Servicio" :content="delivery.serviceName ?? 'Sin Servicio'" />
                 <SectionText title="Importe Total" :content="formatToDollars(delivery.amount)" />
-                <SectionText title="Repartidor" :content="delivery.courierId ?? 'Sin asignar'" />
+                <SectionText title="Repartidor" :content="delivery.courierName ?? 'Sin asignar'" />
               </div>
               <SectionText title="Nota" :content="delivery.notes" />
               <div class="space-y-6 pt-8">
@@ -56,14 +57,6 @@
         </Card>
       </div>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <ActivityView title="Total Facturado">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">Total: {{}}</p>
-        </ActivityView>
-        <ActivityView title="Restante a Cobrar">
-          <div class="text-2xl font-bold">{{}}</div>
-          <p class="text-xs text-gray-500">Total: {{}}</p>
-        </ActivityView>
         <ActivityView title="Ultima Actualizacion">
           <div class="text-2xl font-bold">{{ formatDateShort(delivery.updatedAt) }}</div>
           <p class="text-xs text-gray-500">{{ formatRelativeDate(delivery.updatedAt) }}</p>
@@ -85,7 +78,7 @@ import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom 
 import { SideBar, SectionText, Card, Bagde, ActionsButton, LoadingSkeleton, ActivityView } from '@/components/';
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 import { MenuTimeLineContent } from '@time-line-content/presentation/';
-import { Delivery, DeliveryStatus } from '@/views/deliveries/';
+import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/';
 import { getDeliveryById } from '@/views/deliveries/';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { DeliveryClientAddressList, DeliveryReceiptDropdown } from '@views/deliveries/components';

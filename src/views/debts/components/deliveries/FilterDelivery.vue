@@ -31,7 +31,7 @@
             </button>
           </div>
         </div>
-        <div class="flex flex-col sm:flex-row sm:justify-end gap-3 mt-4">
+        <div v-if="stast && stast?.total_pending > 0" class="flex flex-col sm:flex-row sm:justify-end gap-3 mt-4">
           <Button
             @click="openFull(clientId as string)"
             class="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"

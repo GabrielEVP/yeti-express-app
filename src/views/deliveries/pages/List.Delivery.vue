@@ -62,12 +62,11 @@
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="totalItems"
-      :sortState="sortConfig"
+      :totalItems="deliveries.length"
       @updatePage="updatePage"
       @sort="handleSort"
     >
-      <TableRow v-for="delivery in deliveries" :key="delivery.id">
+      <TableRow v-for="delivery in paginatedItems" :key="delivery.id">
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.number }}
         </TableContent>
@@ -75,16 +74,19 @@
           {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.clientId }}
+          {{ delivery.clientLegalName }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.courierId }}
+          {{ delivery.courierName }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.serviceId }}
+          {{ delivery.serviceName }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
           {{ formatToDollars(delivery.amount) }}
+        </TableContent>
+        <TableContent class="text-black text-center dark:text-white break-words">
+          {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde
@@ -98,7 +100,7 @@
                     : 'border-red-500'
             "
           >
-            {{ delivery.status }}
+            {{ getDeliveryStatusLabel(delivery.status) }}
           </Bagde>
         </TableContent>
         <TableContent>
@@ -139,7 +141,7 @@
                         : 'border-red-500'
                 "
               >
-                {{ delivery.status }}
+                {{ getDeliveryStatusLabel(delivery.status) }}
               </Bagde>
             </div>
             <div class="flex justify-between items-center">
@@ -165,8 +167,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { useSearch, useDebounce } from '@/composables/';
-import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
+import { usePagination, useSearch, useDebounce, useDeleteWithModal } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
   SideBar,
@@ -186,8 +187,8 @@ import {
   LoadingSkeleton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Delivery } from '../models';
-import { DeliveryStatus } from '../models';
+import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
+import { DeliveryStatus } from '@views/deliveries/models';
 import { deleteDeliveryById, searchDeliveries, getFilteredDeliveries, updateDeliveryStatus, getDeliveryTicket } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
@@ -206,13 +207,9 @@ const endDate = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
-const currentPage = ref(1);
-const totalItems = ref(0);
-const totalPages = ref(1);
-const startIndex = ref(0);
-const endIndex = ref(0);
 
-// Separate status for modal
+const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(deliveries, 15);
+
 const modalStatus = ref<DeliveryStatus | undefined>(undefined);
 const isStatusModalOpen = ref(false);
 const selectedDeliveryId = ref<string | undefined>(undefined);
@@ -267,27 +264,10 @@ const runSearch = async () => {
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
     });
-
     deliveries.value = response;
-    totalItems.value = response.length;
-    totalPages.value = Math.ceil(response.length / 15);
-    startIndex.value = (currentPage.value - 1) * 15;
-    endIndex.value = Math.min(startIndex.value + 15, response.length);
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Error al cargar los deliveries';
-    deliveries.value = [];
-    totalItems.value = 0;
-    totalPages.value = 1;
-    startIndex.value = 0;
-    endIndex.value = 0;
   } finally {
     isLoading.value = false;
   }
-};
-
-const updatePage = (page: number) => {
-  currentPage.value = page;
-  runSearch();
 };
 
 const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
