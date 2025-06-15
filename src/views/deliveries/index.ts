@@ -1,6 +1,5 @@
 export * from './adapter/Delivery.ApiAdapter';
 export * from './constants/Delivery.TableHeader';
-export * from './factory/DeliveryFactory';
 export * from './models/Delivery';
 export * from './models/PaymentStatus';
 export * from './models/PaymentType';
