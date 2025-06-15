@@ -56,8 +56,17 @@
               <p class="text-xs text-gray-500">Cantidad de gastos: {{ service.bills.length }}</p>
             </ActivityView>
             <ActivityView title="Ganancias">
+<<<<<<< HEAD:src/views/services/pages/Details.Service.vue
               <div class="text-2xl font-bold">{{ formatToDollars(service.totalEarning ?? 0) }}</div>
               <p class="text-xs text-gray-500">Porcentaje de ganancia: {{}}</p>
+=======
+              <div class="text-2xl font-bold">
+                {{ formatToDollars(service.getTotalEarning()) }}
+              </div>
+              <p class="text-xs text-gray-500">
+                Porcentaje de ganancia: {{ service.getEarningPercentage() }}
+              </p>
+>>>>>>> main:src/views/services/presentation/pages/Details.Service.vue
             </ActivityView>
             <ActivityView title="Ultima Actualizacion">
               <div class="text-2xl font-bold">{{ formatDateShort(service.updatedAt) }}</div>
@@ -82,10 +91,28 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate } from '@/utils';
+<<<<<<< HEAD:src/views/services/pages/Details.Service.vue
 import { SideBar, SectionText, Card, ActionsButton, LoadingSkeleton, ActivityView, Dropdown, EmptyData } from '@/components/';
 import { Service } from '@/views/services';
 import { getServiceById } from '@/views/services';
 import { AppRoutesService } from '@/views/services/router/';
+=======
+import {
+  SideBar,
+  SectionText,
+  Card,
+  ActionsButton,
+  LoadingSkeleton,
+  ActivityView,
+  Dropdown,
+  EmptyData,
+} from '@/components/';
+import { MenuTimeLineContent } from '@/time-line-content/presentation/';
+import { Service, ServiceRepositoryImpl } from '@/views/services';
+import { GetServiceByIdUseCase } from '@views/services';
+import { AppRoutesService } from '@/views/services/presentation/routes/';
+import { SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/services/domain/time-line';
+>>>>>>> main:src/views/services/presentation/pages/Details.Service.vue
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 import { MenuTimeLineContent } from '@time-line-content/components';
 import { SERVICE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/services/constants';
