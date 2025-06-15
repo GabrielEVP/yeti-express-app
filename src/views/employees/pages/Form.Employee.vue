@@ -41,10 +41,10 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
   update: (values, id) => updateEmployee(values, id),
   defaultRoute: AppRoutesEmployee.list,
   messages: {
-    createError: 'Error al crear el Empleador',
-    updateError: 'Error al actualizar el Empleador',
-    createSuccess: 'Empleador creado correctamente',
-    updateSuccess: 'Empleador actualizado correctamente',
+    createError: 'Error al crear el Empleado',
+    updateError: 'Error al actualizar el Empleado',
+    createSuccess: 'Empleado creado correctamente',
+    updateSuccess: 'Empleado actualizado correctamente',
   },
   validation: {
     schema: EmployeeSchema,

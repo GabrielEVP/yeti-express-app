@@ -1,11 +1,7 @@
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-50 flex items-center justify-center px-4"
-  >
+  <div class="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-50 flex items-center justify-center px-4">
     <DangerAlert :show="showError" :message="alertMessage" />
-    <div
-      class="relative max-w-md w-full bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl border border-white/20"
-    >
+    <div class="relative max-w-md w-full bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl border border-white/20">
       <div class="p-8">
         <div class="text-center mb-8">
           <div class="inline-flex items-center justify-center w-16 h-16">
@@ -19,51 +15,18 @@
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <div class="space-y-5">
             <div v-if="!isLogin" class="transform transition-all duration-300 ease-in-out">
-              <FieldForm
-                label="Nombre Completo"
-                id="name"
-                v-model="form.name"
-                type="text"
-                placeholder="Ingresa tu nombre completo"
-                required
-              />
+              <FieldForm label="Nombre Completo" id="name" v-model="form.name" type="text" placeholder="Ingresa tu nombre completo" required />
             </div>
-            <FieldForm
-              label="Email"
-              id="email"
-              v-model="form.email"
-              type="email"
-              placeholder="tu@email.com"
-              required
-            />
-            <FieldForm
-              label="Contraseña"
-              id="password"
-              v-model="form.password"
-              type="password"
-              placeholder="••••••••"
-              required
-            />
+            <FieldForm label="Email" id="email" v-model="form.email" type="email" placeholder="tu@email.com" required />
+            <FieldForm label="Contraseña" id="password" v-model="form.password" type="password" placeholder="••••••••" required />
             <button
               type="submit"
               :disabled="isLoading"
               class="group relative w-full flex justify-center items-center py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-blue-500/25"
             >
               <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
-                <svg
-                  class="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path
                     class="opacity-75"
                     fill="currentColor"
@@ -80,12 +43,7 @@
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  ></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
               </span>
             </button>
@@ -102,9 +60,7 @@
                 {{ isLogin ? 'Regístrate' : 'Inicia sesión' }}
               </span>
             </span>
-            <span
-              class="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"
-            ></span>
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
           </button>
         </div>
       </div>
@@ -162,7 +118,11 @@ async function handleSubmit() {
       router.push('/deliveries');
     }
   } catch (error: any) {
-    triggerError(error.response.data.message || 'Error en la autenticación');
+    if (error.response) {
+      triggerError(error.response.data.message || 'Error en la autenticación');
+    } else {
+      triggerError('Error en la autenticación');
+    }
   } finally {
     isLoading.value = false;
   }

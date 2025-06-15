@@ -49,7 +49,7 @@
               <SectionText title="Nota" :content="delivery.notes" />
               <div class="space-y-6 pt-8">
                 <DeliveryReceiptDropdown :receipt="delivery.receipt" />
-                <DeliveryClientAddressList :address="delivery.clientAddress" />
+                <DeliveryClientAddressList :address="delivery.clientAddress ?? ''" />
               </div>
             </div>
           </div>

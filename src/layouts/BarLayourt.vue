@@ -28,6 +28,9 @@
         </div>
         <hr class="border-gray-200 dark:border-gray-700 mb-4" />
         <div class="relative px-3"></div>
+        <div class="flex p-3">
+          <SidebarProfileMenu :items="isUser ? profileMenuItemsUser : profileMenuItemsEmployee" />
+        </div>
       </div>
     </aside>
     <button
@@ -51,7 +54,7 @@
 import { ref, onMounted } from 'vue';
 import { HomeIcon, UsersIcon, ClipboardIcon, BookUser, Bike, SquareChartGantt, Banknote, WalletMinimal } from 'lucide-vue-next';
 import logo from '@/assets/yeti.webp';
-import { DangerAlert, SuccessAlert } from '@/components/';
+import { DangerAlert, SidebarProfileMenu, SuccessAlert } from '@/components/';
 import NavigationItem from '@/components/ui/sidebars/SidebarItems.vue';
 import ToggleDarkMode from '@/components/ui/sidebars/SidebarToggleMode.vue';
 import { useAlert } from '@/composables/';
@@ -61,6 +64,11 @@ import { storeToRefs } from 'pinia';
 const authStore = useAuthStore();
 
 const { isUser } = storeToRefs(authStore);
+
+import { UserIcon, LogOutIcon } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const { showSuccess, showError, alertMessage } = useAlert();
 
@@ -79,12 +87,39 @@ const navigationItemsUser = [
   { route: '/debts', title: 'Cuentas por cobrar', icon: WalletMinimal },
 ];
 
+const profileMenuItemsUser = [
+  {
+    label: 'Perfil',
+    icon: UserIcon,
+    action: () => router.push('/users/edit'),
+  },
+  {
+    label: 'Cerrar sesión',
+    icon: LogOutIcon,
+    action: () => {
+      authStore.clearUser();
+      router.push('/');
+    },
+  },
+];
+
 const navigationItemsEmployee = [
   { route: '/deliveries', title: 'Deliverys', icon: ClipboardIcon },
   { route: '/clients', title: 'Clientes', icon: UsersIcon },
   { route: '/couriers', title: 'Repartidor', icon: Bike },
   { route: '/services', title: 'Servicios', icon: SquareChartGantt },
   { route: '/company-bills', title: 'Gastos', icon: Banknote },
+];
+
+const profileMenuItemsEmployee = [
+  {
+    label: 'Cerrar sesión',
+    icon: LogOutIcon,
+    action: () => {
+      authStore.clearUser();
+      router.push('/');
+    },
+  },
 ];
 
 function toggleDarkMode() {

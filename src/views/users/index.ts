@@ -1,7 +1,6 @@
 export * from './adapter/User.ApiAdapter';
 export { default as Form } from './pages/Form.User.vue';
 export { default as FormPassword } from './pages/FormPassword.User.vue';
-export { default as Details } from './pages/Details.User.vue';
 export * from './constans/User.PasswordDefaultFormValue';
 export * from './constans/User.DefaultFormValue';
 export * from './models/User';
