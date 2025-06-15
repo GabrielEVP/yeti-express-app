@@ -21,9 +21,9 @@
                 name="paymentStatus"
                 id="paymentStatus"
                 :items="[
-                  { value: 'PAID', label: 'Pagado' },
-                  { value: 'PENDING', label: 'Pendiente' },
-                  { value: 'PARTIAL', label: 'Pago Parcial' },
+                  { value: 'pending', label: 'Pendiente' },
+                  { value: 'partial_paid', label: 'Parcialmente pagado' },
+                  { value: 'paid', label: 'Pagado' },
                 ]"
                 v-model="selectedPaymentStatus"
               >
