@@ -1,31 +1,19 @@
 <template>
   <Card class="mt-8">
-    <div class="hidden lg:block overflow-x-auto">
+    <div class="hidden lg:block">
       <Table>
         <TableHead>
           <TableRow>
-            <TableContent
-              v-for="(header, index) in headers"
-              :key="index"
-              :class="getHeaderAlignment(header.position)"
-            >
+            <TableContent v-for="(header, index) in headers" :key="index" :class="getHeaderAlignment(header.position)">
               <div class="flex items-center h-12" :class="getHeaderFlexAlignment(header.position)">
-                <div
-                  class="flex cursor-pointer"
-                  v-if="header.sortable"
-                  @click="toggleSort(header.key)"
-                >
+                <div class="flex cursor-pointer" v-if="header.sortable" @click="toggleSort(header.key)">
                   <span class="mr-2">{{ header.label }}</span>
                   <component :is="getSortIcon(header.key)" class="w-4 h-4 text-blue-700" />
                 </div>
                 <div v-else>{{ header.label }}</div>
               </div>
             </TableContent>
-            <TableContent
-              class="text-center px-6 py-3 text-xs font-semibold text-gray-600 dark:text-gray-300"
-            >
-              Acciones
-            </TableContent>
+            <TableContent class="text-center px-6 py-3 text-xs font-semibold text-gray-600 dark:text-gray-300"> Acciones </TableContent>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -34,10 +22,7 @@
       </Table>
     </div>
     <div class="lg:hidden">
-      <div
-        class="p-4 border-b border-gray-200 dark:border-gray-700"
-        v-if="sortableHeaders.length > 0"
-      >
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700" v-if="sortableHeaders.length > 0">
         <div class="flex flex-wrap gap-2">
           <button
             v-for="header in sortableHeaders"
@@ -46,10 +31,7 @@
             class="flex items-center gap-1 px-3 py-2 text-xs font-medium rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             <span>{{ header.label }}</span>
-            <component
-              :is="getSortIcon(header.key)"
-              class="w-3 h-3 text-blue-700 dark:text-blue-200"
-            />
+            <component :is="getSortIcon(header.key)" class="w-3 h-3 text-blue-700 dark:text-blue-200" />
           </button>
         </div>
       </div>
@@ -59,13 +41,9 @@
         </div>
       </slot>
     </div>
-    <div
-      class="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-700"
-    >
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-700">
       <div class="text-xs text-gray-500 dark:text-gray-400 text-center sm:text-left">
-        <span class="hidden sm:inline"
-          >Mostrando {{ startIndex + 1 }} a {{ endIndex }} de {{ totalItems }} resultados</span
-        >
+        <span class="hidden sm:inline">Mostrando {{ startIndex + 1 }} a {{ endIndex }} de {{ totalItems }} resultados</span>
         <span class="sm:hidden">{{ startIndex + 1 }}-{{ endIndex }} de {{ totalItems }}</span>
       </div>
       <div class="flex gap-2 items-center">

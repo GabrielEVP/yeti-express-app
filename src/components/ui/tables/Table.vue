@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-x-scroll table-fixed">
+  <div class="overflow-x-auto table-fixed">
     <table class="w-full">
       <slot></slot>
     </table>
