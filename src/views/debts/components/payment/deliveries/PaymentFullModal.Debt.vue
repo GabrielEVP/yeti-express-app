@@ -1,0 +1,114 @@
+<template>
+  <div
+    v-show="isOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50"
+    @click.self="emitClose"
+  >
+    <div class="bg-white dark:bg-gray-800 w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col">
+      <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Pago Completo</h3>
+      </div>
+
+      <form @submit.prevent="onSubmitform" class="flex-1 overflow-y-auto p-4 sm:p-6">
+        <div class="space-y-4 mb-6">
+          <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <Text>Numero de orden</Text>
+            <Text>
+              {{ delivery?.number }}
+            </Text>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <Text>Monto Total</Text>
+              <Text>
+                {{ formatToDollars(delivery.amount) }}
+              </Text>
+            </div>
+            <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <Text>Cantidad a Pagar</Text>
+              <Text>
+                {{ formatToDollars(delivery.debtRemainingAmount) }}
+              </Text>
+            </div>
+          </div>
+          <div class="mb-8">
+            <FieldHidden name="debtId" id="debtId" value="delivery.getDebts()?.getId()" />
+            <Text>Forma de Pago</Text>
+            <div v-for="field in PaymentMethodOptions" :key="field.value" class="mt-8">
+              <FieldRadio name="method" :id="field.value" :value="field.value">
+                {{ field.label }}
+              </FieldRadio>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col justify-end sm:flex-row gap-3">
+            <CancelButton @click="emitClose" />
+            <AcceptButton :disabled="!meta?.valid" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { defineProps, onMounted } from 'vue';
+import { useVeeForm } from '@/composables/';
+import { formatToDollars } from '@utils';
+import { Text, CancelButton, AcceptButton } from '@/components/';
+import FieldRadio from '@components/forms/FieldRadio.vue';
+import { Delivery } from '@/views/deliveries';
+import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
+import { FullDebtPaymentSchema } from '@views/debts/';
+import { createDebtPaymentFull } from '@views/debts/';
+
+import FieldHidden from '@components/forms/FieldHidden.vue';
+
+const props = defineProps<{
+  isOpen: boolean;
+  delivery: Delivery;
+}>();
+
+const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
+  modal: true,
+  create: createDebtPaymentFull,
+  messages: {
+    createError: 'Error al realizar el pago',
+    createSuccess: 'Pago creado correctamente',
+  },
+  validation: {
+    schema: FullDebtPaymentSchema,
+    initialValues: {
+      debtId: props.delivery.debtId ?? '',
+    },
+  },
+});
+
+onMounted(() => {
+  initializeForm();
+});
+
+const emit = defineEmits<{
+  (e: 'proccess', value: boolean): void;
+  (e: 'update:isOpen', value: boolean): void;
+  (e: 'select', delivery: Delivery): void;
+}>();
+
+const emitClose = () => {
+  emit('update:isOpen', false);
+};
+
+const emitProccess = () => {
+  emit('proccess', true);
+};
+
+async function onSubmitform() {
+  const createdPaid = await onSubmit();
+
+  if (createdPaid) {
+    emitProccess();
+    emitClose();
+  }
+}
+</script>

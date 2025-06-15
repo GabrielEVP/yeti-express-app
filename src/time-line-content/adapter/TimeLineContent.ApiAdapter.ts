@@ -1,11 +1,11 @@
-import { TimeLineContent } from '@/time-line-content/domain';
+import { TimeLineContent } from '@/time-line-content';
 
 export function adaptTimeLineContent(apiEvent: any): TimeLineContent {
-  return new TimeLineContent(
-    apiEvent.id,
-    apiEvent.event,
-    apiEvent.reference_table,
-    apiEvent.reference_id,
-    apiEvent.created_at
-  );
+  return {
+    id: apiEvent.id,
+    event: apiEvent.event,
+    referenceTable: apiEvent.reference_table,
+    referenceId: apiEvent.reference_id,
+    createdAt: new Date(apiEvent.created_at),
+  };
 }

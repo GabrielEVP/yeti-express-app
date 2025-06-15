@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import { Details, Form } from '@views/users/components/';
+import { Form, FormPassword } from '@views/users/';
 
 export const UserRouter: Array<RouteRecordRaw> = [
   {
@@ -10,9 +10,9 @@ export const UserRouter: Array<RouteRecordRaw> = [
     props: true,
   },
   {
-    path: '/users/',
-    name: 'users',
-    component: Details,
+    path: '/users/changePassword/',
+    name: 'usersChangePassword',
+    component: FormPassword,
     meta: { requiresAuth: true },
     props: true,
   },

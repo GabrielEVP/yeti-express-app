@@ -1,1 +1,1 @@
-export * from './api/DebtApiAdapter';
+export * from './Debt.ApiAdapter';

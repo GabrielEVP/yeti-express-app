@@ -13,7 +13,13 @@
           :id="id"
           :value="value"
           @change="handleChange"
-          class="w-full px-3 py-2 bg-white border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black"
+          :disabled="disabled"
+          :class="[
+            'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+            disabled
+              ? 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-white border-black dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black',
+          ]"
         >
           <option v-if="placeholder" value="" disabled hidden>
             {{ placeholder }}
@@ -48,5 +54,6 @@ defineProps<{
   items: SelectOption[];
   required?: boolean;
   placeholder?: string;
+  disabled?: boolean;
 }>();
 </script>

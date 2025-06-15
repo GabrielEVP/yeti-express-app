@@ -1,3 +1,8 @@
-import { User } from '@/views/users/domain';
+import { User } from "@/views/users/";
 
-export const USERDEFAULTFORMVALUES: User = User.empty();
+export const USERDEFAULTFORMVALUES: User = {
+   id: "0",
+   name: "",
+   email: "",
+   profile_image: null,
+};

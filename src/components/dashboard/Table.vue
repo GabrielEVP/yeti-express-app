@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue';
+import { ref, computed, PropType, watch } from 'vue';
 import { defineProps, defineEmits } from 'vue';
 import { ChevronLeft, ChevronRight, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-vue-next';
 import { Card, Table, TableBody, TableContent, TableHead, TableRow } from '@/components';
@@ -117,11 +117,19 @@ const props = defineProps<{
   startIndex: number;
   endIndex: number;
   totalItems: number;
+  sortState?: { column: string; order: 'asc' | 'desc' } | null;
 }>();
 
 const emit = defineEmits(['updatePage', 'sort']);
 
-const sortConfig = ref<{ column: string; order: 'asc' | 'desc' } | null>(null);
+const sortConfig = ref<{ column: string; order: 'asc' | 'desc' } | null>(props.sortState || null);
+
+watch(
+  () => props.sortState,
+  (newValue) => {
+    sortConfig.value = newValue || null;
+  }
+);
 
 const sortableHeaders = computed(() => props.headers.filter((header) => header.sortable));
 

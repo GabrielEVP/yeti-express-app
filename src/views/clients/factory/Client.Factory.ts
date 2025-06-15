@@ -1,26 +1,32 @@
-import { Client, ClientPhone } from '@/views/clients/domain/';
-import { ClientType } from '@/views/clients/domain/';
-import { ClientAddress } from '../domain';
+import { Client, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients';
 
-export const createDefaultClient = (): Client => {
-  return new Client(
-    '',
-    '',
-    ClientType.VENEZOLANO,
-    '',
-    '',
-    false,
-    [],
-    [createDefaultClientAddress()],
-    [],
-    [new ClientPhone('', '')],
-    [],
-    [],
-    new Date(),
-    new Date()
-  );
+export const DEFAULT_CLIENT_ADDRESS: ClientAddress = {
+  id: '',
+  address: '',
 };
 
-export const createDefaultClientAddress = (): ClientAddress => {
-  return new ClientAddress('', '');
+export const DEFAULT_CLIENT_PHONE: ClientPhone = {
+  id: '',
+  phone: '',
+};
+
+export const DEFAULT_CLIENT_EMAIL: ClientEmail = {
+  id: '',
+  email: '',
+};
+
+export const DEFAULT_CLIENT: Client = {
+  id: '',
+  legalName: '',
+  type: 'venezolano',
+  registrationNumber: '',
+  notes: '',
+  allowCredit: false,
+  userId: '',
+  createdAt: '',
+  updatedAt: '',
+  events: [],
+  addresses: [DEFAULT_CLIENT_ADDRESS],
+  emails: [],
+  phones: [DEFAULT_CLIENT_PHONE],
 };
