@@ -22,9 +22,6 @@ import type { HistoricalBalance } from '@views/home/';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const props = defineProps<{
-  totalCollected: number;
-  totalCompanyBills: number;
-  totalInvoiced: number;
   historicalBalance: HistoricalBalance[];
   isLoading: boolean;
 }>();
@@ -55,9 +52,11 @@ const chartData = computed(() => {
   };
 
   if (!props.historicalBalance?.length) {
+
+    console.log(props.historicalBalance);
+
     return defaultData;
   }
-
   const labels = props.historicalBalance.map((b) => b.date);
   const collectedData = props.historicalBalance.map((b) => b.total_collected);
   const expensesData = props.historicalBalance.map((b) => b.total_expenses);
