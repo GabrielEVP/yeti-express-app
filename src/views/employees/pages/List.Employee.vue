@@ -120,7 +120,12 @@ const runSearch = async () => {
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  employees.value = await getAllEmployees();
+  isLoading.value = true;
+  try {
+    employees.value = await getAllEmployees();
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(employees, 15);
