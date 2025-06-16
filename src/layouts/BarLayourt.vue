@@ -60,13 +60,11 @@ import ToggleDarkMode from '@/components/ui/sidebars/SidebarToggleMode.vue';
 import { useAlert } from '@/composables/';
 import { useAuthStore } from '@stores';
 import { storeToRefs } from 'pinia';
-
-const authStore = useAuthStore();
-
-const { isUser } = storeToRefs(authStore);
-
 import { UserIcon, LogOutIcon } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const { isUser } = storeToRefs(authStore);
 
 const router = useRouter();
 

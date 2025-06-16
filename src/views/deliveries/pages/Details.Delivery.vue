@@ -23,7 +23,7 @@
             </Bagde>
           </div>
         </div>
-        <div class="flex gap-2">
+        <div v-if="delivery.status == DeliveryStatus.PENDING" class="flex gap-2">
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>

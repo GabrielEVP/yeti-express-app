@@ -48,7 +48,7 @@
           <div class="flex gap-1 justify-center">
             <EyeButton :route="AppRoutesService.details(service.id)" />
             <EditButton :route="AppRoutesService.edit(service.id)" />
-            <TrashButton @click="open(service.id)" />
+            <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -70,7 +70,7 @@
               <div class="flex gap-2">
                 <EyeButton :route="AppRoutesService.details(service.id)" />
                 <EditButton :route="AppRoutesService.edit(service.id)" />
-                <TrashButton @click="open(service.id)" />
+                <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
               </div>
             </div>
           </div>

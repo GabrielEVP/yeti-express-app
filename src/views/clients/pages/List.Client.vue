@@ -42,6 +42,7 @@
       :endIndex="endIndex"
       :totalItems="clients.length"
       @updatePage="updatePage"
+      :sort-state="sortConfig"
       @sort="handleSort"
     >
       <TableRow v-for="client in paginatedItems" :key="client.id">
@@ -58,8 +59,8 @@
           <div class="flex gap-1 justify-center">
             <EyeButton :route="AppRoutesClient.details(client.id)" />
             <EditButton :route="AppRoutesClient.edit(client.id)" />
-            <TrashButton @click="open(client.id)" />
-            <DownloadButton @click="handleReport(client.id)" />
+            <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+            <DownloadButton v-if="client.hasHadDebt" @click="handleReport(client.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -83,8 +84,8 @@
               <div class="flex gap-2">
                 <EyeButton :route="AppRoutesClient.details(client.id)" />
                 <EditButton :route="AppRoutesClient.edit(client.id)" />
-                <TrashButton @click="open(client.id)" />
-                <DownloadButton @click="handleReport(client.id)" />
+                <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+                <DownloadButton v-if="client.hasHadDebt" @click="handleReport(client.id)" />
               </div>
             </div>
           </div>

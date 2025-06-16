@@ -12,6 +12,7 @@ export interface Service {
   updatedAt: string;
   totalExpense?: number;
   totalEarning?: number;
+  canDelete?: boolean;
 }
 
 export interface Bill {

@@ -35,14 +35,16 @@
               required
             />
             <FieldForm label="Número de documento" name="registrationNumber" id="registrationNumber" required />
-            <SelectForm
-              label="Credito"
-              name="allowCredit"
-              id="allowCredit"
-              placeholder="Selecciona si el cliente puede pagar a credito"
-              :items="Array.from(AllowCreditOptions)"
-              required
-            />
+            <div v-if="isUser">
+              <SelectForm
+                label="Credito"
+                name="allowCredit"
+                id="allowCredit"
+                placeholder="Selecciona si el cliente puede pagar a credito"
+                :items="Array.from(AllowCreditOptions)"
+                required
+              />
+            </div>
           </TabsContent>
           <TabsContent tab="address" :activeTab="activeTab">
             <AdressesForm />
@@ -77,6 +79,11 @@ import { ClientSchema } from '@/views/clients/schema';
 import { AppRoutesClient } from '@/views/clients/router';
 import { getClientById, createClient, updateClient } from '@/views/clients/service/';
 import { AdressesForm, PhonesForm, EmailsForm } from '@/views/clients/components/';
+import { useAuthStore } from '@stores';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+const { isUser } = storeToRefs(authStore);
 
 const activeTab = ref('general');
 
@@ -84,7 +91,7 @@ const router = useRouter();
 const route = useRoute();
 const clientId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta, values } = useVeeForm<Client>({
+const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
   id: clientId,
   getById: getClientById,
   create: createClient,

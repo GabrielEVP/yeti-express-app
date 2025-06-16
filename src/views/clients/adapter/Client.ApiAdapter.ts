@@ -22,6 +22,14 @@ export function adaptClient(apiData: any = {}): Client {
     baseClient.debtsCount = Number(apiData.debts_count);
   }
 
+  if (apiData.has_had_debt !== undefined && apiData.has_had_debt !== null) {
+    baseClient.hasHadDebt = apiData.has_had_debt;
+  }
+
+  if (apiData.can_delete !== undefined && apiData.can_delete !== null) {
+    baseClient.canDelete = apiData.can_delete;
+  }
+
   const allowedOptionalFields = ['some_future_field', 'another_field'];
   allowedOptionalFields.forEach((field) => {
     if (apiData[field] !== undefined) {
@@ -53,6 +61,7 @@ export function adaptAddress(apiAddress: any = {}): ClientAddress {
   return {
     id: apiAddress.id ?? '',
     address: apiAddress.address ?? '',
+    canDelete: apiAddress.can_delete ?? true,
   };
 }
 

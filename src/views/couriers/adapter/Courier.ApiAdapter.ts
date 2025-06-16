@@ -8,6 +8,7 @@ export function adaptCourier(apiData: any = {}): Courier {
     lastName: apiData.last_name ?? '',
     phone: apiData.phone ?? '',
     events: Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
+    canDelete: apiData.can_delete ?? true,
     createdAt: apiData.created_at ?? '',
     updatedAt: apiData.updated_at ?? '',
   };

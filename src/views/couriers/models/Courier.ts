@@ -6,6 +6,7 @@ export interface Courier {
   lastName: string;
   phone: string;
   events: TimeLineContent[];
+  canDelete?: boolean;
   createdAt: string;
   updatedAt: string;
 }
