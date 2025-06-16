@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex justify-end mb-4">
-      <PlusButton type="button" @click="push({ id: '', address: '' })" />
+      <PlusButton type="button" @click="push({ id: '', address: '', canDelete: true })" />
     </div>
     <div v-if="fields.length === 0" class="space-y-4 border p-4 rounded-md mb-4">
       <Text>No hay direcciones agregadas</Text>
@@ -9,7 +9,7 @@
     <div v-for="(field, idx) in fields" :key="field.key" class="space-y-4 border p-4 rounded-md mb-4">
       <div class="flex justify-between items-center">
         <h3 class="text-lg font-semibold dark:text-white">Dirección {{ idx + 1 }}</h3>
-        <TrashButton type="button" @click="remove(idx)" />
+        <TrashButton v-if="field.value.canDelete" type="button" @click="remove(idx)" />
       </div>
       <FieldForm label="Dirección" :id="`address-${idx}`" :name="`addresses[${idx}].address`" :required="idx === 0" />
     </div>

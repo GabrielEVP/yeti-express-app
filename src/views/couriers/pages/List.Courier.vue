@@ -36,7 +36,7 @@
           <div class="flex gap-1 justify-center">
             <EyeButton :route="AppRoutesCourier.details(courier.id)" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
-            <TrashButton @click="() => open(courier.id)" />
+            <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -57,7 +57,7 @@
               <div class="flex gap-2">
                 <EyeButton :route="AppRoutesCourier.details(courier.id)" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
-                <TrashButton @click="() => open(courier.id)" />
+                <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
               </div>
             </div>
           </div>
@@ -84,7 +84,6 @@ import {
   EyeButton,
   ConfirmationDeleteModal,
   FilterButton,
-  DownloadButton,
   LoadingSkeleton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/';

@@ -15,12 +15,15 @@ export interface Client {
   createdAt: string;
   updatedAt: string;
   debtsCount?: number;
+  canDelete?: boolean;
+  hasHadDebt?: boolean;
   [key: string]: any;
 }
 
 export interface ClientAddress {
   id: string;
   address: string;
+  canDelete: boolean;
 }
 
 export interface ClientEmail {

@@ -3,6 +3,7 @@ import { Client, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients
 export const DEFAULT_CLIENT_ADDRESS: ClientAddress = {
   id: '',
   address: '',
+  canDelete: true,
 };
 
 export const DEFAULT_CLIENT_PHONE: ClientPhone = {

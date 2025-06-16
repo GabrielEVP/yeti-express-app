@@ -95,7 +95,7 @@ const props = defineProps<{
   startIndex: number;
   endIndex: number;
   totalItems: number;
-  sortState?: { column: string; order: 'asc' | 'desc' } | null;
+  sortState?: { column: any; order: 'asc' | 'desc' } | null;
 }>();
 
 const emit = defineEmits(['updatePage', 'sort']);

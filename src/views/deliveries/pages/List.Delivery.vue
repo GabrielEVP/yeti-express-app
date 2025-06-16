@@ -64,6 +64,7 @@
       :endIndex="endIndex"
       :totalItems="deliveries.length"
       @updatePage="updatePage"
+      :sort-state="sortConfig"
       @sort="handleSort"
     >
       <TableRow v-for="delivery in paginatedItems" :key="delivery.id">
