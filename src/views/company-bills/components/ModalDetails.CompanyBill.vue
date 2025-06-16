@@ -1,7 +1,7 @@
 <template>
   <Modal :is-open="isOpen" @close="handleCloseModal">
     <LoadingSkeleton v-if="!bill" />
-    <div v-else class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-2xl mx-auto overflow-hidden">
+    <div v-else>
       <div class="px-8 pt-8 pb-6 border-b border-gray-100 dark:border-gray-800">
         <div class="flex items-center gap-3 mb-2">
           <div class="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">

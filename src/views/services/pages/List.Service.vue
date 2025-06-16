@@ -129,7 +129,12 @@ const runSearch = async () => {
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  services.value = await getAllServices();
+  isLoading.value = true;
+  try {
+    services.value = await getAllServices();
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(services, 15);
