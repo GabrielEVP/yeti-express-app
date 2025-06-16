@@ -36,9 +36,6 @@
           {{ formatToDollars(service.amount) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
-          {{ formatToDollars(service.comision) }}
-        </TableContent>
-        <TableContent class="text-right text-gray-600 dark:text-gray-300">
           {{ formatToDollars(service.totalExpense ?? 0) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
@@ -60,7 +57,6 @@
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
                   {{ service.name }}
                 </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 break-words">Comision {{ formatToDollars(service.comision) }}</p>
               </div>
               <Bagde class="break-words text-right">
                 {{ formatToDollars(service.amount) }}

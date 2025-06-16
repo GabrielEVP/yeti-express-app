@@ -50,9 +50,6 @@
       <InvoicedChart :deliveries="stats?.historical_invoiced || []" :is-loading="isLoading" />
     </div>
     <FinanceChart
-      :total-collected="stats?.total_collected || 0"
-      :total-company-bills="stats?.total_company_bills || 0"
-      :total-invoiced="stats?.total_invoiced || 0"
       :historical-balance="stats?.historical_balance || []"
       :is-loading="isLoading"
       class="mt-4"
@@ -93,10 +90,8 @@ const fetchStats = async (period: string, date: string) => {
   isLoading.value = true;
   try {
     const response = await getStats({ period, date });
-    console.log('API Response:', response);
 
     if (!response?.historical_delivered?.length) {
-      console.warn('API response missing historical data');
       stats.value = {
         ...response,
         historical_delivered: [{ date: 'Hoy', total: 0 }],

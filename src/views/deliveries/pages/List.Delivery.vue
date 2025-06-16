@@ -302,25 +302,26 @@ const handleDeleteConfirmation = async () => {
 };
 
 const handleDownload = async (deliveryId: string) => {
-  try {
-    const blob = await getDeliveryTicket(deliveryId);
-    if (blob.type === 'application/json') {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const error = JSON.parse(reader.result as string);
-        console.error('Error from server:', error);
-      };
-      reader.readAsText(blob);
-      return;
-    }
-    const url = window.URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    setTimeout(() => {
-      window.URL.revokeObjectURL(url);
-    }, 1000);
-  } catch (error) {
-    console.error('Error opening ticket:', error);
+  const blob = await getDeliveryTicket(deliveryId);
+  const filename = `Ticket_${deliveryId}.pdf`;
+  const mimeType = 'application/pdf';
+
+  if (!blob) {
+    console.error('No se proporcionó un Blob para descargar.');
+    return;
   }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  a.type = mimeType;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  window.URL.revokeObjectURL(url);
 };
 
 const openStatusModal = (id: string, status: DeliveryStatus) => {
