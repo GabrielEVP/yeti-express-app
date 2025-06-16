@@ -59,10 +59,12 @@ import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateShort, formatRelativeDate } from '@/utils/';
 import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton, Bagde } from '@/components/';
-import { MenuTimeLineContent } from '@time-line-content/components/';
 import { Employee, getRoleLabel, Role } from '@/views/employees/';
 import { getEmployeeById } from '@/views/employees/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
+import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
+import { MenuTimeLineContent } from '@time-line-content/components';
+import { EMPLOYE_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/employees/constants';
 
 const route = useRoute();
 const employeeId = route.params.id as string;
@@ -79,7 +81,7 @@ onMounted(() => {
   loadData();
 });
 
-const lineContents = computed(() => []);
+const lineContents = computed(() => adaptTimeLineContentToUI(employee.value?.events ?? [], EMPLOYE_UI_TIME_LINE_CONTENT_DEFINITIONS));
 
 const sectionActions = [
   {

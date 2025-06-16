@@ -5,3 +5,4 @@ export * from './models/Role';
 export * from './router/Router.Employee';
 export * from './schema/Employee.Schema';
 export * from './services/Employee.Api';
+export * from './constants/UiTimeLine.Employee';
