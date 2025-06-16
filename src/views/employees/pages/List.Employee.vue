@@ -121,7 +121,6 @@ const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   isLoading.value = true;
-
   try {
     employees.value = await getAllEmployees();
   } finally {

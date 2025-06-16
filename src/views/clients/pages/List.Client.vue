@@ -201,11 +201,25 @@ const handleDeleteConfirmation = async () => {
 };
 
 const handleReport = async (clientId: string) => {
-  try {
-    const blob = await getClientDebtReport(clientId);
-    const url = window.URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    setTimeout(() => window.URL.revokeObjectURL(url), 100);
-  } catch (error) {}
+  const blob = await getClientDebtReport(clientId);
+  const filename = `informe_deuda_${clientId}.pdf`;
+  const mimeType = 'application/pdf';
+
+  if (!blob) {
+    console.error('No se proporcionó un Blob para descargar.');
+    return;
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  a.type = mimeType;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  window.URL.revokeObjectURL(url);
 };
 </script>
