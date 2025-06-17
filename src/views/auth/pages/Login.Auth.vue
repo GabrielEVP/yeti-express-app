@@ -5,7 +5,7 @@
       <div class="p-8">
         <div class="text-center mb-8">
           <div class="inline-flex items-center justify-center w-16 h-16">
-            <img :src="logo" alt="Logo" class=" rounded-xl " />
+            <img :src="logo" alt="Logo" class="rounded-xl" />
           </div>
           <h2 class="text-3xl font-bold text-gray-800 mb-2">Bienvenido a Yeti Express</h2>
           <p class="text-gray-600 text-sm">
