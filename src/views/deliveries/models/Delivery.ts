@@ -12,6 +12,8 @@ export interface Delivery {
   paymentStatus: DeliveryPaymentStatus;
   notes: string;
   amount: number;
+  pickupAddress: string;
+  cancellationNotes: string;
   events: TimeLineContent[];
   receipt: DeliveryReceipt;
   debtRemainingAmount: number;
@@ -23,7 +25,6 @@ export interface Delivery {
   serviceName?: string;
   debtId: string;
   clientId: string;
-  clientAddressId: string;
   courierId: string;
   serviceId: string;
 }

@@ -116,6 +116,7 @@
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
+            <CopyWhatsapp @click="copyToClipboard(delivery)" />
           </div>
         </TableContent>
       </TableRow>
@@ -193,11 +194,14 @@ import { DeliveryStatus } from '@views/deliveries/models';
 import { deleteDeliveryById, searchDeliveries, getFilteredDeliveries, updateDeliveryStatus, getDeliveryTicket } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
+import { copyToClipboard } from '@views/deliveries/utils'
 
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
 import Cancelled from '../components/button/Cancelled.vue';
+import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
+
 
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -347,4 +351,5 @@ const confirmStatusUpdate = async () => {
 async function handleUpdateStatus(id: string, status: DeliveryStatus) {
   openStatusModal(id, status);
 }
+
 </script>

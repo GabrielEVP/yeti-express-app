@@ -13,6 +13,8 @@ export function adaptDelivery(apiData: any = {}): Delivery {
     paymentStatus: (apiData.payment_status as DeliveryPaymentStatus) ?? DeliveryPaymentStatus.PENDING,
     notes: apiData.notes ?? '',
     amount: apiData.amount ?? 0,
+    pickupAddress: apiData.pickup_address ?? '',
+    cancellationNotes: apiData.cancellation_notes ?? '',
     events: Array.isArray(apiData.events) ? apiData.events.map(adaptTimeLineContent) : [],
     receipt:
       typeof apiData.receipt === 'object' && apiData.receipt !== null
@@ -27,7 +29,6 @@ export function adaptDelivery(apiData: any = {}): Delivery {
     serviceName: apiData.service_name ?? '',
     debtId: apiData.debt_id ?? '',
     clientId: apiData.client_id ?? '',
-    clientAddressId: apiData.client_address_id ?? '',
     courierId: apiData.courier_id ?? '',
     serviceId: apiData.service_id ?? '',
   };
@@ -37,11 +38,12 @@ export function adaptDeliveryForApi(delivery: Delivery): any {
   return {
     notes: delivery.notes ?? '',
     receipt: adaptReceiptForApi(delivery.receipt),
-    payment_type: delivery.paymentType,
-    client_id: delivery.clientId ?? null,
-    client_address_id: delivery.clientAddressId ?? null,
-    courier_id: delivery.courierId ?? null,
-    service_id: delivery.serviceId ?? null,
+    pickup_address: delivery.pickupAddress ?? '',
+    cancellation_notes: delivery.cancellationNotes ?? '',
+    payment_type: delivery.paymentType ?? '',
+    client_id: delivery.clientId ?? '',
+    courier_id: delivery.courierId ?? '',
+    service_id: delivery.serviceId ?? '',
   };
 }
 
