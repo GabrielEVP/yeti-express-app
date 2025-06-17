@@ -2,6 +2,7 @@
   <SideBar>
     <div class="flex justify-center items-center min-h-[calc(100vh-3rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
+        <LoadingSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
@@ -67,13 +68,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useVeeForm } from '@/composables';
-import { SideBar, Card, FieldForm, SelectForm, TextAreaForm, AcceptButton, CancelButton, Tabs, TabsTitle, TabsContent } from '@/components';
+import {
+  SideBar,
+  Card,
+  FieldForm,
+  SelectForm,
+  TextAreaForm,
+  AcceptButton,
+  CancelButton,
+  Tabs,
+  TabsTitle,
+  TabsContent,
+  LoadingSkeleton,
+} from '@/components';
 import { Client } from '@/views/clients/models';
 import { ClientTypeOptions } from '@/views/clients/models';
-import { AllowCreditOptions } from '../models/AllowCredit';
+import { AllowCreditOptions } from '@views/clients';
 import { TABS_FORM_CLIENT } from '@/views/clients/constants';
 import { ClientSchema } from '@/views/clients/schema';
 import { AppRoutesClient } from '@/views/clients/router';
@@ -86,6 +99,8 @@ const authStore = useAuthStore();
 const { isUser } = storeToRefs(authStore);
 
 const activeTab = ref('general');
+
+const formReady = ref(false);
 
 const router = useRouter();
 const route = useRoute();
@@ -109,5 +124,10 @@ const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
   },
 });
 
-onMounted(initializeForm);
+onMounted(async () => {
+  await initializeForm();
+
+  await nextTick();
+  formReady.value = true;
+});
 </script>

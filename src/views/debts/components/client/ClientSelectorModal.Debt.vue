@@ -12,6 +12,7 @@
       </section>
       <footer class="flex-1 overflow-y-auto p-4 sm:p-6">
         <div
+          v-if="filteredClients"
           v-for="client in filteredClients"
           :key="client.id"
           @click="select(client)"
@@ -24,6 +25,7 @@
             <Bagde>Deudas: {{ client.debtsCount }} </Bagde>
           </section>
         </div>
+        <empty-data v-else />
       </footer>
     </div>
   </div>
@@ -34,6 +36,7 @@ import { ref, computed } from 'vue';
 import { X } from 'lucide-vue-next';
 import { Client } from '@views/clients';
 import { Input, Bagde } from '@/components/';
+import { EmptyData } from '@components';
 
 const props = defineProps<{
   open: boolean;

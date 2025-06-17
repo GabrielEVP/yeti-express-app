@@ -99,7 +99,7 @@ import {
 } from '@/components';
 import { Delivery, PaymentType } from '@views/deliveries/models';
 import { PaymentTypeOptions } from '@views/deliveries/models';
-import { getDeliveryById, createDelivery, updateDelivery } from '../services/Delivery.api';
+import { getDeliveryById, createDelivery, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { Client } from '@views/clients';
@@ -117,7 +117,6 @@ const formReady = ref(false);
 
 const selectedClientAllowCredit = ref(true);
 
-// Form composable para Delivery
 const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
   id: deliveryId,
   getById: getDeliveryById,
@@ -189,7 +188,6 @@ onMounted(async () => {
   await loadFormData();
   await initializeForm();
 
-  // Esperamos un tick adicional para asegurar que todos los datos estén disponibles
   await nextTick();
   formReady.value = true;
 });
