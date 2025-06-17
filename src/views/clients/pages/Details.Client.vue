@@ -78,8 +78,6 @@ import { AdressesList, PhonesList, EmailsList } from '@/views/clients/components
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
 import { MenuTimeLineContent } from '@time-line-content/components';
 import { CLIENT_UI_TIME_LINE_CONTENT_DEFINITIONS } from '@views/clients/constants';
-import { Button } from '@components';
-import Back from '@components/buttons/Back.vue';
 
 const route = useRoute();
 const clientId = route.params.id as string;
