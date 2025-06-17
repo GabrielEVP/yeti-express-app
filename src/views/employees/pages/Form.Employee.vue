@@ -7,11 +7,29 @@
           <FieldForm label="Nombre" name="name" id="name" required />
           <FieldForm label="Email" name="email" id="email" required />
           <SelectForm label="Permisos" name="role" :items="[...RoleOptions]" />
-          <FieldForm label="Contraseña" name="password" id="password" type="password" required />
-          <FieldForm label="Confirmar Contraseña" name="confirmPassword" id="confirmPassword" type="password" required />
-          <div class="flex justify-end space-x-2">
-            <CancelButton @click="router.back()" />
-            <AcceptButton :disabled="!meta.valid" />
+          <div v-if="!EmployeeId">
+            <FieldForm label="Contraseña" name="password" id="password" type="password" required />
+            <FieldForm label="Confirmar Contraseña" name="confirmPassword" id="confirmPassword" type="password" required />
+          </div>
+          <div
+            :class="[
+              'flex flex-col gap-4 pt-6',
+              EmployeeId ? 'sm:flex-row justify-between items-center border-t border-gray-200 dark:border-gray-700' : 'justify-end'
+            ]"
+          >
+            <template v-if="EmployeeId">
+              <router-link
+                :to="AppRoutesEmployee.editPassword(EmployeeId)"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 border border-red-200 dark:border-red-800 hover:border-red-300 dark:hover:border-red-700"
+              >
+                <Lock class="h-4 w-4" />
+                Cambiar Contraseña
+              </router-link>
+            </template>
+            <div class="flex space-x-3 justify-end">
+              <CancelButton @click="router.back()" />
+              <AcceptButton :disabled="!meta.valid" />
+            </div>
           </div>
         </form>
       </Card>
@@ -22,17 +40,20 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { Lock } from 'lucide-vue-next';
 import { useVeeForm } from '@/composables';
 import { SideBar, Card, FieldForm, SelectForm, AcceptButton, CancelButton } from '@/components';
 import { Employee } from '@/views/employees/';
 import { RoleOptions } from '@/views/employees/';
-import { EmployeeSchema } from '@/views/employees/schema';
+import { CreateEmployeeSchema, EditEmployeeSchema } from '@/views/employees/schema';
 import { getEmployeeById, createEmployee, updateEmployee } from '@/views/employees/services/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
 
 const router = useRouter();
 const route = useRoute();
 const EmployeeId = route.params.id as string;
+
+const EmployeeSchema = EmployeeId ? EditEmployeeSchema : CreateEmployeeSchema;
 
 const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
   id: EmployeeId,

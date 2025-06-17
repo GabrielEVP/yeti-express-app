@@ -10,10 +10,9 @@
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
       ]"
     >
-      <div class="p-3 flex items-center justify-center shrink-0 border-b border-gray-200 dark:border-gray-700">
-        <img :src="logo" alt="Logo" class="w-12 h-12 rounded-xl shadow-md object-cover" />
+      <div class="p-2 flex items-center justify-center shrink-0 border-b border-gray-200 dark:border-gray-700">
+        <img :src="logo" alt="Logo" class="rounded-xl object-cover" />
       </div>
-
       <nav class="flex-1 overflow-y-auto m-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
         <ul class="p-2 space-y-2">
           <li v-for="item in isUser ? navigationItemsUser : navigationItemsEmployee" :key="item.route">
@@ -54,7 +53,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Package, HomeIcon, UsersIcon, ClipboardIcon, IdCard, Truck, Bike, SquareChartGantt, Banknote, WalletMinimal } from 'lucide-vue-next';
-import logo from '@/assets/yeti.webp';
+import logo from '@/assets/LogoYeti.png';
 import { DangerAlert, SidebarProfileMenu, SuccessAlert } from '@/components/';
 import NavigationItem from '@/components/ui/sidebars/SidebarItems.vue';
 import ToggleDarkMode from '@/components/ui/sidebars/SidebarToggleMode.vue';
