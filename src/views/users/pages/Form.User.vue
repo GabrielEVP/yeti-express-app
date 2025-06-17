@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-screen p-4">
+    <BackButton  />
+    <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-8 shadow-xl rounded-2xl bg-white dark:bg-gray-800 border-0">
         <form @submit.prevent="onSubmit" class="h-full">
           <div class="flex items-center gap-3 mb-6">
@@ -36,7 +37,7 @@ import { useForm } from 'vee-validate';
 import { Lock } from 'lucide-vue-next';
 import { useAlert } from '@/composables/';
 import { useAuthStore } from '@/stores/';
-import { SideBar, Card, FieldForm, AcceptButton, CancelButton } from '@/components/';
+import { SideBar, Card, FieldForm, AcceptButton, CancelButton, BackButton } from '@/components/';
 import { User, UserSchema, updateUser, USERDEFAULTFORMVALUES } from '@/views/users/';
 
 const { handleSubmit, setValues, meta } = useForm<User>({

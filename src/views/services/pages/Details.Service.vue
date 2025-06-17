@@ -3,12 +3,16 @@
     <LoadingSkeleton v-if="!service" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div class="hidden md:block">
-          <h1 class="text-3xl font-bold tracking-tight">
-            {{ service.name }}
-          </h1>
+        <div class="hidden md:flex flex-col md:flex-row gap-12">
+          <BackButton class="hidden md:block" />
+          <div class="hidden md:block">
+            <h1 class="text-3xl font-bold tracking-tight">
+              {{ service.name }}
+            </h1>
+          </div>
         </div>
-        <div class="flex gap-2 justify-end">
+        <div class="flex gap-2 justify-end mt-4">
+          <BackButton class="md:hidden block" />
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
@@ -82,7 +86,17 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Receipt, ReceiptText } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate } from '@/utils';
-import { SideBar, SectionText, Card, ActionsButton, LoadingSkeleton, ActivityView, Dropdown, EmptyData } from '@/components/';
+import {
+  SideBar,
+  SectionText,
+  Card,
+  ActionsButton,
+  LoadingSkeleton,
+  ActivityView,
+  Dropdown,
+  EmptyData,
+  BackButton,
+} from '@/components/';
 import { Service } from '@/views/services';
 import { getServiceById } from '@/views/services';
 import { AppRoutesService } from '@/views/services/router/';

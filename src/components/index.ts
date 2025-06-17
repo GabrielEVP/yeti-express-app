@@ -15,6 +15,8 @@ export { default as PaidButton } from '@/components/buttons/Paid.vue';
 export { default as PartialButton } from '@/components/buttons/Partial.vue';
 export { default as DropdownButton } from '@/components/buttons/Dropdown.vue';
 export { default as ConfirmationButton } from '@/components/buttons/Confirmation.vue';
+export { default as BackButton } from '@/components/buttons/Back.vue';
+
 
 // DASHBOARD
 export { default as ActivityView } from '@components/dashboard/ActivityView.vue';

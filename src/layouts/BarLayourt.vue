@@ -43,7 +43,7 @@
       </svg>
     </button>
     <main class="transition-all duration-300 ml-0 lg:ml-20 min-h-screen">
-      <div class="p-4 sm:p-6">
+      <div class="p-2 sm:p-6">
         <slot></slot>
       </div>
     </main>

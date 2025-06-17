@@ -3,17 +3,21 @@
     <LoadingSkeleton v-if="!employee" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div class="hidden md:block">
-          <h1 class="text-3xl font-bold tracking-tight">
-            {{ employee.name }}
-          </h1>
-          <div class="flex items-center gap-2">
-            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Permisos</h5>
-            |
-            <Bagde>{{ getRoleLabel(employee.role as Role) }}</Bagde>
+        <div class="hidden md:flex flex-col md:flex-row  gap-12">
+          <BackButton class="hidden md:block" />
+          <div class="hidden md:block">
+            <h1 class="text-3xl font-bold tracking-tight">
+              {{ employee.name }}
+            </h1>
+            <div class="flex items-center gap-2">
+              <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Permisos</h5>
+              |
+              <Bagde>{{ getRoleLabel(employee.role as Role) }}</Bagde>
+            </div>
           </div>
         </div>
-        <div class="flex gap-2 justify-end">
+        <div class="flex gap-2 justify-end mt-4">
+          <BackButton class="md:hidden block" />
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
@@ -58,7 +62,16 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateShort, formatRelativeDate } from '@/utils/';
-import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton, Bagde } from '@/components/';
+import {
+  SideBar,
+  SectionText,
+  Card,
+  ActionsButton,
+  ActivityView,
+  LoadingSkeleton,
+  Bagde,
+  BackButton,
+} from '@/components/';
 import { Employee, getRoleLabel, Role } from '@/views/employees/';
 import { getEmployeeById } from '@/views/employees/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
