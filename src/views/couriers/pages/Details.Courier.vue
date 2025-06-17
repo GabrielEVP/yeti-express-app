@@ -3,12 +3,14 @@
     <LoadingSkeleton v-if="!courier" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <BackButton class="hidden md:block" />
         <div class="hidden md:block">
           <h1 class="text-3xl font-bold tracking-tight">
             {{ courier.firstName }}
           </h1>
         </div>
-        <div class="flex gap-2 justify-end">
+        <div class="flex gap-2 justify-end mt-4">
+          <BackButton class="md:hidden block" />
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
       </div>
@@ -53,7 +55,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatDateShort, formatRelativeDate } from '@/utils/';
-import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton } from '@/components/';
+import { SideBar, SectionText, Card, ActionsButton, ActivityView, LoadingSkeleton, BackButton } from '@/components/';
 import { Courier } from '@/views/couriers';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { getCourierById } from '@/views/couriers/services';

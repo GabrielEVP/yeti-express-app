@@ -3,26 +3,30 @@
     <LoadingSkeleton v-if="!delivery" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div class="hidden md:block">
-          <h1 class="text-3xl font-bold tracking-tight">Delivery #{{ delivery.number }}</h1>
-          <div class="flex items-center gap-2">
-            <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
-            |
-            <Bagde
-              :class="
-                delivery.status == DeliveryStatus.PENDING
-                  ? 'border-blue-500'
-                  : delivery.status == DeliveryStatus.IN_TRANSIT
-                    ? 'border-yellow-500'
-                    : delivery.status == DeliveryStatus.DELIVERED
-                      ? 'border-green-500'
-                      : 'border-red-500'
-              "
-            >
-              {{ getDeliveryStatusLabel(delivery.status) }}
-            </Bagde>
+        <div class="hidden md:flex flex-col md:flex-row  gap-12">
+          <BackButton class="hidden md:block" />
+          <div class="hidden md:block">
+            <h1 class="text-3xl font-bold tracking-tight">Delivery #{{ delivery.number }}</h1>
+            <div class="flex items-center gap-2">
+              <h5 class="text-sm font-medium text-muted-foreground dark:text-gray-400">Estado</h5>
+              |
+              <Bagde
+                :class="
+                  delivery.status == DeliveryStatus.PENDING
+                    ? 'border-blue-500'
+                    : delivery.status == DeliveryStatus.IN_TRANSIT
+                      ? 'border-yellow-500'
+                      : delivery.status == DeliveryStatus.DELIVERED
+                        ? 'border-green-500'
+                        : 'border-red-500'
+                "
+              >
+                {{ getDeliveryStatusLabel(delivery.status) }}
+              </Bagde>
+            </div>
           </div>
         </div>
+        <BackButton class="mt-4 md:hidden block" />
         <div v-if="delivery.status == DeliveryStatus.PENDING" class="flex gap-2">
           <ActionsButton title="Acciones" :datas="sectionActions" />
         </div>
@@ -77,7 +81,16 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
 import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
-import { SideBar, SectionText, Card, Bagde, ActionsButton, LoadingSkeleton, ActivityView } from '@/components/';
+import {
+  SideBar,
+  SectionText,
+  Card,
+  Bagde,
+  ActionsButton,
+  LoadingSkeleton,
+  ActivityView,
+  BackButton,
+} from '@/components/';
 import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel, getPaymentTypeLabel } from '@/views/deliveries/';
 import { getDeliveryById } from '@/views/deliveries/';
 import { AppRoutesDelivery } from '@views/deliveries/router';

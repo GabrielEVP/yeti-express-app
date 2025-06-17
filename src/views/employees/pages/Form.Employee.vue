@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-[calc(100vh-3rem)] py-6 px-2">
+    <BackButton  />
+    <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-6">
         <LoadingSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="space-y-6">
@@ -43,7 +44,16 @@ import { nextTick, onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { Lock } from 'lucide-vue-next';
 import { useVeeForm } from '@/composables';
-import { SideBar, Card, FieldForm, SelectForm, AcceptButton, CancelButton, LoadingSkeleton } from '@/components';
+import {
+  SideBar,
+  Card,
+  FieldForm,
+  SelectForm,
+  AcceptButton,
+  CancelButton,
+  LoadingSkeleton,
+  BackButton,
+} from '@/components';
 import { Employee } from '@/views/employees/';
 import { RoleOptions } from '@/views/employees/';
 import { CreateEmployeeSchema, EditEmployeeSchema } from '@/views/employees/schema';

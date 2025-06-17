@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-screen p-4">
+    <BackButton  />
+    <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
         <LoadingSkeleton v-if="!formReady" />
         <form v-else @submit.prevent="onSubmit" class="h-full">
@@ -95,7 +96,7 @@ import {
   Tabs,
   TabsTitle,
   TabsContent,
-  LoadingSkeleton,
+  LoadingSkeleton, BackButton,
 } from '@/components';
 import { Delivery, PaymentType } from '@views/deliveries/models';
 import { PaymentTypeOptions } from '@views/deliveries/models';

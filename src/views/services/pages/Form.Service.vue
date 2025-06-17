@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-[calc(90vh-3rem)] py-6 px-2">
+    <BackButton  />
+    <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
         <LoadingSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
@@ -77,7 +78,7 @@ import {
   TabsContent,
   PlusButton,
   TrashButton,
-  Text, LoadingSkeleton,
+  Text, LoadingSkeleton, BackButton,
 } from '@/components';
 import { Service } from '@views/services/';
 import type { Bill } from '@/views/services/';

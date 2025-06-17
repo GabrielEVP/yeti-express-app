@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <div class="flex justify-center items-center min-h-screen">
+    <BackButton  />
+    <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-6">
         <form @submit.prevent="onSubmit" class="h-full">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">Cambiar contraseña del empleado</h2>
@@ -21,7 +22,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables/';
-import { SideBar, Card, FieldForm, AcceptButton, CancelButton } from '@/components/';
+import { SideBar, Card, FieldForm, AcceptButton, CancelButton, BackButton } from '@/components/';
 import { Employee } from '@/views/employees/';
 import { PasswordSchema } from '@/views/employees/schema';
 import { getEmployeeById, updatePassword } from '@/views/employees/services/';
