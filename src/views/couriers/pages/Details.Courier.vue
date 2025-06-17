@@ -3,11 +3,13 @@
     <LoadingSkeleton v-if="!courier" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <BackButton class="hidden md:block" />
-        <div class="hidden md:block">
-          <h1 class="text-3xl font-bold tracking-tight">
-            {{ courier.firstName }}
-          </h1>
+        <div class="hidden md:flex flex-col md:flex-row gap-12">
+          <BackButton class="hidden md:block" />
+          <div class="hidden md:block">
+            <h1 class="text-3xl font-bold tracking-tight">
+              {{ courier.firstName }}
+            </h1>
+          </div>
         </div>
         <div class="flex gap-2 justify-end mt-4">
           <BackButton class="md:hidden block" />
