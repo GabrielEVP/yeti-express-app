@@ -9,6 +9,7 @@ export const EmployeeApiRoutes = {
   delete: (id: string) => `/employees/${id}`,
   search: (query: string) => `/employees/search/${query}`,
   filter: '/employees',
+  updatePassword: (id: string) => `/employees/${id}/password`,
 };
 
 const processResponse = (data: any): Employee[] => (Array.isArray(data) ? data.map(adaptEmployee) : [adaptEmployee(data)]);
@@ -76,3 +77,13 @@ export const filterEmployees = async (params: Record<string, any>): Promise<Empl
     throw new Error('Failed to fetch filtered Employees.');
   }
 };
+
+export async function updatePassword(data: any, EmployeeId: string) {
+  try {
+    const response = await apiClient.put(EmployeeApiRoutes.updatePassword(EmployeeId), data);
+    return response.data;
+  } catch (error) {
+    throw new Error(String(error));
+  }
+}
+

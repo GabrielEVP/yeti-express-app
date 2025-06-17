@@ -10,3 +10,9 @@ export interface Employee {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Password {
+  password: string;
+  confirmPassword: string;
+}
+

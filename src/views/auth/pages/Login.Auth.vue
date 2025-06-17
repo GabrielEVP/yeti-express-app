@@ -5,7 +5,7 @@
       <div class="p-8">
         <div class="text-center mb-8">
           <div class="inline-flex items-center justify-center w-16 h-16">
-            <img :src="logo" alt="Logo" class="w-14 h-14 rounded-xl shadow-xl" />
+            <img :src="logo" alt="Logo" class=" rounded-xl " />
           </div>
           <h2 class="text-3xl font-bold text-gray-800 mb-2">Bienvenido a Yeti Express</h2>
           <p class="text-gray-600 text-sm">
@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import logo from '@/assets/yeti.webp';
+import logo from '@/assets/LogoYeti.png';
 import { useRouter } from 'vue-router';
 import { FieldForm, DangerAlert } from '@/components/';
 import { login as loginService, register as registerService } from '@/views/users';
