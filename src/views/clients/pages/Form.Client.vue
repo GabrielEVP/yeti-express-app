@@ -66,7 +66,6 @@
     </div>
   </SideBar>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
