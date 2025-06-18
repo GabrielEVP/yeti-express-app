@@ -37,6 +37,7 @@
             <EyeButton :route="AppRoutesCourier.details(courier.id)" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
             <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
+            <DownloadButton  @click="handleReport(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -58,6 +59,7 @@
                 <EyeButton :route="AppRoutesCourier.details(courier.id)" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
                 <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
+                <DownloadButton  @click="handleReport(courier.id)" />
               </div>
             </div>
           </div>
@@ -85,9 +87,10 @@ import {
   ConfirmationDeleteModal,
   FilterButton,
   LoadingSkeleton,
+  DownloadButton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/';
-import { getAllCouriers, deleteCourierById, searchCouriers } from '@/views/couriers/services';
+import { getAllCouriers, deleteCourierById, searchCouriers, getCourierDeliveryReport } from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
 
@@ -136,5 +139,28 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
+};
+
+const handleReport = async (courierId: string) => {
+  const blob = await getCourierDeliveryReport(courierId);
+  const filename = `informe_de_entregas_${courierId}.pdf`;
+  const mimeType = 'application/pdf';
+
+  if (!blob) {
+    console.error('No se proporcionó un Blob para descargar.');
+    return;
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  a.type = mimeType;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  window.URL.revokeObjectURL(url);
 };
 </script>

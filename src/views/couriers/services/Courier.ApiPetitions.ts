@@ -6,6 +6,7 @@ export const courierApiRoutes = {
   list: '/couriers',
   details: (courierId: string | number) => `/couriers/${courierId}`,
   search: (search: string) => `/couriers/search/${search}`,
+  getDeliveryReport: (courierId: string | number) => `/couriers/${courierId}/deliveries-report`,
 };
 
 export const getAllCouriers = async (): Promise<Courier[]> => {
@@ -62,3 +63,9 @@ export const searchCouriers = async (search: string): Promise<Courier[]> => {
     throw new Error('Failed to search couriers.');
   }
 };
+
+export const getCourierDeliveryReport = async (courierId: string): Promise<any> => {
+  const response = await apiClient.get(courierApiRoutes.getDeliveryReport(courierId), { responseType: 'blob' });
+  return response.data;
+};
+

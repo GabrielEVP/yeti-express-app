@@ -1,6 +1,7 @@
 <template>
   <Sidebar>
     <GlobalFilter :initial-range="selectedRange" :initial-date="selectedDate" @filter-change="onFilterChange" />
+    <DownloadButton @click="handleDownload()" />
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
       <ActivityView title="Ordenes realizadas">
         <div v-if="isLoading" class="animate-pulse">
@@ -60,13 +61,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Sidebar from '@/layouts/BarLayourt.vue';
-import { ActivityView } from '@/components/';
+import { ActivityView, DownloadButton } from '@/components/';
 import DeliveriesChart from '../components/DeliveriesChart.vue';
 import InvoicedChart from '../components/InvoicedChart.vue';
 import FinanceChart from '../components/FinanceChart.vue';
 import GlobalFilter from '../components/GlobalFilter.vue';
 import type { DashboardStats } from '@views/home/';
-import { getStats } from '@views/home/';
+import { getStats, getReportStats } from '@views/home/';
 
 const selectedRange = ref<'day' | 'week' | 'month' | 'year'>('week');
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
@@ -119,4 +120,27 @@ const fetchStats = async (period: string, date: string) => {
 onMounted(() => {
   fetchStats(selectedRange.value, selectedDate.value);
 });
+
+const handleDownload = async () => {
+  const blob = await getReportStats();
+  const filename = `report_.pdf`;
+  const mimeType = 'application/pdf';
+
+  if (!blob) {
+    console.error('No se proporcionó un Blob para descargar.');
+    return;
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  a.type = mimeType;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  window.URL.revokeObjectURL(url);
+};
 </script>

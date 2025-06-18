@@ -52,12 +52,8 @@ export function useVeeForm<T extends GenericObject, ID = string>({
     const isEdit = Boolean(id);
 
     try {
-      if (isEdit) {
-        if (!update) {
-          triggerError('No se definió la función de actualización.');
-          return;
-        }
-
+      // Caso de edición con update
+      if (isEdit && update) {
         const res = await update(values, id!);
         if (!res || res.status < 200 || res.status >= 300) {
           triggerError(messages.updateError ?? 'Error al actualizar');
@@ -65,12 +61,13 @@ export function useVeeForm<T extends GenericObject, ID = string>({
         }
 
         triggerSuccess(messages.updateSuccess ?? 'Actualizado correctamente');
-      } else {
-        if (!create) {
-          triggerError('No se definió la función de creación.');
-          return;
-        }
 
+        if (modal) {
+          return res;
+        }
+      }
+      // Caso de creación con create
+      else if (!isEdit && create) {
         const res = await create(values);
         if (!res || res.status < 200 || res.status >= 300) {
           triggerError(messages.createError ?? 'Error al crear');
@@ -82,6 +79,14 @@ export function useVeeForm<T extends GenericObject, ID = string>({
         if (modal) {
           return res;
         }
+      }
+      // Caso donde no se proporciona la función necesaria
+      else {
+        const errorMessage = isEdit
+          ? 'No se definió la función de actualización.'
+          : 'No se definió la función de creación.';
+        triggerError(errorMessage);
+        return;
       }
 
       if (defaultRoute) {

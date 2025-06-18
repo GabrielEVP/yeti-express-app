@@ -29,6 +29,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { Card, Text, CancelButton } from '@/components/';
 import Confirmation from '@components/buttons/Confirmation.vue';
+
 const props = defineProps<{
   isOpen: boolean;
   message: string;
