@@ -28,6 +28,7 @@ export { default as TextAreaForm } from '@/components/forms/TextArea.vue';
 export { default as ModalForm } from '@/components/modals/ModalForm.vue';
 export { default as ModalConfirmation } from '@components/modals/ModalConfirmation.vue';
 export { default as ModalReportGeneral } from '@/components/modals/ModalReportGeneral.vue';
+export { default as ModalReportDetail } from '@/components/modals/ModalReportDetail.vue';
 
 // UI – ALERTS
 export { default as DangerAlert } from '@/components/ui/alerts/Danger.vue';
@@ -70,4 +71,3 @@ export { default as TabsTitle } from '@/components/ui/tabs/TabsTitle.vue';
 // UI – TIME LINES
 export { default as Line } from '@/components/ui/time-lines/Line.vue';
 export { default as LineContent } from '@/components/ui/time-lines/LineContent.vue';
-

@@ -1,12 +1,23 @@
 <template>
-  <ModalConfirmation
-    :isOpen="isOpen"
-    message="¿Estás seguro que quieres eliminar este Courier?"
-    @confirm="handleDeleteConfirmation"
-    @close="close"
-  />
+  <ModalConfirmation :isOpen="isOpen" message="¿Estás seguro que quieres eliminar este Courier?" @confirm="handleDeleteConfirmation" @close="close" />
   <SideBar>
-    <ModalReportGeneral title="Reporte de entregas general" :isOpen="isOpenGeneral" :openDate="open_date" :closeDate="close_date" @close="closeGeneral" @submit-filter="handleGeneralReport" />
+    <ModalReportGeneral
+      title="Reporte de entregas general"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
+    <ModalReportDetail
+      title="Reporte de entregas por repartidor"
+      :isOpen="isOpenDetail"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeDetail"
+      @submit-filter="handleReportDetail"
+      :selected-id="selectedCourierId"
+    />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -39,7 +50,7 @@
             <EyeButton :route="AppRoutesCourier.details(courier.id)" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
             <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
-            <DownloadButton  @click="handleReport(courier.id)" />
+            <DownloadButton @click="openDetail(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -61,7 +72,7 @@
                 <EyeButton :route="AppRoutesCourier.details(courier.id)" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
                 <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
-                <DownloadButton  @click="handleReport(courier.id)" />
+                <DownloadButton @click="openDetail(courier.id)" />
               </div>
             </div>
           </div>
@@ -72,34 +83,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useDebounce, useModal } from '@/composables/';
+import { onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
   Card,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  ReportButton,
-  NewButton,
-  TrashButton,
+  DownloadButton,
   EditButton,
   EyeButton,
-  ModalConfirmation,
-  ModalReportGeneral,
   FilterButton,
   LoadingSkeleton,
-  DownloadButton,
+  ModalConfirmation,
+  ModalReportGeneral,
+  NewButton,
+  ReportButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/';
-import { getAllCouriers, deleteCourierById, searchCouriers, getCourierDeliveryReport } from '@/views/couriers/services';
+import {
+  deleteCourierById,
+  getAllCouriers,
+  getAllCouriersDeliveriesReport,
+  getCourierDeliveryReport,
+  searchCouriers,
+} from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
-import ButtonReport from '@views/couriers/components/ButtonReport.vue';
-import ModalReport from '@views/couriers/components/ModalReport.vue';
-
+import { ModalReportDetail } from '@components';
 
 const couriers = ref<Courier[]>([]);
 const isLoading = ref(false);
@@ -151,19 +166,24 @@ const handleDeleteConfirmation = async () => {
 const open_date = ref<string>('');
 const close_date = ref<string>('');
 
-const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal()
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
 
-const handleGeneralReport = (start: string, end: string) => {
-  open_date.value = start;
-  close_date.value = end;
-  console.log('Fechas recibidas:', start, end);
+const handleGeneralReport = async (start: string, end: string) => {
+  const blob = await getAllCouriersDeliveriesReport(start, end);
+  const filename = `informe_general_entregas_${start}_${end}.pdf`;
+  generatePdf(blob, filename);
 };
 
+const { isOpen: isOpenDetail, selectedId: selectedCourierId, open: openDetail, close: closeDetail } = useModal();
 
+const handleReportDetail = async (courierId: string, start: string, end: string) => {
+  const blob = await getCourierDeliveryReport(courierId, start, end);
+  const filename = `informe_entregas_${courierId}`;
+  generatePdf(blob, filename);
+};
 
-const handleReport = async (courierId: string) => {
-  const blob = await getCourierDeliveryReport(courierId);
-  const filename = `informe_de_entregas_${courierId}.pdf`;
+const generatePdf = (blob: Blob, FileName: string) => {
+  const filename = `${FileName}.pdf`;
   const mimeType = 'application/pdf';
 
   if (!blob) {
