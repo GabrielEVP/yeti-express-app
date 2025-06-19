@@ -1,11 +1,12 @@
 <template>
-  <ConfirmationDeleteModal
+  <ModalConfirmation
     :isOpen="isOpen"
     message="¿Estás seguro que quieres eliminar este Courier?"
     @confirm="handleDeleteConfirmation"
-    @cancel="close"
+    @close="close"
   />
   <SideBar>
+    <ModalReportGeneral title="Reporte de entregas general" :isOpen="isOpenGeneral" :openDate="open_date" :closeDate="close_date" @close="closeGeneral" @submit-filter="handleGeneralReport" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -14,6 +15,7 @@
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           </FilterButton>
         </div>
+        <ReportButton @click="openGeneral">Reportes de entregas</ReportButton>
         <NewButton label="Nuevo Repartidor" :URL="AppRoutesCourier.new" class="w-full sm:w-auto md:w-auto" />
       </div>
     </Card>
@@ -71,7 +73,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useDebounce } from '@/composables/';
+import { usePagination, useSearch, useDebounce, useModal } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   SideBar,
@@ -80,11 +82,13 @@ import {
   TableRow,
   TableDashboard,
   SearchForm,
+  ReportButton,
   NewButton,
   TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
+  ModalReportGeneral,
   FilterButton,
   LoadingSkeleton,
   DownloadButton,
@@ -93,6 +97,9 @@ import { Courier } from '@/views/couriers/';
 import { getAllCouriers, deleteCourierById, searchCouriers, getCourierDeliveryReport } from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
+import ButtonReport from '@views/couriers/components/ButtonReport.vue';
+import ModalReport from '@views/couriers/components/ModalReport.vue';
+
 
 const couriers = ref<Courier[]>([]);
 const isLoading = ref(false);
@@ -140,6 +147,19 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
 };
+
+const open_date = ref<string>('');
+const close_date = ref<string>('');
+
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal()
+
+const handleGeneralReport = (start: string, end: string) => {
+  open_date.value = start;
+  close_date.value = end;
+  console.log('Fechas recibidas:', start, end);
+};
+
+
 
 const handleReport = async (courierId: string) => {
   const blob = await getCourierDeliveryReport(courierId);

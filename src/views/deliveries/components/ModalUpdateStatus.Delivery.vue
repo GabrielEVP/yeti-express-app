@@ -1,11 +1,14 @@
 <template>
-  <ConfirmationActionModal :isOpen="isOpen" :message="getStatusMessage" @confirm="handleConfirm" @cancel="close" />
+  <Modal :isOpen="isOpen"  @confirm="handleConfirm" @close="close">
+    <template #header>Confirmar Accion</template>
+    <span class="text-black dark:text-white">{{ getStatusMessage }}</span>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { ConfirmationActionModal } from '@/components/';
 import { DeliveryStatus } from '@/views/deliveries/';
+import { Modal } from '@components';
 
 const props = defineProps<{
   isOpen: boolean;

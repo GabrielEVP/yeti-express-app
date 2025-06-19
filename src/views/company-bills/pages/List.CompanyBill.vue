@@ -1,11 +1,11 @@
 <template>
   <SideBar>
     <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :company-bill-id="selectedId" @close="CloseDetails" />
-    <ConfirmationDeleteModal
+    <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta gastos?"
       @confirm="handleDeleteConfirmation"
-      @cancel="close"
+      @close="close"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
@@ -91,7 +91,7 @@ import {
   NewButton,
   TrashButton,
   EditButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
   FilterButton,
   Button,
   LoadingSkeleton,

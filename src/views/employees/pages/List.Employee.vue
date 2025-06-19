@@ -1,9 +1,9 @@
 <template>
-  <ConfirmationDeleteModal
+  <ModalConfirmation
     :isOpen="isOpen"
     message="¿Estás seguro que quieres eliminar este empleado?"
     @confirm="handleDeleteConfirmation"
-    @cancel="close"
+    @close="close"
   />
   <SideBar>
     <Card class="p-3">
@@ -88,7 +88,7 @@ import {
   TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
 } from '@/components/';

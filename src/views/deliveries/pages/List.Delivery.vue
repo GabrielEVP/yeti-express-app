@@ -1,10 +1,10 @@
 <template>
   <SideBar>
-    <ConfirmationDeleteModal
+    <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta Delivery?"
       @confirm="handleDeleteConfirmation"
-      @cancel="close"
+      @close="close"
     />
     <ModalUpdateStatus :isOpen="isStatusModalOpen" :status="modalStatus" @confirm="confirmStatusUpdate" @cancel="closeStatusModal" />
     <ModalCancelStatus :isOpen="isCancelModalOpen" :deliveryId="selectedDeliveryId || ''" @close="closeCancelModal" @cancelDelivery="handleCancelDelivery" />
@@ -186,7 +186,7 @@ import {
   EditButton,
   EyeButton,
   DownloadButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
 } from '@/components/';
