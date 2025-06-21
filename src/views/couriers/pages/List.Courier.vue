@@ -9,14 +9,24 @@
       @close="closeGeneral"
       @submit-filter="handleGeneralReport"
     />
+    <ModalReportGeneral
+      title="Reporte de engregas general"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
     <ModalReportDetail
-      title="Reporte de entregas por repartidor"
+      title="Reporte de entregas por cliente"
       :isOpen="isOpenDetail"
       :openDate="open_date"
       :closeDate="close_date"
       @close="closeDetail"
       @submit-filter="handleReportDetail"
       :selected-id="selectedCourierId"
+      :selectOptions="courierOptions"
+      selectLabel="Cliente"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
@@ -26,8 +36,19 @@
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           </FilterButton>
         </div>
-        <ReportButton @click="openGeneral">Reportes de entregas</ReportButton>
-        <NewButton label="Nuevo Repartidor" :URL="AppRoutesCourier.new" class="w-full sm:w-auto md:w-auto" />
+        <div class="flex gap-6 flex-col sm:flex-row">
+          <ReportButton>
+            <div class="grid grid-cols-1 dark:bg-gray-700">
+              <button type="button" @click="openGeneral" class="text-start border-b p-4">
+                <Text>Reporte de entregas General</Text>
+              </button>
+              <button type="button" @click="openDetail" class="text-start border-b p-4">
+                <Text>Reporte de cuentas por repartidor</Text>
+              </button>
+            </div>
+          </ReportButton>
+          <NewButton label="Nuevo Repartidor" :URL="AppRoutesCourier.new" class="w-full sm:w-auto md:w-auto" />
+        </div>
       </div>
     </Card>
     <LoadingSkeleton v-if="isLoading" />
@@ -50,7 +71,6 @@
             <EyeButton :route="AppRoutesCourier.details(courier.id)" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
             <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
-            <DownloadButton @click="openDetail(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -72,7 +92,6 @@
                 <EyeButton :route="AppRoutesCourier.details(courier.id)" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
                 <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
-                <DownloadButton @click="openDetail(courier.id)" />
               </div>
             </div>
           </div>
@@ -83,12 +102,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   Card,
-  DownloadButton,
   EditButton,
   EyeButton,
   FilterButton,
@@ -102,6 +120,7 @@ import {
   TableContent,
   TableDashboard,
   TableRow,
+  Text,
   TrashButton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/';
@@ -115,6 +134,7 @@ import {
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { ModalReportDetail } from '@components';
+import { generatePdf } from '@utils';
 
 const couriers = ref<Courier[]>([]);
 const isLoading = ref(false);
@@ -174,33 +194,18 @@ const handleGeneralReport = async (start: string, end: string) => {
   generatePdf(blob, filename);
 };
 
+const courierOptions = computed(() => {
+  return couriers.value.map((courier) => ({
+    label: courier.firstName,
+    value: courier.id,
+  }));
+});
+
 const { isOpen: isOpenDetail, selectedId: selectedCourierId, open: openDetail, close: closeDetail } = useModal();
 
 const handleReportDetail = async (courierId: string, start: string, end: string) => {
   const blob = await getCourierDeliveryReport(courierId, start, end);
   const filename = `informe_entregas_${courierId}`;
   generatePdf(blob, filename);
-};
-
-const generatePdf = (blob: Blob, FileName: string) => {
-  const filename = `${FileName}.pdf`;
-  const mimeType = 'application/pdf';
-
-  if (!blob) {
-    console.error('No se proporcionó un Blob para descargar.');
-    return;
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = filename;
-  a.type = mimeType;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  window.URL.revokeObjectURL(url);
 };
 </script>
