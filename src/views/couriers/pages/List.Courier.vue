@@ -18,7 +18,7 @@
       @submit-filter="handleGeneralReport"
     />
     <ModalReportDetail
-      title="Reporte de entregas por cliente"
+      title="Reporte de entregas por repartidor"
       :isOpen="isOpenDetail"
       :openDate="open_date"
       :closeDate="close_date"
@@ -29,10 +29,10 @@
       selectLabel="Cliente"
     />
     <Card class="p-3">
-      <div class="flex gap-4 md:flex-row sm:justify-between">
+      <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">
         <div class="md:flex gap-4">
           <SearchForm class="hidden sm:block" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
-          <FilterButton class="w-full sm:w-auto block sm:hidden">
+          <FilterButton class="w-full sm:w-auto">
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           </FilterButton>
         </div>
