@@ -22,6 +22,10 @@ export function adaptClient(apiData: any = {}): Client {
     baseClient.debtsCount = Number(apiData.debts_count);
   }
 
+  if (apiData.total_debt_amount !== undefined && apiData.total_debt_amount !== null) {
+    baseClient.totalDebtAmount = Number(apiData.total_debt_amount);
+  }
+
   if (apiData.has_had_debt !== undefined && apiData.has_had_debt !== null) {
     baseClient.hasHadDebt = apiData.has_had_debt;
   }

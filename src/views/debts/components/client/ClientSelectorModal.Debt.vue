@@ -12,19 +12,32 @@
       </section>
       <footer class="flex-1 overflow-y-auto p-4 sm:p-6">
         <div
-          v-if="filteredClients"
+          v-if="filteredClients && filteredClients.length > 0"
           v-for="client in filteredClients"
           :key="client.id"
           @click="select(client)"
-          class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+          class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 mb-3"
         >
-          <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate">
-              {{ client.legalName }}
-            </h4>
-            <Bagde>Deudas: {{ client.debtsCount }} </Bagde>
-          </section>
+          <div class="flex flex-col space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+              <h4 class="font-medium text-gray-900 dark:text-gray-100 text-lg truncate">
+                {{ client.legalName }}
+              </h4>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ client.registrationNumber }}</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-2 gap-2 mt-2">
+              <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 flex flex-col items-center justify-center">
+                <span class="text-xs text-gray-500 dark:text-gray-400">Deudas Pendientes</span>
+                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ client.debtsCount || 0 }}</span>
+              </div>
+              <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 flex flex-col items-center justify-center">
+                <span class="text-xs text-gray-500 dark:text-gray-400">Monto Pendiente</span>
+                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ formatToDollars(client.totalDebtAmount || 0) }}</span>
+              </div>
+            </div>
+          </div>
         </div>
+        <empty-data v-else-if="filteredClients && filteredClients.length === 0" message="No se encontraron clientes con el criterio de búsqueda" />
         <empty-data v-else />
       </footer>
     </div>
@@ -32,11 +45,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { X } from 'lucide-vue-next';
 import { Client } from '@views/clients';
-import { Input, Bagde } from '@/components/';
+import { Input } from '@/components/';
 import { EmptyData } from '@components';
+import { formatToDollars } from '@utils';
 
 const props = defineProps<{
   open: boolean;
@@ -59,5 +73,20 @@ const select = (client: Client) => {
 
 const emitClose = () => {
   emit('update:open', false);
+};
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return 'N/A';
+
+  try {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('es', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  } catch (e) {
+    return 'N/A';
+  }
 };
 </script>

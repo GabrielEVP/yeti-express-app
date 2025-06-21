@@ -22,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
-import { SideBar, LoadingSkeleton } from '@components';
+import { computed, onMounted, ref, watch } from 'vue';
+import { LoadingSkeleton, SideBar } from '@components';
 import { useModal } from '@composables';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
 import StatusFilter from '../components/deliveries/FilterDelivery.vue';
 import { Delivery, DeliveryPaymentStatus } from '@/views/deliveries/';
-import { getClientsWithDebt, getClientStats, getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter } from '@views/debts';
+import { getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
 import { Client, Stast } from '@views/clients';
 
 const paymentStatusOptions = [

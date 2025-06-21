@@ -50,7 +50,7 @@
         </div>
         <div class="flex gap-6 flex-col sm:flex-row">
           <ReportButton>
-            <div class="grid grid-cols-1">
+            <div class="grid grid-cols-1 dark:bg-gray-700">
               <button type="button" @click="openGeneral" class="text-start border-b p-4">
                 <Text>Reporte de cuentas General</Text>
               </button>

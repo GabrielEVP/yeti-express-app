@@ -14,6 +14,7 @@ export interface Client {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  totalDebtAmount?: number;
   debtsCount?: number;
   canDelete?: boolean;
   hasHadDebt?: boolean;
