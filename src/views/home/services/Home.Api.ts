@@ -6,8 +6,24 @@ export const getStats = async (params: { period?: string; date?: string }): Prom
   return response.data;
 };
 
-export const getReportStats = async (): Promise<any> => {
-  const response = await apiClient.get('/dashboard/report', { responseType: 'blob' });
+export const getReportStats = async (startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get('dashboard/report', {
+    params: {
+      start_date: startDate,
+      end_date: endDate,
+    },
+    responseType: 'blob',
+  });
   return response.data;
 };
 
+export const getReportsimplifiedStats = async (startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get('dashboard/simplified-report', {
+    params: {
+      start_date: startDate,
+      end_date: endDate,
+    },
+    responseType: 'blob',
+  });
+  return response.data;
+};

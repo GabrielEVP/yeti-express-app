@@ -94,8 +94,3 @@ export const createClientAddress = async (data: CreateAddressData): Promise<Clie
   const response = await apiClient.post(clientApiRoutes.createAddress(clientId), addressData);
   return response.data;
 };
-
-export const getClientsWithDebts = async (): Promise<Client[]> => {
-  const response = await apiClient.get(clientApiRoutes.getClientsWithDebts);
-  return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
-};
