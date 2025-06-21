@@ -22,6 +22,7 @@ export { default as FieldForm } from '@/components/forms/Field.vue';
 export { default as FieldFormModel } from '@/components/forms/FieldModel.vue';
 export { default as SearchForm } from '@/components/forms/Search.vue';
 export { default as SelectForm } from '@/components/forms/Select.vue';
+export { default as SelectFilter } from '@/components/forms/SelectFilter.vue';
 export { default as TextAreaForm } from '@/components/forms/TextArea.vue';
 
 // MODALS

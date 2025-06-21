@@ -6,8 +6,27 @@
       @confirm="handleDeleteConfirmation"
       @close="close"
     />
+    <ModalReportGeneral
+      title="Reporte de deudas general"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
+    <ModalReportDetail
+      title="Reporte de deudas por cliente"
+      :isOpen="isOpenDetail"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeDetail"
+      @submit-filter="handleReportDetail"
+      :selected-id="selectedClientId"
+      :selectOptions="clientsOptions"
+      selectLabel="Cliente"
+    />
     <Card class="p-3">
-      <div class="flex gap-4 md:flex-row sm:justify-between">
+      <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">
         <div class="md:flex gap-4">
           <SearchForm class="hidden md:block" v-model="searchQuery" placeholder="Buscar Cliente" @input="debouncedSearch" />
           <FilterButton class="w-full sm:w-auto">
@@ -29,7 +48,22 @@
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Cliente" @input="debouncedSearch" />
           </FilterButton>
         </div>
-        <NewButton label="Nuevo Cliente" :URL="AppRoutesClient.new" class="w-full sm:w-auto md:w-auto" />
+        <div class="flex gap-6 flex-col sm:flex-row">
+          <ReportButton>
+            <div class="grid grid-cols-1">
+              <button type="button" @click="openGeneral" class="text-start border-b p-4">
+                <Text>Reporte de cuentas General</Text>
+              </button>
+              <button type="button" @click="handlePendingReport" class="text-start border-b p-4">
+                <Text>Reporte de cuentas por cobrar</Text>
+              </button>
+              <button type="button" @click="openDetail" class="text-start border-b p-4">
+                <Text>Reporte de cuentas por cliente</Text>
+              </button>
+            </div>
+          </ReportButton>
+          <NewButton label="Nuevo Cliente" :URL="AppRoutesClient.new" class="w-full sm:w-auto md:w-auto" />
+        </div>
       </div>
     </Card>
     <LoadingSkeleton v-if="isLoading" />
@@ -60,7 +94,6 @@
             <EyeButton :route="AppRoutesClient.details(client.id)" />
             <EditButton :route="AppRoutesClient.edit(client.id)" />
             <TrashButton v-if="client.canDelete" @click="open(client.id)" />
-            <DownloadButton v-if="client.hasHadDebt" @click="handleReport(client.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -85,7 +118,6 @@
                 <EyeButton :route="AppRoutesClient.details(client.id)" />
                 <EditButton :route="AppRoutesClient.edit(client.id)" />
                 <TrashButton v-if="client.canDelete" @click="open(client.id)" />
-                <DownloadButton v-if="client.hasHadDebt" @click="handleReport(client.id)" />
               </div>
             </div>
           </div>
@@ -96,33 +128,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { usePagination, useSearch, useDebounce } from '@/composables/';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
-  Card,
   Bagde,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
+  Card,
   EditButton,
-  DownloadButton,
   EyeButton,
-  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
+  ModalConfirmation,
+  ModalReportDetail,
+  ModalReportGeneral,
+  NewButton,
+  ReportButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Client, ClientType, ClientTypeOptions, formatClientType } from '@/views/clients/';
-import { searchClients, deleteClientById, getClientDebtReport, getFilteredClients } from '@/views/clients/service/';
+import {
+  allGetClientsDebtReport,
+  allGetPendingPaidDebtsReport,
+  deleteClientById,
+  getClientDebtReport,
+  getFilteredClients,
+  searchClients,
+} from '@/views/clients/service/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
+import { Text } from '@components';
+import { getClientsWithDebt } from '@views/debts';
+import { generatePdf } from '@utils';
 
 const clients = ref<Client[]>([]);
+const clientsWithDebts = ref<Client[]>([]);
 const selectedType = ref<string>('');
 const selectedCredit = ref<string>('');
 const isLoading = ref(false);
@@ -183,8 +228,20 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
 
 const debouncedSearch = useDebounce(runSearch, 500);
 
+const clientsOptions = computed(() => {
+  return clientsWithDebts.value.map((client) => ({
+    label: client.legalName,
+    value: client.id,
+  }));
+});
+
 onMounted(async () => {
   await runSearch();
+  try {
+    clientsWithDebts.value = await getClientsWithDebt();
+  } catch (error) {
+    console.error('Error fetching clients with debts:', error);
+  }
 });
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
@@ -200,26 +257,28 @@ const handleDeleteConfirmation = async () => {
   await confirmDelete();
 };
 
-const handleReport = async (clientId: string) => {
-  const blob = await getClientDebtReport(clientId);
-  const filename = `informe_deuda_${clientId}.pdf`;
-  const mimeType = 'application/pdf';
+const open_date = ref<string>('');
+const close_date = ref<string>('');
 
-  if (!blob) {
-    console.error('No se proporcionó un Blob para descargar.');
-    return;
-  }
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
 
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = filename;
-  a.type = mimeType;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+const handleGeneralReport = async (start: string, end: string) => {
+  const blob = await allGetClientsDebtReport(start, end);
+  const filename = `informe_general_deudas_${start}_${end}.pdf`;
+  generatePdf(blob, filename);
+};
 
-  window.URL.revokeObjectURL(url);
+const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal();
+
+const handleReportDetail = async (clientId: string, start: string, end: string) => {
+  const blob = await getClientDebtReport(clientId, start, end);
+  const filename = `informe_deuda_${clientId}`;
+  generatePdf(blob, filename);
+};
+
+const handlePendingReport = async () => {
+  const blob = await allGetPendingPaidDebtsReport();
+  const filename = `informe_deuda_general`;
+  generatePdf(blob, filename);
 };
 </script>

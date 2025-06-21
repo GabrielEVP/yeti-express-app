@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/';
-import { Client, ClientAddress, adaptClient, adaptClientForApi } from '@/views/clients/';
+import { adaptClient, adaptClientForApi, Client, ClientAddress } from '@/views/clients/';
 
 export const clientApiRoutes = {
   getAll: '/clients',
@@ -10,8 +10,11 @@ export const clientApiRoutes = {
   edit: (id: string | number) => `/clients/edit/${id}`,
   search: (query: string) => `/clients/search/${query}`,
   filter: '/clients/filter',
-  getDebtReport: (clientId: string | number) => `/clients/${clientId}/debt-report`,
+  getDebtReport: (clientId: string | number) => `/clients/${clientId}/debts-report`,
+  allGetDebtsReport: `/clients/debts-report`,
+  allGetPendingPaidDebtsReport: `/clients/reports/unpaid-debts`,
   createAddress: (clientId: string | number) => `/clients/${clientId}/addresses`,
+  getClientsWithDebts: '/clients/with-debts',
 };
 
 export const getAllClients = async (): Promise<Client[]> => {
@@ -50,8 +53,34 @@ export const getFilteredClients = async (params: Record<string, any>): Promise<C
   return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
 };
 
-export const getClientDebtReport = async (clientId: string): Promise<any> => {
-  const response = await apiClient.get(clientApiRoutes.getDebtReport(clientId), { responseType: 'blob' });
+export const getClientDebtReport = async (clientId: string, startDate?: string, endDate?: string): Promise<any> => {
+  const params: Record<string, string> = {};
+
+  if (startDate && endDate) {
+    params.start_date = startDate;
+    params.end_date = endDate;
+  }
+
+  const response = await apiClient.get(clientApiRoutes.getDebtReport(clientId), {
+    params,
+    responseType: 'blob',
+  });
+  return response.data;
+};
+
+export const allGetPendingPaidDebtsReport = async (): Promise<any> => {
+  const response = await apiClient.get(clientApiRoutes.allGetPendingPaidDebtsReport, { responseType: 'blob' });
+  return response.data;
+};
+
+export const allGetClientsDebtReport = async (startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get(clientApiRoutes.allGetDebtsReport, {
+    params: {
+      start_date: startDate,
+      end_date: endDate,
+    },
+    responseType: 'blob',
+  });
   return response.data;
 };
 
@@ -64,4 +93,9 @@ export const createClientAddress = async (data: CreateAddressData): Promise<Clie
   const { clientId, ...addressData } = data;
   const response = await apiClient.post(clientApiRoutes.createAddress(clientId), addressData);
   return response.data;
+};
+
+export const getClientsWithDebts = async (): Promise<Client[]> => {
+  const response = await apiClient.get(clientApiRoutes.getClientsWithDebts);
+  return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
 };
