@@ -16,13 +16,11 @@
           <SelectForm
             v-if="!showAddressForm"
             label="Dirección de recogida"
-            name="clientAddressId"
+            name="pickupAddress"
             placeholder="Selecciona una dirección"
             :items="addressOptionsWithAdd"
             @update:modelValue="handleAddressSelection"
           />
-
-          <!-- Formulario para nueva dirección -->
           <div v-if="showAddressForm" class="space-y-3">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"> Nueva Dirección </label>
             <div class="space-y-3">
@@ -33,8 +31,6 @@
                 class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 @keyup.enter="saveNewAddress"
               />
-
-              <!-- Botones del formulario de dirección -->
               <div class="flex flex-col sm:flex-row gap-2">
                 <button
                   type="button"
@@ -78,7 +74,7 @@ import { getAllClients, createClientAddress } from '@views/clients';
 interface Props {
   modelValue?: {
     clientId?: string;
-    clientAddressId?: string;
+    pickupAddress?: string;
   };
 }
 
@@ -87,7 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 interface Emits {
-  (e: 'update:modelValue', value: { clientId?: string; clientAddressId?: string }): void;
+  (e: 'update:modelValue', value: { clientId?: string; pickupAddress?: string }): void;
   (e: 'clientChanged', client: Client | null): void;
 }
 
@@ -139,14 +135,14 @@ watch(
   { immediate: true }
 );
 
-function updateValue(updates: Partial<{ clientId?: string; clientAddressId?: string }>) {
+function updateValue(updates: Partial<{ clientId?: string; pickupAddress?: string }>) {
   const newValue = { ...props.modelValue, ...updates };
   emit('update:modelValue', newValue);
 }
 
 function handleClientSelection(clientId: string) {
   selectedClientId.value = clientId;
-  updateValue({ clientId, clientAddressId: '' });
+  updateValue({ clientId, pickupAddress: '' });
   loadAddresses(clientId);
 
   const client = clients.value.find((c) => c.id === clientId);
@@ -159,7 +155,7 @@ async function loadAddresses(clientId: string) {
     const addresses = client.addresses || [];
     clientsAddressOptions.value = addresses.map((address) => ({
       label: address.address,
-      value: address.id,
+      value: address.address,
     }));
   } else {
     clientsAddressOptions.value = [];
@@ -169,13 +165,13 @@ async function loadAddresses(clientId: string) {
   resetNewAddress();
 }
 
-function handleAddressSelection(addressId: string) {
-  if (addressId === '__ADD_NEW__') {
+function handleAddressSelection(addressValue: string) {
+  if (addressValue === '__ADD_NEW__') {
     showAddressForm.value = true;
-    updateValue({ clientAddressId: '' });
+    updateValue({ pickupAddress: '' });
   } else {
     showAddressForm.value = false;
-    updateValue({ clientAddressId: addressId });
+    updateValue({ pickupAddress: addressValue });
   }
 }
 
@@ -188,30 +184,25 @@ function resetNewAddress() {
 async function saveNewAddress() {
   if (!canSaveAddress.value || !selectedClientId.value) return;
 
-  try {
-    const newAddressData = {
-      clientId: selectedClientId.value,
-      address: newAddress.value.address.trim(),
-    };
+  const newAddressData = {
+    clientId: selectedClientId.value,
+    address: newAddress.value.address.trim(),
+  };
 
-    const createdAddress = await createClientAddress(newAddressData);
+  const newAddressOption = {
+    label: newAddressData.address,
+    value: newAddressData.address,
+  };
 
-    const newAddressOption = {
-      label: createdAddress.address,
-      value: createdAddress.id,
-    };
+  clientsAddressOptions.value.push(newAddressOption);
 
-    clientsAddressOptions.value.push(newAddressOption);
+  updateValue({ pickupAddress: newAddressData.address });
 
-    updateValue({ clientAddressId: createdAddress.id });
+  showAddressForm.value = false;
+  resetNewAddress();
 
-    showAddressForm.value = false;
-    resetNewAddress();
+  clients.value = await getAllClients();
 
-    clients.value = await getAllClients();
-  } catch (error) {
-    console.error('Error al guardar la dirección:', error);
-  }
 }
 
 function cancelAddAddress() {
@@ -229,7 +220,7 @@ function closeModalClientForm() {
 
 async function handleAddClient(newClient: Client) {
   try {
-    const firstAddressId = newClient.addresses?.[0]?.id || '';
+    const firstAddress = newClient.addresses?.[0]?.address || '';
 
     clients.value = await getAllClients();
     selectedClientId.value = newClient.id;
@@ -239,7 +230,7 @@ async function handleAddClient(newClient: Client) {
 
     updateValue({
       clientId: newClient.id,
-      clientAddressId: firstAddressId,
+      pickupAddress: firstAddress,
     });
 
     emit('clientChanged', newClient);
@@ -281,7 +272,7 @@ defineExpose({
     clientsAddressOptions.value = [];
     showAddressForm.value = false;
     resetNewAddress();
-    updateValue({ clientId: '', clientAddressId: '' });
+    updateValue({ clientId: '', pickupAddress: '' });
   },
 });
 </script>

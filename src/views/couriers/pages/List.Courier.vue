@@ -1,20 +1,54 @@
 <template>
-  <ConfirmationDeleteModal
-    :isOpen="isOpen"
-    message="¿Estás seguro que quieres eliminar este Courier?"
-    @confirm="handleDeleteConfirmation"
-    @cancel="close"
-  />
+  <ModalConfirmation :isOpen="isOpen" message="¿Estás seguro que quieres eliminar este Courier?" @confirm="handleDeleteConfirmation" @close="close" />
   <SideBar>
+    <ModalReportGeneral
+      title="Reporte de entregas general"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
+    <ModalReportGeneral
+      title="Reporte de engregas general"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
+    <ModalReportDetail
+      title="Reporte de entregas por repartidor"
+      :isOpen="isOpenDetail"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeDetail"
+      @submit-filter="handleReportDetail"
+      :selected-id="selectedCourierId"
+      :selectOptions="courierOptions"
+      selectLabel="Cliente"
+    />
     <Card class="p-3">
-      <div class="flex gap-4 md:flex-row sm:justify-between">
+      <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">
         <div class="md:flex gap-4">
           <SearchForm class="hidden sm:block" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
-          <FilterButton class="w-full sm:w-auto block sm:hidden">
+          <FilterButton class="w-full sm:w-auto">
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           </FilterButton>
         </div>
-        <NewButton label="Nuevo Repartidor" :URL="AppRoutesCourier.new" class="w-full sm:w-auto md:w-auto" />
+        <div class="flex gap-6 flex-col sm:flex-row">
+          <ReportButton>
+            <div class="grid grid-cols-1 dark:bg-gray-700">
+              <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">
+                <Text>Reporte de entregas General</Text>
+              </button>
+              <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">
+                <Text>Reporte de cuentas por repartidor</Text>
+              </button>
+            </div>
+          </ReportButton>
+          <NewButton label="Nuevo Repartidor" :URL="AppRoutesCourier.new" class="w-full sm:w-auto md:w-auto" />
+        </div>
       </div>
     </Card>
     <LoadingSkeleton v-if="isLoading" />
@@ -68,28 +102,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useDebounce } from '@/composables/';
+import { computed, onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
   Card,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationDeleteModal,
   FilterButton,
   LoadingSkeleton,
+  ModalConfirmation,
+  ModalReportGeneral,
+  NewButton,
+  ReportButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  Text,
+  TrashButton,
 } from '@/components/';
 import { Courier } from '@/views/couriers/';
-import { getAllCouriers, deleteCourierById, searchCouriers } from '@/views/couriers/services';
+import {
+  deleteCourierById,
+  getAllCouriers,
+  getAllCouriersDeliveriesReport,
+  getCourierDeliveryReport,
+  searchCouriers,
+} from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
+import { ModalReportDetail } from '@components';
+import { generatePdf } from '@utils';
 
 const couriers = ref<Courier[]>([]);
 const isLoading = ref(false);
@@ -136,5 +181,31 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
+};
+
+const open_date = ref<string>('');
+const close_date = ref<string>('');
+
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
+
+const handleGeneralReport = async (start: string, end: string) => {
+  const blob = await getAllCouriersDeliveriesReport(start, end);
+  const filename = `informe_general_entregas_${start}_${end}.pdf`;
+  generatePdf(blob, filename);
+};
+
+const courierOptions = computed(() => {
+  return couriers.value.map((courier) => ({
+    label: courier.firstName,
+    value: courier.id,
+  }));
+});
+
+const { isOpen: isOpenDetail, selectedId: selectedCourierId, open: openDetail, close: closeDetail } = useModal();
+
+const handleReportDetail = async (courierId: string, start: string, end: string) => {
+  const blob = await getCourierDeliveryReport(courierId, start, end);
+  const filename = `informe_entregas_${courierId}`;
+  generatePdf(blob, filename);
 };
 </script>

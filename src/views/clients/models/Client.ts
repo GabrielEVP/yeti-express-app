@@ -14,9 +14,11 @@ export interface Client {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  totalDebtAmount?: number;
   debtsCount?: number;
   canDelete?: boolean;
   hasHadDebt?: boolean;
+
   [key: string]: any;
 }
 
@@ -38,7 +40,5 @@ export interface ClientPhone {
 
 export interface Stast {
   total_deliveries_with_debt: number;
-  total_invoiced: number;
-  total_paid: number;
   total_pending: number;
 }

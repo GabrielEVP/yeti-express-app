@@ -8,12 +8,10 @@ export const deliveryApiRoutes = {
   delete: (id: string | number) => `/deliveries/${id}`,
   search: (query: string) => `/deliveries/search/${query}`,
   filter: '/deliveries/filter',
-  byClient: (clientId: string | number) => `/deliveries/clients/${clientId}`,
-  byCourier: (courierId: string | number) => `/deliveries/couriers/${courierId}`,
   updateStatus: (deliveryId: string | number) => `/deliveries/${deliveryId}/status`,
+  CancelDelivery: (deliveryId: string | number) => `/deliveries/${deliveryId}/cancel`,
   getTicket: (deliveryId: string | number) => `/deliveries/${deliveryId}/ticket`,
   withDebt: '/deliveries/with-debt',
-  withDebtByClient: (clientId: string | number) => `/deliveries/with-debt/client/${clientId}`,
 };
 
 export const getAllDeliveries = async (): Promise<Delivery[]> => {
@@ -52,31 +50,16 @@ export const getFilteredDeliveries = async (params: Record<string, any>): Promis
   return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 };
 
-export const getDeliveriesByClient = async (clientId: string | number): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.byClient(clientId));
-  return response.data.map(adaptDelivery);
-};
-
-export const getDeliveriesByCourier = async (courierId: string | number): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.byCourier(courierId));
-  return response.data.map(adaptDelivery);
-};
-
 export const updateDeliveryStatus = async (deliveryId: string | number, status: string): Promise<void> => {
   await apiClient.put(deliveryApiRoutes.updateStatus(deliveryId), { status });
 };
 
+export const CancelDelivery = async (deliveryId: string | number, data: any): Promise<void> => {
+  await apiClient.put(deliveryApiRoutes.CancelDelivery(deliveryId), data);
+};
+
+
 export const getDeliveryTicket = async (deliveryId: string | number): Promise<Blob> => {
   const response = await apiClient.get(deliveryApiRoutes.getTicket(deliveryId), { responseType: 'blob' });
   return response.data;
-};
-
-export const getDeliveriesWithDebt = async (): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.withDebt);
-  return response.data.map(adaptDelivery);
-};
-
-export const getDeliveriesWithDebtByClient = async (clientId: string | number): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.withDebtByClient(clientId));
-  return response.data.map(adaptDelivery);
 };

@@ -26,12 +26,8 @@
               </TabsTitle>
             </template>
           </Tabs>
-
           <TabsContent tab="general" :activeTab="activeTab">
-            <!-- Componente de Cliente -->
             <ClientSelector :modelValue="clientSelectorValue" @update:modelValue="handleClientSelectorUpdate" @clientChanged="handleClientChanged" />
-
-            <!-- Detalles del Servicio -->
             <div class="space-y-4">
               <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -49,7 +45,6 @@
               </div>
             </div>
           </TabsContent>
-
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -61,13 +56,11 @@
               </div>
             </div>
           </TabsContent>
-
           <TabsContent tab="notes" :activeTab="activeTab">
             <div class="space-y-4">
-              <TextAreaForm label="Notas" id="notes" placeholder="Ingresa cualquier información adicional sobre la entrega..." />
+              <TextAreaForm name="notes" label="Notas" id="notes" placeholder="Ingresa cualquier información adicional sobre la entrega..." />
             </div>
           </TabsContent>
-
           <div class="mt-6 pt-4 border-t">
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:justify-end">
               <CancelButton @click="router.back()" class="w-full sm:w-auto order-2 sm:order-1" />
@@ -154,15 +147,15 @@ const serviceOptions = computed(() =>
 
 const clientSelectorValue = computed(() => ({
   clientId: values.clientId || '',
-  clientAddressId: values.clientAddressId || '',
+  pickupAddress: values.pickupAddress || '',
 }));
 
-function handleClientSelectorUpdate(clientData: { clientId?: string; clientAddressId?: string }) {
+function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
   if (clientData.clientId !== undefined) {
     setFieldValue('clientId', clientData.clientId);
   }
-  if (clientData.clientAddressId !== undefined) {
-    setFieldValue('clientAddressId', clientData.clientAddressId);
+  if (clientData.pickupAddress !== undefined) {
+    setFieldValue('pickupAddress', clientData.pickupAddress);
   }
 }
 

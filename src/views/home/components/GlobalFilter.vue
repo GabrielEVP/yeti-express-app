@@ -1,6 +1,7 @@
 <template>
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-8">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row items-center justify-start gap-4">
+      <slot />
       <div class="flex items-center gap-2">
         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtrar por:</span>
         <select

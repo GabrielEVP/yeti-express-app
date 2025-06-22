@@ -1,6 +1,35 @@
 <template>
   <Sidebar>
-    <GlobalFilter :initial-range="selectedRange" :initial-date="selectedDate" @filter-change="onFilterChange" />
+    <ModalReportGeneral
+      title="Reporte de caja detallado"
+      :isOpen="isOpenDetail"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeDetail"
+      @submit-filter="handleDetailReport"
+    />
+    <ModalReportGeneral
+      title="Reporte de caja simplificado"
+      :isOpen="isOpenGeneral"
+      :openDate="open_date"
+      :closeDate="close_date"
+      @close="closeGeneral"
+      @submit-filter="handleGeneralReport"
+    />
+    <GlobalFilter :initial-range="selectedRange" :initial-date="selectedDate" @filter-change="onFilterChange">
+      <div class="flex gap-4 mb-4">
+        <ReportButton class="pr-8">
+          <div class="grid grid-cols-1 dark:bg-gray-700">
+            <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">
+              <Text>Reporte de caja detallado</Text>
+            </button>
+            <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">
+              <Text>Reporte de cajas Simplificado</Text>
+            </button>
+          </div>
+        </ReportButton>
+      </div>
+    </GlobalFilter>
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
       <ActivityView title="Ordenes realizadas">
         <div v-if="isLoading" class="animate-pulse">
@@ -49,24 +78,21 @@
       <DeliveriesChart :deliveries="stats?.historical_delivered || []" :is-loading="isLoading" />
       <InvoicedChart :deliveries="stats?.historical_invoiced || []" :is-loading="isLoading" />
     </div>
-    <FinanceChart
-      :historical-balance="stats?.historical_balance || []"
-      :is-loading="isLoading"
-      class="mt-4"
-    />
+    <FinanceChart :historical-balance="stats?.historical_balance || []" :is-loading="isLoading" class="mt-4" />
   </Sidebar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import Sidebar from '@/layouts/BarLayourt.vue';
-import { ActivityView } from '@/components/';
+import { ActivityView, ModalReportGeneral, ReportButton, Text } from '@/components/';
 import DeliveriesChart from '../components/DeliveriesChart.vue';
 import InvoicedChart from '../components/InvoicedChart.vue';
 import FinanceChart from '../components/FinanceChart.vue';
 import GlobalFilter from '../components/GlobalFilter.vue';
-import type { DashboardStats } from '@views/home/';
-import { getStats } from '@views/home/';
+import { DashboardStats, getReportsimplifiedStats, getReportStats, getStats } from '@views/home/';
+import { generatePdf } from '@utils';
+import { useModal } from '@/composables/';
 
 const selectedRange = ref<'day' | 'week' | 'month' | 'year'>('week');
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
@@ -116,7 +142,26 @@ const fetchStats = async (period: string, date: string) => {
   }
 };
 
-onMounted(() => {
+const open_date = ref<string>('');
+const close_date = ref<string>('');
+
+const { isOpen: isOpenDetail, open: openDetail, close: closeDetail } = useModal();
+
+const handleDetailReport = async (start: string, end: string) => {
+  const blob = await getReportStats(start, end);
+  const filename = `informe_de_caja_detallado_${start}_${end}`;
+  generatePdf(blob, filename);
+};
+
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
+
+const handleGeneralReport = async (start: string, end: string) => {
+  const blob = await getReportsimplifiedStats(start, end);
+  const filename = `informe_de_caja_simplificado_${start}_${end}`;
+  generatePdf(blob, filename);
+};
+
+onMounted(async () => {
   fetchStats(selectedRange.value, selectedDate.value);
 });
 </script>

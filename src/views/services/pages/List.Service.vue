@@ -1,10 +1,10 @@
 <template>
   <SideBar>
-    <ConfirmationDeleteModal
+    <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Servicio?"
       @confirm="handleDeleteConfirmation"
-      @cancel="close"
+      @close="close"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
@@ -93,7 +93,7 @@ import {
   TrashButton,
   EditButton,
   EyeButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
 } from '@/components/';

@@ -2,7 +2,7 @@
   <div class="relative">
     <Button
       @click="toggleFilter"
-      class="border bg-white dark:bg-gray-800 border-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+      class="w-full border bg-white dark:bg-gray-800 border-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
     >
       <SlidersHorizontal class="h-4 w-4 mr-2" />
       Filtros
@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { SlidersHorizontal, ChevronDown } from 'lucide-vue-next';
-import { Card, Button } from '@/components';
+import { ChevronDown, SlidersHorizontal } from 'lucide-vue-next';
+import { Button, Card } from '@/components';
 
 const isFilterOpen = ref(false);
 

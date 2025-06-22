@@ -1,12 +1,13 @@
 <template>
   <SideBar>
-    <ConfirmationDeleteModal
+    <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta Delivery?"
       @confirm="handleDeleteConfirmation"
-      @cancel="close"
+      @close="close"
     />
     <ModalUpdateStatus :isOpen="isStatusModalOpen" :status="modalStatus" @confirm="confirmStatusUpdate" @cancel="closeStatusModal" />
+    <ModalCancelStatus :isOpen="isCancelModalOpen" :deliveryId="selectedDeliveryId || ''" @close="closeCancelModal" @cancelDelivery="handleCancelDelivery" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -111,11 +112,12 @@
             <DownloadButton @click="handleDownload(delivery.id)" />
             <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
             <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
-            <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)" />
+            <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
             <Delivered
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
+            <CopyWhatsapp @click="copyToClipboard(delivery)" />
           </div>
         </TableContent>
       </TableRow>
@@ -152,11 +154,12 @@
                 <DownloadButton @click="handleDownload(delivery.id)" />
                 <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
                 <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
-                <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="handleUpdateStatus(delivery.id, DeliveryStatus.REFUSED)" />
+                <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
                 <Delivered
                   v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
                   @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
                 />
+                <CopyWhatsapp @click="copyToClipboard(delivery)" />
               </div>
             </div>
           </div>
@@ -183,21 +186,31 @@ import {
   EditButton,
   EyeButton,
   DownloadButton,
-  ConfirmationDeleteModal,
+  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
 import { DeliveryStatus } from '@views/deliveries/models';
-import { deleteDeliveryById, searchDeliveries, getFilteredDeliveries, updateDeliveryStatus, getDeliveryTicket } from '@/views/deliveries/services';
+import {
+  deleteDeliveryById,
+  searchDeliveries,
+  getFilteredDeliveries,
+  updateDeliveryStatus,
+  getDeliveryTicket,
+  CancelDelivery,
+} from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
+import { copyToClipboard } from '@views/deliveries/utils'
 
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
 import Cancelled from '../components/button/Cancelled.vue';
+import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
+import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
 
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -213,6 +226,7 @@ const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePag
 
 const modalStatus = ref<DeliveryStatus | undefined>(undefined);
 const isStatusModalOpen = ref(false);
+const isCancelModalOpen = ref(false);
 const selectedDeliveryId = ref<string | undefined>(undefined);
 
 const deliveryStatusOptions = [
@@ -347,4 +361,20 @@ const confirmStatusUpdate = async () => {
 async function handleUpdateStatus(id: string, status: DeliveryStatus) {
   openStatusModal(id, status);
 }
+
+const openCancelModal = (id: string) => {
+  selectedDeliveryId.value = id;
+  isCancelModalOpen.value = true;
+};
+
+const closeCancelModal = () => {
+  isCancelModalOpen.value = false;
+  selectedDeliveryId.value = undefined;
+};
+
+const handleCancelDelivery = async (cancelData: { cancellationNotes: string, deliveryId: string }) => {
+  await runSearch();
+  closeCancelModal();
+};
+
 </script>
