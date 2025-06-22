@@ -50,16 +50,10 @@
         </div>
         <div class="flex gap-6 flex-col sm:flex-row">
           <ReportButton>
-            <div class="grid grid-cols-1 dark:bg-gray-700">
-              <button type="button" @click="openGeneral" class="text-start border-b p-4">
-                <Text>Reporte de cuentas General</Text>
-              </button>
-              <button type="button" @click="handlePendingReport" class="text-start border-b p-4">
-                <Text>Reporte de cuentas por cobrar</Text>
-              </button>
-              <button type="button" @click="openDetail" class="text-start border-b p-4">
-                <Text>Reporte de cuentas por cliente</Text>
-              </button>
+            <div class="grid grid-cols-1 dark:bg-gray-700 dark:text-white">
+              <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">Reporte de cuentas General</button>
+              <button type="button" @click="handlePendingReport" class="text-start border-b p-4">Reporte de cuentas por cobrar</button>
+              <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">Reporte de cuentas por cliente</button>
             </div>
           </ReportButton>
           <NewButton label="Nuevo Cliente" :URL="AppRoutesClient.new" class="w-full sm:w-auto md:w-auto" />
@@ -162,7 +156,6 @@ import {
 } from '@/views/clients/service/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
-import { Text } from '@components';
 import { getClientsWithDebt } from '@views/debts';
 import { generatePdf } from '@utils';
 
@@ -260,7 +253,7 @@ const handleDeleteConfirmation = async () => {
 const open_date = ref<string>('');
 const close_date = ref<string>('');
 
-const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
+const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal<string>();
 
 const handleGeneralReport = async (start: string, end: string) => {
   const blob = await allGetClientsDebtReport(start, end);
@@ -268,7 +261,7 @@ const handleGeneralReport = async (start: string, end: string) => {
   generatePdf(blob, filename);
 };
 
-const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal();
+const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal<string>();
 
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
   const blob = await getClientDebtReport(clientId, start, end);

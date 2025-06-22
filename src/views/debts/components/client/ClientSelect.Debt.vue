@@ -12,16 +12,10 @@
         </div>
         <div class="flex gap-4 flex-wrap sm:flex-nowrap">
           <ReportButton>
-            <div class="grid grid-cols-1 dark:bg-gray-700">
-              <button type="button" @click="openGeneral" class="text-start border-b p-4">
-                <Text>Reporte de cuentas General</Text>
-              </button>
-              <button type="button" @click="handlePendingReport" class="text-start border-b p-4">
-                <Text>Reporte de cuentas por cobrar</Text>
-              </button>
-              <button type="button" @click="openDetail" class="text-start border-b p-4">
-                <Text>Reporte de cuentas por cliente</Text>
-              </button>
+            <div class="grid grid-cols-1 dark:bg-gray-700 dark:text-white">
+              <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">Reporte de cuentas General</button>
+              <button type="button" @click="handlePendingReport" class="text-start border-b p-4">Reporte de cuentas por cobrar</button>
+              <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">Reporte de cuentas por cliente</button>
             </div>
           </ReportButton>
           <Button
@@ -110,7 +104,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { formatToDollars, generatePdf } from '@utils';
-import { Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton, Text } from '@components';
+import { Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
 import { Client, Stast } from '@views/clients';
 import { useModal } from '@composables';
 import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/clients/service/';

@@ -39,10 +39,10 @@
         <div class="flex gap-6 flex-col sm:flex-row">
           <ReportButton>
             <div class="grid grid-cols-1 dark:bg-gray-700">
-              <button type="button" @click="openGeneral" class="text-start border-b p-4">
+              <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">
                 <Text>Reporte de entregas General</Text>
               </button>
-              <button type="button" @click="openDetail" class="text-start border-b p-4">
+              <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">
                 <Text>Reporte de cuentas por repartidor</Text>
               </button>
             </div>
