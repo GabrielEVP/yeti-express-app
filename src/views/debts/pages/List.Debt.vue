@@ -1,7 +1,7 @@
 <template>
   <SideBar>
     <ClientSelectorModal v-model:open="isOpen" :clients="clients as Client[]" @select="selectedClient = $event" />
-    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="open" />
+    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="() => open('')" />
     <StatusFilter
       v-if="selectedClient && deliveries"
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
