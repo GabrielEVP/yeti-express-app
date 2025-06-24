@@ -1,7 +1,6 @@
 import { Delivery, DeliveryReceipt } from '@views/deliveries/models/Delivery';
 import { adaptTimeLineContent } from '@/time-line-content/adapter';
-import { DeliveryStatus, PaymentType } from '@views/deliveries/';
-import { DeliveryPaymentStatus } from '@views/deliveries/';
+import { DeliveryPaymentStatus, DeliveryStatus, PaymentType } from '@views/deliveries/';
 
 export function adaptDelivery(apiData: any = {}): Delivery {
   return {
@@ -27,6 +26,7 @@ export function adaptDelivery(apiData: any = {}): Delivery {
     clientAddress: apiData.client_address_name ?? '',
     courierName: apiData.courier_name ?? '',
     serviceName: apiData.service_name ?? '',
+    serviceAmount: apiData.service_amount ?? 0,
     debtId: apiData.debt_id ?? '',
     clientId: apiData.client_id ?? '',
     courierId: apiData.courier_id ?? '',

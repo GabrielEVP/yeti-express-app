@@ -2,7 +2,6 @@ import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from 
 import { formatDateCustom, formatToDollars } from '@utils';
 import { useAlert } from '@composables';
 
-
 export function copyToClipboard(delivery: Delivery) {
   const { triggerError, triggerSuccess } = useAlert();
 
@@ -25,7 +24,7 @@ export function copyToClipboard(delivery: Delivery) {
 
 ----------------------------
 
-🧑‍✈️ *Repartidor:* ${delivery.courierName}
+🏍️️ *Repartidor:* ${delivery.courierName}
 📍 *Estado:* ${getDeliveryStatusLabel(delivery.status)}
 
 ----------------------------
@@ -43,7 +42,8 @@ ${delivery.notes || 'Sin notas'}
 🕒 ${formatDateCustom(new Date())}
   `.trim();
 
-  navigator.clipboard.writeText(text)
+  navigator.clipboard
+    .writeText(text)
     .then(() => triggerSuccess('✅ Copiado al portapapeles. ¡Listo para WhatsApp!'))
-    .catch(err => triggerError('Error al copiar al portapapeles:'));
+    .catch((err) => triggerError('Error al copiar al portapapeles:'));
 }

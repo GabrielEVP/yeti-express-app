@@ -1,7 +1,7 @@
 <template>
   <SideBar>
     <ClientSelectorModal v-model:open="isOpen" :clients="clients as Client[]" @select="selectedClient = $event" />
-    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="() => open('')" />
+    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="() => open('')" :total-debts-amount="totalDebtAmount" />
     <StatusFilter
       v-if="selectedClient && deliveries"
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
@@ -30,7 +30,7 @@ import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
 import StatusFilter from '../components/deliveries/FilterDelivery.vue';
 import { Delivery, DeliveryPaymentStatus } from '@/views/deliveries/';
-import { getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
+import { allAmountDebts, getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
 import { Client, Stast } from '@views/clients';
 
 const paymentStatusOptions = [
@@ -42,6 +42,7 @@ const paymentStatusOptions = [
 
 const selectedPaymentStatus = ref('all');
 const clients = ref<Client[]>([]);
+const totalDebtAmount = ref<number>(0);
 const clientsStats = ref<Stast | null>(null);
 const selectedClient = ref<Client | null>(null);
 const deliveries = ref<Delivery[] | null>([]);
@@ -94,6 +95,7 @@ watch(selectedPaymentStatus, async (newStatus) => {
 
 onMounted(async () => {
   try {
+    totalDebtAmount.value = await allAmountDebts();
     clients.value = await getClientsWithDebt();
   } catch (error) {
     console.error('Error loading clients with debt:', error);
@@ -122,6 +124,7 @@ const handleRefresh = async () => {
   if (selectedClient.value) {
     await loadDeliveries(selectedClient.value.id);
     try {
+      totalDebtAmount.value = await allAmountDebts();
       clientsStats.value = await getClientStats(selectedClient.value.id);
     } catch (error) {
       console.error('Error refreshing client stats:', error);
