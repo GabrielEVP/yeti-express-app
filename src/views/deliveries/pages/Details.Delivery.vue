@@ -3,7 +3,7 @@
     <LoadingSkeleton v-if="!delivery" />
     <div v-else class="space-y-8 text-gray-900 dark:text-gray-100">
       <div class="md:flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div class="hidden md:flex flex-col md:flex-row  gap-12">
+        <div class="hidden md:flex flex-col md:flex-row gap-12">
           <BackButton class="hidden md:block" />
           <div class="hidden md:block">
             <h1 class="text-3xl font-bold tracking-tight">Delivery #{{ delivery.number }}</h1>
@@ -51,6 +51,7 @@
                 <SectionText title="Repartidor" :content="delivery.courierName ?? 'Sin asignar'" />
               </div>
               <SectionText title="Nota" :content="delivery.notes" />
+              <SectionText title="Nota de cancelación" :content="delivery.cancellationNotes" />
               <div class="space-y-6 pt-8">
                 <DeliveryReceiptDropdown :receipt="delivery.receipt" />
                 <DeliveryClientAddressList :address="delivery.pickupAddress ?? ''" />
@@ -77,22 +78,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Building2 } from 'lucide-vue-next';
-import { formatToDollars, formatDateShort, formatRelativeDate, formatDateCustom } from '@/utils/';
+import { formatDateCustom, formatDateShort, formatRelativeDate, formatToDollars } from '@/utils/';
+import { ActionsButton, ActivityView, BackButton, Bagde, Card, LoadingSkeleton, SectionText, SideBar } from '@/components/';
 import {
-  SideBar,
-  SectionText,
-  Card,
-  Bagde,
-  ActionsButton,
-  LoadingSkeleton,
-  ActivityView,
-  BackButton,
-} from '@/components/';
-import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel, getPaymentTypeLabel } from '@/views/deliveries/';
-import { getDeliveryById } from '@/views/deliveries/';
+  Delivery,
+  DeliveryStatus,
+  getDeliveryById,
+  getDeliveryPaymentStatusLabel,
+  getDeliveryStatusLabel,
+  getPaymentTypeLabel,
+} from '@/views/deliveries/';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { DeliveryClientAddressList, DeliveryReceiptDropdown } from '@views/deliveries/components';
 import { adaptTimeLineContentToUI } from '@time-line-content/adapter';
