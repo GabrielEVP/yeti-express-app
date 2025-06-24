@@ -10,7 +10,9 @@
             {{ selectedClient.registrationNumber }}
           </p>
         </div>
-        <div class="flex gap-4 flex-wrap sm:flex-nowrap">
+
+        <div class="flex gap-4 flex-col sm:flex-row sm:flex-nowrap">
+          <bagde> Deuda completa: {{ formatToDollars(totalDebtsAmount ?? 0) }}</bagde>
           <ReportButton>
             <div class="grid grid-cols-1 dark:bg-gray-700 dark:text-white">
               <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">Reporte de cuentas General</button>
@@ -36,7 +38,7 @@
               </div>
               <div class="ml-5 w-0 flex-1">
                 <dl>
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Deudas Pendientes</dt>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Deudas Pendientes del cliente</dt>
                   <dd>
                     <div class="text-lg font-semibold text-gray-900 dark:text-white">
                       {{ stast?.total_deliveries_with_debt ?? 0 }}
@@ -104,19 +106,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { formatToDollars, generatePdf } from '@utils';
-import { Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
+import { Bagde, Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
 import { Client, Stast } from '@views/clients';
 import { useModal } from '@composables';
 import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/clients/service/';
-import { getClientsWithDebt } from '@views/debts';
 import { ClipboardIcon, DollarSignIcon } from 'lucide-vue-next';
 
-const props = defineProps<{
+defineProps<{
   selectedClient: Client | null;
+  totalDebtsAmount: number;
   stast: Stast | null;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'open'): void;
 }>();
 
@@ -124,7 +126,6 @@ const clientsWithDebts = ref<Client[]>([]);
 const openDate = ref<string>('');
 const closeDate = ref<string>('');
 
-// Modal states and functions for reports
 const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
 const { isOpen: isOpenDetail, open: openDetail, close: closeDetail } = useModal();
 
@@ -135,32 +136,6 @@ const clientsOptions = computed(() => {
   }));
 });
 
-// Format the last payment date
-const formatLastPaymentDate = (dateString?: string) => {
-  if (!dateString) return 'No hay pagos';
-
-  try {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('es', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  } catch (e) {
-    return 'Fecha inválida';
-  }
-};
-
-// Load clients with debts for the select dropdown
-const loadClientsWithDebt = async () => {
-  try {
-    clientsWithDebts.value = await getClientsWithDebt();
-  } catch (error) {
-    console.error('Error fetching clients with debts:', error);
-  }
-};
-
-// Report handlers
 const handleGeneralReport = async (start: string, end: string) => {
   const blob = await allGetClientsDebtReport(start, end);
   const filename = `informe_general_deudas_${start}_${end}.pdf`;
@@ -178,7 +153,4 @@ const handlePendingReport = async () => {
   const filename = `informe_deuda_general`;
   generatePdf(blob, filename);
 };
-
-// Load clients with debts when component is mounted
-loadClientsWithDebt();
 </script>

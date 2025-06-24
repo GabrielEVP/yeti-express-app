@@ -1,15 +1,41 @@
 <template>
   <div class="space-y-4 mb-6 px-4 sm:px-0">
     <h3 class="text-lg sm:text-xl font-semibold dark:text-white border-b pb-2">Cliente</h3>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:items-end">
       <div class="lg:col-span-1">
-        <SelectForm
-          label="Cliente"
-          name="clientId"
-          placeholder="Selecciona un Cliente"
-          :items="clientsOptions"
-          @update:modelValue="handleClientSelection"
-        />
+        <!-- Reemplazamos SelectForm con un select customizado con buscador -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cliente</label>
+          <div class="relative">
+            <input
+              v-model="clientSearchQuery"
+              type="text"
+              placeholder="Buscar cliente..."
+              class="text-black lg:mb-6 dark:text-white w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 h-10"
+              @focus="showClientDropdown = true"
+              @blur="handleClientBlur"
+            />
+            <div
+              v-if="showClientDropdown && filteredClients.length > 0"
+              class="text-black dark:text-white absolute top-12 z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto"
+            >
+              <div
+                v-for="client in filteredClients"
+                :key="client.value"
+                @mousedown.prevent="selectClient(client)"
+                class="px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm sm:text-base"
+              >
+                {{ client.label }}
+              </div>
+            </div>
+            <div
+              v-if="showClientDropdown && filteredClients.length === 0 && clientSearchQuery.trim() !== ''"
+              class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg"
+            >
+              <div class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">No se encontraron clientes</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="lg:col-span-1">
         <div class="space-y-2">
@@ -21,17 +47,17 @@
             :items="addressOptionsWithAdd"
             @update:modelValue="handleAddressSelection"
           />
-          <div v-if="showAddressForm" class="space-y-3">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"> Nueva Dirección </label>
+          <div v-if="showAddressForm" class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nueva Dirección</label>
             <div class="space-y-3">
               <input
                 v-model="newAddress.address"
                 type="text"
                 placeholder="Dirección completa"
-                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white h-10"
                 @keyup.enter="saveNewAddress"
               />
-              <div class="flex flex-col sm:flex-row gap-2">
+              <div class="flex flex-col sm:flex-row">
                 <button
                   type="button"
                   @click="saveNewAddress"
@@ -52,12 +78,15 @@
           </div>
         </div>
       </div>
-      <div class="lg:col-span-1 flex items-center">
-        <PlusButton @click="openModalClientForm" class="w-full sm:w-auto sm:min-w-[200px] lg:w-full justify-center">
-          <span class="text-white ml-2 text-sm sm:text-base font-medium">
-            <span>Agregar Cliente</span>
-          </span>
-        </PlusButton>
+      <div class="lg:col-span-1 lg:mb-6">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 lg:opacity-0">Acción</label>
+          <PlusButton @click="openModalClientForm" class="w-full justify-center h-10">
+            <span class="text-white ml-2 text-sm sm:text-base font-medium">
+              <span>Agregar Cliente</span>
+            </span>
+          </PlusButton>
+        </div>
       </div>
     </div>
     <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="closeModalClientForm" @addClient="handleAddClient" />
@@ -65,11 +94,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { SelectForm, PlusButton } from '@/components';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { PlusButton, SelectForm } from '@/components';
 import { DeliveryClientModalForm } from '@views/deliveries/components';
-import { Client } from '@views/clients';
-import { getAllClients, createClientAddress } from '@views/clients';
+import { Client, getAllClients } from '@views/clients';
 
 interface Props {
   modelValue?: {
@@ -84,6 +112,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 interface Emits {
   (e: 'update:modelValue', value: { clientId?: string; pickupAddress?: string }): void;
+
   (e: 'clientChanged', client: Client | null): void;
 }
 
@@ -95,6 +124,10 @@ const selectedClientId = ref<string | null>(null);
 const clients = ref<Client[]>([]);
 const clientsAddressOptions = ref<Array<{ label: string; value: string }>>([]);
 
+// Nuevas variables para el buscador
+const clientSearchQuery = ref('');
+const showClientDropdown = ref(false);
+
 const newAddress = ref({
   address: '',
 });
@@ -105,6 +138,16 @@ const clientsOptions = computed(() =>
     value: client.id,
   }))
 );
+
+// Computed para filtrar clientes basado en la búsqueda
+const filteredClients = computed(() => {
+  if (!clientSearchQuery.value.trim()) {
+    return clientsOptions.value;
+  }
+
+  const searchTerm = clientSearchQuery.value.toLowerCase().trim();
+  return clientsOptions.value.filter((client) => client.label.toLowerCase().includes(searchTerm));
+});
 
 const addressOptionsWithAdd = computed(() => {
   const options = [...clientsAddressOptions.value];
@@ -120,6 +163,49 @@ const addressOptionsWithAdd = computed(() => {
 const canSaveAddress = computed(() => {
   return newAddress.value.address.trim() !== '';
 });
+
+// Función para seleccionar un cliente desde el dropdown
+function selectClient(client: { label: string; value: string }) {
+  clientSearchQuery.value = client.label;
+  showClientDropdown.value = false;
+  handleClientSelection(client.value);
+}
+
+// Función para manejar el blur del input de búsqueda
+function handleClientBlur() {
+  // Usamos setTimeout para permitir que el click en el dropdown se procese antes
+  setTimeout(() => {
+    showClientDropdown.value = false;
+  }, 150);
+}
+
+// Watch para mantener sincronizado el input de búsqueda con la selección actual
+watch(selectedClientId, (newClientId) => {
+  if (newClientId) {
+    const client = clients.value.find((c) => c.id === newClientId);
+    if (client) {
+      clientSearchQuery.value = client.legalName;
+    }
+  } else {
+    clientSearchQuery.value = '';
+  }
+});
+
+// Watch para inicializar el input cuando se carga un valor existente (modo edit)
+watch(
+  () => props.modelValue?.clientId,
+  (clientId) => {
+    if (clientId && clients.value.length > 0) {
+      const client = clients.value.find((c) => c.id === clientId);
+      if (client && clientSearchQuery.value !== client.legalName) {
+        clientSearchQuery.value = client.legalName;
+      }
+    } else if (!clientId) {
+      clientSearchQuery.value = '';
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   () => props.modelValue?.clientId,
@@ -202,7 +288,6 @@ async function saveNewAddress() {
   resetNewAddress();
 
   clients.value = await getAllClients();
-
 }
 
 function cancelAddAddress() {
@@ -252,11 +337,15 @@ async function loadClients() {
 async function initializeWithExistingData() {
   if (props.modelValue?.clientId) {
     selectedClientId.value = props.modelValue.clientId;
-    await loadAddresses(props.modelValue.clientId);
+
+    // Establecer el texto de búsqueda con el cliente seleccionado
     const client = clients.value.find((c) => c.id === props.modelValue?.clientId);
     if (client) {
+      clientSearchQuery.value = client.legalName;
       emit('clientChanged', client);
     }
+
+    await loadAddresses(props.modelValue.clientId);
   }
 }
 
@@ -272,6 +361,7 @@ defineExpose({
     clientsAddressOptions.value = [];
     showAddressForm.value = false;
     resetNewAddress();
+    clientSearchQuery.value = '';
     updateValue({ clientId: '', pickupAddress: '' });
   },
 });

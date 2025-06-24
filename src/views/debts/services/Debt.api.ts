@@ -1,12 +1,18 @@
 import { apiClient } from '@/services/';
-import { Client, adaptClient } from '@views/clients';
-import { Delivery, adaptDelivery } from '@views/deliveries';
+import { adaptClient, Client } from '@views/clients';
+import { adaptDelivery, Delivery } from '@views/deliveries';
 
 export const debtApiRoutes = {
+  allAmountDebts: '/debts/all-amout-debts',
   clientsWithDebt: '/debts/clients/with-debt',
   clientStats: (clientId: string | number) => `/debts/clients/${clientId}/stats`,
   clientDeliveryWithDebts: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts`,
   clientDeliveryWithDebtsFilter: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts-filter`,
+};
+
+export const allAmountDebts = async (): Promise<number> => {
+  const response = await apiClient.get(debtApiRoutes.allAmountDebts);
+  return response.data;
 };
 
 export const getClientsWithDebt = async (): Promise<Client[]> => {

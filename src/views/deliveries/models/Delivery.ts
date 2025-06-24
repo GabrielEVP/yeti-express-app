@@ -1,6 +1,4 @@
-import { DeliveryStatus } from '@/views/deliveries/';
-import { DeliveryPaymentStatus } from '@/views/deliveries/';
-import { PaymentType } from '@/views/deliveries/';
+import { DeliveryPaymentStatus, DeliveryStatus, PaymentType } from '@/views/deliveries/';
 import { TimeLineContent } from '@time-line-content';
 
 export interface Delivery {
@@ -23,6 +21,7 @@ export interface Delivery {
   clientAddress?: string;
   courierName?: string;
   serviceName?: string;
+  serviceAmount?: number;
   debtId: string;
   clientId: string;
   courierId: string;

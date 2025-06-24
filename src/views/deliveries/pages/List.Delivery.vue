@@ -7,7 +7,12 @@
       @close="close"
     />
     <ModalUpdateStatus :isOpen="isStatusModalOpen" :status="modalStatus" @confirm="confirmStatusUpdate" @cancel="closeStatusModal" />
-    <ModalCancelStatus :isOpen="isCancelModalOpen" :deliveryId="selectedDeliveryId || ''" @close="closeCancelModal" @cancelDelivery="handleCancelDelivery" />
+    <ModalCancelStatus
+      :isOpen="isCancelModalOpen"
+      :deliveryId="selectedDeliveryId || ''"
+      @close="closeCancelModal"
+      @cancelDelivery="handleCancelDelivery"
+    />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -15,6 +20,9 @@
           <FilterButton class="w-full sm:w-auto">
             <div class="flex flex-col gap-2">
               <SelectFilter label="Estado de la Orden" name="status" id="status" :items="deliveryStatusOptions" v-model="selectedStatus">
+                <option value="">Todos</option>
+              </SelectFilter>
+              <SelectFilter label="Servicio" name="serviceId" id="serviceId" :items="serviceOptions" v-model="selectedServiceId">
                 <option value="">Todos</option>
               </SelectFilter>
               <SelectFilter
@@ -170,41 +178,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { usePagination, useSearch, useDebounce, useDeleteWithModal } from '@/composables/';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useDebounce, useDeleteWithModal, usePagination, useSearch } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
-  SideBar,
-  Card,
   Bagde,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
+  Card,
+  DownloadButton,
   EditButton,
   EyeButton,
-  DownloadButton,
-  ModalConfirmation,
   FilterButton,
   LoadingSkeleton,
+  ModalConfirmation,
+  NewButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
-import { DeliveryStatus } from '@views/deliveries/models';
-import {
-  deleteDeliveryById,
-  searchDeliveries,
-  getFilteredDeliveries,
-  updateDeliveryStatus,
-  getDeliveryTicket,
-  CancelDelivery,
-} from '@/views/deliveries/services';
+import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
+import { deleteDeliveryById, getDeliveryTicket, getFilteredDeliveries, searchDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { copyToClipboard } from '@views/deliveries/utils'
-
+import { copyToClipboard } from '@views/deliveries/utils';
 import Delivered from '../components/button/Delivered.vue';
 import Transit from '../components/button/Transit.vue';
 import Cancelled from '../components/button/Cancelled.vue';
@@ -212,9 +211,12 @@ import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
 
+import { getAllServices, Service } from '@views/services';
+
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
 const selectedPaymentStatus = ref<string>('');
+const selectedServiceId = ref<string>('');
 const selectedPaymentMethod = ref<string>('');
 const startDate = ref<string>('');
 const endDate = ref<string>('');
@@ -241,7 +243,7 @@ const { searchQuery } = useSearch<Delivery>({
   autoSearch: false,
 });
 
-watch([selectedStatus, selectedPaymentStatus, selectedPaymentMethod, sortConfig, startDate, endDate], () => {
+watch([selectedStatus, selectedPaymentStatus, selectedServiceId, selectedPaymentMethod, sortConfig, startDate, endDate], () => {
   currentPage.value = 1;
   runSearch();
 });
@@ -259,6 +261,10 @@ const runSearch = async () => {
 
     if (selectedPaymentStatus.value) {
       filters.paymentStatus = selectedPaymentStatus.value;
+    }
+
+    if (selectedServiceId.value) {
+      filters.serviceId = selectedServiceId.value;
     }
 
     if (selectedPaymentMethod.value) {
@@ -298,7 +304,17 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
 
 const debouncedSearch = useDebounce(runSearch, 500);
 
+const services = ref<Service[]>([]);
+
+const serviceOptions = computed(() =>
+  services.value.map((service) => ({
+    label: `${service.name}  (${service.amount})`,
+    value: service.id,
+  }))
+);
+
 onMounted(async () => {
+  services.value = await getAllServices();
   await runSearch();
 });
 
@@ -372,9 +388,8 @@ const closeCancelModal = () => {
   selectedDeliveryId.value = undefined;
 };
 
-const handleCancelDelivery = async (cancelData: { cancellationNotes: string, deliveryId: string }) => {
+const handleCancelDelivery = async (cancelData: { cancellationNotes: string; deliveryId: string }) => {
   await runSearch();
   closeCancelModal();
 };
-
 </script>
