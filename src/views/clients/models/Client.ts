@@ -18,7 +18,6 @@ export interface Client {
   debtsCount?: number;
   canDelete?: boolean;
   hasHadDebt?: boolean;
-
   [key: string]: any;
 }
 

@@ -3,14 +3,13 @@
     <h3 class="text-lg sm:text-xl font-semibold dark:text-white border-b pb-2">Cliente</h3>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:items-end">
       <div class="lg:col-span-1">
-        <!-- Reemplazamos SelectForm con un select customizado con buscador -->
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cliente</label>
           <div class="relative">
             <input
               v-model="clientSearchQuery"
               type="text"
-              placeholder="Buscar cliente..."
+              placeholder="Buscar por nombre o número de registro..."
               class="text-black lg:mb-6 dark:text-white w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 h-10"
               @focus="showClientDropdown = true"
               @blur="handleClientBlur"
@@ -25,7 +24,10 @@
                 @mousedown.prevent="selectClient(client)"
                 class="px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm sm:text-base"
               >
-                {{ client.label }}
+                <div class="font-medium">{{ client.label }}</div>
+                <div v-if="client.registrationNumber" class="text-xs text-gray-500 dark:text-gray-400">
+                  Registro: {{ client.registrationNumber }}
+                </div>
               </div>
             </div>
             <div
@@ -124,7 +126,6 @@ const selectedClientId = ref<string | null>(null);
 const clients = ref<Client[]>([]);
 const clientsAddressOptions = ref<Array<{ label: string; value: string }>>([]);
 
-// Nuevas variables para el buscador
 const clientSearchQuery = ref('');
 const showClientDropdown = ref(false);
 
@@ -136,17 +137,21 @@ const clientsOptions = computed(() =>
   clients.value.map((client) => ({
     label: client.legalName,
     value: client.id,
+    registrationNumber: client.registrationNumber,
   }))
 );
 
-// Computed para filtrar clientes basado en la búsqueda
 const filteredClients = computed(() => {
   if (!clientSearchQuery.value.trim()) {
     return clientsOptions.value;
   }
 
   const searchTerm = clientSearchQuery.value.toLowerCase().trim();
-  return clientsOptions.value.filter((client) => client.label.toLowerCase().includes(searchTerm));
+  return clientsOptions.value.filter((client) => {
+    const nameMatch = client.label.toLowerCase().includes(searchTerm);
+    const registrationMatch = client.registrationNumber?.toLowerCase().includes(searchTerm);
+    return nameMatch || registrationMatch;
+  });
 });
 
 const addressOptionsWithAdd = computed(() => {
@@ -164,22 +169,18 @@ const canSaveAddress = computed(() => {
   return newAddress.value.address.trim() !== '';
 });
 
-// Función para seleccionar un cliente desde el dropdown
-function selectClient(client: { label: string; value: string }) {
+function selectClient(client: { label: string; value: string; registrationNumber?: string }) {
   clientSearchQuery.value = client.label;
   showClientDropdown.value = false;
   handleClientSelection(client.value);
 }
 
-// Función para manejar el blur del input de búsqueda
 function handleClientBlur() {
-  // Usamos setTimeout para permitir que el click en el dropdown se procese antes
   setTimeout(() => {
     showClientDropdown.value = false;
   }, 150);
 }
 
-// Watch para mantener sincronizado el input de búsqueda con la selección actual
 watch(selectedClientId, (newClientId) => {
   if (newClientId) {
     const client = clients.value.find((c) => c.id === newClientId);
@@ -191,7 +192,6 @@ watch(selectedClientId, (newClientId) => {
   }
 });
 
-// Watch para inicializar el input cuando se carga un valor existente (modo edit)
 watch(
   () => props.modelValue?.clientId,
   (clientId) => {
@@ -338,7 +338,6 @@ async function initializeWithExistingData() {
   if (props.modelValue?.clientId) {
     selectedClientId.value = props.modelValue.clientId;
 
-    // Establecer el texto de búsqueda con el cliente seleccionado
     const client = clients.value.find((c) => c.id === props.modelValue?.clientId);
     if (client) {
       clientSearchQuery.value = client.legalName;
