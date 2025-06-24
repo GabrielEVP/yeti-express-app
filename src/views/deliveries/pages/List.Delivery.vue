@@ -235,7 +235,7 @@ const deliveryStatusOptions = [
   { value: DeliveryStatus.PENDING, label: 'Pendiente' },
   { value: DeliveryStatus.IN_TRANSIT, label: 'En Tránsito' },
   { value: DeliveryStatus.DELIVERED, label: 'Entregado' },
-  { value: DeliveryStatus.REFUSED, label: 'Rechazado' },
+  { value: DeliveryStatus.REFUSED, label: 'Cancelado' },
 ];
 
 const { searchQuery } = useSearch<Delivery>({
