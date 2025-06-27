@@ -1,26 +1,41 @@
 import { ref, computed, Ref } from "vue";
 
-export function usePagination<T>(items: Ref<T[]>, itemsPerPage: number) {
-   const currentPage = ref(1);
+import { Ref, ref, computed } from 'vue';
 
-   const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
-   const endIndex = computed(() => Math.min(startIndex.value + itemsPerPage, items.value.length));
-   const totalPages = computed(() => Math.ceil(items.value.length / itemsPerPage));
+interface PaginatedData<T> {
+   items: T[];
+   currentPage: number;
+   perPage: number;
+   total: number;
+}
 
-   const paginatedItems = computed(() => {
-      return items.value.slice(startIndex.value, endIndex.value);
+export function usePagination<T>() {
+   const paginatedData = ref<PaginatedData<T>>({ 
+      items: [],
+      currentPage: 1,
+      perPage: 15,
+      total: 0
    });
 
+   const startIndex = computed(() => (paginatedData.value.currentPage - 1) * paginatedData.value.perPage);
+   const endIndex = computed(() => Math.min(startIndex.value + paginatedData.value.perPage, paginatedData.value.total));
+   const totalPages = computed(() => Math.ceil(paginatedData.value.total / paginatedData.value.perPage));
+
    const updatePage = (page: number) => {
-      currentPage.value = page;
+      paginatedData.value.currentPage = page;
+      return { page, perPage: paginatedData.value.perPage };
+   };
+
+   const setPaginatedData = (data: PaginatedData<T>) => {
+      paginatedData.value = data;
    };
 
    return {
-      currentPage,
+      paginatedData,
       startIndex,
       endIndex,
       totalPages,
-      paginatedItems,
       updatePage,
+      setPaginatedData
    };
 }

@@ -48,9 +48,38 @@ export const searchClients = async (query: string): Promise<Client[]> => {
   return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
 };
 
-export const getFilteredClients = async (params: Record<string, any>): Promise<Client[]> => {
+export interface PaginationParams {
+  page?: number;
+  perPage?: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  currentPage: number;
+  perPage: number;
+  total: number;
+}
+
+export const getFilteredClients = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Client>> => {
   const response = await apiClient.get(clientApiRoutes.filter, { params });
-  return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
+
+  if (response.data.items && Array.isArray(response.data.items)) {
+    return {
+      items: response.data.items.map(adaptClient),
+      currentPage: response.data.currentPage || 1,
+      perPage: response.data.perPage || 15,
+      total: response.data.total || 0
+    };
+  }
+
+  // Fallback for old API format
+  const items = Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
+  return {
+    items,
+    currentPage: params.page || 1,
+    perPage: params.perPage || 15,
+    total: items.length
+  };
 };
 
 export const getClientDebtReport = async (clientId: string, startDate?: string, endDate?: string): Promise<any> => {

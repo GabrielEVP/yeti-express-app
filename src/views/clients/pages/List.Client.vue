@@ -64,16 +64,16 @@
     <TableDashboard
       v-else
       :headers="[...TABLE_HEADER_CLIENT]"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="clients.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
       :sort-state="sortConfig"
       @sort="handleSort"
     >
-      <TableRow v-for="client in paginatedItems" :key="client.id">
+      <TableRow v-for="client in paginatedData.items" :key="client.id">
         <TableContent class="text-black dark:text-white break-words">
           {{ client.legalName }}
         </TableContent>
@@ -93,7 +93,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="client in paginatedItems" :key="client.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="client in paginatedData.items" :key="client.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
@@ -159,7 +159,6 @@ import { AppRoutesClient } from '@/views/clients/router';
 import { getClientsWithDebt } from '@views/debts';
 import { generatePdf } from '@utils';
 
-const clients = ref<Client[]>([]);
 const clientsWithDebts = ref<Client[]>([]);
 const selectedType = ref<string>('');
 const selectedCredit = ref<string>('');
@@ -169,7 +168,7 @@ const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(n
 
 const clientTypeOptions = [...ClientTypeOptions];
 
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(clients, 15);
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Client>();
 
 const { searchQuery } = useSearch<Client>({
   fetchFn: searchClients,
@@ -180,7 +179,7 @@ watch([selectedType, selectedCredit, sortConfig], () => {
   runSearch();
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
     error.value = null;
@@ -200,9 +199,11 @@ const runSearch = async () => {
       filters,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
+      page: page,
+      perPage: paginatedData.value.perPage
     });
 
-    clients.value = response;
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }
@@ -219,6 +220,11 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 const clientsOptions = computed(() => {
@@ -229,7 +235,7 @@ const clientsOptions = computed(() => {
 });
 
 onMounted(async () => {
-  await runSearch();
+  await runSearch(1);
   try {
     clientsWithDebts.value = await getClientsWithDebt();
   } catch (error) {
