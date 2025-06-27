@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+
 export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, 'src') },
-
       { find: '@adapters', replacement: path.resolve(__dirname, 'src/adapters') },
       { find: '@assets', replacement: path.resolve(__dirname, 'src/assets') },
       { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
@@ -21,5 +21,8 @@ export default defineConfig({
       { find: '@time-line-content', replacement: path.resolve(__dirname, 'src/time-line-content') },
       { find: '@views', replacement: path.resolve(__dirname, 'src/views') },
     ],
+  },
+  server: {
+    allowedHosts: ['yeti-express-app-production.up.railway.app'],
   },
 });
