@@ -1,6 +1,4 @@
-import { ref, computed, Ref } from "vue";
-
-import { Ref, ref, computed } from 'vue';
+import {ref, computed } from 'vue';
 
 interface PaginatedData<T> {
    items: T[];

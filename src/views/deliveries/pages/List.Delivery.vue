@@ -67,7 +67,7 @@
     <TableDashboard
       v-else
       :headers="[...TABLE_HEADER_DELIVERY]"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
@@ -76,7 +76,7 @@
       :sort-state="sortConfig"
       @sort="handleSort"
     >
-      <TableRow v-for="delivery in paginatedItems" :key="delivery.id">
+      <TableRow v-for="delivery in paginatedData.items" :key="delivery.id">
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.number }}
         </TableContent>
@@ -212,6 +212,7 @@ import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
 
 import { getAllServices, Service } from '@views/services';
+import { Client, getFilteredClients } from '@views/clients';
 
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -224,7 +225,7 @@ const isLoading = ref(false);
 const error = ref<string | null>(null);
 const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
 
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(deliveries, 15);
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Delivery>();
 
 const modalStatus = ref<DeliveryStatus | undefined>(undefined);
 const isStatusModalOpen = ref(false);
@@ -244,11 +245,10 @@ const { searchQuery } = useSearch<Delivery>({
 });
 
 watch([selectedStatus, selectedPaymentStatus, selectedServiceId, selectedPaymentMethod, sortConfig, startDate, endDate], () => {
-  currentPage.value = 1;
   runSearch();
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
     error.value = null;
@@ -284,8 +284,11 @@ const runSearch = async () => {
       filters,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
+      page: page,
+      perPage: paginatedData.value.perPage
     });
-    deliveries.value = response;
+
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }

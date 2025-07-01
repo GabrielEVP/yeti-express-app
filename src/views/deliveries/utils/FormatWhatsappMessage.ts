@@ -38,7 +38,7 @@ ${delivery.notes || 'Sin notas'}
 
 ----------------------------
 
-🙏 Gracias por su preferencia
+🙏 Gracias por confiar en Yeti express
 🕒 ${formatDateCustom(new Date())}
   `.trim();
 

@@ -2,6 +2,17 @@ import { apiClient } from '@/services/';
 import { adaptClient, Client } from '@views/clients';
 import { adaptDelivery, Delivery } from '@views/deliveries';
 
+// Interface para la respuesta paginada de la API
+interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  per_page: number;
+  total: number;
+  last_page: number;
+  from: number;
+  to: number;
+}
+
 export const debtApiRoutes = {
   allAmountDebts: '/debts/all-amout-debts',
   clientsWithDebt: '/debts/clients/with-debt',
@@ -25,14 +36,50 @@ export const getClientStats = async (clientId: string): Promise<any> => {
   return response.data;
 };
 
-export const getClientDeliveryWithDebts = async (clientId: string): Promise<Delivery[]> => {
-  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebts(clientId));
-  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
+// Función modificada para recibir paginación
+export const getClientDeliveryWithDebts = async (clientId: string, page: number = 1, perPage: number = 15): Promise<PaginatedResponse<Delivery>> => {
+  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebts(clientId), {
+    params: { page, per_page: perPage }
+  });
+
+  return {
+    data: Array.isArray(response.data.data)
+      ? response.data.data.map(adaptDelivery)
+      : [adaptDelivery(response.data.data)],
+    current_page: response.data.current_page,
+    per_page: response.data.per_page,
+    total: response.data.total,
+    last_page: response.data.last_page,
+    from: response.data.from,
+    to: response.data.to,
+  };
 };
 
-export const getClientDeliveryWithDebtsFilter = async (clientId: string, paymentStatus: string): Promise<Delivery[]> => {
+// Función modificada para recibir paginación con filtros
+export const getClientDeliveryWithDebtsFilter = async (
+  clientId: string,
+  paymentStatus: string,
+  page: number = 1,
+  perPage: number = 15
+): Promise<PaginatedResponse<Delivery>> => {
   const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebtsFilter(clientId), {
-    params: { status: paymentStatus, client_id: clientId },
+    params: {
+      status: paymentStatus,
+      client_id: clientId,
+      page,
+      per_page: perPage
+    },
   });
-  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
+
+  return {
+    data: Array.isArray(response.data.data)
+      ? response.data.data.map(adaptDelivery)
+      : [adaptDelivery(response.data.data)],
+    current_page: response.data.current_page,
+    per_page: response.data.per_page,
+    total: response.data.total,
+    last_page: response.data.last_page,
+    from: response.data.from,
+    to: response.data.to,
+  };
 };

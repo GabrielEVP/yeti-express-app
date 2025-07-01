@@ -72,7 +72,6 @@ export const getFilteredClients = async (params: Record<string, any> & Paginatio
     };
   }
 
-  // Fallback for old API format
   const items = Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
   return {
     items,

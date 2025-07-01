@@ -45,9 +45,37 @@ export const searchDeliveries = async (query: string): Promise<Delivery[]> => {
   return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 };
 
-export const getFilteredDeliveries = async (params: Record<string, any>): Promise<Delivery[]> => {
+export interface PaginationParams {
+  page?: number;
+  perPage?: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  currentPage: number;
+  perPage: number;
+  total: number;
+}
+export const getFilteredDeliveries = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Delivery>> => {
   const response = await apiClient.get(deliveryApiRoutes.filter, { params });
-  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
+
+  if (response.data.items && Array.isArray(response.data.items)) {
+    return {
+      items: response.data.items.map(adaptDelivery),
+      currentPage: response.data.currentPage || 1,
+      perPage: response.data.perPage || 15,
+      total: response.data.total || 0
+    };
+  }
+
+  const items = Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
+
+  return {
+    items,
+    currentPage: params.page || 1,
+    perPage: params.perPage || 15,
+    total: items.length
+  };
 };
 
 export const updateDeliveryStatus = async (deliveryId: string | number, status: string): Promise<void> => {
