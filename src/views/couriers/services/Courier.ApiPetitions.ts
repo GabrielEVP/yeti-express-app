@@ -1,11 +1,14 @@
 import { apiClient } from '@/services/';
 import { Courier } from '../models';
 import { adaptCourier, adaptCourierForApi } from '@/views/couriers';
+import { PaginatedResponse, PaginationParams } from '@models';
+import { handlePaginatedResponse } from '@utils';
 
 export const courierApiRoutes = {
   list: '/couriers',
   details: (courierId: string | number) => `/couriers/${courierId}`,
   search: (search: string) => `/couriers/search/${search}`,
+  filter: '/couriers/filter',
   getDeliveryReport: (courierId: string | number) => `/couriers/${courierId}/deliveries-report`,
   getAllDeliveriesReport: '/couriers/deliveries-report',
 };
@@ -63,6 +66,11 @@ export const searchCouriers = async (search: string): Promise<Courier[]> => {
   } catch (error) {
     throw new Error('Failed to search couriers.');
   }
+};
+
+export const getFilteredCouriers = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Courier>> => {
+  const response = await apiClient.get(courierApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, adaptCourier, params);
 };
 
 export const getCourierDeliveryReport = async (courierId: string, startDate: string, endDate: string): Promise<any> => {

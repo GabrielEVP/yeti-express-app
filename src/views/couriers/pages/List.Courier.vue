@@ -55,14 +55,14 @@
     <TableDashboard
       v-else
       :headers="TABLE_HEADER_COURIER"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="couriers.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
     >
-      <TableRow v-for="courier in paginatedItems" :key="courier.id">
+      <TableRow v-for="courier in paginatedData.items" :key="courier.id">
         <TableContent>{{ courier.firstName }}</TableContent>
         <TableContent>{{ courier.lastName }}</TableContent>
         <TableContent>{{ courier.phone }}</TableContent>
@@ -76,7 +76,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="courier in paginatedItems" :key="courier.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="courier in paginatedData.items" :key="courier.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
@@ -126,49 +126,56 @@ import {
 import { Courier } from '@/views/couriers/';
 import {
   deleteCourierById,
-  getAllCouriers,
   getAllCouriersDeliveriesReport,
   getCourierDeliveryReport,
   searchCouriers,
+  getFilteredCouriers,
 } from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { ModalReportDetail } from '@components';
 import { generatePdf } from '@utils';
 
-const couriers = ref<Courier[]>([]);
 const isLoading = ref(false);
+const error = ref<string | null>(null);
 
-const { searchQuery, applySearch } = useSearch<Courier>({
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Courier>();
+
+const { searchQuery } = useSearch<Courier>({
   fetchFn: searchCouriers,
   autoSearch: false,
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    if (searchQuery.value.trim() === '') {
-      couriers.value = await getAllCouriers();
-    } else {
-      couriers.value = await applySearch();
-    }
+    error.value = null;
+
+    const response = await getFilteredCouriers({
+      search: searchQuery.value.trim(),
+      page: page,
+      perPage: paginatedData.value.perPage
+    });
+
+    setPaginatedData(response);
+  } catch (err) {
+    error.value = 'Error al cargar los repartidores';
+    console.error(err);
   } finally {
     isLoading.value = false;
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  isLoading.value = true;
-  try {
-    couriers.value = await getAllCouriers();
-  } finally {
-    isLoading.value = false;
-  }
+  await runSearch(1);
 });
-
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(couriers, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteCourierById,
@@ -195,7 +202,7 @@ const handleGeneralReport = async (start: string, end: string) => {
 };
 
 const courierOptions = computed(() => {
-  return couriers.value.map((courier) => ({
+  return paginatedData.value.items.map((courier) => ({
     label: courier.firstName,
     value: courier.id,
   }));

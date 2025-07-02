@@ -22,14 +22,14 @@
     <TableDashboard
       v-else
       :headers="TABLE_HEADER_COMPANY_BILL"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="bills.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
     >
-      <TableRow v-for="bill in paginatedItems" :key="bill.id">
+      <TableRow v-for="bill in paginatedData.items" :key="bill.id">
         <TableContent>{{ bill.name }}</TableContent>
         <TableContent>{{ formatDateCustom(bill.date) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.amount) }}</TableContent>
@@ -48,7 +48,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="bill in paginatedItems" :key="bill.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="bill in paginatedData.items" :key="bill.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold text-gray-900 dark:text-gray-50 break-words">
@@ -99,53 +99,60 @@ import {
 } from '@/components/';
 import { ModalDetails } from '@/views/company-bills/components';
 import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
-import { getAllCompanyBills, deleteCompanyBillById, searchCompanyBills } from '@/views/company-bills/services/';
+import { deleteCompanyBillById, searchCompanyBills, getFilteredCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';
 import { Eye } from 'lucide-vue-next';
 
-const bills = ref<CompanyBill[]>([]);
 const isLoading = ref(false);
+const error = ref<string | null>(null);
 
 const { isOpen: IsOpenDetails, selectedId, open: OpenDetails, close: CloseDetails } = useModal<string>();
 
-const { searchQuery, applySearch } = useSearch<CompanyBill>({
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<CompanyBill>();
+
+const { searchQuery } = useSearch<CompanyBill>({
   fetchFn: searchCompanyBills,
   autoSearch: false,
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    if (searchQuery.value.trim() === '') {
-      bills.value = await getAllCompanyBills();
-    } else {
-      bills.value = await applySearch();
-    }
+    error.value = null;
+
+    const response = await getFilteredCompanyBills({
+      search: searchQuery.value.trim(),
+      page: page,
+      perPage: paginatedData.value.perPage
+    });
+
+    setPaginatedData(response);
+  } catch (err) {
+    error.value = 'Error al cargar los gastos';
+    console.error(err);
   } finally {
     isLoading.value = false;
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  isLoading.value = true;
-  try {
-    bills.value = await getAllCompanyBills();
-  } finally {
-    isLoading.value = false;
-  }
+  await runSearch(1);
 });
-
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(bills, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteCompanyBillById,
-  successMessage: 'Gasto eliminada exitosamente',
-  errorMessage: 'Error al eliminar la gastos',
+  successMessage: 'Gasto eliminado exitosamente',
+  errorMessage: 'Error al eliminar el gasto',
   onAfterDelete: async () => {
-    await runSearch();
+    await runSearch(paginatedData.value.currentPage);
   },
 });
 

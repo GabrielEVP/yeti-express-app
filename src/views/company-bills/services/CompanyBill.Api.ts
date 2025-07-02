@@ -1,6 +1,8 @@
 import { apiClient } from '@/services/';
 import { CompanyBill } from '@/views/company-bills/';
 import { adaptCompanyBill, adaptCompanyBillForApi } from '@/views/company-bills/';
+import { PaginatedResponse, PaginationParams } from '@models';
+import { handlePaginatedResponse } from '@/utils/handlePaginatedResponse';
 
 export const companyBillApiRoutes = {
   getAll: '/company-bills',
@@ -9,6 +11,7 @@ export const companyBillApiRoutes = {
   update: (id: string | number) => `/company-bills/${id}`,
   delete: (id: string | number) => `/company-bills/${id}`,
   search: (query: string) => `/company-bills/search/${query}`,
+  filter: '/company-bills/filter',
 };
 
 export const getAllCompanyBills = async (): Promise<CompanyBill[]> => {
@@ -40,4 +43,9 @@ export const deleteCompanyBillById = async (id: string): Promise<void> => {
 export const searchCompanyBills = async (query: string): Promise<CompanyBill[]> => {
   const response = await apiClient.get(companyBillApiRoutes.search(query));
   return Array.isArray(response.data) ? response.data.map(adaptCompanyBill) : [adaptCompanyBill(response.data)];
+};
+
+export const getFilteredCompanyBills = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<CompanyBill>> => {
+  const response = await apiClient.get(companyBillApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, adaptCompanyBill, params);
 };

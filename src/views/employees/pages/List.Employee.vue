@@ -21,14 +21,14 @@
     <TableDashboard
       v-else
       :headers="TABLE_HEADER_EMPLOYEE"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="employees.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
     >
-      <TableRow v-for="employee in paginatedItems" :key="employee.id">
+      <TableRow v-for="employee in paginatedData.items" :key="employee.id">
         <TableContent>{{ employee.name }}</TableContent>
         <TableContent>{{ employee.email }}</TableContent>
         <TableContent>
@@ -44,7 +44,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="employee in paginatedItems" :key="employee.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="employee in paginatedData.items" :key="employee.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
@@ -93,49 +93,57 @@ import {
   LoadingSkeleton,
 } from '@/components/';
 import { Employee, getRoleLabel, Role } from '@/views/employees/';
-import { getAllEmployees, deleteEmployeeById, searchEmployees } from '@/views/employees/';
+import { deleteEmployeeById, searchEmployees, getFilteredEmployees } from '@/views/employees/';
 import { AppRoutesEmployee } from '@/views/employees/';
 import { TABLE_HEADER_EMPLOYEE } from '@/views/employees/';
 
-const employees = ref<Employee[]>([]);
 const isLoading = ref(false);
+const error = ref<string | null>(null);
 
-const { searchQuery, applySearch } = useSearch<Employee>({
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Employee>();
+
+const { searchQuery } = useSearch<Employee>({
   fetchFn: searchEmployees,
   autoSearch: false,
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    if (searchQuery.value.trim() == '') {
-      return (employees.value = await getAllEmployees());
-    }
-    employees.value = await applySearch();
+    error.value = null;
+
+    const response = await getFilteredEmployees({
+      search: searchQuery.value.trim(),
+      page: page,
+      perPage: paginatedData.value.perPage
+    });
+
+    setPaginatedData(response);
+  } catch (err) {
+    error.value = 'Error al cargar los empleados';
+    console.error(err);
   } finally {
     isLoading.value = false;
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  isLoading.value = true;
-  try {
-    employees.value = await getAllEmployees();
-  } finally {
-    isLoading.value = false;
-  }
+  await runSearch(1);
 });
-
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(employees, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteEmployeeById,
   successMessage: 'Empleado eliminado correctamente',
   errorMessage: 'Error al eliminar el empleado',
   onAfterDelete: async () => {
-    await runSearch();
+    await runSearch(paginatedData.value.currentPage);
   },
 });
 

@@ -1,5 +1,7 @@
 import { apiClient } from '@/services/';
 import { Employee, adaptEmployee, adaptEmployeeForApi } from '@/views/employees';
+import { PaginatedResponse, PaginationParams } from '@models';
+import { handlePaginatedResponse } from '@/utils/handlePaginatedResponse';
 
 export const EmployeeApiRoutes = {
   getAll: '/employees',
@@ -73,6 +75,15 @@ export const filterEmployees = async (params: Record<string, any>): Promise<Empl
   try {
     const response = await apiClient.get(EmployeeApiRoutes.filter, { params });
     return processResponse(response.data);
+  } catch {
+    throw new Error('Failed to fetch filtered Employees.');
+  }
+};
+
+export const getFilteredEmployees = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Employee>> => {
+  try {
+    const response = await apiClient.get(EmployeeApiRoutes.filter, { params });
+    return handlePaginatedResponse(response, adaptEmployee, params);
   } catch {
     throw new Error('Failed to fetch filtered Employees.');
   }

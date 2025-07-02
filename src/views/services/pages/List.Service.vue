@@ -20,15 +20,17 @@
     <LoadingSkeleton v-if="isLoading" />
     <TableDashboard
       v-else
-      :headers="[...TABLE_HEADER_SERVICE]"
-      :currentPage="currentPage"
+      :headers="TABLE_HEADER_SERVICE"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="services.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
+      :sort-state="sortConfig"
+      @sort="handleSort"
     >
-      <TableRow v-for="service in paginatedItems" :key="service.id">
+      <TableRow v-for="service in paginatedData.items" :key="service.id">
         <TableContent class="text-black dark:text-white">
           {{ service.name }}
         </TableContent>
@@ -51,7 +53,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="service in paginatedItems" :key="service.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="service in paginatedData.items" :key="service.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
@@ -98,42 +100,59 @@ import {
   LoadingSkeleton,
 } from '@/components/';
 import { Service } from '@/views/services/';
-import { getAllServices, deleteServiceById, searchServices } from '@/views/services/';
+import { deleteServiceById, getFilteredServices } from '@/views/services/';
 import { TABLE_HEADER_SERVICE } from '@/views/services/constants/';
 import { AppRoutesService } from '@/views/services/router';
+import { Client } from '@views/clients';
 
 const services = ref<Service[]>([]);
 const isLoading = ref(false);
+const sortConfig = ref<{ column: keyof Service; order: 'asc' | 'desc' } | null>(null);
 
-const { searchQuery, applySearch } = useSearch<Service>({
-  fetchFn: searchServices,
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData }= usePagination<Service>();
+
+const { searchQuery } = useSearch<Service>({
+  fetchFn: getFilteredServices,
   autoSearch: false,
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    if (searchQuery.value.trim() === '') {
-      services.value = await getAllServices();
-    } else {
-      services.value = await applySearch();
-    }
+
+    const filters: Record<string, any> = {};
+
+    const response = await getFilteredServices({
+      search: searchQuery.value.trim(),
+      filters,
+      sortBy: sortConfig.value?.column,
+      sortDirection: sortConfig.value?.order,
+      page: page,
+      perPage: paginatedData.value.perPage
+    });
+
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }
 };
+
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
   isLoading.value = true;
   try {
-    services.value = await getAllServices();
+    await runSearch(1);
   } finally {
     isLoading.value = false;
   }
 });
 
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(services, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteServiceById,
@@ -143,6 +162,17 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
     await runSearch();
   },
 });
+
+const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
+  if (config) {
+    sortConfig.value = {
+      column: config.column as keyof Service,
+      order: config.order,
+    };
+  } else {
+    sortConfig.value = null;
+  }
+};
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();

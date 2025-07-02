@@ -1,9 +1,12 @@
 import { apiClient } from '@/services/';
 import { Service, adaptService, adaptServiceForApi } from '@/views/services';
+import { PaginatedResponse, PaginationParams } from '@models';
+import { handlePaginatedResponse } from '@utils';
 
 export const serviceApiRoutes = {
   list: '/services',
   details: (id: number | string) => `/services/${id}`,
+  filter: '/services/filter',
   search: (search: string) => `/services/search/${search}`,
 };
 
@@ -53,11 +56,7 @@ export const deleteServiceById = async (serviceId: string | number): Promise<voi
   }
 };
 
-export const searchServices = async (search: string): Promise<Service[]> => {
-  try {
-    const response = await apiClient.get(serviceApiRoutes.search(search));
-    return Array.isArray(response.data) ? response.data.map(adaptService) : [adaptService(response.data)];
-  } catch (error) {
-    throw new Error('Failed to search services.');
-  }
+export const getFilteredServices = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Service>> => {
+  const response = await apiClient.get(serviceApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, adaptService, params);
 };
