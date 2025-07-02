@@ -1,5 +1,7 @@
 <template>
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsClient v-if="selectedId !== null" :is-open="isOpenDetails" :client-data="selectedClient" @close="closeDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Cliente?"
@@ -85,7 +87,7 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesClient.details(client.id)" />
+            <EyeButtonDetails @click="() => openDetails(String(client.id))" />
             <EditButton :route="AppRoutesClient.edit(client.id)" />
             <TrashButton v-if="client.canDelete" @click="open(client.id)" />
           </div>
@@ -109,7 +111,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesClient.details(client.id)" />
+                <EyeButtonDetails @click="() => openDetails(String(client.id))" />
                 <EditButton :route="AppRoutesClient.edit(client.id)" />
                 <TrashButton v-if="client.canDelete" @click="open(client.id)" />
               </div>
@@ -129,8 +131,9 @@ import {
   Bagde,
   Card,
   EditButton,
-  EyeButton,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
   ModalReportDetail,
@@ -146,10 +149,12 @@ import {
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Client, ClientType, ClientTypeOptions, formatClientType } from '@/views/clients/';
+import { ModalDetailsClient } from '@/views/clients/components/';
 import {
   allGetClientsDebtReport,
   allGetPendingPaidDebtsReport,
   deleteClientById,
+  getClientById,
   getClientDebtReport,
   getFilteredClients,
 } from '@/views/clients/service/';
@@ -163,6 +168,20 @@ const selectedType = ref<string>('');
 const selectedCredit = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const isLoadingDetails = ref(false);
+const selectedClient = ref<Client | null>(null);
+
+const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
+
+const openDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedClient.value = await getClientById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 const clientTypeOptions = [...ClientTypeOptions];
