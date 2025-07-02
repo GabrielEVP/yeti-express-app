@@ -1,5 +1,7 @@
 <template>
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsDelivery v-if="selectedId !== null" :is-open="isOpenDetails" :delivery-data="selectedDelivery" @close="closeDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta Delivery?"
@@ -115,7 +117,7 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+            <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
             <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
             <DownloadButton @click="handleDownload(delivery.id)" />
             <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
@@ -157,7 +159,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-1 justify-center">
-                <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+                <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
                 <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
                 <DownloadButton @click="handleDownload(delivery.id)" />
                 <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
@@ -179,15 +181,16 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useDebounce, useDeleteWithModal, usePagination } from '@/composables/';
+import { useDebounce, useDeleteWithModal, useModal, usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
   Bagde,
   Card,
   DownloadButton,
   EditButton,
-  EyeButton,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
   NewButton,
@@ -200,7 +203,7 @@ import {
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
-import { deleteDeliveryById, getDeliveryTicket, getFilteredDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
+import { deleteDeliveryById, getDeliveryById, getDeliveryTicket, getFilteredDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { copyToClipboard } from '@views/deliveries/utils';
@@ -210,7 +213,7 @@ import Cancelled from '../components/button/Cancelled.vue';
 import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
-
+import ModalDetailsDelivery from '../components/ModalDetails.Delivery.vue';
 import { getAllServices, Service } from '@views/services';
 
 const deliveries = ref<Delivery[]>([]);
@@ -222,6 +225,20 @@ const startDate = ref<string>('');
 const endDate = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const isLoadingDetails = ref(false);
+const selectedDelivery = ref<Delivery | null>(null);
+
+const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
+
+const openDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedDelivery.value = await getDeliveryById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 
