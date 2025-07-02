@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :company-bill-id="selectedId" @close="CloseDetails" />
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :bill-data="selectedBill" @close="CloseDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta gastos?"
@@ -77,60 +78,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useModal, useDebounce } from '@/composables/';
+import { onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
-  Card,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
-  EditButton,
-  ModalConfirmation,
-  FilterButton,
-  Button,
-  LoadingSkeleton,
   Bagde,
+  Button,
+  Card,
+  EditButton,
+  FilterButton,
+  LoadingAbsoluteSkeleton,
+  LoadingSkeleton,
+  ModalConfirmation,
+  NewButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
 import { ModalDetails } from '@/views/company-bills/components';
-import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
-import { deleteCompanyBillById, searchCompanyBills, getFilteredCompanyBills } from '@/views/company-bills/services/';
+import { CompanyBill, formatPaymentMethod, getCompanyBillById } from '@/views/company-bills/';
+import { deleteCompanyBillById, getFilteredCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';
 import { Eye } from 'lucide-vue-next';
 
-const isLoading = ref(false);
-const error = ref<string | null>(null);
+const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
 
-const { isOpen: IsOpenDetails, selectedId, open: OpenDetails, close: CloseDetails } = useModal<string>();
+const isLoadingDetails = ref(false);
+const selectedBill = ref<CompanyBill | null>(null);
+
+const OpenDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedBill.value = await getCompanyBillById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 
 const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<CompanyBill>();
 
-const { searchQuery } = useSearch<CompanyBill>({
-  fetchFn: searchCompanyBills,
-  autoSearch: false,
-});
+const isLoading = ref(false);
+const searchQuery = ref<string>('');
 
 const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    error.value = null;
 
     const response = await getFilteredCompanyBills({
       search: searchQuery.value.trim(),
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);
-  } catch (err) {
-    error.value = 'Error al cargar los gastos';
-    console.error(err);
   } finally {
     isLoading.value = false;
   }
