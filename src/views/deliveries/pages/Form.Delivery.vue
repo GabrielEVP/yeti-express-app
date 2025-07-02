@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
-        <LoadingSkeleton v-if="!formReady" />
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
         <form v-else @submit.prevent="onSubmit" class="h-full">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
@@ -74,33 +74,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
 import {
-  SideBar,
+  AcceptButton,
+  BackButton,
+  CancelButton,
   Card,
   FieldForm,
+  LoadingAbsoluteSkeleton,
   SelectForm,
-  TextAreaForm,
-  AcceptButton,
-  CancelButton,
+  SideBar,
   Tabs,
-  TabsTitle,
   TabsContent,
-  LoadingSkeleton, BackButton,
+  TabsTitle,
+  TextAreaForm,
 } from '@/components';
-import { Delivery, PaymentType } from '@views/deliveries/models';
-import { PaymentTypeOptions } from '@views/deliveries/models';
-import { getDeliveryById, createDelivery, updateDelivery } from '@views/deliveries';
+import { Delivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
+import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { Client } from '@views/clients';
-import { Courier } from '@views/couriers';
-import { getAllCouriers } from '@views/couriers';
-import { Service } from '@views/services';
-import { getAllServices } from '@views/services';
+import { Courier, getAllCouriers } from '@views/couriers';
+import { getAllServices, Service } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
 
 const activeTab = ref('general');

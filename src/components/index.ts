@@ -5,6 +5,7 @@ export { default as CancelButton } from '@/components/buttons/Cancel.vue';
 export { default as DeleteButton } from '@/components/buttons/Delete.vue';
 export { default as EditButton } from '@/components/buttons/Edit.vue';
 export { default as EyeButton } from '@/components/buttons/Eye.vue';
+export { default as EyeButtonDetails } from '@/components/buttons/EyeButton.vue';
 export { default as FilterButton } from '@/components/buttons/Filter.vue';
 export { default as NewButton } from '@/components/buttons/New.vue';
 export { default as PlusButton } from '@/components/buttons/Plus.vue';

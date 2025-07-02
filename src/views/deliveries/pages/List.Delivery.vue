@@ -179,7 +179,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useDebounce, useDeleteWithModal, usePagination, useSearch } from '@/composables/';
+import { useDebounce, useDeleteWithModal, usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
   Bagde,
@@ -200,7 +200,7 @@ import {
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
-import { deleteDeliveryById, getDeliveryTicket, getFilteredDeliveries, searchDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
+import { deleteDeliveryById, getDeliveryTicket, getFilteredDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { copyToClipboard } from '@views/deliveries/utils';
@@ -212,7 +212,6 @@ import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
 
 import { getAllServices, Service } from '@views/services';
-import { Client, getFilteredClients } from '@views/clients';
 
 const deliveries = ref<Delivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -224,6 +223,7 @@ const endDate = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
+const searchQuery = ref<string>('');
 
 const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Delivery>();
 
@@ -238,11 +238,6 @@ const deliveryStatusOptions = [
   { value: DeliveryStatus.DELIVERED, label: 'Entregado' },
   { value: DeliveryStatus.REFUSED, label: 'Cancelado' },
 ];
-
-const { searchQuery } = useSearch<Delivery>({
-  fetchFn: searchDeliveries,
-  autoSearch: false,
-});
 
 watch([selectedStatus, selectedPaymentStatus, selectedServiceId, selectedPaymentMethod, sortConfig, startDate, endDate], () => {
   runSearch();
@@ -285,7 +280,7 @@ const runSearch = async (page: number = 1) => {
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);

@@ -1,6 +1,8 @@
 <template>
   <ModalConfirmation :isOpen="isOpen" message="¿Estás seguro que quieres eliminar este Courier?" @confirm="handleDeleteConfirmation" @close="close" />
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsCourier v-if="selectedId !== null" :is-open="isOpenDetails" :courier-data="selectedCourier" @close="closeDetails" />
     <ModalReportGeneral
       title="Reporte de entregas general"
       :isOpen="isOpenGeneral"
@@ -10,7 +12,7 @@
       @submit-filter="handleGeneralReport"
     />
     <ModalReportGeneral
-      title="Reporte de engregas general"
+      title="Reporte de entregas general"
       :isOpen="isOpenGeneral"
       :openDate="open_date"
       :closeDate="close_date"
@@ -68,7 +70,7 @@
         <TableContent>{{ courier.phone }}</TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesCourier.details(courier.id)" />
+            <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
             <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
           </div>
@@ -89,7 +91,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesCourier.details(courier.id)" />
+                <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
                 <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
               </div>
@@ -102,14 +104,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
+import { computed, onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   Card,
   EditButton,
-  EyeButton,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
   ModalReportGeneral,
@@ -123,14 +126,9 @@ import {
   Text,
   TrashButton,
 } from '@/components/';
-import { Courier } from '@/views/couriers/';
-import {
-  deleteCourierById,
-  getAllCouriersDeliveriesReport,
-  getCourierDeliveryReport,
-  searchCouriers,
-  getFilteredCouriers,
-} from '@/views/couriers/services';
+import { ModalDetailsCourier } from '@/views/couriers/components/';
+import { Courier, getCourierById } from '@/views/couriers/';
+import { deleteCourierById, getAllCouriersDeliveriesReport, getCourierDeliveryReport, getFilteredCouriers } from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { ModalReportDetail } from '@components';
@@ -138,13 +136,23 @@ import { generatePdf } from '@utils';
 
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const isLoadingDetails = ref(false);
+const selectedCourier = ref<Courier | null>(null);
+const searchQuery = ref<string>('');
+
+const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
+
+const openDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedCourier.value = await getCourierById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 
 const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Courier>();
-
-const { searchQuery } = useSearch<Courier>({
-  fetchFn: searchCouriers,
-  autoSearch: false,
-});
 
 const runSearch = async (page: number = 1) => {
   try {
@@ -154,7 +162,7 @@ const runSearch = async (page: number = 1) => {
     const response = await getFilteredCouriers({
       search: searchQuery.value.trim(),
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);

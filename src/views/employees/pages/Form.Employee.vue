@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-6">
-        <LoadingSkeleton v-if="!formReady" />
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="space-y-6">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">Información del empleado</h2>
           <FieldForm label="Nombre" name="name" id="name" required />
@@ -16,7 +16,7 @@
           <div
             :class="[
               'flex flex-col gap-4 pt-6',
-              EmployeeId ? 'sm:flex-row justify-between items-center border-t border-gray-200 dark:border-gray-700' : 'justify-end'
+              EmployeeId ? 'sm:flex-row justify-between items-center border-t border-gray-200 dark:border-gray-700' : 'justify-end',
             ]"
           >
             <template v-if="EmployeeId">
@@ -41,23 +41,13 @@
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Lock } from 'lucide-vue-next';
 import { useVeeForm } from '@/composables';
-import {
-  SideBar,
-  Card,
-  FieldForm,
-  SelectForm,
-  AcceptButton,
-  CancelButton,
-  LoadingSkeleton,
-  BackButton,
-} from '@/components';
-import { Employee } from '@/views/employees/';
-import { RoleOptions } from '@/views/employees/';
+import { AcceptButton, BackButton, CancelButton, Card, FieldForm, LoadingAbsoluteSkeleton, SelectForm, SideBar } from '@/components';
+import { Employee, RoleOptions } from '@/views/employees/';
 import { CreateEmployeeSchema, EditEmployeeSchema } from '@/views/employees/schema';
-import { getEmployeeById, createEmployee, updateEmployee } from '@/views/employees/services/';
+import { createEmployee, getEmployeeById, updateEmployee } from '@/views/employees/services/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
 
 const formReady = ref(false);

@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
-        <LoadingSkeleton v-if="!formReady" />
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
@@ -62,28 +62,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { nextTick, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useFieldArray } from 'vee-validate';
 import { useVeeForm } from '@/composables';
 import {
-  SideBar,
+  AcceptButton,
+  BackButton,
+  CancelButton,
   Card,
   FieldForm,
-  TextAreaForm,
-  AcceptButton,
-  CancelButton,
-  Tabs,
-  TabsTitle,
-  TabsContent,
+  LoadingAbsoluteSkeleton,
   PlusButton,
+  SideBar,
+  Tabs,
+  TabsContent,
+  TabsTitle,
+  Text,
+  TextAreaForm,
   TrashButton,
-  Text, LoadingSkeleton, BackButton,
 } from '@/components';
-import { Service } from '@views/services/';
+import { createService, getServiceById, Service, updateService } from '@views/services/';
 import type { Bill } from '@/views/services/';
 import { serviceSchema } from '@views/services/schema';
-import { getServiceById, createService, updateService } from '@views/services/';
 import { TABS_FORM_SERVICE } from '@/views/services/constants';
 
 const formReady = ref(false);

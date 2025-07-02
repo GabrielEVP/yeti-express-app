@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl p-6">
-        <LoadingSkeleton v-if="!formReady" />
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="h-full space-y-6">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
@@ -68,30 +68,30 @@
   </SideBar>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { nextTick, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import {
-  SideBar,
+  AcceptButton,
+  BackButton,
+  CancelButton,
   Card,
   FieldForm,
+  LoadingAbsoluteSkeleton,
   SelectForm,
-  TextAreaForm,
-  AcceptButton,
-  CancelButton,
+  SideBar,
   Tabs,
-  TabsTitle,
   TabsContent,
-  LoadingSkeleton, BackButton,
+  TabsTitle,
+  TextAreaForm,
 } from '@/components';
-import { Client } from '@/views/clients/models';
-import { ClientTypeOptions } from '@/views/clients/models';
+import { Client, ClientTypeOptions } from '@/views/clients/models';
 import { AllowCreditOptions } from '@views/clients';
 import { TABS_FORM_CLIENT } from '@/views/clients/constants';
 import { ClientSchema } from '@/views/clients/schema';
 import { AppRoutesClient } from '@/views/clients/router';
-import { getClientById, createClient, updateClient } from '@/views/clients/service/';
-import { AdressesForm, PhonesForm, EmailsForm } from '@/views/clients/components/';
+import { createClient, getClientById, updateClient } from '@/views/clients/service/';
+import { AdressesForm, EmailsForm, PhonesForm } from '@/views/clients/components/';
 import { useAuthStore } from '@stores';
 import { storeToRefs } from 'pinia';
 

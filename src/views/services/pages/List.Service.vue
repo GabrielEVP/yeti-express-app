@@ -1,5 +1,7 @@
 <template>
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsService v-if="selectedId !== null" :is-open="IsOpenDetails" :service-data="selectedService" @close="CloseDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Servicio?"
@@ -45,7 +47,7 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesService.details(service.id)" />
+            <EyeButtonDetails @click="() => OpenDetails(String(service.id))" />
             <EditButton :route="AppRoutesService.edit(service.id)" />
             <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
           </div>
@@ -66,7 +68,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesService.details(service.id)" />
+                <EyeButtonDetails @click="() => OpenDetails(String(service.id))" />
                 <EditButton :route="AppRoutesService.edit(service.id)" />
                 <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
               </div>
@@ -79,42 +81,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useDebounce } from '@/composables/';
+import { onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import { formatToDollars } from '@utils';
 import {
-  SideBar,
-  Card,
   Bagde,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
+  Card,
   EditButton,
-  EyeButton,
-  ModalConfirmation,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
+  ModalConfirmation,
+  NewButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
-import { Service } from '@/views/services/';
-import { deleteServiceById, getFilteredServices } from '@/views/services/';
+import { ModalDetailsService } from '@/views/services/components/';
+import { deleteServiceById, getFilteredServices, getServiceById, Service } from '@/views/services/';
 import { TABLE_HEADER_SERVICE } from '@/views/services/constants/';
 import { AppRoutesService } from '@/views/services/router';
-import { Client } from '@views/clients';
 
-const services = ref<Service[]>([]);
 const isLoading = ref(false);
+const isLoadingDetails = ref(false);
+const selectedService = ref<Service | null>(null);
 const sortConfig = ref<{ column: keyof Service; order: 'asc' | 'desc' } | null>(null);
+const searchQuery = ref('');
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData }= usePagination<Service>();
+const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
 
-const { searchQuery } = useSearch<Service>({
-  fetchFn: getFilteredServices,
-  autoSearch: false,
-});
+const OpenDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedService.value = await getServiceById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Service>();
 
 const runSearch = async (page: number = 1) => {
   try {
@@ -128,7 +139,7 @@ const runSearch = async (page: number = 1) => {
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);
@@ -152,7 +163,6 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteServiceById,

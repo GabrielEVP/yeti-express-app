@@ -1,9 +1,10 @@
 <template>
-  <div class="absolute w-full h-full flex items-center justify-center py-16">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
     <div class="space-y-4 text-center">
       <svg
         class="mx-auto h-12 w-12 animate-spin text-blue-600 dark:text-blue-400"
         xmlns="http://www.w3.org/2000/svg"
+        fill="none"
         viewBox="0 0 24 24"
         role="img"
         aria-label="Cargando"
@@ -15,4 +16,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>

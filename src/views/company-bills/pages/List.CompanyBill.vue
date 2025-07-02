@@ -39,9 +39,7 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <Button class="bg-gray-600 hover:bg-gray-700 text-white transition-colors" @click="() => OpenDetails(String(bill.id))">
-              <Eye class="w-4 h-4" />
-            </Button>
+            <EyeButtonDetails @click="() => OpenDetails(String(bill.id))" />
             <EditButton :route="AppRoutesCompanyBill.edit(bill.id)" />
             <TrashButton @click="() => open(bill.id)" />
           </div>
@@ -63,9 +61,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <Button class="bg-gray-600 hover:bg-gray-700 text-white transition-colors" @click="() => OpenDetails(String(bill.id))">
-                  <Eye class="w-4 h-4" />
-                </Button>
+                <EyeButtonDetails @click="() => OpenDetails(String(bill.id))" />
                 <EditButton :route="AppRoutesCompanyBill.edit(bill.id)" />
                 <TrashButton @click="() => open(bill.id)" />
               </div>
@@ -84,9 +80,9 @@ import { formatDateCustom, formatToDollars } from '@/utils/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   Bagde,
-  Button,
   Card,
   EditButton,
+  EyeButtonDetails,
   FilterButton,
   LoadingAbsoluteSkeleton,
   LoadingSkeleton,
@@ -104,7 +100,6 @@ import { CompanyBill, formatPaymentMethod, getCompanyBillById } from '@/views/co
 import { deleteCompanyBillById, getFilteredCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';
-import { Eye } from 'lucide-vue-next';
 
 const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
 

@@ -6,6 +6,8 @@
     @close="close"
   />
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsEmployee v-if="selectedId !== null" :is-open="IsOpenDetails" :employee-data="selectedEmployee" @close="CloseDetails" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -32,11 +34,11 @@
         <TableContent>{{ employee.name }}</TableContent>
         <TableContent>{{ employee.email }}</TableContent>
         <TableContent>
-          <Bagde class="break-words text-right">{{ getRoleLabel(employee.role as Role) }} </Bagde>
+          <Bagde class="break-words text-right">{{ getRoleLabel(employee.role as Role) }}</Bagde>
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesEmployee.details(employee.id)" />
+            <EyeButtonDetails @click="() => OpenDetails(String(employee.id))" />
             <EditButton :route="AppRoutesEmployee.edit(employee.id)" />
             <TrashButton @click="() => open(employee.id)" />
           </div>
@@ -60,7 +62,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesEmployee.details(employee.id)" />
+                <EyeButtonDetails @click="() => OpenDetails(String(employee.id))" />
                 <EditButton :route="AppRoutesEmployee.edit(employee.id)" />
                 <TrashButton @click="() => open(employee.id)" />
               </div>
@@ -73,39 +75,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useDebounce } from '@/composables/';
+import { onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
-  Card,
   Bagde,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
+  Card,
   EditButton,
-  EyeButton,
-  ModalConfirmation,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
+  ModalConfirmation,
+  NewButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
-import { Employee, getRoleLabel, Role } from '@/views/employees/';
-import { deleteEmployeeById, searchEmployees, getFilteredEmployees } from '@/views/employees/';
-import { AppRoutesEmployee } from '@/views/employees/';
-import { TABLE_HEADER_EMPLOYEE } from '@/views/employees/';
+import { ModalDetailsEmployee } from '@/views/employees/components/';
+import {
+  AppRoutesEmployee,
+  deleteEmployeeById,
+  Employee,
+  getEmployeeById,
+  getFilteredEmployees,
+  getRoleLabel,
+  Role,
+  TABLE_HEADER_EMPLOYEE,
+} from '@/views/employees/';
 
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const isLoadingDetails = ref(false);
+const selectedEmployee = ref<Employee | null>(null);
+const searchQuery = ref('');
+
+const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
+
+const OpenDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedEmployee.value = await getEmployeeById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 
 const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Employee>();
-
-const { searchQuery } = useSearch<Employee>({
-  fetchFn: searchEmployees,
-  autoSearch: false,
-});
 
 const runSearch = async (page: number = 1) => {
   try {
@@ -115,7 +135,7 @@ const runSearch = async (page: number = 1) => {
     const response = await getFilteredEmployees({
       search: searchQuery.value.trim(),
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);

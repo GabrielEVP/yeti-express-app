@@ -123,7 +123,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   Bagde,
@@ -152,7 +152,6 @@ import {
   deleteClientById,
   getClientDebtReport,
   getFilteredClients,
-  searchClients,
 } from '@/views/clients/service/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
@@ -165,15 +164,10 @@ const selectedCredit = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
-
+const searchQuery = ref<string>('');
 const clientTypeOptions = [...ClientTypeOptions];
 
 const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Client>();
-
-const { searchQuery } = useSearch<Client>({
-  fetchFn: searchClients,
-  autoSearch: false,
-});
 
 watch([selectedType, selectedCredit, sortConfig], () => {
   runSearch();
@@ -200,7 +194,7 @@ const runSearch = async (page: number = 1) => {
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
       page: page,
-      perPage: paginatedData.value.perPage
+      perPage: paginatedData.value.perPage,
     });
 
     setPaginatedData(response);
