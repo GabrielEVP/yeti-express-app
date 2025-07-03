@@ -52,13 +52,12 @@
             </ModalContentItem>
           </div>
         </div>
-
         <div
           v-if="deliveryData.receipt"
           class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
         >
           <div class="flex items-center gap-3 mb-4 sm:mb-6">
-            <ClipboardCheck class="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+            <PackageCheck class="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
             <span class="font-semibold text-lg text-gray-900 dark:text-white">Direccion de Recogida</span>
           </div>
           <div class="space-y-4 sm:space-y-5">
@@ -105,7 +104,7 @@
 <script setup lang="ts">
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
-import { ClipboardCheck } from 'lucide-vue-next';
+import { ClipboardCheck, PackageCheck } from 'lucide-vue-next';
 import { Delivery, getDeliveryStatusLabel } from '@/views/deliveries/';
 
 defineProps<{

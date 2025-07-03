@@ -14,10 +14,9 @@ interface PaginatedResponse<T> {
 }
 
 export const debtApiRoutes = {
-  allAmountDebts: '/debts/all-amout-debts',
+  allAmountDebts: '/debts/all-amount-debts',
   clientsWithDebt: '/debts/clients/with-debt',
   clientStats: (clientId: string | number) => `/debts/clients/${clientId}/stats`,
-  clientDeliveryWithDebts: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts`,
   clientDeliveryWithDebtsFilter: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts-filter`,
 };
 
@@ -36,26 +35,6 @@ export const getClientStats = async (clientId: string): Promise<any> => {
   return response.data;
 };
 
-// Función modificada para recibir paginación
-export const getClientDeliveryWithDebts = async (clientId: string, page: number = 1, perPage: number = 15): Promise<PaginatedResponse<Delivery>> => {
-  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebts(clientId), {
-    params: { page, per_page: perPage }
-  });
-
-  return {
-    data: Array.isArray(response.data.data)
-      ? response.data.data.map(adaptDelivery)
-      : [adaptDelivery(response.data.data)],
-    current_page: response.data.current_page,
-    per_page: response.data.per_page,
-    total: response.data.total,
-    last_page: response.data.last_page,
-    from: response.data.from,
-    to: response.data.to,
-  };
-};
-
-// Función modificada para recibir paginación con filtros
 export const getClientDeliveryWithDebtsFilter = async (
   clientId: string,
   paymentStatus: string,
@@ -67,14 +46,12 @@ export const getClientDeliveryWithDebtsFilter = async (
       status: paymentStatus,
       client_id: clientId,
       page,
-      per_page: perPage
+      per_page: perPage,
     },
   });
 
   return {
-    data: Array.isArray(response.data.data)
-      ? response.data.data.map(adaptDelivery)
-      : [adaptDelivery(response.data.data)],
+    data: Array.isArray(response.data.data) ? response.data.data.map(adaptDelivery) : [adaptDelivery(response.data.data)],
     current_page: response.data.current_page,
     per_page: response.data.per_page,
     total: response.data.total,

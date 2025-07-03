@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, reactive } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { LoadingSkeleton, SideBar } from '@components';
 import { useModal } from '@composables';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
@@ -33,7 +33,7 @@ import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
 import StatusFilter from '../components/deliveries/FilterDelivery.vue';
 import { Delivery } from '@/views/deliveries/';
-import { allAmountDebts, getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
+import { allAmountDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
 import { Client, Stast } from '@views/clients';
 
 // Interface para los datos de paginación
@@ -74,20 +74,11 @@ const paginationData = reactive<PaginationData>({
 const { isOpen, open } = useModal();
 
 // Función para cargar entregas con paginación
-const loadDeliveries = async (
-  clientId: string,
-  paymentStatus: string = selectedPaymentStatus.value,
-  page: number = 1
-) => {
+const loadDeliveries = async (clientId: string, paymentStatus: string = selectedPaymentStatus.value, page: number = 1) => {
   try {
     isLoading.value = true;
-    let response;
 
-    if (paymentStatus === 'all') {
-      response = await getClientDeliveryWithDebts(clientId, page, paginationData.per_page);
-    } else {
-      response = await getClientDeliveryWithDebtsFilter(clientId, paymentStatus, page, paginationData.per_page);
-    }
+    const response = await getClientDeliveryWithDebtsFilter(clientId, paymentStatus, page, paginationData.per_page);
 
     deliveries.value = response.data;
 
@@ -98,7 +89,6 @@ const loadDeliveries = async (
     paginationData.last_page = response.last_page;
     paginationData.from = response.from;
     paginationData.to = response.to;
-
   } catch (error) {
     console.error('Error loading deliveries:', error);
     deliveries.value = [];
