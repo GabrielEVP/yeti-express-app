@@ -6,7 +6,7 @@ export interface ListDelivery {
   date: string;
   status: DeliveryStatus;
   amount: number;
-  client_legal_name: string;
+  client_name: string;
   service_name: string;
   courier_full_name: string;
 }

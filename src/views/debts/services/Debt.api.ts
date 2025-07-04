@@ -1,23 +1,13 @@
 import { apiClient } from '@/services/';
-import { Client, clientApiRoutes } from '@views/clients';
-import { PaginationParams } from '@models';
+import { Client } from '@views/clients';
+import { PaginatedResponse, PaginationParams } from '@/models';
 import { handlePaginatedResponse } from '@utils';
-
-interface PaginatedResponse<T> {
-  data: T[];
-  current_page: number;
-  per_page: number;
-  total: number;
-  last_page: number;
-  from: number;
-  to: number;
-}
 
 export const debtApiRoutes = {
   allAmountDebts: '/debts/all-amount-debts',
   clientsWithDebt: '/debts/clients/with-debt',
   clientStats: (clientId: string | number) => `/debts/clients/${clientId}/stats`,
-  clientDeliveryWithDebtsFilter: (clientId: string | number) => `/debts/clients/${clientId}/delivery-with-debts-filter`,
+  clientDeliveryWithDebtsFilter: `/debts/clients/delivery-with-debts-filter`,
 };
 
 export const allAmountDebts = async (): Promise<number> => {
@@ -36,6 +26,6 @@ export const getClientStats = async (clientId: string): Promise<any> => {
 };
 
 export const getClientDeliveryWithDebtsFilter = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<unknown>> => {
-  const response = await apiClient.get(clientApiRoutes.filter, { params });
+  const response = await apiClient.get(debtApiRoutes.clientDeliveryWithDebtsFilter, { params });
   return handlePaginatedResponse(response, params);
 };

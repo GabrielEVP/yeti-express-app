@@ -86,7 +86,7 @@
           {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.client_legal_name }}
+          {{ delivery.client_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.courier_full_name }}
@@ -124,7 +124,7 @@
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
-            <CopyWhatsapp @click="copyToClipboard(selectedDelivery)" />
+            <CopyWhatsapp @click="CopyToWhatsapp(delivery.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -166,7 +166,7 @@
                   v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
                   @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
                 />
-                <CopyWhatsapp @click="copyToClipboard(selectedDelivery)" />
+                <CopyWhatsapp @click="CopyToWhatsapp(delivery.id)" />
               </div>
             </div>
           </div>
@@ -237,6 +237,15 @@ const openDetails = async (id: string) => {
   }
 };
 
+const CopyToWhatsapp = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedDelivery.value = await getDeliveryById(id);
+    copyToClipboard(selectedDelivery.value);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
 const sortConfig = ref<{ column: keyof ListDelivery; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 

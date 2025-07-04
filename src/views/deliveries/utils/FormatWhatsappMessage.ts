@@ -40,7 +40,7 @@ ${delivery.notes || 'Sin notas'}
 
 ----------------------------
 
-🙏 Gracias por confiar en Yeti express
+🙏 Gracias por confiar en Yetiexpress
 🕒 ${formatDateCustom(new Date())}
   `.trim();
 
