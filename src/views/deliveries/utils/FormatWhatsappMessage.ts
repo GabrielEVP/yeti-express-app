@@ -12,7 +12,8 @@ export function copyToClipboard(delivery: Delivery) {
 *Fecha:* ${formatDateCustom(delivery.date)}
 
 ----------------------------
-
+Direccion de retiro
+ 
 👤 *Cliente:* ${delivery.clientLegalName}
 📍 *Dirección:* ${delivery.pickupAddress || 'N/A'}
 
@@ -24,10 +25,11 @@ export function copyToClipboard(delivery: Delivery) {
 
 ----------------------------
 
-🏍️️ *Repartidor:* ${delivery.courierName}
+🛵️ *Repartidor:* ${delivery.courierName}
 📍 *Estado:* ${getDeliveryStatusLabel(delivery.status)}
 
 ----------------------------
+Direccion de entrega del pedido 
 
 🤝 *Recibe:* ${delivery.receipt.fullName || 'N/A'}
 📞 *Teléfono:* ${delivery.receipt.phone || 'N/A'}

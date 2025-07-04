@@ -97,8 +97,8 @@ import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveri
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { Client } from '@views/clients';
-import { Courier, getAllCouriers } from '@views/couriers';
-import { getAllServices, Service } from '@views/services';
+import { getAllCouriers, ListCourier } from '@views/couriers';
+import { getAllServices, ListService } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
 
 const activeTab = ref('general');
@@ -127,15 +127,15 @@ const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Del
   },
 });
 
-const couriers = ref<Courier[]>([]);
+const couriers = ref<ListCourier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
-    label: `${courier.firstName} ${courier.lastName}`,
+    label: `${courier.first_name} ${courier.last_name}`,
     value: courier.id,
   }))
 );
 
-const services = ref<Service[]>([]);
+const services = ref<ListService[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
     label: service.name,

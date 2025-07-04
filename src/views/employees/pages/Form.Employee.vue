@@ -9,19 +9,19 @@
           <FieldForm label="Nombre" name="name" id="name" required />
           <FieldForm label="Email" name="email" id="email" required />
           <SelectForm label="Permisos" name="role" :items="[...RoleOptions]" />
-          <div v-if="!EmployeeId">
+          <div v-if="!employee_id">
             <FieldForm label="Contraseña" name="password" id="password" type="password" required />
             <FieldForm label="Confirmar Contraseña" name="confirmPassword" id="confirmPassword" type="password" required />
           </div>
           <div
             :class="[
               'flex flex-col gap-4 pt-6',
-              EmployeeId ? 'sm:flex-row justify-between items-center border-t border-gray-200 dark:border-gray-700' : 'justify-end',
+              employee_id ? 'sm:flex-row justify-between items-center border-t border-gray-200 dark:border-gray-700' : 'justify-end',
             ]"
           >
-            <template v-if="EmployeeId">
+            <template v-if="employee_id">
               <router-link
-                :to="AppRoutesEmployee.editPassword(EmployeeId)"
+                :to="AppRoutesEmployee.editPassword(employee_id)"
                 class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 border border-red-200 dark:border-red-800 hover:border-red-300 dark:hover:border-red-700"
               >
                 <Lock class="h-4 w-4" />
@@ -45,7 +45,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { Lock } from 'lucide-vue-next';
 import { useVeeForm } from '@/composables';
 import { AcceptButton, BackButton, CancelButton, Card, FieldForm, LoadingAbsoluteSkeleton, SelectForm, SideBar } from '@/components';
-import { Employee, RoleOptions } from '@/views/employees/';
+import { FormEmployee, RoleOptions } from '@/views/employees/models';
 import { CreateEmployeeSchema, EditEmployeeSchema } from '@/views/employees/schema';
 import { createEmployee, getEmployeeById, updateEmployee } from '@/views/employees/services/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
@@ -54,12 +54,12 @@ const formReady = ref(false);
 
 const router = useRouter();
 const route = useRoute();
-const EmployeeId = route.params.id as string;
+const employee_id = route.params.id as string;
 
-const EmployeeSchema = EmployeeId ? EditEmployeeSchema : CreateEmployeeSchema;
+const EmployeeSchema = employee_id ? EditEmployeeSchema : CreateEmployeeSchema;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
-  id: EmployeeId,
+const { initializeForm, onSubmit, meta } = useVeeForm<FormEmployee>({
+  id: employee_id,
   getById: getEmployeeById,
   create: createEmployee,
   update: (values, id) => updateEmployee(values, id),

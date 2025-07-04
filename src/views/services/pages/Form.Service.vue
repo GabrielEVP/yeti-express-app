@@ -82,7 +82,8 @@ import {
   TextAreaForm,
   TrashButton,
 } from '@/components';
-import { createService, getServiceById, Service, updateService } from '@views/services/';
+import { FormService } from '@/views/services/models';
+import { createService, getServiceById, updateService } from '@views/services/services';
 import type { Bill } from '@/views/services/';
 import { serviceSchema } from '@views/services/schema';
 import { TABS_FORM_SERVICE } from '@/views/services/constants';
@@ -93,10 +94,10 @@ const activeTab = ref('general');
 
 const router = useRouter();
 const route = useRoute();
-const serviceId = route.params.id as string;
+const service_id = route.params.id as string;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Service, string>({
-  id: serviceId,
+const { initializeForm, onSubmit, meta } = useVeeForm<FormService, string>({
+  id: service_id,
   getById: getServiceById,
   create: createService,
   update: (values, id) => updateService(values, id),

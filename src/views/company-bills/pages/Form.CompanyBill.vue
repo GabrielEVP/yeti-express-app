@@ -37,7 +37,7 @@ import { nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { AcceptButton, BackButton, CancelButton, Card, FieldForm, LoadingAbsoluteSkeleton, SelectForm, SideBar, TextAreaForm } from '@/components';
-import { CompanyBill } from '@/views/company-bills/';
+import { FormCompanyBill } from '@/views/company-bills/';
 import { PaymentMethodOptions } from '@views/company-bills/models/PaymentMethod';
 import { CompanyBillSchema } from '@views/company-bills/schema/CompanyBill.Schema';
 import { createCompanyBill, getCompanyBillById, updateCompanyBill } from '@/views/company-bills/services/';
@@ -49,7 +49,7 @@ const router = useRouter();
 const route = useRoute();
 const billId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<CompanyBill>({
+const { initializeForm, onSubmit, meta } = useVeeForm<FormCompanyBill>({
   id: billId,
   getById: getCompanyBillById,
   create: createCompanyBill,

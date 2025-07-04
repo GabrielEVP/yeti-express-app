@@ -2,7 +2,7 @@
   <ModalConfirmation :isOpen="isOpen" message="¿Estás seguro que quieres eliminar este Courier?" @confirm="handleDeleteConfirmation" @close="close" />
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
-    <ModalDetailsCourier v-if="selectedId !== null" :is-open="isOpenDetails" :courier-data="selectedCourier" @close="closeDetails" />
+    <ModalDetailsCourier v-if="selectedId !== null" :is-open="isOpenDetails" :courier="selectedCourier" @close="closeDetails" />
     <ModalReportGeneral
       title="Reporte de entregas general"
       :isOpen="isOpenGeneral"
@@ -65,14 +65,14 @@
       @updatePage="handlePageChange"
     >
       <TableRow v-for="courier in paginatedData.items" :key="courier.id">
-        <TableContent>{{ courier.firstName }}</TableContent>
-        <TableContent>{{ courier.lastName }}</TableContent>
+        <TableContent>{{ courier.first_name }}</TableContent>
+        <TableContent>{{ courier.last_name }}</TableContent>
         <TableContent>{{ courier.phone }}</TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
             <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
-            <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
+            <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -82,7 +82,7 @@
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
-                  {{ courier.firstName }}
+                  {{ courier.first_name }} {{ courier.last_name }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
                   {{ courier.phone }}
@@ -93,7 +93,7 @@
               <div class="flex gap-2">
                 <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
-                <TrashButton v-if="courier.canDelete" @click="() => open(courier.id)" />
+                <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
               </div>
             </div>
           </div>
@@ -127,8 +127,14 @@ import {
   TrashButton,
 } from '@/components/';
 import { ModalDetailsCourier } from '@/views/couriers/components/';
-import { Courier, getCourierById } from '@/views/couriers/';
-import { deleteCourierById, getAllCouriersDeliveriesReport, getCourierDeliveryReport, getFilteredCouriers } from '@/views/couriers/services';
+import { DetailCourier, ListCourier } from '@/views/couriers/';
+import {
+  deleteCourierById,
+  getAllCouriersDeliveriesReport,
+  getCourierById,
+  getCourierDeliveryReport,
+  getFilteredCouriers,
+} from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
 import { ModalReportDetail } from '@components';
@@ -137,7 +143,7 @@ import { generatePdf } from '@utils';
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
-const selectedCourier = ref<Courier | null>(null);
+const selectedCourier = ref<DetailCourier | null>(null);
 const searchQuery = ref<string>('');
 
 const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
@@ -152,7 +158,7 @@ const openDetails = async (id: string) => {
   }
 };
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Courier>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListCourier>();
 
 const runSearch = async (page: number = 1) => {
   try {
@@ -166,9 +172,6 @@ const runSearch = async (page: number = 1) => {
     });
 
     setPaginatedData(response);
-  } catch (err) {
-    error.value = 'Error al cargar los repartidores';
-    console.error(err);
   } finally {
     isLoading.value = false;
   }
@@ -210,8 +213,8 @@ const handleGeneralReport = async (start: string, end: string) => {
 };
 
 const courierOptions = computed(() => {
-  return paginatedData.value.items.map((courier) => ({
-    label: courier.firstName,
+  return paginatedData.value.items.map((courier: ListCourier) => ({
+    label: courier.first_name + ' ' + courier.last_name,
     value: courier.id,
   }));
 });

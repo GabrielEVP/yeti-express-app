@@ -7,7 +7,7 @@
           <div class="relative">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 tracking-wide uppercase">Monto Total</p>
             <div class="relative inline-block">
-              <p class="text-4xl font-black  text-black dark:text-white ">
+              <p class="text-4xl font-black text-black dark:text-white">
                 {{ formatToDollars(billData.amount) }}
               </p>
               <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gradient-to-r bg-black dark:bg-white rounded-full"></div>
@@ -41,12 +41,12 @@
 
 <script setup lang="ts">
 import { formatDateCustom, formatToDollars } from '@/utils/';
-import {  ModalDetail, ModalContentItem, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
-import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
+import { ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
+import { DetailCompanyBill, formatPaymentMethod } from '@/views/company-bills/';
 
 defineProps<{
   isOpen: boolean;
-  billData: CompanyBill | null;
+  billData: DetailCompanyBill | null;
 }>();
 
 const emit = defineEmits<{

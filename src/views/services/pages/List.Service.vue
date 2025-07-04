@@ -1,7 +1,7 @@
 <template>
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
-    <ModalDetailsService v-if="selectedId !== null" :is-open="IsOpenDetails" :service-data="selectedService" @close="CloseDetails" />
+    <ModalDetailsService v-if="selectedId !== null" :is-open="IsOpenDetails" :service="selectedService" @close="CloseDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Servicio?"
@@ -29,7 +29,6 @@
       :endIndex="endIndex"
       :totalItems="paginatedData.total"
       @updatePage="handlePageChange"
-      :sort-state="sortConfig"
       @sort="handleSort"
     >
       <TableRow v-for="service in paginatedData.items" :key="service.id">
@@ -40,16 +39,16 @@
           {{ formatToDollars(service.amount) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
-          {{ formatToDollars(service.totalExpense ?? 0) }}
+          {{ formatToDollars(service.total_expense) }}
         </TableContent>
         <TableContent class="text-right text-gray-600 dark:text-gray-300">
-          {{ formatToDollars(service.totalEarning ?? 0) }}
+          {{ formatToDollars(service.total_earning) }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
             <EyeButtonDetails @click="() => OpenDetails(String(service.id))" />
             <EditButton :route="AppRoutesService.edit(service.id)" />
-            <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
+            <TrashButton v-if="service.can_delete" @click="() => open(service.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -70,7 +69,7 @@
               <div class="flex gap-2">
                 <EyeButtonDetails @click="() => OpenDetails(String(service.id))" />
                 <EditButton :route="AppRoutesService.edit(service.id)" />
-                <TrashButton v-if="service.canDelete" @click="() => open(service.id)" />
+                <TrashButton v-if="service.can_delete" @click="() => open(service.id)" />
               </div>
             </div>
           </div>
@@ -103,14 +102,14 @@ import {
   TrashButton,
 } from '@/components/';
 import { ModalDetailsService } from '@/views/services/components/';
-import { deleteServiceById, getFilteredServices, getServiceById, Service } from '@/views/services/';
+import { DetailService, ListService } from '@/views/services/models';
+import { deleteServiceById, getFilteredServices, getServiceById } from '@/views/services/services';
 import { TABLE_HEADER_SERVICE } from '@/views/services/constants/';
 import { AppRoutesService } from '@/views/services/router';
 
 const isLoading = ref(false);
 const isLoadingDetails = ref(false);
-const selectedService = ref<Service | null>(null);
-const sortConfig = ref<{ column: keyof Service; order: 'asc' | 'desc' } | null>(null);
+const selectedService = ref<DetailService | null>(null);
 const searchQuery = ref('');
 
 const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
@@ -125,19 +124,14 @@ const OpenDetails = async (id: string) => {
   }
 };
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Service>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListService>();
 
 const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
 
-    const filters: Record<string, any> = {};
-
     const response = await getFilteredServices({
       search: searchQuery.value.trim(),
-      filters,
-      sortBy: sortConfig.value?.column,
-      sortDirection: sortConfig.value?.order,
       page: page,
       perPage: paginatedData.value.perPage,
     });
@@ -172,17 +166,6 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
     await runSearch();
   },
 });
-
-const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
-  if (config) {
-    sortConfig.value = {
-      column: config.column as keyof Service,
-      order: config.order,
-    };
-  } else {
-    sortConfig.value = null;
-  }
-};
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();

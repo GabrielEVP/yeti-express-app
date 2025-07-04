@@ -7,7 +7,7 @@
   />
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
-    <ModalDetailsEmployee v-if="selectedId !== null" :is-open="IsOpenDetails" :employee-data="selectedEmployee" @close="CloseDetails" />
+    <ModalDetailsEmployee v-if="selectedId !== null" :is-open="IsOpenDetails" :employee="selectedEmployee" @close="CloseDetails" />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -95,22 +95,16 @@ import {
   TableRow,
   TrashButton,
 } from '@/components/';
+import { DetailEmployee, getRoleLabel, ListEmployee, Role } from '@views/employees/models';
+import { deleteEmployeeById, getEmployeeById, getFilteredEmployees } from '@/views/employees/services';
+import { TABLE_HEADER_EMPLOYEE } from '@views/employees/constants';
+import { AppRoutesEmployee } from '@views/employees/router';
 import { ModalDetailsEmployee } from '@/views/employees/components/';
-import {
-  AppRoutesEmployee,
-  deleteEmployeeById,
-  Employee,
-  getEmployeeById,
-  getFilteredEmployees,
-  getRoleLabel,
-  Role,
-  TABLE_HEADER_EMPLOYEE,
-} from '@/views/employees/';
 
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
-const selectedEmployee = ref<Employee | null>(null);
+const selectedEmployee = ref<DetailEmployee | null>(null);
 const searchQuery = ref('');
 
 const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
@@ -125,7 +119,7 @@ const OpenDetails = async (id: string) => {
   }
 };
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Employee>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListEmployee>();
 
 const runSearch = async (page: number = 1) => {
   try {

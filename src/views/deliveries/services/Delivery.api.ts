@@ -1,5 +1,7 @@
 import { apiClient } from '@/services/';
-import { Delivery, adaptDelivery, adaptDeliveryForApi } from '@/views/deliveries/';
+import { adaptDelivery, adaptDeliveryForApi, Delivery } from '@/views/deliveries/';
+import { DeliveryDetails, SimpleDelivery } from '@views/deliveries/models';
+import { PaginatedResponse, PaginationParams } from '@models';
 
 export const deliveryApiRoutes = {
   base: '/deliveries',
@@ -19,9 +21,9 @@ export const getAllDeliveries = async (): Promise<Delivery[]> => {
   return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 };
 
-export const getDeliveryById = async (deliveryId: string | number): Promise<Delivery> => {
+export const getDeliveryById = async (deliveryId: string | number): Promise<DeliveryDetails> => {
   const response = await apiClient.get(deliveryApiRoutes.getById(deliveryId));
-  return adaptDelivery(response.data);
+  return response.data;
 };
 
 export const createDelivery = async (data: Delivery): Promise<Delivery> => {
@@ -40,41 +42,23 @@ export const deleteDeliveryById = async (deliveryId: string | number): Promise<v
   await apiClient.delete(deliveryApiRoutes.delete(deliveryId));
 };
 
-export const searchDeliveries = async (query: string): Promise<Delivery[]> => {
-  const response = await apiClient.get(deliveryApiRoutes.search(query));
-  return Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
-};
-
-export interface PaginationParams {
-  page?: number;
-  perPage?: number;
-}
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  currentPage: number;
-  perPage: number;
-  total: number;
-}
-export const getFilteredDeliveries = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<Delivery>> => {
+export const getFilteredDeliveries = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<SimpleDelivery>> => {
   const response = await apiClient.get(deliveryApiRoutes.filter, { params });
 
   if (response.data.items && Array.isArray(response.data.items)) {
     return {
-      items: response.data.items.map(adaptDelivery),
+      items: response.data.items,
       currentPage: response.data.currentPage || 1,
       perPage: response.data.perPage || 15,
-      total: response.data.total || 0
+      total: response.data.total || 0,
     };
   }
-
-  const items = Array.isArray(response.data) ? response.data.map(adaptDelivery) : [adaptDelivery(response.data)];
 
   return {
     items,
     currentPage: params.page || 1,
     perPage: params.perPage || 15,
-    total: items.length
+    total: items.length,
   };
 };
 
@@ -85,7 +69,6 @@ export const updateDeliveryStatus = async (deliveryId: string | number, status: 
 export const CancelDelivery = async (deliveryId: string | number, data: any): Promise<void> => {
   await apiClient.put(deliveryApiRoutes.CancelDelivery(deliveryId), data);
 };
-
 
 export const getDeliveryTicket = async (deliveryId: string | number): Promise<Blob> => {
   const response = await apiClient.get(deliveryApiRoutes.getTicket(deliveryId), { responseType: 'blob' });

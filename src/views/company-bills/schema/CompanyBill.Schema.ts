@@ -1,5 +1,5 @@
-import { object, string, number, date, mixed } from 'yup';
-import { PaymentMethod } from '@views/company-bills/models/PaymentMethod';
+import { date, mixed, number, object, string } from 'yup';
+import { PaymentMethod } from '@views/company-bills/';
 
 export const CompanyBillSchema = object({
   date: date().required('La fecha es requerida'),

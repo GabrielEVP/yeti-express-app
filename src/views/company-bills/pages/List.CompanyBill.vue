@@ -96,7 +96,7 @@ import {
   TrashButton,
 } from '@/components/';
 import { ModalDetails } from '@/views/company-bills/components';
-import { CompanyBill, formatPaymentMethod, getCompanyBillById } from '@/views/company-bills/';
+import { DetailCompanyBill, formatPaymentMethod, getCompanyBillById, ListCompanyBill } from '@/views/company-bills/';
 import { deleteCompanyBillById, getFilteredCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';
@@ -104,7 +104,7 @@ import { AppRoutesCompanyBill } from '@/views/company-bills/router';
 const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
 
 const isLoadingDetails = ref(false);
-const selectedBill = ref<CompanyBill | null>(null);
+const selectedBill = ref<DetailCompanyBill | null>(null);
 
 const OpenDetails = async (id: string) => {
   try {
@@ -116,7 +116,7 @@ const OpenDetails = async (id: string) => {
   }
 };
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<CompanyBill>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListCompanyBill>();
 
 const isLoading = ref(false);
 const searchQuery = ref<string>('');

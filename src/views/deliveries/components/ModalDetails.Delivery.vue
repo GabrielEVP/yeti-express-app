@@ -20,21 +20,21 @@
               <template #title>Estado</template>
               <template #content>
                 <Bagde>
-                  {{ getDeliveryStatusLabel(deliveryData.status) }}
+                  {{ deliveryData.status }}
                 </Bagde>
               </template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Servicio</template>
-              <template #content>{{ deliveryData.serviceName }}</template>
+              <template #content>{{ deliveryData.service_name }}</template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Cliente</template>
-              <template #content>{{ deliveryData.clientLegalName }}</template>
+              <template #content>{{ deliveryData.client_legal_name }}</template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Repartidor</template>
-              <template #content>{{ deliveryData.courierName }}</template>
+              <template #content>{{ deliveryData.courier_full_name }}</template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Monto</template>
@@ -48,12 +48,12 @@
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Fecha de Actualización</template>
-              <template #content>{{ formatDateCustom(deliveryData.updatedAt) }}</template>
+              <template #content>{{ formatDateCustom(deliveryData.updated_at) }}</template>
             </ModalContentItem>
           </div>
         </div>
         <div
-          v-if="deliveryData.receipt"
+          v-if="deliveryData.pickup_address"
           class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
         >
           <div class="flex items-center gap-3 mb-4 sm:mb-6">
@@ -63,13 +63,12 @@
           <div class="space-y-4 sm:space-y-5">
             <ModalContentItem>
               <template #title>Direccion</template>
-              <template #content>{{ deliveryData.pickupAddress }}</template>
+              <template #content>{{ deliveryData.pickup_address }}</template>
             </ModalContentItem>
           </div>
         </div>
-
         <div
-          v-if="deliveryData.receipt"
+          v-if="deliveryData.receipt_full_name"
           class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
         >
           <div class="flex items-center gap-3 mb-4 sm:mb-6">
@@ -79,22 +78,25 @@
           <div class="space-y-4 sm:space-y-5">
             <ModalContentItem>
               <template #title>Nombre Completo</template>
-              <template #content>{{ deliveryData.receipt.fullName }}</template>
+              <template #content>{{ deliveryData.receipt_full_name }}</template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Teléfono</template>
-              <template #content>{{ deliveryData.receipt.phone }}</template>
+              <template #content>{{ deliveryData.receipt_phone }}</template>
             </ModalContentItem>
             <ModalContentItem>
               <template #title>Dirección</template>
-              <template #content>{{ deliveryData.receipt.address }}</template>
+              <template #content>{{ deliveryData.receipt_address }}</template>
             </ModalContentItem>
           </div>
         </div>
-
         <ModalSpecialContentItem v-if="deliveryData.notes">
           <template #title>Notas</template>
           <template #content>{{ deliveryData.notes }}</template>
+        </ModalSpecialContentItem>
+        <ModalSpecialContentItem v-if="deliveryData.cancellation_notes">
+          <template #title>Nota de cancelacion</template>
+          <template #content>{{ deliveryData.cancellation_notes }}</template>
         </ModalSpecialContentItem>
       </div>
     </div>
@@ -105,11 +107,11 @@
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
 import { ClipboardCheck, PackageCheck } from 'lucide-vue-next';
-import { Delivery, getDeliveryStatusLabel } from '@/views/deliveries/';
+import { DeliveryDetails } from '@views/deliveries/models';
 
 defineProps<{
   isOpen: boolean;
-  deliveryData: Delivery | null;
+  deliveryData: DeliveryDetails | null;
 }>();
 
 const emit = defineEmits<{
