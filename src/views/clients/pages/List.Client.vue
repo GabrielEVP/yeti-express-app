@@ -1,7 +1,7 @@
 <template>
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
-    <ModalDetailsClient v-if="selectedId !== null" :is-open="isOpenDetails" :client-data="selectedClient" @close="closeDetails" />
+    <ModalDetailsClient v-if="selectedId !== null" :is-open="isOpenDetails" :client="selectedClient" @close="closeDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Cliente?"
@@ -77,19 +77,19 @@
     >
       <TableRow v-for="client in paginatedData.items" :key="client.id">
         <TableContent class="text-black dark:text-white break-words">
-          {{ client.legalName }}
+          {{ client.legal_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           <Bagde>{{ formatClientType(client.type as ClientType) }}</Bagde>
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300 break-words">
-          {{ client.registrationNumber }}
+          {{ client.registration_number }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
             <EyeButtonDetails @click="() => openDetails(String(client.id))" />
             <EditButton :route="AppRoutesClient.edit(client.id)" />
-            <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+            <TrashButton v-if="client.can_delete" @click="open(client.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -99,10 +99,10 @@
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
-                  {{ client.legalName }}
+                  {{ client.legal_name }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
-                  {{ client.registrationNumber }}
+                  {{ client.registration_number }}
                 </p>
               </div>
               <Bagde class="break-words text-right">
@@ -113,7 +113,7 @@
               <div class="flex gap-2">
                 <EyeButtonDetails @click="() => openDetails(String(client.id))" />
                 <EditButton :route="AppRoutesClient.edit(client.id)" />
-                <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+                <TrashButton v-if="client.can_delete" @click="open(client.id)" />
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ import {
   TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Client, ClientType, ClientTypeOptions, formatClientType } from '@/views/clients/';
+import { Client, ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
 import { ModalDetailsClient } from '@/views/clients/components/';
 import {
   allGetClientsDebtReport,
@@ -169,7 +169,7 @@ const selectedCredit = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
-const selectedClient = ref<Client | null>(null);
+const selectedClient = ref<DetailClient | null>(null);
 
 const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
 
@@ -182,11 +182,11 @@ const openDetails = async (id: string) => {
     isLoadingDetails.value = false;
   }
 };
-const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
+const sortConfig = ref<{ column: keyof ListClient; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 const clientTypeOptions = [...ClientTypeOptions];
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Client>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListClient>();
 
 watch([selectedType, selectedCredit, sortConfig], () => {
   runSearch();
@@ -225,7 +225,7 @@ const runSearch = async (page: number = 1) => {
 const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
   if (config) {
     sortConfig.value = {
-      column: config.column as keyof Client,
+      column: config.column as keyof ListClient,
       order: config.order,
     };
   } else {

@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/';
-import { adaptClient, Client } from '@views/clients';
+import { Client } from '@views/clients';
 import { adaptDelivery, Delivery } from '@views/deliveries';
 
 // Interface para la respuesta paginada de la API
@@ -27,7 +27,7 @@ export const allAmountDebts = async (): Promise<number> => {
 
 export const getClientsWithDebt = async (): Promise<Client[]> => {
   const response = await apiClient.get(debtApiRoutes.clientsWithDebt);
-  return Array.isArray(response.data) ? response.data.map(adaptClient) : [adaptClient(response.data)];
+  return response.data;
 };
 
 export const getClientStats = async (clientId: string): Promise<any> => {

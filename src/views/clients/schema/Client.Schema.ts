@@ -1,4 +1,4 @@
-import { object, string, array } from 'yup';
+import { array, object, string } from 'yup';
 
 export const AddressSchema = object({
   address: string().required('Dirección requerida'),
@@ -13,8 +13,8 @@ export const PhoneSchema = object({
 });
 
 export const ClientSchema = object({
-  legalName: string().required('Nombre Legal es requerido'),
-  registrationNumber: string().required('Numero de documento es Requerido'),
+  legal_name: string().required('Nombre Legal es requerido'),
+  registration_number: string().required('Numero de documento es Requerido'),
   addresses: array().of(AddressSchema),
   emails: array().of(EmailSchema),
   phones: array().of(PhoneSchema),

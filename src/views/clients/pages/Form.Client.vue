@@ -27,7 +27,7 @@
             </template>
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
-            <FieldForm label="Nombre Legal" name="legalName" id="legalName" required />
+            <FieldForm label="Nombre Legal" name="legal_name" id="legal_name" required />
             <SelectForm
               label="Tipo de cliente"
               name="type"
@@ -36,12 +36,12 @@
               :items="Array.from(ClientTypeOptions)"
               required
             />
-            <FieldForm label="Número de documento" name="registrationNumber" id="registrationNumber" required />
+            <FieldForm label="Número de documento" name="registration_number" id="registration_number" required />
             <div v-if="isUser">
               <SelectForm
                 label="Credito"
-                name="allowCredit"
-                id="allowCredit"
+                name="allow_credit"
+                id="allow_credit"
                 placeholder="Selecciona si el cliente puede pagar a credito"
                 :items="Array.from(AllowCreditOptions)"
                 required
@@ -85,7 +85,7 @@ import {
   TabsTitle,
   TextAreaForm,
 } from '@/components';
-import { Client, ClientTypeOptions } from '@/views/clients/models';
+import { ClientTypeOptions, FormClient } from '@/views/clients/models';
 import { AllowCreditOptions } from '@views/clients';
 import { TABS_FORM_CLIENT } from '@/views/clients/constants';
 import { ClientSchema } from '@/views/clients/schema';
@@ -104,10 +104,10 @@ const formReady = ref(false);
 
 const router = useRouter();
 const route = useRoute();
-const clientId = route.params.id as string;
+const client_id = route.params.id as string;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Client>({
-  id: clientId,
+const { initializeForm, onSubmit, meta } = useVeeForm<FormClient>({
+  id: client_id,
   getById: getClientById,
   create: createClient,
   update: (values, id) => updateClient(values, id),
