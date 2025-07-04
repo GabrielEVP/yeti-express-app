@@ -1,8 +1,8 @@
-import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries';
-import { formatDateCustom, formatToDollars } from '@utils';
-import { useAlert } from '@composables';
+import { DetailDelivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/models';
+import { formatDateCustom, formatToDollars } from '@/utils';
+import { useAlert } from '@/composables';
 
-export function copyToClipboard(delivery: Delivery) {
+export function copyToClipboard(delivery: DetailDelivery) {
   const { triggerError, triggerSuccess } = useAlert();
 
   const text = `
@@ -14,26 +14,26 @@ export function copyToClipboard(delivery: Delivery) {
 ----------------------------
 Direccion de retiro
  
-👤 *Cliente:* ${delivery.clientLegalName}
-📍 *Dirección:* ${delivery.pickupAddress || 'N/A'}
+👤 *Cliente:* ${delivery.client_legal_name}
+📍 *Dirección:* ${delivery.pickup_address || 'N/A'}
 
 ----------------------------
 
-🚚 *Servicio:* ${delivery.serviceName}
+🚚 *Servicio:* ${delivery.service_name}
 💰 *Monto:* ${formatToDollars(delivery.amount)}
-📌 *Estado del Pago:* ${getDeliveryPaymentStatusLabel(delivery.paymentStatus)}
+📌 *Estado del Pago:* ${getDeliveryPaymentStatusLabel(delivery.payment_status)}
 
 ----------------------------
 
-🛵️ *Repartidor:* ${delivery.courierName}
+🛵️ *Repartidor:* ${delivery.courier_full_name}
 📍 *Estado:* ${getDeliveryStatusLabel(delivery.status)}
 
 ----------------------------
 Direccion de entrega del pedido 
 
-🤝 *Recibe:* ${delivery.receipt.fullName || 'N/A'}
-📞 *Teléfono:* ${delivery.receipt.phone || 'N/A'}
-🏠 *Dirección de Entrega:* ${delivery.receipt.address || 'N/A'}
+🤝 *Recibe:* ${delivery.receipt_full_name || 'N/A'}
+📞 *Teléfono:* ${delivery.receipt_phone || 'N/A'}
+🏠 *Dirección de Entrega:* ${delivery.receipt_address || 'N/A'}
 
 📝 *Nota:*
 ${delivery.notes || 'Sin notas'}

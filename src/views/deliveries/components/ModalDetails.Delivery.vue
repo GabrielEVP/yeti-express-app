@@ -107,11 +107,11 @@
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
 import { ClipboardCheck, PackageCheck } from 'lucide-vue-next';
-import { DeliveryDetails } from '@views/deliveries/models';
+import { DetailDelivery } from '@views/deliveries/models';
 
 defineProps<{
   isOpen: boolean;
-  deliveryData: DeliveryDetails | null;
+  deliveryData: DetailDelivery | null;
 }>();
 
 const emit = defineEmits<{

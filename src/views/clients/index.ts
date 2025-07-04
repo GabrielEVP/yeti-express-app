@@ -4,6 +4,8 @@ export * from './constants/UiTimeLine.Client';
 export * from './factory/Client.Factory';
 export * from './models/AllowCredit';
 export * from './models/Client';
+export * from './models/FormClient';
+export * from './models/ListClient';
 export * from './models/Type';
 export * from './router/Router.Client';
 export * from './schema/Client.Schema';

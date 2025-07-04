@@ -86,19 +86,16 @@
           {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.clientLegalName }}
+          {{ delivery.client_legal_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.courierName }}
+          {{ delivery.courier_full_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.serviceName }}
+          {{ delivery.service_name }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
           {{ formatToDollars(delivery.amount) }}
-        </TableContent>
-        <TableContent class="text-black text-center dark:text-white break-words">
-          {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde
@@ -127,7 +124,7 @@
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
-            <CopyWhatsapp @click="copyToClipboard(delivery)" />
+            <CopyWhatsapp @click="copyToClipboard(selectedDelivery)" />
           </div>
         </TableContent>
       </TableRow>
@@ -169,7 +166,7 @@
                   v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
                   @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
                 />
-                <CopyWhatsapp @click="copyToClipboard(delivery)" />
+                <CopyWhatsapp @click="copyToClipboard(selectedDelivery)" />
               </div>
             </div>
           </div>
@@ -202,7 +199,7 @@ import {
   TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
+import { DeliveryStatus, DetailDelivery, getDeliveryStatusLabel, ListDelivery } from '@views/deliveries/models';
 import { deleteDeliveryById, getDeliveryById, getDeliveryTicket, getFilteredDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
@@ -214,9 +211,9 @@ import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
 import ModalDetailsDelivery from '../components/ModalDetails.Delivery.vue';
-import { getAllServices, Service } from '@views/services';
+import { getAllServices, ListService } from '@views/services';
 
-const deliveries = ref<Delivery[]>([]);
+const deliveries = ref<ListDelivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
 const selectedPaymentStatus = ref<string>('');
 const selectedServiceId = ref<string>('');
@@ -226,7 +223,7 @@ const endDate = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
-const selectedDelivery = ref<Delivery | null>(null);
+const selectedDelivery = ref<DetailDelivery | null>(null);
 
 const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
 
@@ -239,10 +236,11 @@ const openDetails = async (id: string) => {
     isLoadingDetails.value = false;
   }
 };
-const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
+
+const sortConfig = ref<{ column: keyof ListDelivery; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 
-const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<Delivery>();
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListDelivery>();
 
 const modalStatus = ref<DeliveryStatus | undefined>(undefined);
 const isStatusModalOpen = ref(false);
@@ -309,7 +307,7 @@ const runSearch = async (page: number = 1) => {
 const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
   if (config) {
     sortConfig.value = {
-      column: config.column as keyof Delivery,
+      column: config.column as keyof ListDelivery,
       order: config.order,
     };
   } else {
@@ -319,7 +317,7 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
 
 const debouncedSearch = useDebounce(runSearch, 500);
 
-const services = ref<Service[]>([]);
+const services = ref<ListService[]>([]);
 
 const serviceOptions = computed(() =>
   services.value.map((service) => ({

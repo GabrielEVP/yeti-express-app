@@ -4,7 +4,7 @@
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
         <LoadingAbsoluteSkeleton v-if="!formReady" />
-        <form v-else @submit.prevent="onSubmit" class="h-full">
+        <form @submit.prevent="onSubmit" class="h-full">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
               <option value="general">General</option>
@@ -31,16 +31,16 @@
             <div class="space-y-4">
               <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <SelectForm label="Servicio" name="serviceId" placeholder="Selecciona un servicio" :items="serviceOptions" />
+                <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
                 <SelectForm
                   label="Forma de pago"
-                  name="paymentType"
+                  name="payment_type"
                   placeholder="Forma de pago"
                   :items="[...PaymentTypeOptions]"
                   :disabled="!selectedClientAllowCredit"
                 />
                 <div class="sm:col-span-2 lg:col-span-1">
-                  <SelectForm label="Repartidor" name="courierId" placeholder="Selecciona un repartidor" :items="courierOptions" />
+                  <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
                 </div>
               </div>
             </div>
@@ -48,7 +48,7 @@
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FieldForm label="Nombre completo" name="receipt.fullName" id="fullName" required />
+                <FieldForm label="Nombre completo" name="receipt.full_name" id="fullName" required />
                 <FieldForm label="Teléfono" name="receipt.phone" id="phone" required />
               </div>
               <div class="w-full">
@@ -92,7 +92,7 @@ import {
   TabsTitle,
   TextAreaForm,
 } from '@/components';
-import { Delivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
+import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
 import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
@@ -109,7 +109,7 @@ const formReady = ref(false);
 
 const selectedClientAllowCredit = ref(true);
 
-const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
   id: deliveryId,
   getById: getDeliveryById,
   create: createDelivery,
