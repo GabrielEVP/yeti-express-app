@@ -132,7 +132,7 @@ const courierOptions = computed(() =>
 const services = ref<ListService[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
-    label: service.name,
+    label: `${service.name} -- ${service.amount}`,
     value: service.id,
   }))
 );

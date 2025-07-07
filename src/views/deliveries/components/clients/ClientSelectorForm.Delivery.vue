@@ -130,7 +130,7 @@ const selectedClient = ref<ListClient | null>(null);
 
 const clientsOptions = computed(() =>
   clients.value.map((client) => ({
-    label: client.legal_name,
+    label: `${client.legal_name} - ${client.registration_number}`,
     value: client.id,
   }))
 );

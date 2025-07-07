@@ -368,7 +368,6 @@ const handleDeleteConfirmation = async () => {
   await confirmDelete();
 };
 
-// Función modificada para mostrar el ticket en modal
 const handleViewTicket = async (deliveryId: string) => {
   try {
     const blob = await getDeliveryTicket(deliveryId);
@@ -378,22 +377,18 @@ const handleViewTicket = async (deliveryId: string) => {
       return;
     }
 
-    // Crear URL del blob para mostrar en el modal
     const url = window.URL.createObjectURL(blob);
 
-    // Establecer los datos del ticket
     ticketBlob.value = blob;
     ticketUrl.value = url;
     selectedTicketDeliveryId.value = deliveryId;
 
-    // Abrir el modal
     isTicketModalOpen.value = true;
   } catch (error) {
     console.error('Error al obtener el ticket:', error);
   }
 };
 
-// Función para descargar el ticket desde el modal
 const downloadTicket = () => {
   if (!ticketBlob.value || !selectedTicketDeliveryId.value) return;
 
@@ -413,11 +408,9 @@ const downloadTicket = () => {
   window.URL.revokeObjectURL(url);
 };
 
-// Función para cerrar el modal del ticket
 const closeTicketModal = () => {
   isTicketModalOpen.value = false;
 
-  // Limpiar la URL del blob para evitar memory leaks
   if (ticketUrl.value) {
     window.URL.revokeObjectURL(ticketUrl.value);
     ticketUrl.value = '';

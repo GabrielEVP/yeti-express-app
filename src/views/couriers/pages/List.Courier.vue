@@ -207,9 +207,25 @@ const close_date = ref<string>('');
 const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
 
 const handleGeneralReport = async (start: string, end: string) => {
-  const blob = await getAllCouriersDeliveriesReport(start, end);
-  const filename = `informe_general_entregas_${start}_${end}.pdf`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getAllCouriersDeliveriesReport(start, end);
+    const filename = `informe_general_entregas_${start}_${end}.pdf`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const handleReportDetail = async (courierId: string, start: string, end: string) => {
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getCourierDeliveryReport(courierId, start, end);
+    const filename = `informe_entregas_${courierId}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 
 const courierOptions = computed(() => {
@@ -220,10 +236,4 @@ const courierOptions = computed(() => {
 });
 
 const { isOpen: isOpenDetail, selectedId: selectedCourierId, open: openDetail, close: closeDetail } = useModal();
-
-const handleReportDetail = async (courierId: string, start: string, end: string) => {
-  const blob = await getCourierDeliveryReport(courierId, start, end);
-  const filename = `informe_entregas_${courierId}`;
-  generatePdf(blob, filename);
-};
 </script>

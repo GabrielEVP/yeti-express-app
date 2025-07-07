@@ -1,4 +1,5 @@
 <template>
+  <LoadingAbsoluteSkeleton v-if="isLoading" />
   <Card>
     <div class="p-4 sm:p-6">
       <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -106,7 +107,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { formatToDollars, generatePdf } from '@utils';
-import { Bagde, Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
+import { Bagde, Button, Card, LoadingAbsoluteSkeleton, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
 import { ClientDebt, ClientStats } from '@views/debts/models';
 import { useModal } from '@composables';
 import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
@@ -137,21 +138,38 @@ const clientsOptions = computed(() => {
   }));
 });
 
+const isLoading = ref(false);
+
 const handleGeneralReport = async (start: string, end: string) => {
-  const blob = await allGetClientsDebtReport(start, end);
-  const filename = `informe_general_deudas_${start}_${end}.pdf`;
-  generatePdf(blob, filename);
+  isLoading.value = true;
+  try {
+    const blob = await allGetClientsDebtReport(start, end);
+    const filename = `informe_general_deudas_${start}_${end}.pdf`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
-  const blob = await getClientDebtReport(clientId, start, end);
-  const filename = `informe_deuda_${clientId}.pdf`;
-  generatePdf(blob, filename);
+  isLoading.value = true;
+  try {
+    const blob = await getClientDebtReport(clientId, start, end);
+    const filename = `informe_deuda_${clientId}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const handlePendingReport = async () => {
-  const blob = await allGetPendingPaidDebtsReport();
-  const filename = `informe_deuda_general.pdf`;
-  generatePdf(blob, filename);
+  isLoading.value = true;
+  try {
+    const blob = await allGetPendingPaidDebtsReport();
+    const filename = `informe_deuda_general`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>

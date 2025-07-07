@@ -270,22 +270,37 @@ const close_date = ref<string>('');
 const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal<string>();
 
 const handleGeneralReport = async (start: string, end: string) => {
-  const blob = await allGetClientsDebtReport(start, end);
-  const filename = `informe_general_deudas_${start}_${end}.pdf`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await allGetClientsDebtReport(start, end);
+    const filename = `informe_general_deudas_${start}_${end}.pdf`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 
 const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal<string>();
 
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
-  const blob = await getClientDebtReport(clientId, start, end);
-  const filename = `informe_deuda_${clientId}`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getClientDebtReport(clientId, start, end);
+    const filename = `informe_deuda_${clientId}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 
 const handlePendingReport = async () => {
-  const blob = await allGetPendingPaidDebtsReport();
-  const filename = `informe_deuda_general`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await allGetPendingPaidDebtsReport();
+    const filename = `informe_deuda_general`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 </script>
