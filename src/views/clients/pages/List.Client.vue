@@ -150,14 +150,8 @@ import {
 import SelectFilter from '@components/forms/SelectFilter.vue';
 import { Client, ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
 import { ModalDetailsClient } from '@/views/clients/components/';
-import {
-  allGetClientsDebtReport,
-  allGetPendingPaidDebtsReport,
-  deleteClientById,
-  getClientById,
-  getClientDebtReport,
-  getFilteredClients,
-} from '@/views/clients/service/';
+import { deleteClientById, getClientById, getFilteredClients } from '@/views/clients/service/';
+import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
 import { getClientsWithDebt } from '@views/debts';
@@ -258,8 +252,8 @@ onMounted(async () => {
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteClientById,
-  successMessage: 'Repartidor eliminado exitosamente',
-  errorMessage: 'Error al eliminar el repartidor',
+  successMessage: 'Ciente eliminado exitosamente',
+  errorMessage: 'Error al eliminar el cliente',
   onAfterDelete: async () => {
     await runSearch();
   },

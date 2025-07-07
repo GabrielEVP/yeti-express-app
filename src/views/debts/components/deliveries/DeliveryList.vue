@@ -12,8 +12,8 @@
       :key="delivery.id"
       class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
     >
-      <DeliveryCardMobile :delivery="delivery as Delivery" @pay-full="openFull" @pay-partial="openPartial" />
-      <DeliveryCardDesktop :delivery="delivery as Delivery" @pay-full="openFull" @pay-partial="openPartial" />
+      <DeliveryCardMobile :delivery="delivery as DeliveryWithDebt" @pay-full="openFull" @pay-partial="openPartial" />
+      <DeliveryCardDesktop :delivery="delivery as DeliveryWithDebt" @pay-full="openFull" @pay-partial="openPartial" />
     </div>
     <EmptyStateSelectClient v-if="!clientId" />
     <EmptyStateNoDeliveries v-if="deliveries.length === 0 && clientId && !isLoading" :show-action="true" />
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Delivery } from '@views/deliveries';
+import { DeliveryWithDebt } from '@views/debts/models';
 import PaymentFullModalDebt from '../payment/deliveries/PaymentFullModal.Debt.vue';
 import PaymentPartialModalDebt from '../payment/deliveries/PaymentPartialModal.Debt.vue';
 import DeliveryCardMobile from './CardMobile.vue';
@@ -52,7 +52,7 @@ interface PaginationData {
 const props = defineProps<{
   clientId: string | null;
   paymentStatus: string;
-  deliveries: Delivery[];
+  deliveries: DeliveryWithDebt[];
   paginationData: PaginationData;
   isLoading: boolean;
 }>();
@@ -64,16 +64,16 @@ const emit = defineEmits<{
   (e: 'next-page'): void;
 }>();
 
-const selectedDelivery = ref<Delivery>();
+const selectedDelivery = ref<DeliveryWithDebt>();
 const isFullModalOpen = ref(false);
 const isPartialModalOpen = ref(false);
 
-const openFull = (delivery: Delivery) => {
+const openFull = (delivery: DeliveryWithDebt) => {
   selectedDelivery.value = delivery;
   isFullModalOpen.value = true;
 };
 
-const openPartial = (delivery: Delivery) => {
+const openPartial = (delivery: DeliveryWithDebt) => {
   selectedDelivery.value = delivery;
   isPartialModalOpen.value = true;
 };

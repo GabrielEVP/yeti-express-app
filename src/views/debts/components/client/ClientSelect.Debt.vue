@@ -4,10 +4,10 @@
       <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 class="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 truncate">
-            {{ selectedClient?.legalName || 'Selecciona un cliente' }}
+            {{ selectedClient?.legal_name || 'Selecciona un cliente' }}
           </h2>
           <p v-if="selectedClient" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {{ selectedClient.registrationNumber }}
+            {{ selectedClient.registration_number }}
           </p>
         </div>
 
@@ -107,22 +107,22 @@
 import { computed, ref } from 'vue';
 import { formatToDollars, generatePdf } from '@utils';
 import { Bagde, Button, Card, ModalReportDetail, ModalReportGeneral, ReportButton } from '@components';
-import { Client, Stast } from '@views/clients';
+import { ClientDebt, ClientStats } from '@views/debts/models';
 import { useModal } from '@composables';
-import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/clients/service/';
+import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
 import { ClipboardIcon, DollarSignIcon } from 'lucide-vue-next';
 
 defineProps<{
-  selectedClient: Client | null;
+  selectedClient: ClientDebt | null;
   totalDebtsAmount: number;
-  stast: Stast | null;
+  stast: ClientStats | null;
 }>();
 
 defineEmits<{
   (e: 'open'): void;
 }>();
 
-const clientsWithDebts = ref<Client[]>([]);
+const clientsWithDebts = ref<ClientDebt[]>([]);
 const openDate = ref<string>('');
 const closeDate = ref<string>('');
 
@@ -131,7 +131,7 @@ const { isOpen: isOpenDetail, open: openDetail, close: closeDetail } = useModal(
 
 const clientsOptions = computed(() => {
   return clientsWithDebts.value.map((client) => ({
-    label: client.legalName,
+    label: client.legal_name,
     value: client.id,
   }));
 });

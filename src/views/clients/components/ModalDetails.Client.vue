@@ -6,8 +6,8 @@
         <div class="text-center py-4 sm:py-6 relative">
           <div class="relative">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 tracking-wide uppercase">Nombre</p>
-            <div class="relative inline-block">
-              <p class="text-3xl sm:text-4xl font-black text-black dark:text-white">
+            <div class="relative inline-block max-w-full">
+              <p class="text-3xl sm:text-4xl font-black text-black dark:text-white break-words hyphens-auto leading-tight">
                 {{ client.legal_name }}
               </p>
               <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gradient-to-r bg-black dark:bg-white rounded-full"></div>

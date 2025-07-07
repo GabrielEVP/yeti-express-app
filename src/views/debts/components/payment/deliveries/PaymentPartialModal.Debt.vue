@@ -21,13 +21,13 @@
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Monto Total</Text>
                 <Text>
-                  {{ formatToDollars(delivery.amount) }}
+                  {{ formatToDollars(delivery.debt_amount) }}
                 </Text>
               </div>
               <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <Text>Pendiente</Text>
                 <Text>
-                  {{ formatToDollars(delivery.debtRemainingAmount) }}
+                  {{ formatToDollars(delivery.debt_remaining_amount) }}
                 </Text>
               </div>
             </div>
@@ -38,8 +38,8 @@
               label="Monto"
               type="number"
               name="amount"
-              :max="String(delivery.debtRemainingAmount)"
-              :placeholder="String(delivery.debtRemainingAmount)"
+              :max="String(delivery.debt_remaining_amount)"
+              :placeholder="String(delivery.debt_remaining_amount)"
             />
           </div>
           <div class="mb-4">
@@ -68,17 +68,15 @@
 import { defineProps, onMounted } from 'vue';
 import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
-import { Label, Text, CancelButton, AcceptButton, FieldForm } from '@/components/';
+import { AcceptButton, CancelButton, FieldForm, Label, Text } from '@/components/';
 import FieldRadio from '@components/forms/FieldRadio.vue';
-import { Delivery } from '@/views/deliveries';
-import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
-import { PartialDebtPaymentSchema } from '@views/debts/';
-import { createDebtPaymentPartial } from '@views/debts/';
+import { DeliveryWithDebt } from '@/views/debts/models';
+import { createDebtPaymentPartial, DebtPayment, PartialDebtPaymentSchema, PaymentMethodOptions } from '@views/debts/';
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
 const props = defineProps<{
   isOpen: boolean;
-  delivery: Delivery;
+  delivery: DeliveryWithDebt;
 }>();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
@@ -91,7 +89,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   validation: {
     schema: PartialDebtPaymentSchema,
     initialValues: {
-      debtId: props.delivery.debtId ?? '',
+      debtId: props.delivery.debt_id ?? '',
     },
   },
 });
@@ -103,7 +101,7 @@ onMounted(() => {
 const emit = defineEmits<{
   (e: 'proccess', value: boolean): void;
   (e: 'update:isOpen', value: boolean): void;
-  (e: 'select', delivery: Delivery): void;
+  (e: 'select', delivery: DeliveryWithDebt): void;
 }>();
 
 const emitClose = () => {

@@ -130,7 +130,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="delivery in deliveries" :key="delivery.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="delivery in paginatedData.items" :key="delivery.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">

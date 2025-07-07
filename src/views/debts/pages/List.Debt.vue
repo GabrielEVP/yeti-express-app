@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <ClientSelectorModal v-model:open="isOpen" :clients="clients as Client[]" @select="selectedClient = $event" />
-    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="() => open('')" :total-debts-amount="totalDebtAmount" />
+    <ClientSelectorModal v-model:open="isOpen" :clients="clients" @select="selectedClient = $event" />
+    <ClientSelect :selectedClient="selectedClient" :stast="clientsStats" @open="() => open('')" :total-debts-amount="totalDebtAmount" />
     <StatusFilter
-      v-if="selectedClient && paginationData.total > 0"
+      v-if="selectedClient && paginatedData.total > 0"
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
       :stast="clientsStats"
       v-model="selectedPaymentStatus"
@@ -13,8 +13,15 @@
     <DeliveryList
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : null"
       :payment-status="selectedPaymentStatus"
-      :deliveries="deliveries"
-      :pagination-data="paginationData"
+      :deliveries="paginatedData.items"
+      :pagination-data="{
+        current_page: paginatedData.currentPage,
+        per_page: paginatedData.perPage,
+        total: paginatedData.total,
+        last_page: totalPages,
+        from: startIndex,
+        to: endIndex,
+      }"
       :is-loading="isLoading"
       @refresh="handleRefresh"
       @previous-page="handlePreviousPage"
@@ -25,26 +32,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { LoadingSkeleton, SideBar } from '@components';
-import { useModal } from '@composables';
+import { useModal, usePagination } from '@composables';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
 import StatusFilter from '../components/deliveries/FilterDelivery.vue';
 import { Delivery } from '@/views/deliveries/';
 import { allAmountDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
-import { Client, Stast } from '@views/clients';
-
-// Interface para los datos de paginación
-interface PaginationData {
-  current_page: number;
-  per_page: number;
-  total: number;
-  last_page: number;
-  from: number;
-  to: number;
-}
+import { ClientDebt, ClientStats } from '@views/debts/models';
 
 const paymentStatusOptions = [
   { label: 'Todos', value: 'all' },
@@ -54,78 +51,66 @@ const paymentStatusOptions = [
 ];
 
 const selectedPaymentStatus = ref('all');
-const clients = ref<Client[]>([]);
+const clients = ref<ClientDebt[]>([]);
 const totalDebtAmount = ref<number>(0);
-const clientsStats = ref<Stast | null>(null);
-const selectedClient = ref<Client | null>(null);
+const clientsStats = ref<ClientStats | null>(null);
+const selectedClient = ref<ClientDebt | null>(null);
 const deliveries = ref<Delivery[]>([]);
 const isLoading = ref(false);
 
-// Estado para la información de paginación
-const paginationData = reactive<PaginationData>({
-  current_page: 1,
-  per_page: 15,
-  total: 0,
-  last_page: 1,
-  from: 0,
-  to: 0,
-});
+const { paginatedData, startIndex, endIndex, totalPages, updatePage, setPaginatedData } = usePagination<Delivery>();
 
 const { isOpen, open } = useModal();
 
-// Función para cargar entregas con paginación
 const loadDeliveries = async (clientId: string, paymentStatus: string = selectedPaymentStatus.value, page: number = 1) => {
   try {
     isLoading.value = true;
 
-    const response = await getClientDeliveryWithDebtsFilter(clientId, paymentStatus, page, paginationData.per_page);
+    const response = await getClientDeliveryWithDebtsFilter({
+      client_id: clientId,
+      payment_status: paymentStatus !== 'all' ? paymentStatus : undefined,
+      page,
+      perPage: paginatedData.value.perPage,
+    });
 
-    deliveries.value = response.data;
+    deliveries.value = response.items;
 
-    // Actualizar información de paginación
-    paginationData.current_page = response.current_page;
-    paginationData.per_page = response.per_page;
-    paginationData.total = response.total;
-    paginationData.last_page = response.last_page;
-    paginationData.from = response.from;
-    paginationData.to = response.to;
+    setPaginatedData(response);
   } catch (error) {
     console.error('Error loading deliveries:', error);
     deliveries.value = [];
-    // Reset pagination data on error
-    paginationData.current_page = 1;
-    paginationData.total = 0;
-    paginationData.last_page = 1;
-    paginationData.from = 0;
-    paginationData.to = 0;
+    setPaginatedData({
+      items: [],
+      currentPage: 1,
+      perPage: 15,
+      total: 0,
+    });
   } finally {
     isLoading.value = false;
   }
 };
 
-// Manejar cambio de página anterior
 const handlePreviousPage = () => {
-  if (selectedClient.value && paginationData.current_page > 1) {
-    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginationData.current_page - 1);
+  if (selectedClient.value && paginatedData.value.currentPage > 1) {
+    const params = updatePage(paginatedData.value.currentPage - 1);
+    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, params.page);
   }
 };
 
-// Manejar cambio de página siguiente
 const handleNextPage = () => {
-  if (selectedClient.value && paginationData.current_page < paginationData.last_page) {
-    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginationData.current_page + 1);
+  if (selectedClient.value && paginatedData.value.currentPage < totalPages.value) {
+    const params = updatePage(paginatedData.value.currentPage + 1);
+    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, params.page);
   }
 };
 
-// Watcher para cliente seleccionado
 watch(selectedClient, async (newClient) => {
   if (newClient) {
     try {
       isLoading.value = true;
       clientsStats.value = await getClientStats(newClient.id);
-      // Reset pagination to first page when client changes
-      paginationData.current_page = 1;
-      await loadDeliveries(newClient.id, selectedPaymentStatus.value, 1);
+      const params = updatePage(1);
+      await loadDeliveries(newClient.id, selectedPaymentStatus.value, params.page);
     } catch (error) {
       clientsStats.value = null;
       deliveries.value = [];
@@ -136,25 +121,22 @@ watch(selectedClient, async (newClient) => {
   } else {
     deliveries.value = [];
     clientsStats.value = null;
-    // Reset pagination when no client selected
-    paginationData.current_page = 1;
-    paginationData.total = 0;
-    paginationData.last_page = 1;
-    paginationData.from = 0;
-    paginationData.to = 0;
+    setPaginatedData({
+      items: [],
+      currentPage: 1,
+      perPage: 15,
+      total: 0,
+    });
   }
 });
 
-// Watcher para estado de pago
 watch(selectedPaymentStatus, async (newStatus) => {
   if (selectedClient.value) {
-    // Reset to first page when filter changes
-    paginationData.current_page = 1;
-    await loadDeliveries(selectedClient.value.id, newStatus, 1);
+    const params = updatePage(1);
+    await loadDeliveries(selectedClient.value.id, newStatus, params.page);
   }
 });
 
-// Cargar datos iniciales
 onMounted(async () => {
   try {
     totalDebtAmount.value = await allAmountDebts();
@@ -165,10 +147,9 @@ onMounted(async () => {
   }
 });
 
-// Función para refrescar datos
 const handleRefresh = async () => {
   if (selectedClient.value) {
-    await loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginationData.current_page);
+    await loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginatedData.value.currentPage);
     try {
       totalDebtAmount.value = await allAmountDebts();
       clientsStats.value = await getClientStats(selectedClient.value.id);

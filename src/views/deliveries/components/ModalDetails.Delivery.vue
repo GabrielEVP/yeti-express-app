@@ -19,9 +19,19 @@
             <ModalContentItem>
               <template #title>Estado</template>
               <template #content>
-                <Bagde>
-                  {{ deliveryData.status }}
-                </Bagde>
+                <Bagde>{{ getDeliveryStatusLabel(deliveryData.status) }}</Bagde>
+              </template>
+            </ModalContentItem>
+            <ModalContentItem>
+              <template #title>Estado de pago</template>
+              <template #content>
+                <Bagde>{{ getDeliveryPaymentStatusLabel(deliveryData.payment_status) }}</Bagde>
+              </template>
+            </ModalContentItem>
+            <ModalContentItem>
+              <template #title>Tipo de pago</template>
+              <template #content>
+                <Bagde>{{ getPaymentTypeLabel(deliveryData.payment_type) }}</Bagde>
               </template>
             </ModalContentItem>
             <ModalContentItem>
@@ -107,7 +117,7 @@
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
 import { ClipboardCheck, PackageCheck } from 'lucide-vue-next';
-import { DetailDelivery } from '@views/deliveries/models';
+import { DetailDelivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel, getPaymentTypeLabel } from '@views/deliveries/models';
 
 defineProps<{
   isOpen: boolean;

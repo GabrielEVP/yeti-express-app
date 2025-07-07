@@ -41,17 +41,15 @@
 import { defineProps, onMounted } from 'vue';
 import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
-import { Text, CancelButton, AcceptButton } from '@/components/';
+import { AcceptButton, CancelButton, Text } from '@/components/';
 import FieldRadio from '@components/forms/FieldRadio.vue';
-import { PaymentMethodOptions } from '@views/debts/';
-import { FullDebtPaymentSchema } from '@views/debts/';
-import { payAllDebts } from '@views/debts/';
+import { FullDebtPaymentSchema, payAllDebts, PaymentMethodOptions } from '@views/debts/';
 import FieldHidden from '@components/forms/FieldHidden.vue';
-import { Stast } from '@views/clients';
+import { ClientStats } from '@views/debts/models';
 
 const props = defineProps<{
   isOpen: boolean;
-  stast: Stast | null;
+  stast: ClientStats | null;
   clientId: string;
 }>();
 

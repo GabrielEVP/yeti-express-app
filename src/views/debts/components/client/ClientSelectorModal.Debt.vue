@@ -21,18 +21,18 @@
           <div class="flex flex-col space-y-2">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between">
               <h4 class="font-medium text-gray-900 dark:text-gray-100 text-lg truncate">
-                {{ client.legalName }}
+                {{ client.legal_name }}
               </h4>
-              <span class="text-xs text-gray-500 dark:text-gray-400">{{ client.registrationNumber }}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ client.registration_number }}</span>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-2 gap-2 mt-2">
               <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 flex flex-col items-center justify-center">
                 <span class="text-xs text-gray-500 dark:text-gray-400">Deudas Pendientes</span>
-                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ client.debtsCount || 0 }}</span>
+                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ client.debt_counts || 0 }}</span>
               </div>
               <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2 flex flex-col items-center justify-center">
                 <span class="text-xs text-gray-500 dark:text-gray-400">Monto Pendiente</span>
-                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ formatToDollars(client.totalDebtAmount || 0) }}</span>
+                <span class="text-base font-semibold text-gray-700 dark:text-gray-300">{{ formatToDollars(client.total_pending || 0) }}</span>
               </div>
             </div>
           </div>
@@ -47,46 +47,31 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { X } from 'lucide-vue-next';
-import { Client } from '@views/clients';
+import { ClientDebt } from '@views/debts/models';
 import { Input } from '@/components/';
 import { EmptyData } from '@components';
 import { formatToDollars } from '@utils';
 
 const props = defineProps<{
   open: boolean;
-  clients: Client[];
+  clients: ClientDebt[];
 }>();
 
 const emit = defineEmits<{
   (e: 'update:open', value: boolean): void;
-  (e: 'select', client: Client): void;
+  (e: 'select', client: ClientDebt): void;
 }>();
 
 const clientSearch = ref('');
 
-const filteredClients = computed(() => props.clients.filter((client) => client.legalName.toLowerCase().includes(clientSearch.value.toLowerCase())));
+const filteredClients = computed(() => props.clients.filter((client) => client.legal_name.toLowerCase().includes(clientSearch.value.toLowerCase())));
 
-const select = (client: Client) => {
+const select = (client: ClientDebt) => {
   emit('select', client);
   emit('update:open', false);
 };
 
 const emitClose = () => {
   emit('update:open', false);
-};
-
-const formatDate = (dateString?: string) => {
-  if (!dateString) return 'N/A';
-
-  try {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('es', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  } catch (e) {
-    return 'N/A';
-  }
 };
 </script>

@@ -14,10 +14,6 @@ export const clientApiRoutes = {
   edit: (id: string | number) => `${base}/edit/${id}`,
   search: (query: string) => `${base}/search/${query}`,
   filter: `${base}/filter`,
-  getDebtReport: (id: string | number) => `${base}/${id}/debts-report`,
-  allGetDebtsReport: `${base}/debts-report`,
-  allGetPendingPaidDebtsReport: `${base}/reports/unpaid-debts`,
-  getClientsWithDebts: `${base}/with-debts`,
 };
 
 export const getAllClients = async (): Promise<ListClient[]> => {
@@ -47,35 +43,4 @@ export const deleteClientById = async (id: string): Promise<void> => {
 export const getFilteredClients = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<ListClient>> => {
   const response = await apiClient.get(clientApiRoutes.filter, { params });
   return handlePaginatedResponse(response, params);
-};
-
-export const getClientDebtReport = async (id: string, startDate?: string, endDate?: string): Promise<any> => {
-  const params: Record<string, string> = {};
-
-  if (startDate && endDate) {
-    params.start_date = startDate;
-    params.end_date = endDate;
-  }
-
-  const response = await apiClient.get(clientApiRoutes.getDebtReport(id), {
-    params,
-    responseType: 'blob',
-  });
-  return response.data;
-};
-
-export const allGetPendingPaidDebtsReport = async (): Promise<any> => {
-  const response = await apiClient.get(clientApiRoutes.allGetPendingPaidDebtsReport, { responseType: 'blob' });
-  return response.data;
-};
-
-export const allGetClientsDebtReport = async (startDate: string, endDate: string): Promise<any> => {
-  const response = await apiClient.get(clientApiRoutes.allGetDebtsReport, {
-    params: {
-      start_date: startDate,
-      end_date: endDate,
-    },
-    responseType: 'blob',
-  });
-  return response.data;
 };
