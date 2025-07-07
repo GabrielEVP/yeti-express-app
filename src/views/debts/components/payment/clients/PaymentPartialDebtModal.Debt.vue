@@ -57,7 +57,7 @@ import { ClientStats } from '@views/debts/models';
 const props = defineProps<{
   isOpen: boolean;
   stast: ClientStats | null;
-  clientId: string;
+  client_id: string;
 }>();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<any>({
@@ -70,7 +70,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<any>({
   validation: {
     schema: FullDebtPaymentSchema,
     initialValues: {
-      clientId: props.clientId ?? '',
+      client_id: props.client_id ?? '',
     },
   },
 });
@@ -93,11 +93,8 @@ const emitProccess = () => {
 };
 
 async function onSubmitform() {
-  const createdPaid = await onSubmit();
-
-  if (createdPaid) {
-    emitProccess();
-    emitClose();
-  }
+  await onSubmit();
+  emitProccess();
+  emitClose();
 }
 </script>

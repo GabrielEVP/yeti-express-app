@@ -32,13 +32,7 @@
               <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
-                <SelectForm
-                  label="Forma de pago"
-                  name="payment_type"
-                  placeholder="Forma de pago"
-                  :items="[...PaymentTypeOptions]"
-                  :disabled="!selectedClientAllowCredit"
-                />
+                <SelectForm label="Forma de pago" name="payment_type" placeholder="Forma de pago" :items="[...PaymentTypeOptions]" />
                 <div class="sm:col-span-2 lg:col-span-1">
                   <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
                 </div>
@@ -144,16 +138,16 @@ const serviceOptions = computed(() =>
 );
 
 const clientSelectorValue = computed(() => ({
-  clientId: values.clientId || '',
-  pickupAddress: values.pickupAddress || '',
+  clientId: values.client_id || '',
+  pickupAddress: values.pickup_address || '',
 }));
 
 function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
   if (clientData.clientId !== undefined) {
-    setFieldValue('clientId', clientData.clientId);
+    setFieldValue('client_id', clientData.clientId);
   }
   if (clientData.pickupAddress !== undefined) {
-    setFieldValue('pickupAddress', clientData.pickupAddress);
+    setFieldValue('pickup_address', clientData.pickupAddress);
   }
 }
 
@@ -163,7 +157,7 @@ function handleClientChanged(client: Client | null) {
       selectedClientAllowCredit.value = true;
     } else {
       selectedClientAllowCredit.value = false;
-      setFieldValue('paymentType', PaymentType.FULL);
+      setFieldValue('payment_type', PaymentType.FULL);
     }
   } else {
     selectedClientAllowCredit.value = true;

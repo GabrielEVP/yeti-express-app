@@ -112,17 +112,17 @@ import { useModal } from '@composables';
 import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
 import { ClipboardIcon, DollarSignIcon } from 'lucide-vue-next';
 
-defineProps<{
+const props = defineProps<{
   selectedClient: ClientDebt | null;
-  totalDebtsAmount: number;
+  totalDebtsAmount: number | null;
   stast: ClientStats | null;
+  clientsWithDebts: ClientDebt[] | null;
 }>();
 
 defineEmits<{
   (e: 'open'): void;
 }>();
 
-const clientsWithDebts = ref<ClientDebt[]>([]);
 const openDate = ref<string>('');
 const closeDate = ref<string>('');
 
@@ -130,7 +130,8 @@ const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useMod
 const { isOpen: isOpenDetail, open: openDetail, close: closeDetail } = useModal();
 
 const clientsOptions = computed(() => {
-  return clientsWithDebts.value.map((client) => ({
+  if (!props.clientsWithDebts) return [];
+  return props.clientsWithDebts.map((client) => ({
     label: client.legal_name,
     value: client.id,
   }));
@@ -144,13 +145,13 @@ const handleGeneralReport = async (start: string, end: string) => {
 
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
   const blob = await getClientDebtReport(clientId, start, end);
-  const filename = `informe_deuda_${clientId}`;
+  const filename = `informe_deuda_${clientId}.pdf`;
   generatePdf(blob, filename);
 };
 
 const handlePendingReport = async () => {
   const blob = await allGetPendingPaidDebtsReport();
-  const filename = `informe_deuda_general`;
+  const filename = `informe_deuda_general.pdf`;
   generatePdf(blob, filename);
 };
 </script>

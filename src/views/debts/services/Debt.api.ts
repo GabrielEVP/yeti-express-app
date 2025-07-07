@@ -18,7 +18,7 @@ export const debtApiRoutes = {
 
 export const allAmountDebts = async (): Promise<number> => {
   const response = await apiClient.get(debtApiRoutes.allAmountDebts);
-  return response.data.total_amount;
+  return response.data.amount;
 };
 
 export const getClientsWithDebt = async (): Promise<ClientDebt[]> => {

@@ -18,12 +18,12 @@ export const createDebtPaymentPartial = async (payment: DebtPayment): Promise<De
   return response.data;
 };
 
-export const payAllDebts = async (pay: any): Promise<DebtPayment[]> => {
-  const response = await apiClient.post(debtPaymentApiRoutes.payAll, { pay });
+export const payAllDebts = async (pay: any): Promise<DebtPayment> => {
+  const response = await apiClient.post(debtPaymentApiRoutes.payAll, pay);
   return response.data;
 };
 
-export const payPartialAmountAcrossDebts = async (pay: any): Promise<DebtPayment[]> => {
-  const response = await apiClient.post(debtPaymentApiRoutes.payPartialAmount, { pay });
+export const payPartialAmountAcrossDebts = async (pay: any): Promise<DebtPayment> => {
+  const response = await apiClient.post(debtPaymentApiRoutes.payPartialAmount, pay);
   return response.data;
 };

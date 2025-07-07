@@ -1,5 +1,4 @@
-import { PaymentMethod } from '@/views/debts/';
-import { DebtStatus } from '@/views/debts/';
+import { DebtStatus, PaymentMethod } from '@/views/debts/';
 
 export interface Debt {
   id: string;
@@ -15,5 +14,5 @@ export interface DebtPayment {
   amount: number;
   date: Date;
   method: PaymentMethod;
-  debtId: string;
+  debt_id: string;
 }

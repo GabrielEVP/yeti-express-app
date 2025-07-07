@@ -1,9 +1,14 @@
 <template>
   <SideBar>
     <ClientSelectorModal v-model:open="isOpen" :clients="clients" @select="selectedClient = $event" />
-    <ClientSelect :selectedClient="selectedClient" :stast="clientsStats" @open="() => open('')" :total-debts-amount="totalDebtAmount" />
+    <ClientSelect
+      :selectedClient="selectedClient"
+      :stast="clientsStats"
+      @open="() => open('')"
+      :total-debts-amount="totalDebtAmount"
+      :clients-with-debts="clients"
+    />
     <StatusFilter
-      v-if="selectedClient && paginatedData.total > 0"
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
       :stast="clientsStats"
       v-model="selectedPaymentStatus"
@@ -27,13 +32,13 @@
       @previous-page="handlePreviousPage"
       @next-page="handleNextPage"
     />
-    <LoadingSkeleton v-if="isLoading" />
+    <LoadingAbsoluteSkeleton v-if="isLoading" />
   </SideBar>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { LoadingSkeleton, SideBar } from '@components';
+import { LoadingAbsoluteSkeleton, SideBar } from '@components';
 import { useModal, usePagination } from '@composables';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
@@ -76,15 +81,6 @@ const loadDeliveries = async (clientId: string, paymentStatus: string = selected
     deliveries.value = response.items;
 
     setPaginatedData(response);
-  } catch (error) {
-    console.error('Error loading deliveries:', error);
-    deliveries.value = [];
-    setPaginatedData({
-      items: [],
-      currentPage: 1,
-      perPage: 15,
-      total: 0,
-    });
   } finally {
     isLoading.value = false;
   }
@@ -111,10 +107,6 @@ watch(selectedClient, async (newClient) => {
       clientsStats.value = await getClientStats(newClient.id);
       const params = updatePage(1);
       await loadDeliveries(newClient.id, selectedPaymentStatus.value, params.page);
-    } catch (error) {
-      clientsStats.value = null;
-      deliveries.value = [];
-      console.error('Error loading client data:', error);
     } finally {
       isLoading.value = false;
     }
@@ -138,24 +130,21 @@ watch(selectedPaymentStatus, async (newStatus) => {
 });
 
 onMounted(async () => {
+  isLoading.value = true;
   try {
     totalDebtAmount.value = await allAmountDebts();
     clients.value = await getClientsWithDebt();
-  } catch (error) {
-    console.error('Error loading clients with debt:', error);
-    clients.value = [];
+  } finally {
+    isLoading.value = false;
   }
 });
 
 const handleRefresh = async () => {
   if (selectedClient.value) {
     await loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginatedData.value.currentPage);
-    try {
-      totalDebtAmount.value = await allAmountDebts();
-      clientsStats.value = await getClientStats(selectedClient.value.id);
-    } catch (error) {
-      console.error('Error refreshing client stats:', error);
-    }
+    clients.value = await getClientsWithDebt();
+    totalDebtAmount.value = await allAmountDebts();
+    clientsStats.value = await getClientStats(selectedClient.value.id);
   }
 };
 </script>

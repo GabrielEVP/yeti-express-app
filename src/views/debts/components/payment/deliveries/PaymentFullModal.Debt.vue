@@ -78,7 +78,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   validation: {
     schema: FullDebtPaymentSchema,
     initialValues: {
-      debtId: props.delivery.debt_id ?? '',
+      debt_id: props.delivery.debt_id ?? '',
     },
   },
 });

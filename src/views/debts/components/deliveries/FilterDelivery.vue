@@ -2,7 +2,7 @@
   <PaymentFullModalDebt
     v-if="selectedclientId"
     v-model:isOpen="isFullModalOpen"
-    :clientId="selectedclientId"
+    :client_id="selectedclientId"
     :totalDebtAmount="0"
     @process="handleFullPaymentProcess"
     :stast="stast"
@@ -10,7 +10,7 @@
   <PaymentPartialModalDebt
     v-if="selectedclientId"
     v-model:isOpen="isPartialModalOpen"
-    :clientId="selectedclientId"
+    :client_id="selectedclientId"
     :totalDebtAmount="0"
     @process="handlePartialPaymentProcess"
     :stast="stast"
@@ -51,7 +51,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Button } from '@/components/';
 import PaymentFullModalDebt from '../payment/clients/PaymentFullDebtModal.Debt.vue';
 import PaymentPartialModalDebt from '../payment/clients/PaymentPartialDebtModal.Debt.vue';
@@ -71,8 +71,11 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: string): void;
+
   (e: 'payFull', delivery: any): void;
+
   (e: 'payPartial', delivery: any): void;
+
   (e: 'refresh'): void;
 }
 

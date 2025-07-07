@@ -15,6 +15,14 @@
       @close="closeCancelModal"
       @cancelDelivery="handleCancelDelivery"
     />
+    <ModalPdfViewer
+      :isOpen="isTicketModalOpen"
+      :PDFUrl="ticketUrl"
+      :PDFBlob="ticketBlob"
+      :id="selectedTicketDeliveryId"
+      @close="closeTicketModal"
+      @download="downloadTicket"
+    />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
         <div class="md:flex gap-4">
@@ -116,7 +124,7 @@
           <div class="flex gap-1 justify-center">
             <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
             <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
-            <DownloadButton @click="handleDownload(delivery.id)" />
+            <DownloadButton @click="handleViewTicket(delivery.id)" />
             <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
             <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
             <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
@@ -158,7 +166,7 @@
               <div class="flex gap-1 justify-center">
                 <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
                 <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
-                <DownloadButton @click="handleDownload(delivery.id)" />
+                <DownloadButton @click="handleViewTicket(delivery.id)" />
                 <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
                 <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
                 <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
@@ -190,6 +198,7 @@ import {
   LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
+  ModalPdfViewer,
   NewButton,
   SearchForm,
   SideBar,
@@ -225,6 +234,11 @@ const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
 const selectedDelivery = ref<DetailDelivery | null>(null);
 
+const isTicketModalOpen = ref(false);
+const ticketUrl = ref<string>('');
+const ticketBlob = ref<Blob | null>(null);
+const selectedTicketDeliveryId = ref<string>('');
+
 const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
 
 const openDetails = async (id: string) => {
@@ -246,6 +260,7 @@ const CopyToWhatsapp = async (id: string) => {
     isLoadingDetails.value = false;
   }
 };
+
 const sortConfig = ref<{ column: keyof ListDelivery; order: 'asc' | 'desc' } | null>(null);
 const searchQuery = ref<string>('');
 
@@ -353,17 +368,39 @@ const handleDeleteConfirmation = async () => {
   await confirmDelete();
 };
 
-const handleDownload = async (deliveryId: string) => {
-  const blob = await getDeliveryTicket(deliveryId);
-  const filename = `Ticket_${deliveryId}.pdf`;
+// Función modificada para mostrar el ticket en modal
+const handleViewTicket = async (deliveryId: string) => {
+  try {
+    const blob = await getDeliveryTicket(deliveryId);
+
+    if (!blob) {
+      console.error('No se pudo obtener el ticket.');
+      return;
+    }
+
+    // Crear URL del blob para mostrar en el modal
+    const url = window.URL.createObjectURL(blob);
+
+    // Establecer los datos del ticket
+    ticketBlob.value = blob;
+    ticketUrl.value = url;
+    selectedTicketDeliveryId.value = deliveryId;
+
+    // Abrir el modal
+    isTicketModalOpen.value = true;
+  } catch (error) {
+    console.error('Error al obtener el ticket:', error);
+  }
+};
+
+// Función para descargar el ticket desde el modal
+const downloadTicket = () => {
+  if (!ticketBlob.value || !selectedTicketDeliveryId.value) return;
+
+  const filename = `Ticket_${selectedTicketDeliveryId.value}.pdf`;
   const mimeType = 'application/pdf';
 
-  if (!blob) {
-    console.error('No se proporcionó un Blob para descargar.');
-    return;
-  }
-
-  const url = window.URL.createObjectURL(blob);
+  const url = window.URL.createObjectURL(ticketBlob.value);
   const a = document.createElement('a');
   a.style.display = 'none';
   a.href = url;
@@ -374,6 +411,20 @@ const handleDownload = async (deliveryId: string) => {
   document.body.removeChild(a);
 
   window.URL.revokeObjectURL(url);
+};
+
+// Función para cerrar el modal del ticket
+const closeTicketModal = () => {
+  isTicketModalOpen.value = false;
+
+  // Limpiar la URL del blob para evitar memory leaks
+  if (ticketUrl.value) {
+    window.URL.revokeObjectURL(ticketUrl.value);
+    ticketUrl.value = '';
+  }
+
+  ticketBlob.value = null;
+  selectedTicketDeliveryId.value = '';
 };
 
 const openStatusModal = (id: string, status: DeliveryStatus) => {

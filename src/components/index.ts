@@ -30,8 +30,8 @@ export { default as TextAreaForm } from '@/components/forms/TextArea.vue';
 export { default as ModalContentItem } from '@/components/modals/modalDetailContent/ContentItem.vue';
 export { default as ModalSpecialContentItem } from '@/components/modals/modalDetailContent/SpecialContentItem.vue';
 export { default as ModalTitleModal } from '@/components/modals/modalDetailContent/TitleModal.vue';
-
 export { default as ModalForm } from '@/components/modals/ModalForm.vue';
+export { default as ModalPdfViewer } from '@/components/modals/ModalPDFViewer.vue';
 export { default as ModalConfirmation } from '@components/modals/ModalConfirmation.vue';
 export { default as ModalReportGeneral } from '@/components/modals/ModalReportGeneral.vue';
 export { default as ModalReportDetail } from '@/components/modals/ModalReportDetail.vue';
