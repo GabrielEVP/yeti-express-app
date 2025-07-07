@@ -45,6 +45,7 @@
             name="pickupAddress"
             placeholder="Selecciona una dirección"
             :items="addressOptionsWithAdd"
+            :modelValue="props.modelValue?.pickupAddress || ''"
             @update:modelValue="handleAddressSelection"
           />
           <div v-if="showAddressForm" class="space-y-2">
@@ -144,12 +145,27 @@ const filteredClients = computed(() => {
 
 const addressOptionsWithAdd = computed(() => {
   const options = [...clientAddresses.value];
+
+  // Si hay una dirección en modelValue que no está en las opciones, la agregamos
+  if (props.modelValue?.pickupAddress && props.modelValue.pickupAddress !== '') {
+    const currentAddress = props.modelValue.pickupAddress;
+    const addressExists = options.some((addr) => addr.value === currentAddress);
+
+    if (!addressExists) {
+      options.push({
+        label: currentAddress,
+        value: currentAddress,
+      });
+    }
+  }
+
   if (selectedClient.value) {
     options.push({
       label: '+ Agregar nueva dirección',
       value: '__ADD_NEW__',
     });
   }
+
   return options;
 });
 
@@ -164,8 +180,23 @@ function selectClient(client: { label: string; value: string }) {
   const clientData = clients.value.find((c) => c.id === client.value);
   selectedClient.value = clientData || null;
 
-  updateValue({ clientId: client.value, pickupAddress: '' });
-  loadAddresses(client.value);
+  // Mantener la dirección existente si está definida
+  const currentPickupAddress = props.modelValue?.pickupAddress || '';
+  updateValue({ clientId: client.value, pickupAddress: currentPickupAddress });
+
+  loadAddresses(client.value).then(() => {
+    // Si hay una dirección existente, asegurarse que esté en las opciones
+    if (currentPickupAddress && currentPickupAddress !== '') {
+      const addressExists = clientAddresses.value.some((addr) => addr.value === currentPickupAddress);
+      if (!addressExists) {
+        clientAddresses.value.push({
+          label: currentPickupAddress,
+          value: currentPickupAddress,
+        });
+      }
+    }
+  });
+
   emit('clientChanged', clientData || null);
 }
 
@@ -199,16 +230,25 @@ function handleAddressSelection(addressValue: string) {
   }
 }
 
-async function saveNewAddress() {
-  if (!newAddress.value.trim() || !selectedClient.value) return;
+function handleManualAddress(address: string) {
+  if (!address.trim()) return;
 
   const addressData = {
-    label: newAddress.value.trim(),
-    value: newAddress.value.trim(),
+    label: address.trim(),
+    value: address.trim(),
   };
 
-  clientAddresses.value.push(addressData);
+  if (!clientAddresses.value.some((addr) => addr.value === addressData.value)) {
+    clientAddresses.value.push(addressData);
+  }
+
   updateValue({ pickupAddress: addressData.value });
+}
+
+async function saveNewAddress() {
+  if (!newAddress.value.trim()) return;
+
+  handleManualAddress(newAddress.value);
 
   showAddressForm.value = false;
   newAddress.value = '';
@@ -279,8 +319,38 @@ watch(
   { immediate: true }
 );
 
+watch(
+  () => props.modelValue?.pickupAddress,
+  (pickupAddress) => {
+    if (pickupAddress && pickupAddress !== '') {
+      const addressExists = clientAddresses.value.some((addr) => addr.value === pickupAddress);
+      if (!addressExists) {
+        clientAddresses.value.push({
+          label: pickupAddress,
+          value: pickupAddress,
+        });
+      }
+      updateValue({ pickupAddress });
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(async () => {
   await loadClients();
+
+  // Si hay una dirección definida en el modelValue al montar, aseguramos que se agregue
+  if (props.modelValue?.pickupAddress && props.modelValue.pickupAddress !== '') {
+    const pickupAddress = props.modelValue.pickupAddress;
+    const addressExists = clientAddresses.value.some((addr) => addr.value === pickupAddress);
+
+    if (!addressExists) {
+      clientAddresses.value.push({
+        label: pickupAddress,
+        value: pickupAddress,
+      });
+    }
+  }
 });
 
 defineExpose({
