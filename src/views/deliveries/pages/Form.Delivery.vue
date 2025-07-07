@@ -90,7 +90,7 @@ import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries
 import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { FormClient } from '@views/clients';
+import { ListClient } from '@views/clients';
 import { getAllCouriers, ListCourier } from '@views/couriers';
 import { getAllServices, ListService } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
@@ -151,7 +151,7 @@ function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddre
   }
 }
 
-function handleClientChanged(client: FormClient | null) {
+function handleClientChanged(client: ListClient | null) {
   if (client) {
     if (client.allow_credit) {
       selectedClientAllowCredit.value = true;
@@ -165,10 +165,10 @@ function handleClientChanged(client: FormClient | null) {
 }
 
 async function loadFormData(): Promise<void> {
-  const [courierData, serviceData] = (await Promise.all([getAllCouriers(), getAllServices()])) as [ListCourier, ListService[]];
+  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
 
-  couriers.value = [courierData];
-  services.value = serviceData;
+  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
+  services.value = Array.isArray(serviceData) ? serviceData : [];
 }
 
 onMounted(async () => {

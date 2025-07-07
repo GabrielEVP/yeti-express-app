@@ -23,7 +23,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables/';
 import { SideBar, Card, FieldForm, AcceptButton, CancelButton, BackButton } from '@/components/';
-import { Employee } from '@/views/employees/';
+import { Employee } from '@/views/employees/models';
 import { PasswordSchema } from '@/views/employees/schema';
 import { getEmployeeById, updatePassword } from '@/views/employees/services/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
