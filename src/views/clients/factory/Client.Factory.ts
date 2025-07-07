@@ -1,32 +1,27 @@
-import { Client, ClientAddress, ClientEmail, ClientPhone, ClientType } from '@/views/clients/models';
+import { ClientType, FormClient, FormClientAddress, FormClientEmail, FormClientPhone } from '@/views/clients/models';
 
-export const DEFAULT_CLIENT_ADDRESS: ClientAddress = {
+export const DEFAULT_CLIENT_ADDRESS: FormClientAddress = {
   id: '',
   address: '',
-  canDelete: true,
 };
 
-export const DEFAULT_CLIENT_PHONE: ClientPhone = {
+export const DEFAULT_CLIENT_PHONE: FormClientPhone = {
   id: '',
   phone: '',
 };
 
-export const DEFAULT_CLIENT_EMAIL: ClientEmail = {
+export const DEFAULT_CLIENT_EMAIL: FormClientEmail = {
   id: '',
   email: '',
 };
 
-export const DEFAULT_CLIENT: Client = {
+export const DEFAULT_CLIENT: FormClient = {
   id: '',
-  legalName: '',
+  legal_name: '',
   type: ClientType.VENEZOLANO,
-  registrationNumber: '',
+  registration_number: '',
   notes: '',
-  allowCredit: false,
-  userId: '',
-  createdAt: '',
-  updatedAt: '',
-  events: [],
+  allow_credit: false,
   addresses: [DEFAULT_CLIENT_ADDRESS],
   emails: [],
   phones: [DEFAULT_CLIENT_PHONE],

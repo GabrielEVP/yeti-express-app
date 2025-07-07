@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { User } from '@/views/users/';
-import { Employee } from '@/views/employees/';
+import { DetailEmployee } from '@/views/employees/models';
 
-type AuthUser = User | Employee;
+type AuthUser = User | DetailEmployee;
 
 interface AuthState {
   accessToken: string | null;

@@ -90,7 +90,7 @@ import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries
 import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { Client } from '@views/clients';
+import { FormClient } from '@views/clients';
 import { getAllCouriers, ListCourier } from '@views/couriers';
 import { getAllServices, ListService } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
@@ -151,9 +151,9 @@ function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddre
   }
 }
 
-function handleClientChanged(client: Client | null) {
+function handleClientChanged(client: FormClient | null) {
   if (client) {
-    if (client.allowCredit) {
+    if (client.allow_credit) {
       selectedClientAllowCredit.value = true;
     } else {
       selectedClientAllowCredit.value = false;
@@ -164,9 +164,10 @@ function handleClientChanged(client: Client | null) {
   }
 }
 
-async function loadFormData() {
-  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
-  couriers.value = courierData;
+async function loadFormData(): Promise<void> {
+  const [courierData, serviceData] = (await Promise.all([getAllCouriers(), getAllServices()])) as [ListCourier, ListService[]];
+
+  couriers.value = [courierData];
   services.value = serviceData;
 }
 

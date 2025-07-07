@@ -98,6 +98,7 @@ import { PlusButton, SelectForm } from '@/components';
 import { DeliveryClientModalForm } from '@views/deliveries/components';
 import { ListClient } from '@views/clients/models';
 import { getAllClients, getClientById } from '@views/clients/service';
+import { ClientAddress } from '@views/clients';
 
 interface Props {
   modelValue?: {
@@ -178,7 +179,7 @@ async function loadAddresses(clientId: string) {
   try {
     const clientDetail = await getClientById(clientId);
     clientAddresses.value =
-      clientDetail?.addresses?.map((address) => ({
+      clientDetail?.addresses?.map((address: ClientAddress) => ({
         label: address.address,
         value: address.address,
       })) || [];
