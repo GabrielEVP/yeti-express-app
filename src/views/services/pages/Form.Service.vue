@@ -82,9 +82,8 @@ import {
   TextAreaForm,
   TrashButton,
 } from '@/components';
-import { FormService } from '@/views/services/models';
+import { FormBill, FormService } from '@/views/services/models';
 import { createService, getServiceById, updateService } from '@views/services/services';
-import type { Bill } from '@/views/services/';
 import { serviceSchema } from '@views/services/schema';
 import { TABS_FORM_SERVICE } from '@/views/services/constants';
 
@@ -114,7 +113,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<FormService, string>({
   },
 });
 
-const { fields, push, remove } = useFieldArray<Bill>('bills');
+const { fields, push, remove } = useFieldArray<FormBill>('bills');
 
 onMounted(async () => {
   await initializeForm();

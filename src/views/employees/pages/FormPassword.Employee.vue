@@ -1,6 +1,6 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-6">
         <form @submit.prevent="onSubmit" class="h-full">
@@ -22,10 +22,10 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables/';
-import { SideBar, Card, FieldForm, AcceptButton, CancelButton, BackButton } from '@/components/';
-import { Employee } from '@/views/employees/models';
+import { AcceptButton, BackButton, CancelButton, Card, FieldForm, SideBar } from '@/components/';
+import { Password } from '@/views/employees/models';
 import { PasswordSchema } from '@/views/employees/schema';
-import { getEmployeeById, updatePassword } from '@/views/employees/services/';
+import { updatePassword } from '@/views/employees/services/';
 import { AppRoutesEmployee } from '@/views/employees/router/';
 import { onMounted } from 'vue';
 
@@ -33,9 +33,8 @@ const router = useRouter();
 const route = useRoute();
 const EmployeeId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<Employee>({
+const { initializeForm, onSubmit, meta } = useVeeForm<Password>({
   id: EmployeeId,
-  getById: getEmployeeById,
   update: (values, id) => updatePassword(values, id),
   defaultRoute: AppRoutesEmployee.list,
   messages: {

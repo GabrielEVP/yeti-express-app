@@ -29,7 +29,6 @@
       :endIndex="endIndex"
       :totalItems="paginatedData.total"
       @updatePage="handlePageChange"
-      @sort="handleSort"
     >
       <TableRow v-for="service in paginatedData.items" :key="service.id">
         <TableContent class="text-black dark:text-white">

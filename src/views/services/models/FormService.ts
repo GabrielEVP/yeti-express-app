@@ -3,10 +3,10 @@ export interface FormService {
   name: string;
   description: string;
   amount: number;
-  bills: Bill[];
+  bills: FormBill[];
 }
 
-export interface Bill {
+export interface FormBill {
   id: string;
   name: string;
   amount: number;

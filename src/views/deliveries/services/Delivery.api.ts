@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/';
-import { Delivery, DetailDelivery, FormDelivery, ListDelivery } from '@/views/deliveries/models';
+import { Delivery, FormDelivery, ListDelivery } from '@/views/deliveries/models';
 import { PaginatedResponse, PaginationParams } from '@/models';
 import { handlePaginatedResponse } from '@/utils';
 
@@ -18,7 +18,7 @@ export const deliveryApiRoutes = {
   withDebt: `${base}/with-debt`,
 };
 
-export const getDeliveryById = async (id: string | number): Promise<DetailDelivery> => {
+export const getDeliveryById = async (id: string | number): Promise<any> => {
   const response = await apiClient.get(deliveryApiRoutes.getById(id));
   return response.data;
 };
