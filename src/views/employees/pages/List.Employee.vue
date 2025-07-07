@@ -5,6 +5,17 @@
     @confirm="handleDeleteConfirmation"
     @close="close"
   />
+  <ModalReportDetail
+    title="Reporte de entregas por empleado"
+    :isOpen="isOpenDetail"
+    :openDate="open_date"
+    :closeDate="close_date"
+    @close="closeDetail"
+    @submit-filter="handleReportDetail"
+    :selected-id="selectedEmployeeId"
+    :selectOptions="employeeOptions"
+    selectLabel="Empleado"
+  />
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
     <ModalDetailsEmployee v-if="selectedId !== null" :is-open="IsOpenDetails" :employee="selectedEmployee" @close="CloseDetails" />
@@ -16,7 +27,16 @@
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Empleado" @input="debouncedSearch" />
           </FilterButton>
         </div>
-        <NewButton label="Nuevo Empleado" :URL="AppRoutesEmployee.new" class="w-full sm:w-auto md:w-auto" />
+        <div class="flex gap-6 flex-col sm:flex-row">
+          <ReportButton>
+            <div class="grid grid-cols-1 dark:bg-gray-700">
+              <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">
+                <Text>Reporte de eventos</Text>
+              </button>
+            </div>
+          </ReportButton>
+          <NewButton label="Nuevo Empleado" :URL="AppRoutesEmployee.new" class="w-full sm:w-auto md:w-auto" />
+        </div>
       </div>
     </Card>
     <LoadingSkeleton v-if="isLoading" />
@@ -75,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
@@ -87,19 +107,23 @@ import {
   LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
+  ModalReportDetail,
   NewButton,
+  ReportButton,
   SearchForm,
   SideBar,
   TableContent,
   TableDashboard,
   TableRow,
+  Text,
   TrashButton,
 } from '@/components/';
 import { DetailEmployee, getRoleLabel, ListEmployee, Role } from '@views/employees/models';
-import { deleteEmployeeById, getEmployeeById, getFilteredEmployees } from '@/views/employees/services';
+import { deleteEmployeeById, getEmployeeById, getEventReportByEmployee, getFilteredEmployees } from '@/views/employees/services';
 import { TABLE_HEADER_EMPLOYEE } from '@views/employees/constants';
 import { AppRoutesEmployee } from '@views/employees/router';
 import { ModalDetailsEmployee } from '@/views/employees/components/';
+import { generatePdf } from '@utils';
 
 const isLoading = ref(false);
 const error = ref<string | null>(null);
@@ -114,6 +138,30 @@ const OpenDetails = async (id: string) => {
     isLoadingDetails.value = true;
     selectedEmployee.value = await getEmployeeById(id);
     openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const open_date = ref<string>('');
+const close_date = ref<string>('');
+const selectedEmployeeId = ref<string>('');
+
+const { isOpen: isOpenDetail, selectedId: idEmployee, open: openDetail, close: closeDetail } = useModal();
+
+const employeeOptions = computed(() => {
+  return paginatedData.value.items.map((employee: ListEmployee) => ({
+    label: employee.name + ' ' + employee.email,
+    value: employee.id,
+  }));
+});
+
+const handleReportDetail = async (id: string, start: string, end: string) => {
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getEventReportByEmployee(id, start, end);
+    const filename = `informe_general_de_eventos${start}_${end}.pdf`;
+    generatePdf(blob, filename);
   } finally {
     isLoadingDetails.value = false;
   }

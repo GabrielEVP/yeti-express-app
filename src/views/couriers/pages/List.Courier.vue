@@ -11,14 +11,6 @@
       @close="closeGeneral"
       @submit-filter="handleGeneralReport"
     />
-    <ModalReportGeneral
-      title="Reporte de entregas general"
-      :isOpen="isOpenGeneral"
-      :openDate="open_date"
-      :closeDate="close_date"
-      @close="closeGeneral"
-      @submit-filter="handleGeneralReport"
-    />
     <ModalReportDetail
       title="Reporte de entregas por repartidor"
       :isOpen="isOpenDetail"
@@ -28,7 +20,7 @@
       @submit-filter="handleReportDetail"
       :selected-id="selectedCourierId"
       :selectOptions="courierOptions"
-      selectLabel="Cliente"
+      selectLabel="Repartidor"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">

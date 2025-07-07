@@ -13,6 +13,7 @@ export const employeeApiRoutes = {
   search: (query: string) => `${base}/search/${query}`,
   filter: base,
   updatePassword: (id: string) => `${base}/${id}/password`,
+  eventReport: (id: string) => `${base}/${id}/report-event`,
 };
 
 export const getEmployeeById = async (EmployeeId: string): Promise<DetailEmployee> => {
@@ -43,3 +44,14 @@ export async function updatePassword(password: Password, EmployeeId: string) {
   const response = await apiClient.put(employeeApiRoutes.updatePassword(EmployeeId), password);
   return response.data;
 }
+
+export const getEventReportByEmployee = async (id: string, startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get(employeeApiRoutes.eventReport(id), {
+    params: {
+      start_date: startDate,
+      end_date: endDate,
+    },
+    responseType: 'blob',
+  });
+  return response.data;
+};
