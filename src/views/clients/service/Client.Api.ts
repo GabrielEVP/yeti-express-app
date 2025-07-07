@@ -21,7 +21,7 @@ export const getAllClients = async (): Promise<ListClient[]> => {
   return response.data;
 };
 
-export const getClientById = async (id: string): Promise<DetailClient> => {
+export const getClientById = async (id: string): Promise<any> => {
   const response = await apiClient.get(clientApiRoutes.getById(id));
   return response.data;
 };

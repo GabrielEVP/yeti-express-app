@@ -148,7 +148,7 @@ import {
   TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Client, ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
+import { ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
 import { ModalDetailsClient } from '@/views/clients/components/';
 import { deleteClientById, getClientById, getFilteredClients } from '@/views/clients/service/';
 import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
@@ -156,8 +156,9 @@ import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
 import { getClientsWithDebt } from '@views/debts';
 import { generatePdf } from '@utils';
+import { ClientDebt } from '@views/debts/models';
 
-const clientsWithDebts = ref<Client[]>([]);
+const clientsWithDebts = ref<ClientDebt[]>([]);
 const selectedType = ref<string>('');
 const selectedCredit = ref<string>('');
 const isLoading = ref(false);
@@ -236,7 +237,7 @@ const debouncedSearch = useDebounce(runSearch, 500);
 
 const clientsOptions = computed(() => {
   return clientsWithDebts.value.map((client) => ({
-    label: client.legalName,
+    label: client.legal_name,
     value: client.id,
   }));
 });

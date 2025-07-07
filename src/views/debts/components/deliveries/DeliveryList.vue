@@ -52,7 +52,7 @@ interface PaginationData {
 const props = defineProps<{
   clientId: string | null;
   paymentStatus: string;
-  deliveries: DeliveryWithDebt[];
+  deliveries: any[];
   paginationData: PaginationData;
   isLoading: boolean;
 }>();

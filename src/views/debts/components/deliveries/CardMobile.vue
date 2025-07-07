@@ -63,7 +63,7 @@ const props = defineProps<Props>();
 
 defineEmits<{
   (e: 'payFull', delivery: DeliveryWithDebt): void;
-  (e: 'payPartial', delivery: DeliDeliveryWithDebtvery): void;
+  (e: 'payPartial', delivery: DeliveryWithDebt): void;
 }>();
 
 const showPaymentInfo = computed(() => {

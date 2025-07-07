@@ -1,4 +1,4 @@
-import { Client, ClientAddress, ClientEmail, ClientPhone } from '@/views/clients';
+import { Client, ClientAddress, ClientEmail, ClientPhone, ClientType } from '@/views/clients/models';
 
 export const DEFAULT_CLIENT_ADDRESS: ClientAddress = {
   id: '',
@@ -19,7 +19,7 @@ export const DEFAULT_CLIENT_EMAIL: ClientEmail = {
 export const DEFAULT_CLIENT: Client = {
   id: '',
   legalName: '',
-  type: 'venezolano',
+  type: ClientType.VENEZOLANO,
   registrationNumber: '',
   notes: '',
   allowCredit: false,
