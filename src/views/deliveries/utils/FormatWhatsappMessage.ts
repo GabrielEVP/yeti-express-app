@@ -1,8 +1,8 @@
-import { DetailDelivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/models';
+import { getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/models';
 import { formatDateCustom, formatToDollars } from '@/utils';
 import { useAlert } from '@/composables';
 
-export function copyToClipboard(delivery: DetailDelivery) {
+export function copyToClipboard(delivery: any) {
   const { triggerError, triggerSuccess } = useAlert();
 
   const text = `
