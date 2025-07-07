@@ -51,7 +51,7 @@
           <slot />
         </div>
         <div class="px-6 py-3 bg-gray-50 dark:bg-slate-700 border-t border-gray-200 dark:border-slate-600">
-          <p class="text-xs text-gray-500 dark:text-slate-400 text-center">Selecciona el tipo de reporte que deseas generar</p>
+          <p class="text-xs text-gray-500 dark:text-slate-400 text-center break-all">Selecciona el tipo de reporte</p>
         </div>
       </div>
     </Transition>
