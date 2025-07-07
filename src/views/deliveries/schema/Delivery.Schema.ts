@@ -1,4 +1,4 @@
-import { object, string, number, date, array, mixed } from 'yup';
+import { date, mixed, number, object, string } from 'yup';
 
 export const paymentSchema = object({
   date: date().required('La fecha del pago es requerida'),
@@ -9,15 +9,13 @@ export const paymentSchema = object({
 });
 
 export const receiptSchema = object({
-  fullName: string().required('El nombre completo es requerido'),
+  full_name: string().required('El nombre completo es requerido'),
   phone: string().required('El teléfono es requerido'),
   address: string().required('La dirección es requerida'),
 });
 
 export const DeliverySchema = object({
-  paymentType: mixed<'partial' | 'full'>()
-    .oneOf(['partial', 'full'], 'Tipo de pago inválido')
-    .required('El tipo de pago es requerido'),
+  payment_type: mixed<'partial' | 'full'>().oneOf(['partial', 'full'], 'Tipo de pago inválido').required('El tipo de pago es requerido'),
   notes: string().nullable(),
   receipt: receiptSchema.required('El recibo es requerido'),
 });

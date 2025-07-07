@@ -21,13 +21,13 @@
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Monto Total</Text>
               <Text>
-                {{ formatToDollars(delivery.amount) }}
+                {{ formatToDollars(delivery.debt_amount) }}
               </Text>
             </div>
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <Text>Cantidad a Pagar</Text>
               <Text>
-                {{ formatToDollars(delivery.debtRemainingAmount) }}
+                {{ formatToDollars(delivery.debt_remaining_amount) }}
               </Text>
             </div>
           </div>
@@ -56,18 +56,16 @@
 import { defineProps, onMounted } from 'vue';
 import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
-import { Text, CancelButton, AcceptButton } from '@/components/';
+import { AcceptButton, CancelButton, Text } from '@/components/';
 import FieldRadio from '@components/forms/FieldRadio.vue';
-import { Delivery } from '@/views/deliveries';
-import { DebtPayment, PaymentMethodOptions } from '@views/debts/';
-import { FullDebtPaymentSchema } from '@views/debts/';
-import { createDebtPaymentFull } from '@views/debts/';
+import { DeliveryWithDebt } from '@/views/debts/models';
+import { createDebtPaymentFull, DebtPayment, FullDebtPaymentSchema, PaymentMethodOptions } from '@views/debts/';
 
 import FieldHidden from '@components/forms/FieldHidden.vue';
 
 const props = defineProps<{
   isOpen: boolean;
-  delivery: Delivery;
+  delivery: DeliveryWithDebt;
 }>();
 
 const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
@@ -80,7 +78,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
   validation: {
     schema: FullDebtPaymentSchema,
     initialValues: {
-      debtId: props.delivery.debtId ?? '',
+      debt_id: props.delivery.debt_id ?? '',
     },
   },
 });
@@ -92,7 +90,7 @@ onMounted(() => {
 const emit = defineEmits<{
   (e: 'proccess', value: boolean): void;
   (e: 'update:isOpen', value: boolean): void;
-  (e: 'select', delivery: Delivery): void;
+  (e: 'select', delivery: DeliveryWithDebt): void;
 }>();
 
 const emitClose = () => {

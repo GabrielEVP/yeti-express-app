@@ -1,89 +1,57 @@
 import { apiClient } from '@/services/';
-import { Employee, adaptEmployee, adaptEmployeeForApi } from '@/views/employees';
+import { DetailEmployee, FormEmployee, ListEmployee, Password } from '@/views/employees/models';
+import { PaginatedResponse, PaginationParams } from '@models';
+import { handlePaginatedResponse } from '@/utils/handlePaginatedResponse';
 
-export const EmployeeApiRoutes = {
-  getAll: '/employees',
-  getById: (id: string) => `/employees/${id}`,
-  create: '/employees',
-  update: (id: string) => `/employees/${id}`,
-  delete: (id: string) => `/employees/${id}`,
-  search: (query: string) => `/employees/search/${query}`,
-  filter: '/employees',
-  updatePassword: (id: string) => `/employees/${id}/password`,
+const base = '/employees';
+
+export const employeeApiRoutes = {
+  getById: (id: string) => `${base}/${id}`,
+  create: base,
+  update: (id: string) => `${base}/${id}`,
+  delete: (id: string) => `${base}/${id}`,
+  search: (query: string) => `${base}/search/${query}`,
+  filter: base,
+  updatePassword: (id: string) => `${base}/${id}/password`,
+  eventReport: (id: string) => `${base}/${id}/report-event`,
 };
 
-const processResponse = (data: any): Employee[] => (Array.isArray(data) ? data.map(adaptEmployee) : [adaptEmployee(data)]);
-
-export const getAllEmployees = async (): Promise<Employee[]> => {
-  try {
-    const response = await apiClient.get(EmployeeApiRoutes.getAll);
-    return processResponse(response.data);
-  } catch {
-    throw new Error('Failed to fetch all Employees.');
-  }
+export const getEmployeeById = async (EmployeeId: string): Promise<DetailEmployee> => {
+  const response = await apiClient.get(employeeApiRoutes.getById(EmployeeId));
+  return response.data;
 };
 
-export const getEmployeeById = async (EmployeeId: string): Promise<Employee> => {
-  try {
-    const response = await apiClient.get(EmployeeApiRoutes.getById(EmployeeId));
-    return adaptEmployee(response.data);
-  } catch {
-    throw new Error(`Failed to fetch Employee with ID ${EmployeeId}.`);
-  }
+export const createEmployee = async (employee: FormEmployee): Promise<DetailEmployee> => {
+  const response = await apiClient.post(employeeApiRoutes.create, employee);
+  return response.data;
 };
 
-export const createEmployee = async (data: Employee): Promise<Employee> => {
-  try {
-    const payload = adaptEmployeeForApi(data);
-    const response = await apiClient.post(EmployeeApiRoutes.create, payload);
-    return adaptEmployee(response.data);
-  } catch {
-    throw new Error('Failed to create Employee.');
-  }
+export const updateEmployee = async (employee: FormEmployee, id: string): Promise<DetailEmployee> => {
+  const response = await apiClient.put(employeeApiRoutes.update(id), employee);
+  return response.data;
 };
 
-export const updateEmployee = async (data: Employee, EmployeeId: string): Promise<Employee> => {
-  try {
-    const payload = adaptEmployeeForApi(data);
-    const response = await apiClient.put(EmployeeApiRoutes.update(EmployeeId), payload);
-    return adaptEmployee(response.data);
-  } catch {
-    throw new Error(`Failed to update Employee with ID ${EmployeeId}.`);
-  }
+export const deleteEmployeeById = async (id: string): Promise<void> => {
+  await apiClient.delete(employeeApiRoutes.delete(id));
 };
 
-export const deleteEmployeeById = async (EmployeeId: string): Promise<void> => {
-  try {
-    await apiClient.delete(EmployeeApiRoutes.delete(EmployeeId));
-  } catch {
-    throw new Error(`Failed to delete Employee with ID ${EmployeeId}.`);
-  }
+export const getFilteredEmployees = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<ListEmployee>> => {
+  const response = await apiClient.get(employeeApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, params);
 };
 
-export const searchEmployees = async (query: string): Promise<Employee[]> => {
-  try {
-    const response = await apiClient.get(EmployeeApiRoutes.search(query));
-    return processResponse(response.data);
-  } catch {
-    throw new Error('Failed to search Employees.');
-  }
-};
-
-export const filterEmployees = async (params: Record<string, any>): Promise<Employee[]> => {
-  try {
-    const response = await apiClient.get(EmployeeApiRoutes.filter, { params });
-    return processResponse(response.data);
-  } catch {
-    throw new Error('Failed to fetch filtered Employees.');
-  }
-};
-
-export async function updatePassword(data: any, EmployeeId: string) {
-  try {
-    const response = await apiClient.put(EmployeeApiRoutes.updatePassword(EmployeeId), data);
-    return response.data;
-  } catch (error) {
-    throw new Error(String(error));
-  }
+export async function updatePassword(password: Password, EmployeeId: string) {
+  const response = await apiClient.put(employeeApiRoutes.updatePassword(EmployeeId), password);
+  return response.data;
 }
 
+export const getEventReportByEmployee = async (id: string, startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get(employeeApiRoutes.eventReport(id), {
+    params: {
+      start_date: startDate,
+      end_date: endDate,
+    },
+    responseType: 'blob',
+  });
+  return response.data;
+};

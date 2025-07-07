@@ -79,13 +79,14 @@
       <InvoicedChart :deliveries="stats?.historical_invoiced || []" :is-loading="isLoading" />
     </div>
     <FinanceChart :historical-balance="stats?.historical_balance || []" :is-loading="isLoading" class="mt-4" />
+    <LoadingAbsoluteSkeleton v-if="isLoadingPDF" />
   </Sidebar>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import Sidebar from '@/layouts/BarLayourt.vue';
-import { ActivityView, ModalReportGeneral, ReportButton, Text } from '@/components/';
+import { ActivityView, LoadingAbsoluteSkeleton, ModalReportGeneral, ReportButton, Text } from '@/components/';
 import DeliveriesChart from '../components/DeliveriesChart.vue';
 import InvoicedChart from '../components/InvoicedChart.vue';
 import FinanceChart from '../components/FinanceChart.vue';
@@ -98,6 +99,7 @@ const selectedRange = ref<'day' | 'week' | 'month' | 'year'>('week');
 const selectedDate = ref(new Date().toISOString().split('T')[0]);
 const stats = ref<DashboardStats | null>(null);
 const isLoading = ref(false);
+const isLoadingPDF = ref(false);
 
 const formatNumber = (value: number) => {
   return value.toLocaleString('en-US', {
@@ -148,20 +150,30 @@ const close_date = ref<string>('');
 const { isOpen: isOpenDetail, open: openDetail, close: closeDetail } = useModal();
 
 const handleDetailReport = async (start: string, end: string) => {
-  const blob = await getReportStats(start, end);
-  const filename = `informe_de_caja_detallado_${start}_${end}`;
-  generatePdf(blob, filename);
+  isLoadingPDF.value = true;
+  try {
+    const blob = await getReportStats(start, end);
+    const filename = `informe_de_caja_detallado_${start}_${end}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingPDF.value = false;
+  }
 };
 
 const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal();
 
 const handleGeneralReport = async (start: string, end: string) => {
-  const blob = await getReportsimplifiedStats(start, end);
-  const filename = `informe_de_caja_simplificado_${start}_${end}`;
-  generatePdf(blob, filename);
+  isLoadingPDF.value = true;
+  try {
+    const blob = await getReportsimplifiedStats(start, end);
+    const filename = `informe_de_caja_simplificado_${start}_${end}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingPDF.value = false;
+  }
 };
 
 onMounted(async () => {
-  fetchStats(selectedRange.value, selectedDate.value);
+  await fetchStats(selectedRange.value, selectedDate.value);
 });
 </script>

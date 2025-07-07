@@ -1,9 +1,14 @@
 <template>
   <SideBar>
-    <ClientSelectorModal v-model:open="isOpen" :clients="clients as Client[]" @select="selectedClient = $event" />
-    <ClientSelect :selectedClient="selectedClient as Client" :stast="clientsStats" @open="() => open('')" :total-debts-amount="totalDebtAmount" />
+    <ClientSelectorModal v-model:open="isOpen" :clients="clients" @select="selectedClient = $event" />
+    <ClientSelect
+      :selectedClient="selectedClient"
+      :stast="clientsStats"
+      @open="() => open('')"
+      :total-debts-amount="totalDebtAmount"
+      :clients-with-debts="clients"
+    />
     <StatusFilter
-      v-if="selectedClient && deliveries"
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : undefined"
       :stast="clientsStats"
       v-model="selectedPaymentStatus"
@@ -13,25 +18,35 @@
     <DeliveryList
       :client-id="selectedClient?.id != null ? String(selectedClient.id) : null"
       :payment-status="selectedPaymentStatus"
-      :deliveries="filteredDeliveries as Delivery[]"
+      :deliveries="paginatedData.items"
+      :pagination-data="{
+        current_page: paginatedData.currentPage,
+        per_page: paginatedData.perPage,
+        total: paginatedData.total,
+        last_page: totalPages,
+        from: startIndex,
+        to: endIndex,
+      }"
       :is-loading="isLoading"
       @refresh="handleRefresh"
+      @previous-page="handlePreviousPage"
+      @next-page="handleNextPage"
     />
-    <LoadingSkeleton v-if="isLoading" />
+    <LoadingAbsoluteSkeleton v-if="isLoading" />
   </SideBar>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import { LoadingSkeleton, SideBar } from '@components';
-import { useModal } from '@composables';
+import { onMounted, ref, watch } from 'vue';
+import { LoadingAbsoluteSkeleton, SideBar } from '@components';
+import { useModal, usePagination } from '@composables';
 import ClientSelectorModal from '../components/client/ClientSelectorModal.Debt.vue';
 import DeliveryList from '../components/deliveries/DeliveryList.vue';
 import ClientSelect from '../components/client/ClientSelect.Debt.vue';
 import StatusFilter from '../components/deliveries/FilterDelivery.vue';
-import { Delivery, DeliveryPaymentStatus } from '@/views/deliveries/';
-import { allAmountDebts, getClientDeliveryWithDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
-import { Client, Stast } from '@views/clients';
+import { Delivery } from '@/views/deliveries/';
+import { allAmountDebts, getClientDeliveryWithDebtsFilter, getClientStats, getClientsWithDebt } from '@views/debts';
+import { ClientDebt, ClientStats } from '@views/debts/models';
 
 const paymentStatusOptions = [
   { label: 'Todos', value: 'all' },
@@ -41,94 +56,95 @@ const paymentStatusOptions = [
 ];
 
 const selectedPaymentStatus = ref('all');
-const clients = ref<Client[]>([]);
+const clients = ref<ClientDebt[]>([]);
 const totalDebtAmount = ref<number>(0);
-const clientsStats = ref<Stast | null>(null);
-const selectedClient = ref<Client | null>(null);
-const deliveries = ref<Delivery[] | null>([]);
+const clientsStats = ref<ClientStats | null>(null);
+const selectedClient = ref<ClientDebt | null>(null);
+const deliveries = ref<Delivery[]>([]);
 const isLoading = ref(false);
+
+const { paginatedData, startIndex, endIndex, totalPages, updatePage, setPaginatedData } = usePagination<Delivery>();
 
 const { isOpen, open } = useModal();
 
-const filteredDeliveries = computed(() => {
-  if (selectedPaymentStatus.value === 'all') {
-    return deliveries.value;
-  }
+const loadDeliveries = async (clientId: string, paymentStatus: string = selectedPaymentStatus.value, page: number = 1) => {
+  try {
+    isLoading.value = true;
 
-  return deliveries.value?.filter((delivery) => {
-    switch (selectedPaymentStatus.value) {
-      case 'pending':
-        return delivery.paymentStatus === DeliveryPaymentStatus.PENDING;
-      case 'partial_paid':
-        return delivery.paymentStatus === DeliveryPaymentStatus.PARTIAL_PAID;
-      case 'paid':
-        return delivery.paymentStatus === DeliveryPaymentStatus.PAID;
-      default:
-        return true;
-    }
-  });
-});
+    const response = await getClientDeliveryWithDebtsFilter({
+      client_id: clientId,
+      payment_status: paymentStatus !== 'all' ? paymentStatus : undefined,
+      page,
+      perPage: paginatedData.value.perPage,
+    });
+
+    deliveries.value = response.items;
+
+    setPaginatedData(response);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handlePreviousPage = () => {
+  if (selectedClient.value && paginatedData.value.currentPage > 1) {
+    const params = updatePage(paginatedData.value.currentPage - 1);
+    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, params.page);
+  }
+};
+
+const handleNextPage = () => {
+  if (selectedClient.value && paginatedData.value.currentPage < totalPages.value) {
+    const params = updatePage(paginatedData.value.currentPage + 1);
+    loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, params.page);
+  }
+};
 
 watch(selectedClient, async (newClient) => {
   if (newClient) {
     try {
       isLoading.value = true;
       clientsStats.value = await getClientStats(newClient.id);
-      await loadDeliveries(newClient.id);
-    } catch (error) {
-      clientsStats.value = null;
-      deliveries.value = [];
+      const params = updatePage(1);
+      await loadDeliveries(newClient.id, selectedPaymentStatus.value, params.page);
     } finally {
       isLoading.value = false;
     }
   } else {
     deliveries.value = [];
     clientsStats.value = null;
+    setPaginatedData({
+      items: [],
+      currentPage: 1,
+      perPage: 15,
+      total: 0,
+    });
   }
 });
 
 watch(selectedPaymentStatus, async (newStatus) => {
   if (selectedClient.value) {
-    await loadDeliveries(selectedClient.value.id, newStatus);
+    const params = updatePage(1);
+    await loadDeliveries(selectedClient.value.id, newStatus, params.page);
   }
 });
 
 onMounted(async () => {
+  isLoading.value = true;
   try {
     totalDebtAmount.value = await allAmountDebts();
     clients.value = await getClientsWithDebt();
-  } catch (error) {
-    console.error('Error loading clients with debt:', error);
-    clients.value = [];
-  }
-});
-
-const loadDeliveries = async (clientId: string, paymentStatus: string = selectedPaymentStatus.value) => {
-  try {
-    isLoading.value = true;
-
-    if (paymentStatus === 'all') {
-      deliveries.value = await getClientDeliveryWithDebts(clientId);
-    } else {
-      deliveries.value = await getClientDeliveryWithDebtsFilter(clientId, paymentStatus);
-    }
-  } catch (error) {
-    console.error('Error loading deliveries:', error);
-    deliveries.value = [];
   } finally {
     isLoading.value = false;
   }
-};
+});
 
 const handleRefresh = async () => {
   if (selectedClient.value) {
-    await loadDeliveries(selectedClient.value.id);
-    try {
-      totalDebtAmount.value = await allAmountDebts();
-      clientsStats.value = await getClientStats(selectedClient.value.id);
-    } catch (error) {
-      console.error('Error refreshing client stats:', error);
-    }
+    await loadDeliveries(selectedClient.value.id, selectedPaymentStatus.value, paginatedData.value.currentPage);
+    clients.value = await getClientsWithDebt();
+    totalDebtAmount.value = await allAmountDebts();
+    clientsStats.value = await getClientStats(selectedClient.value.id);
   }
 };
 </script>

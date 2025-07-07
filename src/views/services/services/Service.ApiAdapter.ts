@@ -1,63 +1,42 @@
 import { apiClient } from '@/services/';
-import { Service, adaptService, adaptServiceForApi } from '@/views/services';
+import { DetailService, FormService, ListService } from '@/views/services';
+import { PaginatedResponse, PaginationParams } from '@/models';
+import { handlePaginatedResponse } from '@/utils';
+
+const base = '/services';
 
 export const serviceApiRoutes = {
-  list: '/services',
-  details: (id: number | string) => `/services/${id}`,
-  search: (search: string) => `/services/search/${search}`,
+  list: base,
+  details: (id: string) => `${base}/${id}`,
+  update: (id: string) => `${base}/${id}`,
+  filter: `${base}/filter`,
 };
 
-export const getAllServices = async (): Promise<Service[]> => {
-  try {
-    const response = await apiClient.get(serviceApiRoutes.list);
-    return Array.isArray(response.data) ? response.data.map(adaptService) : [adaptService(response.data)];
-  } catch (error) {
-    throw new Error('Failed to fetch services.');
-  }
+export const getAllServices = async (): Promise<ListService[]> => {
+  const response = await apiClient.get(serviceApiRoutes.list);
+  return response.data;
 };
 
-export const getServiceById = async (serviceId: string | number): Promise<Service> => {
-  try {
-    const response = await apiClient.get(serviceApiRoutes.details(serviceId));
-    return adaptService(response.data);
-  } catch (error) {
-    throw new Error(`Failed to fetch service with ID ${serviceId}.`);
-  }
+export const getServiceById = async (service_id: string): Promise<DetailService> => {
+  const response = await apiClient.get(serviceApiRoutes.details(service_id));
+  return response.data;
 };
 
-export const createService = async (data: Service): Promise<Service> => {
-  try {
-    const payload = adaptServiceForApi(data);
-    const response = await apiClient.post(serviceApiRoutes.list, payload);
-    return adaptService(response.data);
-  } catch (error) {
-    throw new Error('Failed to create service.');
-  }
+export const createService = async (service: FormService): Promise<DetailService> => {
+  const response = await apiClient.post(serviceApiRoutes.list, service);
+  return response.data;
 };
 
-export const updateService = async (data: Service, serviceId: string | number): Promise<Service> => {
-  try {
-    const payload = adaptServiceForApi(data);
-    const response = await apiClient.put(serviceApiRoutes.details(serviceId), payload);
-    return adaptService(response.data);
-  } catch (error) {
-    throw new Error(`Failed to update service with ID ${serviceId}.`);
-  }
+export const updateService = async (service: FormService, id: string): Promise<DetailService> => {
+  const response = await apiClient.put(serviceApiRoutes.details(id), service);
+  return response.data;
 };
 
-export const deleteServiceById = async (serviceId: string | number): Promise<void> => {
-  try {
-    await apiClient.delete(serviceApiRoutes.details(serviceId));
-  } catch (error) {
-    throw new Error(`Failed to delete service with ID ${serviceId}.`);
-  }
+export const deleteServiceById = async (id: string): Promise<void> => {
+  await apiClient.delete(serviceApiRoutes.details(id));
 };
 
-export const searchServices = async (search: string): Promise<Service[]> => {
-  try {
-    const response = await apiClient.get(serviceApiRoutes.search(search));
-    return Array.isArray(response.data) ? response.data.map(adaptService) : [adaptService(response.data)];
-  } catch (error) {
-    throw new Error('Failed to search services.');
-  }
+export const getFilteredServices = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<ListService>> => {
+  const response = await apiClient.get(serviceApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, params);
 };

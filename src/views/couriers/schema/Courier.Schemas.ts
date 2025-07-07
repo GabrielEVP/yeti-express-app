@@ -1,6 +1,6 @@
-import { object, string } from "yup";
+import { object, string } from 'yup';
 
 export const CourierSchema = object({
-   firstName: string().required("El nombre es requerido"),
-   lastName: string().required("El apellido es requerido"),
+  first_name: string().required('El nombre es requerido'),
+  last_name: string().required('El apellido es requerido'),
 });

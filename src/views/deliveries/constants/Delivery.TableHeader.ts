@@ -5,6 +5,5 @@ export const TABLE_HEADER_DELIVERY = [
   { label: 'Repartidor', key: 'courier', position: 'left' },
   { label: 'Servicio', key: 'service', position: 'left' },
   { label: 'Monto', key: 'amount', position: 'right', sortable: true },
-  { label: 'Estado de pago', key: 'paymentStatus', position: 'center' },
   { label: 'Estado', key: 'status', position: 'center', sortable: true },
 ];

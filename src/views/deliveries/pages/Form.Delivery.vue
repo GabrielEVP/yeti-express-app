@@ -1,10 +1,10 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-6xl mx-auto p-4 md:p-6">
-        <LoadingSkeleton v-if="!formReady" />
-        <form v-else @submit.prevent="onSubmit" class="h-full">
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
+        <form @submit.prevent="onSubmit" class="h-full">
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
               <option value="general">General</option>
@@ -31,16 +31,10 @@
             <div class="space-y-4">
               <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <SelectForm label="Servicio" name="serviceId" placeholder="Selecciona un servicio" :items="serviceOptions" />
-                <SelectForm
-                  label="Forma de pago"
-                  name="paymentType"
-                  placeholder="Forma de pago"
-                  :items="[...PaymentTypeOptions]"
-                  :disabled="!selectedClientAllowCredit"
-                />
+                <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
+                <SelectForm label="Forma de pago" name="payment_type" placeholder="Forma de pago" :items="[...PaymentTypeOptions]" />
                 <div class="sm:col-span-2 lg:col-span-1">
-                  <SelectForm label="Repartidor" name="courierId" placeholder="Selecciona un repartidor" :items="courierOptions" />
+                  <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
                 </div>
               </div>
             </div>
@@ -48,7 +42,7 @@
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FieldForm label="Nombre completo" name="receipt.fullName" id="fullName" required />
+                <FieldForm label="Nombre completo" name="receipt.full_name" id="fullName" required />
                 <FieldForm label="Teléfono" name="receipt.phone" id="phone" required />
               </div>
               <div class="w-full">
@@ -74,33 +68,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
 import {
-  SideBar,
+  AcceptButton,
+  BackButton,
+  CancelButton,
   Card,
   FieldForm,
+  LoadingAbsoluteSkeleton,
   SelectForm,
-  TextAreaForm,
-  AcceptButton,
-  CancelButton,
+  SideBar,
   Tabs,
-  TabsTitle,
   TabsContent,
-  LoadingSkeleton, BackButton,
+  TabsTitle,
+  TextAreaForm,
 } from '@/components';
-import { Delivery, PaymentType } from '@views/deliveries/models';
-import { PaymentTypeOptions } from '@views/deliveries/models';
-import { getDeliveryById, createDelivery, updateDelivery } from '@views/deliveries';
+import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
+import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { Client } from '@views/clients';
-import { Courier } from '@views/couriers';
-import { getAllCouriers } from '@views/couriers';
-import { Service } from '@views/services';
-import { getAllServices } from '@views/services';
+import { ListClient } from '@views/clients';
+import { getAllCouriers, ListCourier } from '@views/couriers';
+import { getAllServices, ListService } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
 
 const activeTab = ref('general');
@@ -111,7 +103,7 @@ const formReady = ref(false);
 
 const selectedClientAllowCredit = ref(true);
 
-const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Delivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
   id: deliveryId,
   getById: getDeliveryById,
   create: createDelivery,
@@ -129,53 +121,54 @@ const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<Del
   },
 });
 
-const couriers = ref<Courier[]>([]);
+const couriers = ref<ListCourier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
-    label: `${courier.firstName} ${courier.lastName}`,
+    label: `${courier.first_name} ${courier.last_name}`,
     value: courier.id,
   }))
 );
 
-const services = ref<Service[]>([]);
+const services = ref<ListService[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
-    label: service.name,
+    label: `${service.name} -- ${service.amount}`,
     value: service.id,
   }))
 );
 
 const clientSelectorValue = computed(() => ({
-  clientId: values.clientId || '',
-  pickupAddress: values.pickupAddress || '',
+  clientId: values.client_id || '',
+  pickupAddress: values.pickup_address || '',
 }));
 
 function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
   if (clientData.clientId !== undefined) {
-    setFieldValue('clientId', clientData.clientId);
+    setFieldValue('client_id', clientData.clientId);
   }
   if (clientData.pickupAddress !== undefined) {
-    setFieldValue('pickupAddress', clientData.pickupAddress);
+    setFieldValue('pickup_address', clientData.pickupAddress);
   }
 }
 
-function handleClientChanged(client: Client | null) {
+function handleClientChanged(client: ListClient | null) {
   if (client) {
-    if (client.allowCredit) {
+    if (client.allow_credit) {
       selectedClientAllowCredit.value = true;
     } else {
       selectedClientAllowCredit.value = false;
-      setFieldValue('paymentType', PaymentType.FULL);
+      setFieldValue('payment_type', PaymentType.FULL);
     }
   } else {
     selectedClientAllowCredit.value = true;
   }
 }
 
-async function loadFormData() {
+async function loadFormData(): Promise<void> {
   const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
-  couriers.value = courierData;
-  services.value = serviceData;
+
+  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
+  services.value = Array.isArray(serviceData) ? serviceData : [];
 }
 
 onMounted(async () => {

@@ -1,8 +1,8 @@
-import { Delivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries';
-import { formatDateCustom, formatToDollars } from '@utils';
-import { useAlert } from '@composables';
+import { getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@/views/deliveries/models';
+import { formatDateCustom, formatToDollars } from '@/utils';
+import { useAlert } from '@/composables';
 
-export function copyToClipboard(delivery: Delivery) {
+export function copyToClipboard(delivery: any) {
   const { triggerError, triggerSuccess } = useAlert();
 
   const text = `
@@ -12,33 +12,35 @@ export function copyToClipboard(delivery: Delivery) {
 *Fecha:* ${formatDateCustom(delivery.date)}
 
 ----------------------------
-
-👤 *Cliente:* ${delivery.clientLegalName}
-📍 *Dirección:* ${delivery.pickupAddress || 'N/A'}
+*Direccion de retiro*
+ 
+👤 *Cliente:* ${delivery.client_legal_name}
+📍 *Dirección:* ${delivery.pickup_address || 'N/A'}
 
 ----------------------------
 
-🚚 *Servicio:* ${delivery.serviceName}
+🚚 *Servicio:* ${delivery.service_name}
 💰 *Monto:* ${formatToDollars(delivery.amount)}
-📌 *Estado del Pago:* ${getDeliveryPaymentStatusLabel(delivery.paymentStatus)}
+📌 *Estado del Pago:* ${getDeliveryPaymentStatusLabel(delivery.payment_status)}
 
 ----------------------------
 
-🏍️️ *Repartidor:* ${delivery.courierName}
+🛵️ *Repartidor:* ${delivery.courier_full_name}
 📍 *Estado:* ${getDeliveryStatusLabel(delivery.status)}
 
 ----------------------------
+*Direccion de entrega del pedido*
 
-🤝 *Recibe:* ${delivery.receipt.fullName || 'N/A'}
-📞 *Teléfono:* ${delivery.receipt.phone || 'N/A'}
-🏠 *Dirección de Entrega:* ${delivery.receipt.address || 'N/A'}
+🤝 *Recibe:* ${delivery.receipt_full_name || 'N/A'}
+📞 *Teléfono:* ${delivery.receipt_phone || 'N/A'}
+🏠 *Dirección de Entrega:* ${delivery.receipt_address || 'N/A'}
 
 📝 *Nota:*
 ${delivery.notes || 'Sin notas'}
 
 ----------------------------
 
-🙏 Gracias por su preferencia
+🙏 Gracias por confiar en Yetiexpress
 🕒 ${formatDateCustom(new Date())}
   `.trim();
 

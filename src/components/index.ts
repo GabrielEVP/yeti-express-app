@@ -5,6 +5,7 @@ export { default as CancelButton } from '@/components/buttons/Cancel.vue';
 export { default as DeleteButton } from '@/components/buttons/Delete.vue';
 export { default as EditButton } from '@/components/buttons/Edit.vue';
 export { default as EyeButton } from '@/components/buttons/Eye.vue';
+export { default as EyeButtonDetails } from '@/components/buttons/EyeButton.vue';
 export { default as FilterButton } from '@/components/buttons/Filter.vue';
 export { default as NewButton } from '@/components/buttons/New.vue';
 export { default as PlusButton } from '@/components/buttons/Plus.vue';
@@ -26,7 +27,11 @@ export { default as SelectFilter } from '@/components/forms/SelectFilter.vue';
 export { default as TextAreaForm } from '@/components/forms/TextArea.vue';
 
 // MODALS
+export { default as ModalContentItem } from '@/components/modals/modalDetailContent/ContentItem.vue';
+export { default as ModalSpecialContentItem } from '@/components/modals/modalDetailContent/SpecialContentItem.vue';
+export { default as ModalTitleModal } from '@/components/modals/modalDetailContent/TitleModal.vue';
 export { default as ModalForm } from '@/components/modals/ModalForm.vue';
+export { default as ModalPdfViewer } from '@/components/modals/ModalPDFViewer.vue';
 export { default as ModalConfirmation } from '@components/modals/ModalConfirmation.vue';
 export { default as ModalReportGeneral } from '@/components/modals/ModalReportGeneral.vue';
 export { default as ModalReportDetail } from '@/components/modals/ModalReportDetail.vue';
@@ -44,12 +49,15 @@ export { default as EmptyData } from '@/components/ui/EmptyData.vue';
 export { default as InputDisabled } from '@/components/ui/InputDisabled.vue';
 export { default as Input } from '@/components/ui/Input.vue';
 export { default as Label } from '@/components/ui/Label.vue';
-export { default as LoadingSkeleton } from '@/components/ui/LoadingSkeleton.vue';
 export { default as SectionText } from '@/components/ui/SectionText.vue';
 export { default as Text } from '@/components/ui/Text.vue';
 
+export { default as LoadingSkeleton } from '@components/ui/Loanding/LoadingSkeleton.vue';
+export { default as LoadingAbsoluteSkeleton } from '@components/ui/Loanding/LoadingAbsoluteSkeleton.vue';
+
 // UI – MODALS
 export { default as Modal } from '@/components/ui/modals/Modal.vue';
+export { default as ModalDetail } from '@/components/ui/modals/ModalDetail.vue';
 
 // UI – SIDEBAR HELPERS
 export { default as SideBar } from '@/layouts/BarLayourt.vue';

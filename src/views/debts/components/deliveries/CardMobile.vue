@@ -5,16 +5,16 @@
         <span class="font-mono text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-md">
           {{ delivery.number }}
         </span>
-        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full" :class="getStatusClasses(delivery.status)">
-          {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
+        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full" :class="getStatusClasses(delivery.payment_status)">
+          {{ getDeliveryPaymentStatusLabel(delivery.payment_status) }}
         </span>
       </div>
       <div v-if="showPaymentInfo" class="text-right">
         <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          {{ formatToDollars(delivery.amount ?? 0) }}
+          {{ formatToDollars(delivery.debt_amount ?? 0) }}
         </div>
         <div class="text-sm text-gray-500 dark:text-gray-400">Resta pendiente</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatToDollars(delivery.debtRemainingAmount ?? 0) }}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatToDollars(delivery.debt_remaining_amount ?? 0) }}</div>
       </div>
     </div>
 
@@ -51,27 +51,27 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Delivery, getDeliveryPaymentStatusLabel } from '@views/deliveries';
-import { DeliveryPaymentStatus } from '@views/deliveries';
+import { DeliveryPaymentStatus, getDeliveryPaymentStatusLabel } from '@views/deliveries';
 import { formatDateCustom, formatToDollars } from '@/utils/';
+import { DeliveryWithDebt } from '@views/debts/models';
 
 interface Props {
-  delivery: Delivery;
+  delivery: DeliveryWithDebt;
 }
 
 const props = defineProps<Props>();
 
 defineEmits<{
-  (e: 'payFull', delivery: Delivery): void;
-  (e: 'payPartial', delivery: Delivery): void;
+  (e: 'payFull', delivery: DeliveryWithDebt): void;
+  (e: 'payPartial', delivery: DeliveryWithDebt): void;
 }>();
 
 const showPaymentInfo = computed(() => {
-  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
+  return props.delivery.payment_status != DeliveryPaymentStatus.PAID;
 });
 
 const showPaymentButtons = computed(() => {
-  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
+  return props.delivery.payment_status != DeliveryPaymentStatus.PAID;
 });
 
 const getStatusClasses = (status: string) => {

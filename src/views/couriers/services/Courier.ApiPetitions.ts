@@ -1,72 +1,50 @@
 import { apiClient } from '@/services/';
-import { Courier } from '../models';
-import { adaptCourier, adaptCourierForApi } from '@/views/couriers';
+import { PaginatedResponse, PaginationParams } from '@/models';
+import { handlePaginatedResponse } from '@/utils';
+import { DetailCourier, FormCourier, ListCourier } from '@/views/couriers/models';
+
+const base = '/couriers';
 
 export const courierApiRoutes = {
-  list: '/couriers',
-  details: (courierId: string | number) => `/couriers/${courierId}`,
-  search: (search: string) => `/couriers/search/${search}`,
-  getDeliveryReport: (courierId: string | number) => `/couriers/${courierId}/deliveries-report`,
-  getAllDeliveriesReport: '/couriers/deliveries-report',
+  list: base,
+  details: (id: string) => `${base}/${id}`,
+  update: (id: string) => `${base}/${id}`,
+  filter: `${base}/filter`,
+  getDeliveryReport: (id: string) => `${base}/${id}/deliveries-report`,
+  getAllDeliveriesReport: `${base}/deliveries-report`,
 };
 
-export const getAllCouriers = async (): Promise<Courier[]> => {
-  try {
-    const response = await apiClient.get(courierApiRoutes.list);
-    return Array.isArray(response.data) ? response.data.map(adaptCourier) : [adaptCourier(response.data)];
-  } catch (error) {
-    throw new Error('Failed to fetch couriers.');
-  }
+export const getAllCouriers = async (): Promise<ListCourier> => {
+  const response = await apiClient.get(courierApiRoutes.list);
+  return response.data;
 };
 
-export const getCourierById = async (courierId: string | number): Promise<Courier> => {
-  try {
-    const response = await apiClient.get(courierApiRoutes.details(courierId));
-    return adaptCourier(response.data);
-  } catch (error) {
-    throw new Error(`Failed to fetch courier with ID ${courierId}.`);
-  }
+export const getCourierById = async (courier_id: string): Promise<DetailCourier> => {
+  const response = await apiClient.get(courierApiRoutes.details(courier_id));
+  return response.data;
 };
 
-export const createCourier = async (data: Courier): Promise<Courier> => {
-  try {
-    const payload = adaptCourierForApi(data);
-    const response = await apiClient.post(courierApiRoutes.list, payload);
-    return adaptCourier(response.data);
-  } catch (error) {
-    throw new Error('Failed to create courier.');
-  }
+export const createCourier = async (courier: FormCourier): Promise<DetailCourier> => {
+  const response = await apiClient.post(courierApiRoutes.list, courier);
+  return response.data;
 };
 
-export const updateCourier = async (data: Courier, courierId: string | number): Promise<Courier> => {
-  try {
-    const payload = adaptCourierForApi(data);
-    const response = await apiClient.put(courierApiRoutes.details(courierId), payload);
-    return adaptCourier(response.data);
-  } catch (error) {
-    throw new Error(`Failed to update courier with ID ${courierId}.`);
-  }
+export const updateCourier = async (courier: FormCourier, id: string): Promise<DetailCourier> => {
+  const response = await apiClient.put(courierApiRoutes.update(id), courier);
+  return response.data;
 };
 
-export const deleteCourierById = async (courierId: string | number): Promise<void> => {
-  try {
-    await apiClient.delete(courierApiRoutes.details(courierId));
-  } catch (error) {
-    throw new Error(`Failed to delete courier with ID ${courierId}.`);
-  }
+export const deleteCourierById = async (courier_id: string): Promise<void> => {
+  await apiClient.delete(courierApiRoutes.details(courier_id));
 };
 
-export const searchCouriers = async (search: string): Promise<Courier[]> => {
-  try {
-    const response = await apiClient.get(courierApiRoutes.search(search));
-    return Array.isArray(response.data) ? response.data.map(adaptCourier) : [adaptCourier(response.data)];
-  } catch (error) {
-    throw new Error('Failed to search couriers.');
-  }
+export const getFilteredCouriers = async (params: Record<string, any> & PaginationParams): Promise<PaginatedResponse<ListCourier>> => {
+  const response = await apiClient.get(courierApiRoutes.filter, { params });
+  return handlePaginatedResponse(response, params);
 };
 
-export const getCourierDeliveryReport = async (courierId: string, startDate: string, endDate: string): Promise<any> => {
-  const response = await apiClient.get(courierApiRoutes.getDeliveryReport(courierId), {
+export const getCourierDeliveryReport = async (courier_id: string, startDate: string, endDate: string): Promise<any> => {
+  const response = await apiClient.get(courierApiRoutes.getDeliveryReport(courier_id), {
     params: {
       start_date: startDate,
       end_date: endDate,

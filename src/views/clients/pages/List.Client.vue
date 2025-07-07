@@ -1,5 +1,7 @@
 <template>
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsClient v-if="selectedId !== null" :is-open="isOpenDetails" :client="selectedClient" @close="closeDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar este Cliente?"
@@ -64,43 +66,43 @@
     <TableDashboard
       v-else
       :headers="[...TABLE_HEADER_CLIENT]"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="clients.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
       :sort-state="sortConfig"
       @sort="handleSort"
     >
-      <TableRow v-for="client in paginatedItems" :key="client.id">
+      <TableRow v-for="client in paginatedData.items" :key="client.id">
         <TableContent class="text-black dark:text-white break-words">
-          {{ client.legalName }}
+          {{ client.legal_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           <Bagde>{{ formatClientType(client.type as ClientType) }}</Bagde>
         </TableContent>
         <TableContent class="text-gray-600 dark:text-gray-300 break-words">
-          {{ client.registrationNumber }}
+          {{ client.registration_number }}
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesClient.details(client.id)" />
+            <EyeButtonDetails @click="() => openDetails(String(client.id))" />
             <EditButton :route="AppRoutesClient.edit(client.id)" />
-            <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+            <TrashButton v-if="client.can_delete" @click="open(client.id)" />
           </div>
         </TableContent>
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="client in paginatedItems" :key="client.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="client in paginatedData.items" :key="client.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
-                  {{ client.legalName }}
+                  {{ client.legal_name }}
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
-                  {{ client.registrationNumber }}
+                  {{ client.registration_number }}
                 </p>
               </div>
               <Bagde class="break-words text-right">
@@ -109,9 +111,9 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <EyeButton :route="AppRoutesClient.details(client.id)" />
+                <EyeButtonDetails @click="() => openDetails(String(client.id))" />
                 <EditButton :route="AppRoutesClient.edit(client.id)" />
-                <TrashButton v-if="client.canDelete" @click="open(client.id)" />
+                <TrashButton v-if="client.can_delete" @click="open(client.id)" />
               </div>
             </div>
           </div>
@@ -123,14 +125,15 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useDebounce, useModal, usePagination, useSearch } from '@/composables/';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
   Bagde,
   Card,
   EditButton,
-  EyeButton,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
   ModalReportDetail,
@@ -145,42 +148,46 @@ import {
   TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Client, ClientType, ClientTypeOptions, formatClientType } from '@/views/clients/';
-import {
-  allGetClientsDebtReport,
-  allGetPendingPaidDebtsReport,
-  deleteClientById,
-  getClientDebtReport,
-  getFilteredClients,
-  searchClients,
-} from '@/views/clients/service/';
+import { ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
+import { ModalDetailsClient } from '@/views/clients/components/';
+import { deleteClientById, getClientById, getFilteredClients } from '@/views/clients/service/';
+import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
 import { getClientsWithDebt } from '@views/debts';
 import { generatePdf } from '@utils';
+import { ClientDebt } from '@views/debts/models';
 
-const clients = ref<Client[]>([]);
-const clientsWithDebts = ref<Client[]>([]);
+const clientsWithDebts = ref<ClientDebt[]>([]);
 const selectedType = ref<string>('');
 const selectedCredit = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const sortConfig = ref<{ column: keyof Client; order: 'asc' | 'desc' } | null>(null);
+const isLoadingDetails = ref(false);
+const selectedClient = ref<DetailClient | null>(null);
 
+const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
+
+const openDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedClient.value = await getClientById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+const sortConfig = ref<{ column: keyof ListClient; order: 'asc' | 'desc' } | null>(null);
+const searchQuery = ref<string>('');
 const clientTypeOptions = [...ClientTypeOptions];
 
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(clients, 15);
-
-const { searchQuery } = useSearch<Client>({
-  fetchFn: searchClients,
-  autoSearch: false,
-});
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListClient>();
 
 watch([selectedType, selectedCredit, sortConfig], () => {
   runSearch();
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
     error.value = null;
@@ -200,9 +207,11 @@ const runSearch = async () => {
       filters,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
+      page: page,
+      perPage: paginatedData.value.perPage,
     });
 
-    clients.value = response;
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }
@@ -211,7 +220,7 @@ const runSearch = async () => {
 const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
   if (config) {
     sortConfig.value = {
-      column: config.column as keyof Client,
+      column: config.column as keyof ListClient,
       order: config.order,
     };
   } else {
@@ -219,17 +228,22 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 const clientsOptions = computed(() => {
   return clientsWithDebts.value.map((client) => ({
-    label: client.legalName,
+    label: client.legal_name,
     value: client.id,
   }));
 });
 
 onMounted(async () => {
-  await runSearch();
+  await runSearch(1);
   try {
     clientsWithDebts.value = await getClientsWithDebt();
   } catch (error) {
@@ -239,8 +253,8 @@ onMounted(async () => {
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteClientById,
-  successMessage: 'Repartidor eliminado exitosamente',
-  errorMessage: 'Error al eliminar el repartidor',
+  successMessage: 'Ciente eliminado exitosamente',
+  errorMessage: 'Error al eliminar el cliente',
   onAfterDelete: async () => {
     await runSearch();
   },
@@ -256,22 +270,37 @@ const close_date = ref<string>('');
 const { isOpen: isOpenGeneral, open: openGeneral, close: closeGeneral } = useModal<string>();
 
 const handleGeneralReport = async (start: string, end: string) => {
-  const blob = await allGetClientsDebtReport(start, end);
-  const filename = `informe_general_deudas_${start}_${end}.pdf`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await allGetClientsDebtReport(start, end);
+    const filename = `informe_general_deudas_${start}_${end}.pdf`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 
 const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal<string>();
 
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
-  const blob = await getClientDebtReport(clientId, start, end);
-  const filename = `informe_deuda_${clientId}`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getClientDebtReport(clientId, start, end);
+    const filename = `informe_deuda_${clientId}`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 
 const handlePendingReport = async () => {
-  const blob = await allGetPendingPaidDebtsReport();
-  const filename = `informe_deuda_general`;
-  generatePdf(blob, filename);
+  isLoadingDetails.value = true;
+  try {
+    const blob = await allGetPendingPaidDebtsReport();
+    const filename = `informe_deuda_general`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
 };
 </script>

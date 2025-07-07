@@ -10,15 +10,18 @@
         {{ formatDateCustom(delivery.date) }}
       </div>
       <Bagde>
-        {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
+        {{ getDeliveryPaymentStatusLabel(delivery.payment_status) }}
       </Bagde>
     </div>
     <div v-if="showPaymentSection" class="flex items-center gap-8">
       <div class="text-right">
         <Text class="text-lg font-semibold">
-          {{ formatToDollars(delivery.amount ?? 0) }}
+          {{ formatToDollars(delivery.debt_amount ?? 0) }}
         </Text>
-        <Text class="text-sm text-gray-500 dark:text-gray-400"> Resta: {{ formatToDollars(delivery.debtRemainingAmount ?? 0) }} </Text>
+        <Text class="text-sm text-gray-500 dark:text-gray-400">
+          Resta:
+          {{ formatToDollars(delivery.debt_remaining_amount ?? 0) }}
+        </Text>
       </div>
 
       <div v-if="showPaymentButtons" class="flex gap-2">
@@ -41,28 +44,28 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Delivery, getDeliveryPaymentStatusLabel } from '@views/deliveries';
-import { DeliveryPaymentStatus } from '@views/deliveries';
+import { DeliveryPaymentStatus, getDeliveryPaymentStatusLabel } from '@views/deliveries';
+import { DeliveryWithDebt } from '@views/debts/models';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { Bagde, Button, Text } from '@/components/';
 
 interface Props {
-  delivery: Delivery;
+  delivery: DeliveryWithDebt;
 }
 
 const props = defineProps<Props>();
 
 defineEmits<{
-  (e: 'payFull', delivery: Delivery): void;
-  (e: 'payPartial', delivery: Delivery): void;
+  (e: 'payFull', delivery: DeliveryWithDebt): void;
+  (e: 'payPartial', delivery: DeliveryWithDebt): void;
 }>();
 
 const showPaymentSection = computed(() => {
-  return props.delivery.paymentStatus != DeliveryPaymentStatus.PAID;
+  return props.delivery.payment_status != DeliveryPaymentStatus.PAID;
 });
 
 const showPaymentButtons = computed(() => {
-  const status = props.delivery.paymentStatus?.toLowerCase() || '';
+  const status = props.delivery.payment_status?.toLowerCase() || '';
   return !status.includes('pagado') || status.includes('parcialmente pagado');
 });
 </script>

@@ -1,4 +1,3 @@
-export * from './adapter/Delivery.ApiAdapter';
 export * from './constants/Delivery.TableHeader';
 export * from './models/Delivery';
 export * from './models/PaymentStatus';

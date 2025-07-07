@@ -1,6 +1,7 @@
 <template>
   <SideBar>
-    <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :company-bill-id="selectedId" @close="CloseDetails" />
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetails v-if="selectedId !== null" :is-open="IsOpenDetails" :bill-data="selectedBill" @close="CloseDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta gastos?"
@@ -22,14 +23,14 @@
     <TableDashboard
       v-else
       :headers="TABLE_HEADER_COMPANY_BILL"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
-      :totalItems="bills.length"
-      @updatePage="updatePage"
+      :totalItems="paginatedData.total"
+      @updatePage="handlePageChange"
     >
-      <TableRow v-for="bill in paginatedItems" :key="bill.id">
+      <TableRow v-for="bill in paginatedData.items" :key="bill.id">
         <TableContent>{{ bill.name }}</TableContent>
         <TableContent>{{ formatDateCustom(bill.date) }}</TableContent>
         <TableContent>{{ formatToDollars(bill.amount) }}</TableContent>
@@ -38,9 +39,7 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <Button class="bg-gray-600 hover:bg-gray-700 text-white transition-colors" @click="() => OpenDetails(String(bill.id))">
-              <Eye class="w-4 h-4" />
-            </Button>
+            <EyeButtonDetails @click="() => OpenDetails(String(bill.id))" />
             <EditButton :route="AppRoutesCompanyBill.edit(bill.id)" />
             <TrashButton @click="() => open(bill.id)" />
           </div>
@@ -48,7 +47,7 @@
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="bill in paginatedItems" :key="bill.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="bill in paginatedData.items" :key="bill.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold text-gray-900 dark:text-gray-50 break-words">
@@ -62,9 +61,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-2">
-                <Button class="bg-gray-600 hover:bg-gray-700 text-white transition-colors" @click="() => OpenDetails(String(bill.id))">
-                  <Eye class="w-4 h-4" />
-                </Button>
+                <EyeButtonDetails @click="() => OpenDetails(String(bill.id))" />
                 <EditButton :route="AppRoutesCompanyBill.edit(bill.id)" />
                 <TrashButton @click="() => open(bill.id)" />
               </div>
@@ -77,75 +74,86 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { usePagination, useSearch, useModal, useDebounce } from '@/composables/';
+import { onMounted, ref } from 'vue';
+import { useDebounce, useModal, usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@/utils/';
 import { useDeleteWithModal } from '@/composables/UseModalWithDelete';
 import {
-  SideBar,
-  Card,
-  TableContent,
-  TableRow,
-  TableDashboard,
-  SearchForm,
-  NewButton,
-  TrashButton,
-  EditButton,
-  ModalConfirmation,
-  FilterButton,
-  Button,
-  LoadingSkeleton,
   Bagde,
+  Card,
+  EditButton,
+  EyeButtonDetails,
+  FilterButton,
+  LoadingAbsoluteSkeleton,
+  LoadingSkeleton,
+  ModalConfirmation,
+  NewButton,
+  SearchForm,
+  SideBar,
+  TableContent,
+  TableDashboard,
+  TableRow,
+  TrashButton,
 } from '@/components/';
 import { ModalDetails } from '@/views/company-bills/components';
-import { CompanyBill, formatPaymentMethod } from '@/views/company-bills/';
-import { getAllCompanyBills, deleteCompanyBillById, searchCompanyBills } from '@/views/company-bills/services/';
+import { DetailCompanyBill, formatPaymentMethod, getCompanyBillById, ListCompanyBill } from '@/views/company-bills/';
+import { deleteCompanyBillById, getFilteredCompanyBills } from '@/views/company-bills/services/';
 import { TABLE_HEADER_COMPANY_BILL } from '@views/company-bills/constants';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router';
-import { Eye } from 'lucide-vue-next';
 
-const bills = ref<CompanyBill[]>([]);
+const { isOpen: IsOpenDetails, selectedId, open: openModalDetails, close: CloseDetails } = useModal<string>();
+
+const isLoadingDetails = ref(false);
+const selectedBill = ref<DetailCompanyBill | null>(null);
+
+const OpenDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedBill.value = await getCompanyBillById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListCompanyBill>();
+
 const isLoading = ref(false);
+const searchQuery = ref<string>('');
 
-const { isOpen: IsOpenDetails, selectedId, open: OpenDetails, close: CloseDetails } = useModal<string>();
-
-const { searchQuery, applySearch } = useSearch<CompanyBill>({
-  fetchFn: searchCompanyBills,
-  autoSearch: false,
-});
-
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
-    if (searchQuery.value.trim() === '') {
-      bills.value = await getAllCompanyBills();
-    } else {
-      bills.value = await applySearch();
-    }
+
+    const response = await getFilteredCompanyBills({
+      search: searchQuery.value.trim(),
+      page: page,
+      perPage: paginatedData.value.perPage,
+    });
+
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }
 };
 
+const handlePageChange = async (page: number) => {
+  const params = updatePage(page);
+  await runSearch(params.page);
+};
+
 const debouncedSearch = useDebounce(runSearch, 500);
 
 onMounted(async () => {
-  isLoading.value = true;
-  try {
-    bills.value = await getAllCompanyBills();
-  } finally {
-    isLoading.value = false;
-  }
+  await runSearch(1);
 });
-
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(bills, 15);
 
 const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
   deleteFn: deleteCompanyBillById,
-  successMessage: 'Gasto eliminada exitosamente',
-  errorMessage: 'Error al eliminar la gastos',
+  successMessage: 'Gasto eliminado exitosamente',
+  errorMessage: 'Error al eliminar el gasto',
   onAfterDelete: async () => {
-    await runSearch();
+    await runSearch(paginatedData.value.currentPage);
   },
 });
 

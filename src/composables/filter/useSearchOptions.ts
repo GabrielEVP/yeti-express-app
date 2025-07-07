@@ -24,7 +24,6 @@ export function useSearch<TData>({ fetchFn, autoSearch = true }: UseSearchOption
       onInvalidate(() => (isStale = true));
       const _ = await applySearch();
       if (isStale) return;
-      // el componente decide qué hacer con los datos
     });
   }
 

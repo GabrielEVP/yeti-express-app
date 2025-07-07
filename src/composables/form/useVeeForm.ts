@@ -1,8 +1,8 @@
+import type { GenericObject } from 'vee-validate';
 import { useForm } from 'vee-validate';
 import { useRouter } from 'vue-router';
 import { useAlert } from '@/composables/useAlert';
 import { redirectToLastOrDefault } from '@/composables/';
-import type { GenericObject } from 'vee-validate';
 import type { PartialDeep } from 'type-fest';
 
 interface CrudFormOptions<T extends GenericObject, ID> {
@@ -52,24 +52,23 @@ export function useVeeForm<T extends GenericObject, ID = string>({
     const isEdit = Boolean(id);
 
     try {
-      // Caso de edición con update
       if (isEdit && update) {
         const res = await update(values, id!);
-        if (!res || res.status < 200 || res.status >= 300) {
+        // Check if response exists and status is error (excluding 204)
+        if (res && res.status >= 300) {
           triggerError(messages.updateError ?? 'Error al actualizar');
           return;
         }
-
+        1;
         triggerSuccess(messages.updateSuccess ?? 'Actualizado correctamente');
 
         if (modal) {
           return res;
         }
-      }
-      // Caso de creación con create
-      else if (!isEdit && create) {
+      } else if (!isEdit && create) {
         const res = await create(values);
-        if (!res || res.status < 200 || res.status >= 300) {
+        // Check if response exists and status is error (excluding 204)
+        if (res && res.status >= 300) {
           triggerError(messages.createError ?? 'Error al crear');
           return;
         }
@@ -79,12 +78,8 @@ export function useVeeForm<T extends GenericObject, ID = string>({
         if (modal) {
           return res;
         }
-      }
-      // Caso donde no se proporciona la función necesaria
-      else {
-        const errorMessage = isEdit
-          ? 'No se definió la función de actualización.'
-          : 'No se definió la función de creación.';
+      } else {
+        const errorMessage = isEdit ? 'No se definió la función de actualización.' : 'No se definió la función de creación.';
         triggerError(errorMessage);
         return;
       }
@@ -94,11 +89,7 @@ export function useVeeForm<T extends GenericObject, ID = string>({
       }
     } catch (error) {
       console.log(error);
-      triggerError(
-        isEdit
-          ? (messages.updateError ?? 'Error al actualizar')
-          : (messages.createError ?? 'Error al crear')
-      );
+      triggerError(isEdit ? (messages.updateError ?? 'Error al actualizar') : (messages.createError ?? 'Error al crear'));
     }
   });
 

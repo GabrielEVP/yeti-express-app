@@ -1,5 +1,7 @@
 <template>
   <SideBar>
+    <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
+    <ModalDetailsDelivery v-if="selectedId !== null" :is-open="isOpenDetails" :delivery-data="selectedDelivery" @close="closeDetails" />
     <ModalConfirmation
       :isOpen="isOpen"
       message="¿Estás seguro que quieres eliminar esta Delivery?"
@@ -12,6 +14,14 @@
       :deliveryId="selectedDeliveryId || ''"
       @close="closeCancelModal"
       @cancelDelivery="handleCancelDelivery"
+    />
+    <ModalPdfViewer
+      :isOpen="isTicketModalOpen"
+      :PDFUrl="ticketUrl"
+      :PDFBlob="ticketBlob"
+      :id="selectedTicketDeliveryId"
+      @close="closeTicketModal"
+      @download="downloadTicket"
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between">
@@ -67,7 +77,7 @@
     <TableDashboard
       v-else
       :headers="[...TABLE_HEADER_DELIVERY]"
-      :currentPage="currentPage"
+      :currentPage="paginatedData.currentPage"
       :totalPages="totalPages"
       :startIndex="startIndex"
       :endIndex="endIndex"
@@ -76,7 +86,7 @@
       :sort-state="sortConfig"
       @sort="handleSort"
     >
-      <TableRow v-for="delivery in paginatedItems" :key="delivery.id">
+      <TableRow v-for="delivery in paginatedData.items" :key="delivery.id">
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.number }}
         </TableContent>
@@ -84,19 +94,16 @@
           {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.clientLegalName }}
+          {{ delivery.client_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.courierName }}
+          {{ delivery.courier_full_name }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.serviceName }}
+          {{ delivery.service_name }}
         </TableContent>
         <TableContent class="text-black text-right dark:text-white break-words">
           {{ formatToDollars(delivery.amount) }}
-        </TableContent>
-        <TableContent class="text-black text-center dark:text-white break-words">
-          {{ getDeliveryPaymentStatusLabel(delivery.paymentStatus) }}
         </TableContent>
         <TableContent class="text-black text-center dark:text-white break-words">
           <Bagde
@@ -115,9 +122,9 @@
         </TableContent>
         <TableContent>
           <div class="flex gap-1 justify-center">
-            <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+            <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
             <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
-            <DownloadButton @click="handleDownload(delivery.id)" />
+            <DownloadButton @click="handleViewTicket(delivery.id)" />
             <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
             <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
             <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
@@ -125,13 +132,13 @@
               v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
               @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
             />
-            <CopyWhatsapp @click="copyToClipboard(delivery)" />
+            <CopyWhatsapp @click="CopyToWhatsapp(delivery.id)" />
           </div>
         </TableContent>
       </TableRow>
       <template #mobile-rows>
         <div class="lg:hidden space-y-4">
-          <div v-for="delivery in deliveries" :key="delivery.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
+          <div v-for="delivery in paginatedData.items" :key="delivery.id" class="bg-white dark:bg-gray-800 border rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-3">
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
@@ -157,9 +164,9 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex gap-1 justify-center">
-                <EyeButton :route="AppRoutesDelivery.details(delivery.id)" />
+                <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
                 <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
-                <DownloadButton @click="handleDownload(delivery.id)" />
+                <DownloadButton @click="handleViewTicket(delivery.id)" />
                 <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
                 <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
                 <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
@@ -167,7 +174,7 @@
                   v-if="delivery.status != DeliveryStatus.DELIVERED && delivery.status == DeliveryStatus.IN_TRANSIT"
                   @click="handleUpdateStatus(delivery.id, DeliveryStatus.DELIVERED)"
                 />
-                <CopyWhatsapp @click="copyToClipboard(delivery)" />
+                <CopyWhatsapp @click="CopyToWhatsapp(delivery.id)" />
               </div>
             </div>
           </div>
@@ -179,17 +186,19 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useDebounce, useDeleteWithModal, usePagination, useSearch } from '@/composables/';
+import { useDebounce, useDeleteWithModal, useModal, usePagination } from '@/composables/';
 import { formatDateCustom, formatToDollars } from '@utils';
 import {
   Bagde,
   Card,
   DownloadButton,
   EditButton,
-  EyeButton,
+  EyeButtonDetails,
   FilterButton,
+  LoadingAbsoluteSkeleton,
   LoadingSkeleton,
   ModalConfirmation,
+  ModalPdfViewer,
   NewButton,
   SearchForm,
   SideBar,
@@ -199,8 +208,8 @@ import {
   TrashButton,
 } from '@/components/';
 import SelectFilter from '@components/forms/SelectFilter.vue';
-import { Delivery, DeliveryStatus, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel } from '@views/deliveries/models';
-import { deleteDeliveryById, getDeliveryTicket, getFilteredDeliveries, searchDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
+import { DeliveryStatus, DetailDelivery, getDeliveryStatusLabel, ListDelivery } from '@views/deliveries/models';
+import { deleteDeliveryById, getDeliveryById, getDeliveryTicket, getFilteredDeliveries, updateDeliveryStatus } from '@/views/deliveries/services';
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { copyToClipboard } from '@views/deliveries/utils';
@@ -210,10 +219,10 @@ import Cancelled from '../components/button/Cancelled.vue';
 import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
 import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
 import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
+import ModalDetailsDelivery from '../components/ModalDetails.Delivery.vue';
+import { getAllServices, ListService } from '@views/services';
 
-import { getAllServices, Service } from '@views/services';
-
-const deliveries = ref<Delivery[]>([]);
+const deliveries = ref<ListDelivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
 const selectedPaymentStatus = ref<string>('');
 const selectedServiceId = ref<string>('');
@@ -222,9 +231,40 @@ const startDate = ref<string>('');
 const endDate = ref<string>('');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const sortConfig = ref<{ column: keyof Delivery; order: 'asc' | 'desc' } | null>(null);
+const isLoadingDetails = ref(false);
+const selectedDelivery = ref<DetailDelivery | null>(null);
 
-const { currentPage, totalPages, startIndex, endIndex, paginatedItems, updatePage } = usePagination(deliveries, 15);
+const isTicketModalOpen = ref(false);
+const ticketUrl = ref<string>('');
+const ticketBlob = ref<Blob | null>(null);
+const selectedTicketDeliveryId = ref<string>('');
+
+const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
+
+const openDetails = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedDelivery.value = await getDeliveryById(id);
+    openModalDetails(id);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const CopyToWhatsapp = async (id: string) => {
+  try {
+    isLoadingDetails.value = true;
+    selectedDelivery.value = await getDeliveryById(id);
+    copyToClipboard(selectedDelivery.value);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const sortConfig = ref<{ column: keyof ListDelivery; order: 'asc' | 'desc' } | null>(null);
+const searchQuery = ref<string>('');
+
+const { paginatedData, totalPages, startIndex, endIndex, updatePage, setPaginatedData } = usePagination<ListDelivery>();
 
 const modalStatus = ref<DeliveryStatus | undefined>(undefined);
 const isStatusModalOpen = ref(false);
@@ -238,17 +278,11 @@ const deliveryStatusOptions = [
   { value: DeliveryStatus.REFUSED, label: 'Cancelado' },
 ];
 
-const { searchQuery } = useSearch<Delivery>({
-  fetchFn: searchDeliveries,
-  autoSearch: false,
-});
-
 watch([selectedStatus, selectedPaymentStatus, selectedServiceId, selectedPaymentMethod, sortConfig, startDate, endDate], () => {
-  currentPage.value = 1;
   runSearch();
 });
 
-const runSearch = async () => {
+const runSearch = async (page: number = 1) => {
   try {
     isLoading.value = true;
     error.value = null;
@@ -284,8 +318,11 @@ const runSearch = async () => {
       filters,
       sortBy: sortConfig.value?.column,
       sortDirection: sortConfig.value?.order,
+      page: page,
+      perPage: paginatedData.value.perPage,
     });
-    deliveries.value = response;
+
+    setPaginatedData(response);
   } finally {
     isLoading.value = false;
   }
@@ -294,7 +331,7 @@ const runSearch = async () => {
 const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) => {
   if (config) {
     sortConfig.value = {
-      column: config.column as keyof Delivery,
+      column: config.column as keyof ListDelivery,
       order: config.order,
     };
   } else {
@@ -304,7 +341,7 @@ const handleSort = (config: { column: string; order: 'asc' | 'desc' } | null) =>
 
 const debouncedSearch = useDebounce(runSearch, 500);
 
-const services = ref<Service[]>([]);
+const services = ref<ListService[]>([]);
 
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
@@ -331,17 +368,34 @@ const handleDeleteConfirmation = async () => {
   await confirmDelete();
 };
 
-const handleDownload = async (deliveryId: string) => {
-  const blob = await getDeliveryTicket(deliveryId);
-  const filename = `Ticket_${deliveryId}.pdf`;
+const handleViewTicket = async (deliveryId: string) => {
+  try {
+    const blob = await getDeliveryTicket(deliveryId);
+
+    if (!blob) {
+      console.error('No se pudo obtener el ticket.');
+      return;
+    }
+
+    const url = window.URL.createObjectURL(blob);
+
+    ticketBlob.value = blob;
+    ticketUrl.value = url;
+    selectedTicketDeliveryId.value = deliveryId;
+
+    isTicketModalOpen.value = true;
+  } catch (error) {
+    console.error('Error al obtener el ticket:', error);
+  }
+};
+
+const downloadTicket = () => {
+  if (!ticketBlob.value || !selectedTicketDeliveryId.value) return;
+
+  const filename = `Ticket_${selectedTicketDeliveryId.value}.pdf`;
   const mimeType = 'application/pdf';
 
-  if (!blob) {
-    console.error('No se proporcionó un Blob para descargar.');
-    return;
-  }
-
-  const url = window.URL.createObjectURL(blob);
+  const url = window.URL.createObjectURL(ticketBlob.value);
   const a = document.createElement('a');
   a.style.display = 'none';
   a.href = url;
@@ -352,6 +406,18 @@ const handleDownload = async (deliveryId: string) => {
   document.body.removeChild(a);
 
   window.URL.revokeObjectURL(url);
+};
+
+const closeTicketModal = () => {
+  isTicketModalOpen.value = false;
+
+  if (ticketUrl.value) {
+    window.URL.revokeObjectURL(ticketUrl.value);
+    ticketUrl.value = '';
+  }
+
+  ticketBlob.value = null;
+  selectedTicketDeliveryId.value = '';
 };
 
 const openStatusModal = (id: string, status: DeliveryStatus) => {

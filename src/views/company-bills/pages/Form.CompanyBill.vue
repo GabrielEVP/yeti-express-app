@@ -1,9 +1,9 @@
 <template>
   <SideBar>
-    <BackButton  />
+    <BackButton />
     <div class="flex justify-center items-center min-h-[calc(100vh-6rem)] py-6 px-2">
       <Card class="w-full max-w-4xl mx-auto p-6">
-        <LoadingSkeleton v-if="!formReady" />
+        <LoadingAbsoluteSkeleton v-if="!formReady" />
         <form @submit.prevent="onSubmit" class="space-y-6">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">Información del gasto</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -34,22 +34,13 @@
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
-import {
-  SideBar,
-  Card,
-  FieldForm,
-  SelectForm,
-  AcceptButton,
-  CancelButton,
-  TextAreaForm,
-  LoadingSkeleton, BackButton,
-} from '@/components';
-import { CompanyBill } from '@/views/company-bills/';
+import { AcceptButton, BackButton, CancelButton, Card, FieldForm, LoadingAbsoluteSkeleton, SelectForm, SideBar, TextAreaForm } from '@/components';
+import { FormCompanyBill } from '@/views/company-bills/';
 import { PaymentMethodOptions } from '@views/company-bills/models/PaymentMethod';
 import { CompanyBillSchema } from '@views/company-bills/schema/CompanyBill.Schema';
-import { getCompanyBillById, createCompanyBill, updateCompanyBill } from '@/views/company-bills/services/';
+import { createCompanyBill, getCompanyBillById, updateCompanyBill } from '@/views/company-bills/services/';
 import { AppRoutesCompanyBill } from '@/views/company-bills/router/';
 
 const formReady = ref(false);
@@ -58,7 +49,7 @@ const router = useRouter();
 const route = useRoute();
 const billId = route.params.id as string;
 
-const { initializeForm, onSubmit, meta } = useVeeForm<CompanyBill>({
+const { initializeForm, onSubmit, meta } = useVeeForm<FormCompanyBill>({
   id: billId,
   getById: getCompanyBillById,
   create: createCompanyBill,

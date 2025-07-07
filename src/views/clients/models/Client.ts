@@ -1,9 +1,10 @@
 import { TimeLineContent } from '@time-line-content';
+import { ClientType } from '@views/clients';
 
 export interface Client {
   id: string;
   legalName: string;
-  type: 'venezolano' | 'foreing' | 'legal' | 'commune' | 'government' | 'pasaport' | 'personal_signature';
+  type: ClientType;
   registrationNumber: string;
   notes: string;
   allowCredit: boolean;
