@@ -41,6 +41,7 @@
               >
                 Cancelar
               </button>
+              
               <button
                 type="button"
                 @click="$emit('confirm')"
