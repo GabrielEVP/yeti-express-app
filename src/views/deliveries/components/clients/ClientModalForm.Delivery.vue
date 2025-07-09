@@ -43,7 +43,7 @@ const emit = defineEmits<{
   (e: 'addClient', clientData: FormClient): void;
 }>();
 
-const { initializeForm, onSubmit, meta, errors } = useVeeForm<FormClient>({
+const { initializeForm, onSubmit, meta } = useVeeForm<FormClient>({
   modal: true,
   create: createClient,
   messages: {
