@@ -1,5 +1,5 @@
 <template>
-  <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="isModalClientFormOpen = false" @addClient="handleAddClient" />
+  <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="isModalClientFormOpen = false" @addClient="handleAddClient as any" />
   <div class="space-y-4 mb-6 px-4 sm:px-0">
     <h3 class="text-lg sm:text-xl font-semibold dark:text-white border-b pb-2">Cliente</h3>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:items-end">
@@ -146,7 +146,6 @@ const filteredClients = computed(() => {
 const addressOptionsWithAdd = computed(() => {
   const options = [...clientAddresses.value];
 
-  // Si hay una dirección en modelValue que no está en las opciones, la agregamos
   if (props.modelValue?.pickupAddress && props.modelValue.pickupAddress !== '') {
     const currentAddress = props.modelValue.pickupAddress;
     const addressExists = options.some((addr) => addr.value === currentAddress);
@@ -180,12 +179,10 @@ function selectClient(client: { label: string; value: string }) {
   const clientData = clients.value.find((c) => c.id === client.value);
   selectedClient.value = clientData || null;
 
-  // Mantener la dirección existente si está definida
   const currentPickupAddress = props.modelValue?.pickupAddress || '';
   updateValue({ clientId: client.value, pickupAddress: currentPickupAddress });
 
   loadAddresses(client.value).then(() => {
-    // Si hay una dirección existente, asegurarse que esté en las opciones
     if (currentPickupAddress && currentPickupAddress !== '') {
       const addressExists = clientAddresses.value.some((addr) => addr.value === currentPickupAddress);
       if (!addressExists) {
@@ -339,7 +336,6 @@ watch(
 onMounted(async () => {
   await loadClients();
 
-  // Si hay una dirección definida en el modelValue al montar, aseguramos que se agregue
   if (props.modelValue?.pickupAddress && props.modelValue.pickupAddress !== '') {
     const pickupAddress = props.modelValue.pickupAddress;
     const addressExists = clientAddresses.value.some((addr) => addr.value === pickupAddress);
