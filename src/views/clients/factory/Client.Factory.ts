@@ -21,7 +21,7 @@ export const DEFAULT_CLIENT: FormClient = {
   type: ClientType.VENEZOLANO,
   registration_number: '',
   notes: '',
-  allow_credit: false,
+  allow_credit: 1,
   addresses: [DEFAULT_CLIENT_ADDRESS],
   emails: [],
   phones: [DEFAULT_CLIENT_PHONE],

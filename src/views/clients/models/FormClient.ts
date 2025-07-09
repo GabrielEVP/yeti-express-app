@@ -6,7 +6,7 @@ export interface FormClient {
   type: ClientType;
   registration_number: string;
   notes: string;
-  allow_credit: boolean;
+  allow_credit: number;
   addresses: FormClientAddress[];
   emails: FormClientEmail[];
   phones: FormClientPhone[];
