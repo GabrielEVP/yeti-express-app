@@ -1,5 +1,5 @@
 <template>
-  <Modal :isOpen="isOpen"  @confirm="handleConfirm" @close="close">
+  <Modal :isOpen="isOpen" @confirm="handleConfirm" @close="close">
     <template #header>Confirmar Accion</template>
     <span class="text-black dark:text-white">{{ getStatusMessage }}</span>
   </Modal>
@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { DeliveryStatus } from '@/views/deliveries/';
+import { DeliveryStatus } from '@views/deliveries';
 import { Modal } from '@components';
 
 const props = defineProps<{

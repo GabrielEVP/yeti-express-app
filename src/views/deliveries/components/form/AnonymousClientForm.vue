@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { FieldForm, SelectForm } from '@/components';
+import { FieldForm, SelectForm } from '@components';
 import { ClientTypeOptions } from '@views/clients';
 
 defineProps<{

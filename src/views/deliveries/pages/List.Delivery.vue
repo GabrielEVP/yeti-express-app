@@ -213,13 +213,13 @@ import { deleteDeliveryById, getDeliveryById, getDeliveryTicket, getFilteredDeli
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { copyToClipboard } from '@views/deliveries/utils';
-import Delivered from '../components/button/Delivered.vue';
-import Transit from '../components/button/Transit.vue';
-import Cancelled from '../components/button/Cancelled.vue';
-import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
-import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
-import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
-import ModalDetailsDelivery from '../components/ModalDetails.Delivery.vue';
+import Delivered from '@views/deliveries/components/list/button/Delivered.vue';
+import Transit from '@views/deliveries/components/list/button/Transit.vue';
+import Cancelled from '@views/deliveries/components/list/button/Cancelled.vue';
+import CopyWhatsapp from '@views/deliveries/components/list/button/CopyWhatsapp.vue';
+import ModalUpdateStatus from '../components/list/ModalUpdateStatus.Delivery.vue';
+import ModalCancelStatus from '../components/list/ModalCancelStatus.Delivery.vue';
+import ModalDetailsDelivery from '../components/list/ModalDetails.Delivery.vue';
 import { getAllServices, ListService } from '@views/services';
 
 const deliveries = ref<ListDelivery[]>([]);

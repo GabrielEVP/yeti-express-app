@@ -103,9 +103,9 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { SelectForm } from '@/components';
+import { SelectForm } from '@components';
 import { ListClient } from '@views/clients/models';
-import { FormDelivery, PaymentTypeOptions } from '@/views/deliveries/models';
+import { FormDelivery, PaymentTypeOptions } from '@views/deliveries/models';
 import { getAllClients, getClientById } from '@views/clients/service';
 import { ClientAddress } from '@views/clients';
 
