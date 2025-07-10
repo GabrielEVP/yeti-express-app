@@ -1,39 +1,38 @@
 <template>
-  <DeliveryClientModalForm :isOpen="isModalClientFormOpen" @close="isModalClientFormOpen = false" @addClient="handleAddClient as any" />
   <div class="space-y-4 mb-6 px-4 sm:px-0">
-    <h3 class="text-lg sm:text-xl font-semibold dark:text-white border-b pb-2">Cliente</h3>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:items-end">
-      <div class="lg:col-span-1">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cliente</label>
-          <div class="relative">
-            <input
-              v-model="clientSearchQuery"
-              type="text"
-              placeholder="Buscar cliente..."
-              class="text-black lg:mb-6 dark:text-white w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 h-10"
-              @focus="showClientDropdown = true"
-              @blur="handleClientBlur"
-            />
+    <div class="space-y-4 border p-4 rounded-md mb-4">
+      <div v-if="!selectedClient" class="mb-4 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+        <p class="text-sm text-yellow-800 dark:text-yellow-600">Por favor, seleccione un cliente para habilitar las opciones adicionales.</p>
+      </div>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cliente</label>
+        <div class="relative">
+          <input
+            v-model="clientSearchQuery"
+            type="text"
+            placeholder="Buscar cliente..."
+            class="text-black lg:mb-6 dark:text-white w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 h-10 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-800"
+            @focus="showClientDropdown = true"
+            @blur="handleClientBlur"
+          />
+          <div
+            v-if="showClientDropdown && filteredClients.length > 0"
+            class="text-black dark:text-white absolute top-12 z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto"
+          >
             <div
-              v-if="showClientDropdown && filteredClients.length > 0"
-              class="text-black dark:text-white absolute top-12 z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto"
+              v-for="client in filteredClients"
+              :key="client.value"
+              @mousedown.prevent="selectClient(client)"
+              class="px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm sm:text-base"
             >
-              <div
-                v-for="client in filteredClients"
-                :key="client.value"
-                @mousedown.prevent="selectClient(client)"
-                class="px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm sm:text-base"
-              >
-                {{ client.label }}
-              </div>
+              {{ client.label }}
             </div>
-            <div
-              v-if="showClientDropdown && filteredClients.length === 0 && clientSearchQuery.trim() !== ''"
-              class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg"
-            >
-              <div class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">No se encontraron clientes</div>
-            </div>
+          </div>
+          <div
+            v-if="showClientDropdown && filteredClients.length === 0 && clientSearchQuery.trim() !== ''"
+            class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg"
+          >
+            <div class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">No se encontraron clientes</div>
           </div>
         </div>
       </div>
@@ -47,6 +46,7 @@
             :items="addressOptionsWithAdd"
             :modelValue="props.modelValue?.pickupAddress || ''"
             @update:modelValue="handleAddressSelection"
+            :disabled="!selectedClient"
           />
           <div v-if="showAddressForm" class="space-y-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nueva Dirección</label>
@@ -55,14 +55,15 @@
                 v-model="newAddress"
                 type="text"
                 placeholder="Dirección completa"
-                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white h-10"
+                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white h-10 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-800"
                 @keyup.enter="saveNewAddress"
+                :disabled="!selectedClient"
               />
               <div class="flex flex-col sm:flex-row">
                 <button
                   type="button"
                   @click="saveNewAddress"
-                  :disabled="!newAddress.trim()"
+                  :disabled="!newAddress.trim() || !selectedClient"
                   class="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
                 >
                   Guardar
@@ -70,7 +71,8 @@
                 <button
                   type="button"
                   @click="cancelAddAddress"
-                  class="flex-1 bg-gray-500 text-white px-3 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm font-medium transition-colors"
+                  :disabled="!selectedClient"
+                  class="flex-1 bg-gray-500 text-white px-3 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancelar
                 </button>
@@ -78,15 +80,21 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="lg:col-span-1 lg:mb-6">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 lg:opacity-0">Acción</label>
-          <PlusButton @click="isModalClientFormOpen = true" class="w-full justify-center h-10">
-            <span class="text-white ml-2 text-sm sm:text-base font-medium">
-              <span>Agregar Cliente</span>
-            </span>
-          </PlusButton>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:items-end">
+          <SelectForm
+            label="Dirección de recogida"
+            name="pickupAddress"
+            placeholder="Selecciona una dirección"
+            :items="addressOptionsWithAdd"
+            :disabled="!selectedClient"
+          />
+          <SelectForm
+            label="Forma de pago"
+            name="payment_type"
+            placeholder="Forma de pago"
+            :items="[...PaymentTypeOptions]"
+            :disabled="!selectedClient"
+          />
         </div>
       </div>
     </div>
@@ -95,9 +103,9 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { PlusButton, SelectForm } from '@/components';
-import { DeliveryClientModalForm } from '@views/deliveries/components';
+import { SelectForm } from '@/components';
 import { ListClient } from '@views/clients/models';
+import { FormDelivery, PaymentTypeOptions } from '@/views/deliveries/models';
 import { getAllClients, getClientById } from '@views/clients/service';
 import { ClientAddress } from '@views/clients';
 
@@ -106,6 +114,7 @@ interface Props {
     clientId?: string;
     pickupAddress?: string;
   };
+  formDelivery?: FormDelivery;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -218,6 +227,8 @@ async function loadAddresses(clientId: string) {
 }
 
 function handleAddressSelection(addressValue: string) {
+  if (!selectedClient.value) return;
+
   if (addressValue === '__ADD_NEW__') {
     showAddressForm.value = true;
     updateValue({ pickupAddress: '' });
@@ -228,7 +239,7 @@ function handleAddressSelection(addressValue: string) {
 }
 
 function handleManualAddress(address: string) {
-  if (!address.trim()) return;
+  if (!address.trim() || !selectedClient.value) return;
 
   const addressData = {
     label: address.trim(),
@@ -243,7 +254,7 @@ function handleManualAddress(address: string) {
 }
 
 async function saveNewAddress() {
-  if (!newAddress.value.trim()) return;
+  if (!newAddress.value.trim() || !selectedClient.value) return;
 
   handleManualAddress(newAddress.value);
 
@@ -286,15 +297,6 @@ async function loadClients() {
   } catch (error) {
     console.error('Error al cargar clientes:', error);
   }
-}
-
-function resetSelection() {
-  selectedClient.value = null;
-  clientAddresses.value = [];
-  showAddressForm.value = false;
-  newAddress.value = '';
-  clientSearchQuery.value = '';
-  updateValue({ clientId: '', pickupAddress: '' });
 }
 
 watch(
@@ -351,6 +353,5 @@ onMounted(async () => {
 
 defineExpose({
   loadClients,
-  resetSelection,
 });
 </script>

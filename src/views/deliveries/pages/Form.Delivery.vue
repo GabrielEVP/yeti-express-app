@@ -8,6 +8,7 @@
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
               <option value="general">General</option>
+              <option value="client">Cliente</option>
               <option value="receipt">Persona a recibir</option>
               <option value="notes">Notas</option>
             </template>
@@ -15,6 +16,10 @@
               <TabsTitle tab="general" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                 <FileText class="w-4 h-4 dark:text-white" />
                 <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">General</span>
+              </TabsTitle>
+              <TabsTitle tab="client" :activeTab="activeTab" @update:activeTab="activeTab = $event">
+                <NotebookPen class="w-4 h-4 dark:text-white" />
+                <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">Cliente</span>
               </TabsTitle>
               <TabsTitle tab="receipt" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                 <NotebookPen class="w-4 h-4 dark:text-white" />
@@ -27,18 +32,53 @@
             </template>
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
-            <ClientSelector :modelValue="clientSelectorValue" @update:modelValue="handleClientSelectorUpdate" @clientChanged="handleClientChanged" />
             <div class="space-y-4">
-              <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
-                <SelectForm label="Forma de pago" name="payment_type" placeholder="Forma de pago" :items="[...PaymentTypeOptions]" />
-                <div class="sm:col-span-2 lg:col-span-1">
-                  <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
-                </div>
+                <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
               </div>
             </div>
           </TabsContent>
+          <tabs-content tab="client" :active-tab="activeTab">
+            <div class="mb-4">
+              <div class="grid grid-cols-2 gap-4 mt-3 mb-4">
+                <Button
+                  type="button"
+                  :class="{
+                    'bg-blue-600 border-blue-700 text-white dark:bg-blue-700 dark:border-blue-800 dark:text-white': clientTypeSelection === 'regular',
+                    'bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-400 dark:text-blue-300':
+                      clientTypeSelection !== 'regular',
+                  }"
+                  @click="clientTypeSelection = 'regular'"
+                  :disabled="isEditMode && !canChangeToRegular"
+                >
+                  Cliente Regular
+                </Button>
+                <Button
+                  type="button"
+                  :class="{
+                    'bg-blue-600 border-blue-700 text-white dark:bg-blue-700 dark:border-blue-800 dark:text-white':
+                      clientTypeSelection === 'anonymous',
+                    'bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-400 dark:text-blue-300':
+                      clientTypeSelection !== 'anonymous',
+                  }"
+                  @click="clientTypeSelection = 'anonymous'"
+                  :disabled="isEditMode && !canChangeToAnonymous"
+                >
+                  Cliente Anónimo
+                </Button>
+              </div>
+            </div>
+
+            <ClientSelector
+              v-if="clientTypeSelection === 'regular'"
+              :modelValue="clientSelectorValue"
+              :formDelivery="values"
+              @update:modelValue="handleClientSelectorUpdate"
+            />
+
+            <AnonymousClientForm v-if="clientTypeSelection === 'anonymous'" :clientType="clientTypeSelection" />
+          </tabs-content>
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -68,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
@@ -86,22 +126,25 @@ import {
   TabsTitle,
   TextAreaForm,
 } from '@/components';
-import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
-import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
+import { FormDelivery } from '@views/deliveries/models';
+import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries/services';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { ListClient } from '@views/clients';
 import { getAllCouriers, ListCourier } from '@views/couriers';
 import { getAllServices, ListService } from '@views/services';
 import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
+import AnonymousClientForm from '../components/clients/AnonymousClientForm.vue';
+import { Button } from '@components';
 
 const activeTab = ref('general');
 const router = useRouter();
 const route = useRoute();
 const deliveryId = route.params.id as string;
 const formReady = ref(false);
-
-const selectedClientAllowCredit = ref(true);
+const clientTypeSelection = ref<'regular' | 'anonymous'>('regular');
+const isEditMode = computed(() => !!deliveryId);
+const canChangeToRegular = computed(() => !values.client_id);
+const canChangeToAnonymous = computed(() => values.client_id === undefined || values.client_id === null || values.client_id === '');
 
 const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
   id: deliveryId,
@@ -121,6 +164,28 @@ const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<For
   },
 });
 
+async function loadFormData(): Promise<void> {
+  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
+
+  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
+  services.value = Array.isArray(serviceData) ? serviceData : [];
+}
+
+onMounted(async () => {
+  await loadFormData();
+  await initializeForm();
+  await nextTick();
+
+  // Determinar el tipo de cliente basado en los datos cargados
+  if (values.client_id) {
+    clientTypeSelection.value = 'regular';
+  } else if (values.anonymous_client && values.anonymous_client.legal_name) {
+    clientTypeSelection.value = 'anonymous';
+  }
+
+  formReady.value = true;
+});
+
 const couriers = ref<ListCourier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
@@ -132,7 +197,7 @@ const courierOptions = computed(() =>
 const services = ref<ListService[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
-    label: `${service.name} -- ${service.amount}`,
+    label: `${service.name} - ( ${service.amount.toFixed(2)} )`,
     value: service.id,
   }))
 );
@@ -145,37 +210,24 @@ const clientSelectorValue = computed(() => ({
 function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
   if (clientData.clientId !== undefined) {
     setFieldValue('client_id', clientData.clientId);
-  }
-  if (clientData.pickupAddress !== undefined) {
-    setFieldValue('pickup_address', clientData.pickupAddress);
-  }
-}
 
-function handleClientChanged(client: ListClient | null) {
-  if (client) {
-    if (client.allow_credit) {
-      selectedClientAllowCredit.value = true;
-    } else {
-      selectedClientAllowCredit.value = false;
-      setFieldValue('payment_type', PaymentType.FULL);
+    if (clientData.pickupAddress !== undefined) {
+      setFieldValue('pickup_address', clientData.pickupAddress);
     }
-  } else {
-    selectedClientAllowCredit.value = true;
   }
 }
 
-async function loadFormData(): Promise<void> {
-  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
-
-  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
-  services.value = Array.isArray(serviceData) ? serviceData : [];
-}
-
-onMounted(async () => {
-  await loadFormData();
-  await initializeForm();
-
-  await nextTick();
-  formReady.value = true;
+// Observar cambios en el tipo de cliente seleccionado
+watch(clientTypeSelection, (newType) => {
+  if (newType === 'regular') {
+    // Limpiar datos de cliente anónimo
+    setFieldValue('anonymous_client.legal_name', '');
+    setFieldValue('anonymous_client.type', '');
+    setFieldValue('anonymous_client.registration_number', '');
+    setFieldValue('anonymous_client.phone', '');
+  } else {
+    // Limpiar cliente regular
+    setFieldValue('client_id', '');
+  }
 });
 </script>
