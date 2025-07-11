@@ -40,9 +40,12 @@
             </div>
           </TabsContent>
           <tabs-content tab="client" :active-tab="activeTab">
-            <div class="mb-4">
-              <ClientTypeSelector v-model="clientTypeSelection" :is_edit_mode="isEditMode" :client_id="values.client_id" />
-            </div>
+            <ClientTypeSelector
+              v-model="clientTypeSelection"
+              :is_edit_mode="isEditMode"
+              :client_id="values.client_id"
+              :client_source="client_name_source"
+            />
             <ClientSelector
               v-if="clientTypeSelection === 'regular'"
               :modelValue="clientSelectorValue"
@@ -116,6 +119,7 @@ const deliveryId = route.params.id as string;
 const formReady = ref(false);
 const clientTypeSelection = ref<'regular' | 'anonymous'>('regular');
 const isEditMode = computed(() => !!deliveryId);
+const client_name_source = ref<string>('');
 
 const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
   id: deliveryId,
@@ -147,9 +151,12 @@ onMounted(async () => {
   await initializeForm();
   await nextTick();
 
-  if (values.client_id) {
+  const hasClientId = values.client_id !== null && values.client_id !== undefined && values.client_id !== '';
+  const hasAnonymousClient = values.anonymous_client && values.anonymous_client.legal_name;
+
+  if (hasClientId) {
     clientTypeSelection.value = 'regular';
-  } else if (values.anonymous_client && values.anonymous_client.legal_name) {
+  } else if (hasAnonymousClient) {
     clientTypeSelection.value = 'anonymous';
   }
 
@@ -187,7 +194,7 @@ function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddre
   }
 }
 
-watch(clientTypeSelection, (newType) => {
+watch(clientTypeSelection, (newType, oldType) => {
   if (newType === 'regular') {
     setFieldValue('anonymous_client.legal_name', '');
     setFieldValue('anonymous_client.type', ClientType.VENEZOLANO);

@@ -4,6 +4,5 @@ export * from './models/PaymentStatus';
 export * from './models/PaymentType';
 export * from './models/Status';
 export * from './router/Router.Delivery';
-export * from './schema/Delivery.ClientBasicSchema';
 export * from './schema/Delivery.Schema';
 export * from './services/Delivery.api';

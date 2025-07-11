@@ -80,22 +80,13 @@
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:items-end">
-          <SelectForm
-            label="Dirección de recogida"
-            name="pickupAddress"
-            placeholder="Selecciona una dirección"
-            :items="addressOptionsWithAdd"
-            :disabled="!selectedClient"
-          />
-          <SelectForm
-            label="Forma de pago"
-            name="payment_type"
-            placeholder="Forma de pago"
-            :items="[...PaymentTypeOptions]"
-            :disabled="!selectedClient"
-          />
-        </div>
+        <SelectForm
+          label="Forma de pago"
+          name="payment_type"
+          placeholder="Forma de pago"
+          :items="[...PaymentTypeOptions]"
+          :disabled="!selectedClient"
+        />
       </div>
     </div>
   </div>
@@ -302,13 +293,16 @@ async function loadClients() {
 watch(
   () => props.modelValue?.clientId,
   async (clientId) => {
-    if (clientId && clients.value.length > 0) {
+    if (clientId && clientId !== '' && clients.value.length > 0) {
       const client = clients.value.find((c) => c.id === clientId);
       if (client) {
         selectedClient.value = client;
-        clientSearchQuery.value = client.legal_name;
+        clientSearchQuery.value = `${client.legal_name} - ${client.registration_number}`;
         await loadAddresses(clientId);
         emit('clientChanged', client);
+        console.log('Cliente seleccionado en watch:', client.legal_name, client.id);
+      } else {
+        console.log('Cliente con ID', clientId, 'no encontrado en la lista');
       }
     } else {
       selectedClient.value = null;
@@ -338,6 +332,22 @@ watch(
 onMounted(async () => {
   await loadClients();
 
+  // Si hay un clientId, verificar si está en la lista y seleccionarlo
+  if (props.modelValue?.clientId && props.modelValue.clientId !== '') {
+    const clientId = props.modelValue.clientId;
+    const client = clients.value.find((c) => c.id === clientId);
+
+    if (client) {
+      selectedClient.value = client;
+      clientSearchQuery.value = `${client.legal_name} - ${client.registration_number}`;
+      await loadAddresses(clientId);
+      console.log('Cliente seleccionado en onMounted:', client.legal_name, client.id);
+    } else {
+      console.log('Cliente con ID', clientId, 'no encontrado al inicializar');
+    }
+  }
+
+  // Manejo de dirección de recogida
   if (props.modelValue?.pickupAddress && props.modelValue.pickupAddress !== '') {
     const pickupAddress = props.modelValue.pickupAddress;
     const addressExists = clientAddresses.value.some((addr) => addr.value === pickupAddress);
