@@ -54,7 +54,6 @@
             />
             <AnonymousClientForm v-if="clientTypeSelection === 'anonymous'" :clientType="clientTypeSelection" />
           </tabs-content>
-          {{ errors }}
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -122,7 +121,7 @@ const clientTypeSelection = ref<'regular' | 'anonymous'>('regular');
 const isEditMode = computed(() => !!deliveryId);
 const client_name_source = ref<string>('');
 
-const { initializeForm, onSubmit, meta, setFieldValue, values, errors } = useVeeForm<FormDelivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
   id: deliveryId,
   getById: getDeliveryById,
   create: createDelivery,
