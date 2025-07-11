@@ -54,6 +54,7 @@
             />
             <AnonymousClientForm v-if="clientTypeSelection === 'anonymous'" :clientType="clientTypeSelection" />
           </tabs-content>
+          {{ errors }}
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -121,7 +122,7 @@ const clientTypeSelection = ref<'regular' | 'anonymous'>('regular');
 const isEditMode = computed(() => !!deliveryId);
 const client_name_source = ref<string>('');
 
-const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values, errors } = useVeeForm<FormDelivery>({
   id: deliveryId,
   getById: getDeliveryById,
   create: createDelivery,
@@ -180,16 +181,16 @@ const serviceOptions = computed(() =>
 );
 
 const clientSelectorValue = computed(() => ({
-  clientId: values.client_id || '',
-  pickupAddress: values.pickup_address || '',
+  client_id: values.client_id || '',
+  pickup_address: values.pickup_address || '',
 }));
 
-function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
-  if (clientData.clientId !== undefined) {
-    setFieldValue('client_id', clientData.clientId);
+function handleClientSelectorUpdate(clientData: { client_id?: string; pickup_address?: string }) {
+  if (clientData.client_id !== undefined) {
+    setFieldValue('client_id', clientData.client_id);
 
-    if (clientData.pickupAddress !== undefined) {
-      setFieldValue('pickup_address', clientData.pickupAddress);
+    if (clientData.pickup_address !== undefined) {
+      setFieldValue('pickup_address', clientData.pickup_address);
     }
   }
 }

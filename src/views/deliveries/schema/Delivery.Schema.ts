@@ -17,14 +17,14 @@ export const anonymousClientSchema = object({
 export const DeliverySchema = object({
   notes: string().nullable(),
   receipt: receiptSchema.required('El recibo es requerido'),
-  client_id: string(),
+  client_id: string().nullable(),
   payment_type: string().when('client_id', {
-    is: (val: string | undefined | null) => !!val,
+    is: (val: string | null) => val !== null && val !== undefined && val !== '',
     then: (schema) => schema.required('El tipo de pago es requerido cuando se selecciona un cliente regular'),
     otherwise: (schema) => schema.optional(),
   }),
   anonymous_client: object().when('client_id', {
-    is: (val: string | undefined | null) => !val,
+    is: (val: string | null) => val === null || val === undefined || val === '',
     then: (schema) => anonymousClientSchema.required('La información del cliente anónimo es requerida'),
     otherwise: (schema) => schema.optional(),
   }),
