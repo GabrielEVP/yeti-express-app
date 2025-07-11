@@ -114,8 +114,8 @@
 </template>
 
 <script setup lang="ts">
-import { formatDateCustom, formatToDollars } from '@/utils/';
-import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@/components/';
+import { formatDateCustom, formatToDollars } from '@utils';
+import { Bagde, ModalContentItem, ModalDetail, ModalSpecialContentItem, ModalTitleModal } from '@components';
 import { ClipboardCheck, PackageCheck } from 'lucide-vue-next';
 import { DetailDelivery, getDeliveryPaymentStatusLabel, getDeliveryStatusLabel, getPaymentTypeLabel } from '@views/deliveries/models';
 

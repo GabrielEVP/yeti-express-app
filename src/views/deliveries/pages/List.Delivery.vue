@@ -94,7 +94,13 @@
           {{ formatDateCustom(delivery.date) }}
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
-          {{ delivery.client_name }}
+          <span
+            :class="{
+              'bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded': delivery.client_name_source === 'anonymous',
+            }"
+          >
+            {{ delivery.client_name }}
+          </span>
         </TableContent>
         <TableContent class="text-black dark:text-white break-words">
           {{ delivery.courier_full_name }}
@@ -143,6 +149,15 @@
               <div class="w-full">
                 <p class="font-semibold max-w-[160px] md:max-w-[300px] text-gray-900 dark:text-gray-50 break-words">
                   {{ delivery.number }}
+                </p>
+                <p class="text-sm my-1">
+                  <span
+                    :class="{
+                      'bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded': delivery.client_name_source === 'anonymous',
+                    }"
+                  >
+                    {{ delivery.client_name }}
+                  </span>
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 break-words">
                   {{ formatDateCustom(delivery.date) }}
@@ -213,13 +228,13 @@ import { deleteDeliveryById, getDeliveryById, getDeliveryTicket, getFilteredDeli
 import { TABLE_HEADER_DELIVERY } from '@views/deliveries/constants';
 import { AppRoutesDelivery } from '@views/deliveries/router';
 import { copyToClipboard } from '@views/deliveries/utils';
-import Delivered from '../components/button/Delivered.vue';
-import Transit from '../components/button/Transit.vue';
-import Cancelled from '../components/button/Cancelled.vue';
-import CopyWhatsapp from '../components/button/CopyWhatsapp.vue';
-import ModalUpdateStatus from '../components/ModalUpdateStatus.Delivery.vue';
-import ModalCancelStatus from '../components/ModalCancelStatus.Delivery.vue';
-import ModalDetailsDelivery from '../components/ModalDetails.Delivery.vue';
+import Delivered from '@views/deliveries/components/list/button/Delivered.vue';
+import Transit from '@views/deliveries/components/list/button/Transit.vue';
+import Cancelled from '@views/deliveries/components/list/button/Cancelled.vue';
+import CopyWhatsapp from '@views/deliveries/components/list/button/CopyWhatsapp.vue';
+import ModalUpdateStatus from '../components/list/ModalUpdateStatus.Delivery.vue';
+import ModalCancelStatus from '../components/list/ModalCancelStatus.Delivery.vue';
+import ModalDetailsDelivery from '../components/list/ModalDetails.Delivery.vue';
 import { getAllServices, ListService } from '@views/services';
 
 const deliveries = ref<ListDelivery[]>([]);
@@ -454,7 +469,7 @@ const closeCancelModal = () => {
   selectedDeliveryId.value = undefined;
 };
 
-const handleCancelDelivery = async (cancelData: { cancellationNotes: string; deliveryId: string }) => {
+const handleCancelDelivery = async () => {
   await runSearch();
   closeCancelModal();
 };

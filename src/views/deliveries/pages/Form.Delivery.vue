@@ -8,6 +8,7 @@
           <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event">
             <template #mobile>
               <option value="general">General</option>
+              <option value="client">Cliente</option>
               <option value="receipt">Persona a recibir</option>
               <option value="notes">Notas</option>
             </template>
@@ -15,6 +16,10 @@
               <TabsTitle tab="general" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                 <FileText class="w-4 h-4 dark:text-white" />
                 <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">General</span>
+              </TabsTitle>
+              <TabsTitle tab="client" :activeTab="activeTab" @update:activeTab="activeTab = $event">
+                <NotebookPen class="w-4 h-4 dark:text-white" />
+                <span class="ml-2 md:ml-4 dark:text-white text-sm md:text-base">Cliente</span>
               </TabsTitle>
               <TabsTitle tab="receipt" :activeTab="activeTab" @update:activeTab="activeTab = $event">
                 <NotebookPen class="w-4 h-4 dark:text-white" />
@@ -27,18 +32,29 @@
             </template>
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
-            <ClientSelector :modelValue="clientSelectorValue" @update:modelValue="handleClientSelectorUpdate" @clientChanged="handleClientChanged" />
             <div class="space-y-4">
-              <h3 class="text-lg font-semibold dark:text-white border-b pb-2">Detalles del Servicio</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
-                <SelectForm label="Forma de pago" name="payment_type" placeholder="Forma de pago" :items="[...PaymentTypeOptions]" />
-                <div class="sm:col-span-2 lg:col-span-1">
-                  <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
-                </div>
+                <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
               </div>
             </div>
           </TabsContent>
+          <tabs-content tab="client" :active-tab="activeTab">
+            <ClientTypeSelector
+              v-model="clientTypeSelection"
+              :is_edit_mode="isEditMode"
+              :client_id="values.client_id"
+              :client_source="client_name_source"
+            />
+            <ClientSelector
+              v-if="clientTypeSelection === 'regular'"
+              :modelValue="clientSelectorValue"
+              :formDelivery="values"
+              @update:modelValue="handleClientSelectorUpdate"
+            />
+            <AnonymousClientForm v-if="clientTypeSelection === 'anonymous'" :clientType="clientTypeSelection" />
+          </tabs-content>
+          {{ errors }}
           <TabsContent tab="receipt" :activeTab="activeTab">
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -68,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useVeeForm } from '@/composables';
 import { FileText, NotebookPen } from 'lucide-vue-next';
@@ -86,24 +102,27 @@ import {
   TabsTitle,
   TextAreaForm,
 } from '@/components';
-import { FormDelivery, PaymentType, PaymentTypeOptions } from '@views/deliveries/models';
-import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries';
+import { FormDelivery } from '@views/deliveries/models';
+import { createDelivery, getDeliveryById, updateDelivery } from '@views/deliveries/services';
 import { DeliverySchema } from '@views/deliveries/schema';
 import { AppRoutesDelivery } from '@views/deliveries/router';
-import { ListClient } from '@views/clients';
 import { getAllCouriers, ListCourier } from '@views/couriers';
 import { getAllServices, ListService } from '@views/services';
-import ClientSelector from '../components/clients/ClientSelectorForm.Delivery.vue';
+import ClientSelector from '../components/form/ClientSelectorForm.Delivery.vue';
+import AnonymousClientForm from '../components/form/AnonymousClientForm.vue';
+import ClientTypeSelector from '../components/form/ClientTypeSelector.vue';
+import { ClientType } from '@views/clients';
 
 const activeTab = ref('general');
 const router = useRouter();
 const route = useRoute();
 const deliveryId = route.params.id as string;
 const formReady = ref(false);
+const clientTypeSelection = ref<'regular' | 'anonymous'>('regular');
+const isEditMode = computed(() => !!deliveryId);
+const client_name_source = ref<string>('');
 
-const selectedClientAllowCredit = ref(true);
-
-const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<FormDelivery>({
+const { initializeForm, onSubmit, meta, setFieldValue, values, errors } = useVeeForm<FormDelivery>({
   id: deliveryId,
   getById: getDeliveryById,
   create: createDelivery,
@@ -121,6 +140,30 @@ const { initializeForm, onSubmit, meta, setFieldValue, values } = useVeeForm<For
   },
 });
 
+async function loadFormData(): Promise<void> {
+  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
+
+  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
+  services.value = Array.isArray(serviceData) ? serviceData : [];
+}
+
+onMounted(async () => {
+  await loadFormData();
+  await initializeForm();
+  await nextTick();
+
+  const hasClientId = values.client_id !== null && values.client_id !== undefined && values.client_id !== '';
+  const hasAnonymousClient = values.anonymous_client && values.anonymous_client.legal_name;
+
+  if (hasClientId) {
+    clientTypeSelection.value = 'regular';
+  } else if (hasAnonymousClient) {
+    clientTypeSelection.value = 'anonymous';
+  }
+
+  formReady.value = true;
+});
+
 const couriers = ref<ListCourier[]>([]);
 const courierOptions = computed(() =>
   couriers.value.map((courier) => ({
@@ -132,50 +175,34 @@ const courierOptions = computed(() =>
 const services = ref<ListService[]>([]);
 const serviceOptions = computed(() =>
   services.value.map((service) => ({
-    label: `${service.name} -- ${service.amount}`,
+    label: `${service.name} - ( ${service.amount.toFixed(2)} )`,
     value: service.id,
   }))
 );
 
 const clientSelectorValue = computed(() => ({
-  clientId: values.client_id || '',
-  pickupAddress: values.pickup_address || '',
+  client_id: values.client_id || '',
+  pickup_address: values.pickup_address || '',
 }));
 
-function handleClientSelectorUpdate(clientData: { clientId?: string; pickupAddress?: string }) {
-  if (clientData.clientId !== undefined) {
-    setFieldValue('client_id', clientData.clientId);
-  }
-  if (clientData.pickupAddress !== undefined) {
-    setFieldValue('pickup_address', clientData.pickupAddress);
-  }
-}
+function handleClientSelectorUpdate(clientData: { client_id?: string; pickup_address?: string }) {
+  if (clientData.client_id !== undefined) {
+    setFieldValue('client_id', clientData.client_id);
 
-function handleClientChanged(client: ListClient | null) {
-  if (client) {
-    if (client.allow_credit) {
-      selectedClientAllowCredit.value = true;
-    } else {
-      selectedClientAllowCredit.value = false;
-      setFieldValue('payment_type', PaymentType.FULL);
+    if (clientData.pickup_address !== undefined) {
+      setFieldValue('pickup_address', clientData.pickup_address);
     }
-  } else {
-    selectedClientAllowCredit.value = true;
   }
 }
 
-async function loadFormData(): Promise<void> {
-  const [courierData, serviceData] = await Promise.all([getAllCouriers(), getAllServices()]);
-
-  couriers.value = Array.isArray(courierData) ? courierData : [courierData];
-  services.value = Array.isArray(serviceData) ? serviceData : [];
-}
-
-onMounted(async () => {
-  await loadFormData();
-  await initializeForm();
-
-  await nextTick();
-  formReady.value = true;
+watch(clientTypeSelection, (newType, oldType) => {
+  if (newType === 'regular') {
+    setFieldValue('anonymous_client.legal_name', '');
+    setFieldValue('anonymous_client.type', ClientType.VENEZOLANO);
+    setFieldValue('anonymous_client.registration_number', '');
+    setFieldValue('anonymous_client.phone', '');
+  } else {
+    setFieldValue('client_id', '');
+  }
 });
 </script>

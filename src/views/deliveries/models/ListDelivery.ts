@@ -9,4 +9,5 @@ export interface ListDelivery {
   client_name: string;
   service_name: string;
   courier_full_name: string;
+  client_name_source: string;
 }
