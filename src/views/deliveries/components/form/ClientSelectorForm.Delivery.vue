@@ -77,7 +77,13 @@
           </div>
         </div>
       </div>
-      <SelectForm label="Forma de pago" name="payment_type" placeholder="Forma de pago" :items="PaymentTypeOptions" :disabled="!selectedClient" />
+      <SelectForm
+        label="Forma de pago"
+        name="payment_type"
+        placeholder="Forma de pago"
+        :items="[...PaymentTypeOptions]"
+        :disabled="!selectedClient"
+      />
     </div>
   </div>
 </template>
