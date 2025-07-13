@@ -31,9 +31,9 @@ export function copyToClipboard(delivery: any) {
 ----------------------------
 *Direccion de entrega del pedido*
 
-🤝 *Recibe:* ${delivery.receipt_full_name || 'N/A'}
-📞 *Teléfono:* ${delivery.receipt_phone || 'N/A'}
-🏠 *Dirección de Entrega:* ${delivery.receipt_address || 'N/A'}
+🤝 *Recibe:* ${delivery.receipt.full_name || 'N/A'}
+📞 *Teléfono:* ${delivery.receipt.phone || 'N/A'}
+🏠 *Dirección de Entrega:* ${delivery.receipt.address || 'N/A'}
 
 📝 *Nota:*
 ${delivery.notes || 'Sin notas'}
