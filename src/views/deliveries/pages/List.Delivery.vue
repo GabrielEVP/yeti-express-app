@@ -152,6 +152,7 @@
                 </p>
                 <p class="text-sm my-1">
                   <span
+                    class="dark:text-white"
                     :class="{
                       'bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded': delivery.client_name_source === 'anonymous',
                     }"
