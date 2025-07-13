@@ -154,8 +154,8 @@
                   <span
                     :class="
                       delivery.client_name_source === 'anonymous'
-                        ? 'px-1 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-white'
-                        : ''
+                        ? 'px-1 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-300 dark:text-black'
+                        : 'dark:text-white'
                     "
                   >
                     {{ delivery.client_name }}
