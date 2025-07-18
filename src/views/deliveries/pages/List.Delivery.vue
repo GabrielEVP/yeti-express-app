@@ -82,7 +82,7 @@
       :startIndex="startIndex"
       :endIndex="endIndex"
       :totalItems="deliveries.length"
-      @updatePage="updatePage"
+      @updatePage="handlePageChange"
       :sort-state="sortConfig"
       @sort="handleSort"
     >
@@ -474,5 +474,9 @@ const closeCancelModal = () => {
 const handleCancelDelivery = async () => {
   await runSearch();
   closeCancelModal();
+};
+
+const handlePageChange = async (page: number) => {
+  await runSearch(page);
 };
 </script>
