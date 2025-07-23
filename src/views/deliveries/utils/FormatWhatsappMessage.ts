@@ -15,6 +15,7 @@ export function copyToClipboard(delivery: any) {
 *Direccion de retiro*
  
 👤 *Cliente:* ${delivery.client_legal_name}
+📞 *Teléfono:* ${delivery.client_phone || 'N/A'}
 📍 *Dirección:* ${delivery.pickup_address || 'N/A'}
 
 ----------------------------
