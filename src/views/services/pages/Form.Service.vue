@@ -30,6 +30,7 @@
             <FieldForm label="Nombre" name="name" id="name" required />
             <TextAreaForm label="Descripción" name="description" id="description" required />
             <FieldForm label="Monto" name="amount" id="amount" type="number" required />
+            <FieldForm label="Comisión" name="commission" id="commission" type="number" required />
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
@@ -109,7 +110,9 @@ const { initializeForm, onSubmit, meta } = useVeeForm<FormService, string>({
   },
   validation: {
     schema: serviceSchema,
-    initialValues: {},
+    initialValues: {
+      comision: 0,
+    },
   },
 });
 
@@ -117,7 +120,6 @@ const { fields, push, remove } = useFieldArray<FormBill>('bills');
 
 onMounted(async () => {
   await initializeForm();
-
   await nextTick();
   formReady.value = true;
 });
