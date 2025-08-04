@@ -30,7 +30,6 @@
             <FieldForm label="Nombre" name="name" id="name" required />
             <TextAreaForm label="Descripción" name="description" id="description" required />
             <FieldForm label="Monto" name="amount" id="amount" type="number" required />
-            <FieldForm label="Comisión" name="commission" id="commission" type="number" required />
           </TabsContent>
           <TabsContent tab="bills" :activeTab="activeTab">
             <div>
@@ -46,8 +45,8 @@
                   <TrashButton type="button" @click="remove(idx)" />
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <FieldForm label="nombre" :id="`bills-${idx}`" :name="`bills[${idx}].name`" :required="idx === 0" />
-                  <FieldForm label="Monto" :id="`bills-${idx}`" :name="`bills[${idx}].amount`" :required="idx === 0" />
+                  <FieldForm label="nombre" :id="bills-${idx}" :name="bills[${idx}].name" :required="idx === 0" />
+                  <FieldForm label="Monto" :id="bills-${idx}" :name="bills[${idx}].amount" :required="idx === 0" />
                 </div>
               </div>
             </div>
@@ -110,9 +109,7 @@ const { initializeForm, onSubmit, meta } = useVeeForm<FormService, string>({
   },
   validation: {
     schema: serviceSchema,
-    initialValues: {
-      comision: 0,
-    },
+    initialValues: {},
   },
 });
 
@@ -120,6 +117,7 @@ const { fields, push, remove } = useFieldArray<FormBill>('bills');
 
 onMounted(async () => {
   await initializeForm();
+
   await nextTick();
   formReady.value = true;
 });
