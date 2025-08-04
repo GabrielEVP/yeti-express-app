@@ -45,8 +45,8 @@
                   <TrashButton type="button" @click="remove(idx)" />
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <FieldForm label="nombre" :id="bills-${idx}" :name="bills[${idx}].name" :required="idx === 0" />
-                  <FieldForm label="Monto" :id="bills-${idx}" :name="bills[${idx}].amount" :required="idx === 0" />
+                  <FieldForm label="nombre" :id="`bills-${idx}`" :name="`bills[${idx}].name`" :required="idx === 0" />
+                  <FieldForm label="Monto" :id="`bills-${idx}`" :name="`bills[${idx}].amount`" :required="idx === 0" />
                 </div>
               </div>
             </div>
