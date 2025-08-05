@@ -33,7 +33,8 @@
           </Tabs>
           <TabsContent tab="general" :activeTab="activeTab">
             <div class="space-y-4">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <FieldForm type="date" label="fecha" name="date" id="date" required />
                 <SelectForm label="Servicio" name="service_id" placeholder="Selecciona un servicio" :items="serviceOptions" />
                 <SelectForm label="Repartidor" name="courier_id" placeholder="Selecciona un repartidor" :items="courierOptions" />
               </div>
@@ -149,6 +150,12 @@ async function loadFormData(): Promise<void> {
 onMounted(async () => {
   await loadFormData();
   await initializeForm();
+
+  if (!isEditMode.value) {
+    const today = new Date().toISOString().split('T')[0];
+    setFieldValue('date', today as any);
+  }
+
   await nextTick();
 
   const hasClientId = values.client_id !== null && values.client_id !== undefined && values.client_id !== '';
