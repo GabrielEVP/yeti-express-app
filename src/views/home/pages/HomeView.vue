@@ -108,16 +108,15 @@ const formatNumber = (value: number) => {
   });
 };
 
-const onFilterChange = (range: 'day' | 'week' | 'month' | 'year', date: string) => {
+const onFilterChange = (range: 'day' | 'week' | 'month' | 'year') => {
   selectedRange.value = range;
-  selectedDate.value = date;
-  fetchStats(range, date);
+  fetchStats(range);
 };
 
-const fetchStats = async (period: string, date: string) => {
+const fetchStats = async (period: string) => {
   isLoading.value = true;
   try {
-    const response = await getStats({ period, date });
+    const response = await getStats({ period });
 
     if (!response?.historical_delivered?.length) {
       stats.value = {
@@ -174,6 +173,6 @@ const handleGeneralReport = async (start: string, end: string) => {
 };
 
 onMounted(async () => {
-  await fetchStats(selectedRange.value, selectedDate.value);
+  await fetchStats(selectedRange.value);
 });
 </script>
