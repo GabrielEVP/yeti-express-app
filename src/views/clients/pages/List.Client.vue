@@ -27,6 +27,15 @@
       :selectOptions="clientsOptions"
       selectLabel="Cliente"
     />
+    <ModalClientSelector
+      title="Reporte de deudas no pagadas por cliente"
+      :isOpen="isOpenUnpaidReport"
+      @close="closeUnpaidReport"
+      @submit-selection="handleUnpaidReport"
+      :selected-id="null"
+      :selectOptions="clientsOptions"
+      selectLabel="Cliente"
+    />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">
         <div class="md:flex gap-4">
@@ -55,6 +64,9 @@
             <div class="grid grid-cols-1 dark:bg-gray-700 dark:text-white">
               <button type="button" @click="() => openGeneral('')" class="text-start border-b p-4">Reporte de cuentas General</button>
               <button type="button" @click="handlePendingReport" class="text-start border-b p-4">Reporte de cuentas por cobrar</button>
+              <button type="button" @click="() => openUnpaidReport('')" class="text-start border-b p-4">
+                Reporte de cuentas por cobrar en cliente
+              </button>
               <button type="button" @click="() => openDetail('')" class="text-start border-b p-4">Reporte de cuentas por cliente</button>
             </div>
           </ReportButton>
@@ -135,6 +147,7 @@ import {
   FilterButton,
   LoadingAbsoluteSkeleton,
   LoadingSkeleton,
+  ModalClientSelector,
   ModalConfirmation,
   ModalReportDetail,
   ModalReportGeneral,
@@ -151,7 +164,7 @@ import SelectFilter from '@components/forms/SelectFilter.vue';
 import { ClientType, ClientTypeOptions, DetailClient, formatClientType, ListClient } from '@/views/clients/models';
 import { ModalDetailsClient } from '@/views/clients/components/';
 import { deleteClientById, getClientById, getFilteredClients } from '@/views/clients/service/';
-import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport } from '@/views/debts/';
+import { allGetClientsDebtReport, allGetPendingPaidDebtsReport, getClientDebtReport, getClientUnpaidDebtsReport } from '@/views/debts/';
 import { TABLE_HEADER_CLIENT } from '@/views/clients/constants/';
 import { AppRoutesClient } from '@/views/clients/router';
 import { getClientsWithDebt } from '@views/debts';
@@ -236,6 +249,7 @@ const handlePageChange = async (page: number) => {
 const debouncedSearch = useDebounce(runSearch, 500);
 
 const clientsOptions = computed(() => {
+  console.log('Clientes con deudas:', clientsWithDebts.value);
   return clientsWithDebts.value.map((client) => ({
     label: client.legal_name,
     value: client.id,
@@ -246,6 +260,7 @@ onMounted(async () => {
   await runSearch(1);
   try {
     clientsWithDebts.value = await getClientsWithDebt();
+    console.log('Clientes con deudas cargados:', clientsWithDebts.value.length);
   } catch (error) {
     console.error('Error fetching clients with debts:', error);
   }
@@ -282,6 +297,8 @@ const handleGeneralReport = async (start: string, end: string) => {
 
 const { isOpen: isOpenDetail, selectedId: selectedClientId, open: openDetail, close: closeDetail } = useModal<string>();
 
+const { isOpen: isOpenUnpaidReport, open: openUnpaidReport, close: closeUnpaidReport } = useModal<string>();
+
 const handleReportDetail = async (clientId: string, start: string, end: string) => {
   isLoadingDetails.value = true;
   try {
@@ -298,6 +315,17 @@ const handlePendingReport = async () => {
   try {
     const blob = await allGetPendingPaidDebtsReport();
     const filename = `informe_deuda_general`;
+    generatePdf(blob, filename);
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const handleUnpaidReport = async (clientId: string) => {
+  isLoadingDetails.value = true;
+  try {
+    const blob = await getClientUnpaidDebtsReport(clientId);
+    const filename = `informe_deudas_no_pagadas_cliente_${clientId}`;
     generatePdf(blob, filename);
   } finally {
     isLoadingDetails.value = false;
