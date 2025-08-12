@@ -14,6 +14,7 @@ export const debtApiRoutes = {
   getDebtReport: (id: string | number) => `${base}/${id}/debts-report`,
   allGetDebtsReport: `${base}/debts-report`,
   allGetPendingPaidDebtsReport: `${base}/un-paid-debts-report`,
+  getClientUnpaidDebtsReport: (id: string | number) => `${base}/${id}/unpaid-debts-report`,
 };
 
 export const allAmountDebts = async (): Promise<number> => {
@@ -62,6 +63,13 @@ export const allGetClientsDebtReport = async (startDate: string, endDate: string
       start_date: startDate,
       end_date: endDate,
     },
+    responseType: 'blob',
+  });
+  return response.data;
+};
+
+export const getClientUnpaidDebtsReport = async (id: string): Promise<any> => {
+  const response = await apiClient.get(debtApiRoutes.getClientUnpaidDebtsReport(id), {
     responseType: 'blob',
   });
   return response.data;

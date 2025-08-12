@@ -35,6 +35,7 @@ export { default as ModalPdfViewer } from '@/components/modals/ModalPDFViewer.vu
 export { default as ModalConfirmation } from '@components/modals/ModalConfirmation.vue';
 export { default as ModalReportGeneral } from '@/components/modals/ModalReportGeneral.vue';
 export { default as ModalReportDetail } from '@/components/modals/ModalReportDetail.vue';
+export { default as ModalClientSelector } from '@/components/modals/ModalClientSelector.vue';
 
 // UI – ALERTS
 export { default as DangerAlert } from '@/components/ui/alerts/Danger.vue';
