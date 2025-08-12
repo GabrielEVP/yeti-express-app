@@ -252,7 +252,7 @@ const clientsOptions = computed(() => {
   console.log('Clientes con deudas:', clientsWithDebts.value);
   return clientsWithDebts.value.map((client) => ({
     label: client.legal_name,
-    value: client.id,
+    value: String(client.id),
   }));
 });
 
