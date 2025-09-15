@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/home',
     name: 'Home',
     component: HomeView,
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAuth: true },
   },
   ...ClientRouter,
   ...CourierRouter,
@@ -47,15 +47,6 @@ router.beforeEach((to, from, next) => {
   const { isAuthenticated, isUser, isEmployee } = storeToRefs(authStore);
 
   if (to.meta.requiresAuth && !isAuthenticated.value) {
-    next({ path: '/' });
-    return;
-  }
-
-  if (to.meta.requiresAdmin && !isUser.value) {
-    if (isEmployee.value) {
-      next({ path: '/deliveries' });
-      return;
-    }
     next({ path: '/' });
     return;
   }
