@@ -104,11 +104,13 @@ const profileMenuItemsUser = [
 ];
 
 const navigationItemsEmployee = [
-  { route: '/deliveries', title: 'Deliverys', icon: ClipboardIcon },
+  { route: '/home', title: 'Inicio', icon: HomeIcon },
+  { route: '/deliveries', title: 'Deliverys', icon: Package },
   { route: '/clients', title: 'Clientes', icon: UsersIcon },
-  { route: '/couriers', title: 'Repartidor', icon: Bike },
+  { route: '/couriers', title: 'Repartidor', icon: Truck },
   { route: '/services', title: 'Servicios', icon: SquareChartGantt },
   { route: '/company-bills', title: 'Gastos', icon: Banknote },
+  { route: '/debts', title: 'Cuentas por cobrar', icon: WalletMinimal },
 ];
 
 const profileMenuItemsEmployee = [
