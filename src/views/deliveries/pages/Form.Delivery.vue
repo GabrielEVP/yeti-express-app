@@ -152,8 +152,10 @@ onMounted(async () => {
   await initializeForm();
 
   if (!isEditMode.value) {
-    const today = new Date().toISOString().split('T')[0];
-    setFieldValue('date', today as any);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    setFieldValue('date', today);
   }
 
   await nextTick();
