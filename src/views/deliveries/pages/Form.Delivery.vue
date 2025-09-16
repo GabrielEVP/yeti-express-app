@@ -153,9 +153,12 @@ onMounted(async () => {
 
   if (!isEditMode.value) {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const localDateString = `${year}-${month}-${day}`;
 
-    setFieldValue('date', today);
+    setFieldValue('date', localDateString as unknown as Date);
   }
 
   await nextTick();
