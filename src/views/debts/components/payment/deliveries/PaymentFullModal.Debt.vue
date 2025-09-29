@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted } from 'vue';
+import { defineProps, onMounted, watch } from 'vue';
 import { useVeeForm } from '@/composables/';
 import { formatToDollars } from '@utils';
 import { AcceptButton, CancelButton, Text } from '@/components/';
@@ -68,7 +68,7 @@ const props = defineProps<{
   delivery: DeliveryWithDebt;
 }>();
 
-const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
+const { initializeForm, onSubmit, meta, setFieldValue } = useVeeForm<DebtPayment>({
   modal: true,
   create: createDebtPaymentFull,
   messages: {
@@ -86,6 +86,17 @@ const { initializeForm, onSubmit, meta } = useVeeForm<DebtPayment>({
 onMounted(() => {
   initializeForm();
 });
+
+// Watch for changes in delivery prop and update the debt_id
+watch(
+  () => props.delivery.debt_id,
+  (newDebtId) => {
+    if (newDebtId) {
+      setFieldValue('debt_id', newDebtId);
+    }
+  },
+  { immediate: true }
+);
 
 const emit = defineEmits<{
   (e: 'proccess', value: boolean): void;
