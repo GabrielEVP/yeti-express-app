@@ -131,7 +131,7 @@
             <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
             <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
             <DownloadButton @click="handleViewTicket(delivery.id)" />
-            <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
+            <TrashButton v-if="isUser || delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
             <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
             <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
             <Delivered
@@ -184,7 +184,7 @@
                 <EyeButtonDetails @click="() => openDetails(String(delivery.id))" />
                 <EditButton v-if="delivery.status == DeliveryStatus.PENDING" :route="AppRoutesDelivery.edit(delivery.id)" />
                 <DownloadButton @click="handleViewTicket(delivery.id)" />
-                <TrashButton v-if="delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
+                <TrashButton v-if="isUser || delivery.status == DeliveryStatus.PENDING" @click="open(delivery.id)" />
                 <Transit v-if="delivery.status == DeliveryStatus.PENDING" @click="handleUpdateStatus(delivery.id, DeliveryStatus.IN_TRANSIT)" />
                 <Cancelled v-if="delivery.status == DeliveryStatus.IN_TRANSIT" @click="openCancelModal(delivery.id)" />
                 <Delivered
@@ -238,6 +238,8 @@ import ModalUpdateStatus from '../components/list/ModalUpdateStatus.Delivery.vue
 import ModalCancelStatus from '../components/list/ModalCancelStatus.Delivery.vue';
 import ModalDetailsDelivery from '../components/list/ModalDetails.Delivery.vue';
 import { getAllServices, ListService } from '@views/services';
+import { useAuthStore } from '@stores';
+import { storeToRefs } from 'pinia';
 
 const deliveries = ref<ListDelivery[]>([]);
 const selectedStatus = ref<DeliveryStatus | undefined>(undefined);
@@ -366,6 +368,9 @@ const serviceOptions = computed(() =>
     value: service.id,
   }))
 );
+
+const authStore = useAuthStore();
+const { isUser } = storeToRefs(authStore);
 
 onMounted(async () => {
   services.value = await getAllServices();
