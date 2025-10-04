@@ -37,7 +37,7 @@
               required
             />
             <FieldForm label="Número de documento" name="registration_number" id="registration_number" required />
-            <div v-if="isUser">
+            <div>
               <SelectForm
                 label="Credito"
                 name="allow_credit"
