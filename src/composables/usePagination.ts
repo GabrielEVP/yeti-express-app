@@ -11,7 +11,7 @@ export function usePagination<T>() {
    const paginatedData = ref<PaginatedData<T>>({ 
       items: [],
       currentPage: 1,
-      perPage: 15,
+      perPage: 20,
       total: 0
    });
 
