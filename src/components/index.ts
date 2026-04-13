@@ -10,6 +10,7 @@ export { default as FilterButton } from '@/components/buttons/Filter.vue';
 export { default as NewButton } from '@/components/buttons/New.vue';
 export { default as PlusButton } from '@/components/buttons/Plus.vue';
 export { default as TrashButton } from '@/components/buttons/Trash.vue';
+export { default as ToggleActiveButton } from '@/components/buttons/ToggleActive.vue';
 export { default as DownloadButton } from '@/components/buttons/Download.vue';
 export { default as BackButton } from '@/components/buttons/Back.vue';
 export { default as ReportButton } from '@/components/buttons/Report.vue';

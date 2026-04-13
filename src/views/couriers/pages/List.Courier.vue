@@ -1,5 +1,13 @@
 <template>
   <ModalConfirmation :isOpen="isOpen" message="¿Estás seguro que quieres eliminar este Courier?" @confirm="handleDeleteConfirmation" @close="close" />
+  <ModalConfirmation
+    :isOpen="isOpenToggle"
+    :message="toggleTarget?.active
+      ? `¿Desactivar a ${toggleTarget?.first_name} ${toggleTarget?.last_name}? No aparecerá más en el programa.`
+      : `¿Activar a ${toggleTarget?.first_name} ${toggleTarget?.last_name}?`"
+    @confirm="confirmToggle"
+    @close="closeToggle"
+  />
   <SideBar>
     <LoadingAbsoluteSkeleton v-if="isLoadingDetails" />
     <ModalDetailsCourier v-if="selectedId !== null" :is-open="isOpenDetails" :courier="selectedCourier" @close="closeDetails" />
@@ -24,11 +32,20 @@
     />
     <Card class="p-3">
       <div class="flex gap-4 md:flex-row sm:justify-between flex-col sm:flex-row">
-        <div class="md:flex gap-4">
+        <div class="md:flex gap-4 items-center">
           <SearchForm class="hidden sm:block" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           <FilterButton class="sm:hidden w-full sm:w-auto">
             <SearchForm class="sm:hidden" v-model="searchQuery" placeholder="Buscar Repartidor" @input="debouncedSearch" />
           </FilterButton>
+          <select
+            v-model="statusFilter"
+            @change="handleStatusChange"
+            class="hidden sm:block border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+            <option value="all">Todos</option>
+          </select>
         </div>
         <div class="flex gap-6 flex-col sm:flex-row">
           <ReportButton>
@@ -64,6 +81,7 @@
           <div class="flex gap-1 justify-center">
             <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
+            <ToggleActiveButton :active="courier.active" @click="() => openToggle(courier)" />
             <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
           </div>
         </TableContent>
@@ -85,6 +103,7 @@
               <div class="flex gap-2">
                 <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
+                <ToggleActiveButton :active="courier.active" @click="() => openToggle(courier)" />
                 <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
               </div>
             </div>
@@ -116,6 +135,7 @@ import {
   TableDashboard,
   TableRow,
   Text,
+  ToggleActiveButton,
   TrashButton,
 } from '@/components/';
 import { ModalDetailsCourier } from '@/views/couriers/components/';
@@ -126,6 +146,7 @@ import {
   getCourierById,
   getCourierDeliveryReport,
   getFilteredCouriers,
+  toggleCourierActive,
 } from '@/views/couriers/services';
 import { TABLE_HEADER_COURIER } from '@/views/couriers/constants/';
 import { AppRoutesCourier } from '@views/couriers/router';
@@ -137,6 +158,7 @@ const error = ref<string | null>(null);
 const isLoadingDetails = ref(false);
 const selectedCourier = ref<DetailCourier | null>(null);
 const searchQuery = ref<string>('');
+const statusFilter = ref<'active' | 'inactive' | 'all'>('active');
 
 const { isOpen: isOpenDetails, selectedId, open: openModalDetails, close: closeDetails } = useModal<string>();
 
@@ -161,6 +183,7 @@ const runSearch = async (page: number = 1) => {
       search: searchQuery.value.trim(),
       page: page,
       perPage: paginatedData.value.perPage,
+      status: statusFilter.value,
     });
 
     setPaginatedData(response);
@@ -172,6 +195,10 @@ const runSearch = async (page: number = 1) => {
 const handlePageChange = async (page: number) => {
   const params = updatePage(page);
   await runSearch(params.page);
+};
+
+const handleStatusChange = () => {
+  runSearch(1);
 };
 
 const debouncedSearch = useDebounce(runSearch, 500);
@@ -191,6 +218,41 @@ const { isOpen, open, close, confirmDelete } = useDeleteWithModal({
 
 const handleDeleteConfirmation = async () => {
   await confirmDelete();
+};
+
+// Toggle active modal
+const isOpenToggle = ref(false);
+const toggleTarget = ref<ListCourier | null>(null);
+
+const openToggle = (courier: ListCourier) => {
+  toggleTarget.value = courier;
+  isOpenToggle.value = true;
+};
+
+const closeToggle = () => {
+  isOpenToggle.value = false;
+  toggleTarget.value = null;
+};
+
+const confirmToggle = async () => {
+  if (!toggleTarget.value) return;
+  try {
+    const updated = await toggleCourierActive(String(toggleTarget.value.id));
+    // Si el filtro activo no incluye el nuevo estado, sacamos el item de la lista
+    const shouldRemove =
+      (statusFilter.value === 'active' && !updated.active) ||
+      (statusFilter.value === 'inactive' && updated.active);
+    if (shouldRemove) {
+      await runSearch(paginatedData.value.currentPage);
+    } else {
+      const item = paginatedData.value.items.find((c: ListCourier) => String(c.id) === String(updated.id));
+      if (item) item.active = updated.active;
+    }
+  } catch {
+    // network errors handled by interceptor
+  } finally {
+    closeToggle();
+  }
 };
 
 const open_date = ref<string>('');

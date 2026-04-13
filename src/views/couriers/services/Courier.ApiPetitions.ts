@@ -34,6 +34,11 @@ export const updateCourier = async (courier: FormCourier, id: string): Promise<D
   return response.data;
 };
 
+export const toggleCourierActive = async (courier_id: string): Promise<ListCourier> => {
+  const response = await apiClient.patch(`${base}/${courier_id}/toggle-active`);
+  return response.data;
+};
+
 export const deleteCourierById = async (courier_id: string): Promise<void> => {
   await apiClient.delete(courierApiRoutes.details(courier_id));
 };
