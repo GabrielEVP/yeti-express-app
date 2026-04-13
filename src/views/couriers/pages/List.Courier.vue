@@ -82,7 +82,6 @@
             <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
             <EditButton :route="AppRoutesCourier.edit(courier.id)" />
             <ToggleActiveButton :active="courier.active" @click="() => openToggle(courier)" />
-            <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
           </div>
         </TableContent>
       </TableRow>
@@ -104,7 +103,6 @@
                 <EyeButtonDetails @click="() => openDetails(String(courier.id))" />
                 <EditButton :route="AppRoutesCourier.edit(courier.id)" />
                 <ToggleActiveButton :active="courier.active" @click="() => openToggle(courier)" />
-                <TrashButton v-if="courier.can_delete" @click="() => open(courier.id)" />
               </div>
             </div>
           </div>
